@@ -135,7 +135,7 @@
 <tr>
 <td><code>reply.read</code></td>
 <td>safe</td>
-<td>Hermes's reply to the caller's own last <code>prompt.send</code>, <code>{text, complete, truncated, session}</code>, taken only from the events of the conversation the prompt went to. Another agent on the same window reads an empty reply</td>
+<td>Hermes's reply to the caller's own last <code>prompt.send</code>, <code>{text, complete, truncated, session, status?, working?}</code>, taken only from the events of the conversation the prompt went to: the part being written while Hermes works, the turn's final answer once <code>complete</code> is true. Another agent on the same window reads an empty reply</td>
 </tr>
 </tbody>
 </table></div>

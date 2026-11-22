@@ -791,7 +791,7 @@ its page and grants no `ui` scope. What an agent gets is three actions:
 |---|---|---|
 | `prompt.send {text}` | dangerous | `host.composer.submit(null, text)`: sends as if typed and entered. Asks you each time, and shows the whole prompt |
 | `prompt.draft {text}` | dangerous | `host.composer.setDraft(null, text)`: fills the message box, sends nothing. Asks you each time: the words are then one Enter from Hermes |
-| `reply.read` | safe | Hermes's reply to the caller's own last `prompt.send`, `{text, complete, truncated, session}`, taken only from the events of the conversation the prompt went to. Another agent on the same window reads an empty reply |
+| `reply.read` | safe | Hermes's reply to the caller's own last `prompt.send`, `{text, complete, truncated, session, status?, working?}`, taken only from the events of the conversation the prompt went to: the part being written while Hermes works, the turn's final answer once `complete` is true. Another agent on the same window reads an empty reply |
 
 Both writing actions are `dangerous`, and that is the point of the word here: the level
 Auto waives the question for sensitive actions and never for dangerous ones. What each

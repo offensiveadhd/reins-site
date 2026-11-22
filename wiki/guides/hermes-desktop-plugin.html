@@ -70,12 +70,15 @@
 Reins surface with declared actions. An agent outside Hermes, Claude Code for one, can
 then send Hermes a prompt and read the reply, with the Reins consent prompt, indicator,
 panel, Pause and Stop in the Hermes window.</p>
-<p><strong>Status: built and statically checked, not run in Hermes.</strong> The plugin builds, and its
-own source runs in the repository's tests against a stand-in for Hermes's SDK
-(<code>packages/electron/test/hermes-plugin.test.ts</code>). The built file passed the import
-scanner of Hermes's own plugin loader (<code>apps/desktop/src/contrib/runtime-loader.ts</code>)
-when that was run over it by hand, outside Hermes. It has not been installed, loaded or
-used in a live Hermes Desktop. It was written from the Desktop plugin SDK documentation
+<p><strong>Status: run once in a live Hermes Desktop, on Windows.</strong> On 22 November 2026 the
+built plugin was installed in Hermes Desktop (Windows 11, the version current that day),
+switched on, attached to a hub started with <a href="https://github.com/offensiveadhd/reins/blob/main/integrations/hermes-desktop/hub.json" class="ext"><code>hub.json</code></a>, and an agent sent a
+prompt with <code>prompt.send</code> after the person allowed both cards. Hermes (GLM 5.3) carried
+out the task and <code>reply.read</code> returned its final answer with <code>complete: true</code>, 55 s
+later. That one run is all that was run live: not macOS or Linux, not <code>prompt.draft</code>,
+not the levels or the Chat tab in Hermes. The plugin's own source also runs in the
+repository's tests against a stand-in for Hermes's SDK
+(<code>packages/electron/test/hermes-plugin.test.ts</code>). It was written from the Desktop plugin SDK documentation
 in the Hermes repository (<code>website/docs/developer-guide/desktop-plugin-sdk.md</code>) at the
 version installed in November 2026 (Electron 44.10.2).</p>
 <p>The other way to reach Hermes Desktop, with nothing installed into it, is to adopt it
@@ -99,7 +102,7 @@ small on purpose.</p>
 <tr>
 <td>action <code>prompt.send {text}</code></td>
 <td>dangerous</td>
-<td>Sends <code>text</code> in Hermes's conversation in front, through <code>host.composer.submit(null, text)</code>: the same as typing and pressing Enter. You are asked each time and shown the whole prompt. Refused with <code>E_BUSY</code> while Hermes is in the middle of a turn there, with <code>E_NO_TARGET</code> when Hermes does not say which conversation is in front, and with <code>E_INTERNAL</code> when this Hermes gives no sign of whether a turn is under way.</td>
+<td>Sends <code>text</code> in Hermes's conversation in front, through <code>host.composer.submit(null, text)</code>: the same as typing and pressing Enter. You are asked each time and shown the whole prompt. Refused with <code>E_BUSY</code> while Hermes is in the middle of a turn there, with <code>E_NO_TARGET</code> when no chat takes the prompt, and with <code>E_INTERNAL</code> when this Hermes gives no sign of whether a turn is under way. Where Hermes names no live session for the chat in front (<code>host.state.focusedSessionId</code> is null, as in the build this was run in, though the chat answers), the prompt goes to the chat the app's focus routes to, is refused while any conversation is mid-turn, and the reply is the first turn that starts within 30 s; the result then says <code>learning: true</code>.</td>
 </tr>
 <tr>
 <td>action <code>prompt.draft {text}</code></td>
@@ -109,12 +112,12 @@ small on purpose.</p>
 <tr>
 <td>action <code>reply.read</code></td>
 <td>safe</td>
-<td>Hermes's reply to the caller's own last <code>prompt.send</code>: <code>{ session, text, complete, truncated, at }</code>. An agent that did not send the prompt gets an empty reply.</td>
+<td>Hermes's reply to the caller's own last <code>prompt.send</code>: <code>{ session, text, complete, truncated, at, status?, working? }</code>. While Hermes works, <code>text</code> is the part it is writing now and <code>complete</code> is false; once the turn has ended, <code>text</code> is its final answer, and <code>status</code> says how it ended (<code>complete</code>, <code>error</code>, <code>interrupted</code>) when Hermes says so. <code>working</code> is whether Hermes is in the middle of a turn in that conversation. An agent that did not send the prompt gets an empty reply.</td>
 </tr>
 <tr>
 <td>state <code>conversation</code></td>
 <td></td>
-<td><code>{ session, busy, awaitingResponse, model }</code> of Hermes's conversation in front.</td>
+<td><code>{ session, busy, awaitingResponse, model, profile }</code> of Hermes's conversation in front.</td>
 </tr>
 </tbody>
 </table></div>
@@ -131,10 +134,13 @@ answers: <code>reply.read</code> gives it to that agent and an empty one to any 
 not a state, because a state is the same for every agent that was allowed to look. It
 is forgotten when that agent's grant ends.</li>
 <li><strong>No reply from another conversation.</strong> The reply is collected from the gateway events
-<code>message.start</code>, <code>message.delta</code>, <code>message.complete</code> and <code>message.error</code>, at most
-16 000 characters, and only from events that name the session the prompt went to. An
-event without a session id, or from a conversation in the background, is not taken for
-the answer. And because the reply is whatever Hermes says next in that conversation,
+<code>message.start</code>, <code>message.delta</code>, <code>message.interim</code>, <code>message.complete</code> and
+<code>message.error</code>, at most 16 000 characters, and only from events that name the session
+the prompt went to. An event without a session id, or from a conversation in the
+background, is not taken for the answer. A turn with tool calls is written in parts:
+what is kept is the part being written now, and at the end the turn's final text, so
+the commentary of a long run does not use up the room the answer needs. And because
+the reply is whatever Hermes says next in that conversation,
 <code>prompt.send</code> is refused while Hermes is in the middle of a turn there
 (<code>host.state.busyBySession</code>, <code>host.state.busy</code>, <code>host.state.awaitingResponse</code>), and
 also when this Hermes offers none of those signs: otherwise the end of an answer to
@@ -346,6 +352,39 @@ the sixth unasked prompt within ten minutes asks whatever the rule says.</li>
 </ol>
 <p>With the MCP adapter registered, the same are the tools <code>reins_attach</code> and <code>reins_act</code>.
 <code>reply.read</code> answers the session that sent the prompt: read with the same agent.</p>
+<h2 id="handing-hermes-a-whole-task">Handing Hermes a whole task <a class="anchor" href="#handing-hermes-a-whole-task" aria-label="Link to the section Handing Hermes a whole task">#</a></h2>
+<p>A prompt has to fit on the card the person approves (about 1,900 characters), and a
+reply holds 16 000. A task with a brief of several pages, and results longer than a
+reply, still goes through, when both agents read the same disk:</p>
+<ol>
+<li>The outer agent writes the brief to a file.</li>
+<li>It sends a short prompt that points at it: read this file, write your results to
+that file, report back here when you are done. The card shows the two paths, which is
+what the person approves; the brief is theirs to open.</li>
+<li>It reads the state <code>conversation</code> now and then (no prompt, under any level), and
+<code>reply.read</code> when Hermes is no longer working, until <code>complete</code> is true. <code>status</code>
+says whether the turn ended in <code>error</code> or was <code>interrupted</code>.</li>
+<li>It reads the result file. The reply is the short report.</li>
+</ol>
+<p>Three things to keep to, whatever does the handing over:</p>
+<ul>
+<li><strong>A person who said no is not asked another way.</strong> <code>E_CONSENT</code> that comes back at
+once is a refusal: the task is not sent by some other route instead. In protocol 0.1
+a prompt nobody touched answers the same code when its time is up (60 s under the
+guarded profile), so a caller tells the two apart by how long the answer took.</li>
+<li><strong>A task that was sent is not sent again</strong> because the reply is late. The grant can
+end before the reply is complete (Stop, a reload, its time), and the reply goes with
+it; what Hermes wrote to the result file stays.</li>
+<li><strong>The reply is page data.</strong> The hub could not verify this page, and Hermes's answer
+is another agent's text: read it as tool output, not as instructions.</li>
+</ul>
+<p>One caller that does all of this is the <code>desktop</code> route of a delegation script for
+Claude Code (not part of this repository). It was run end to end against a stand-in for
+Hermes: the built plugin of this folder in a browser page, a real hub with
+<a href="https://github.com/offensiveadhd/reins/blob/main/integrations/hermes-desktop/hub.json" class="ext"><code>hub.json</code></a>, the shell tools, and a person's clicks on the real cards
+(allowed, refused, and left to run out). It was then run once in a live Hermes Desktop
+(see Status): the prompt and the attach allowed, the brief carried out, the result file
+written and the final answer returned.</p>
 <h2 id="limits-and-what-is-not-known">Limits, and what is not known <a class="anchor" href="#limits-and-what-is-not-known" aria-label="Link to the section Limits, and what is not known">#</a></h2>
 <ul>
 <li><strong><code>file://</code> on a socket.</strong> A hub that admits <code>file://</code> admits every local HTML file
@@ -359,13 +398,21 @@ same page, so none is offered.</li>
 <li><strong>A plugin is not a boundary.</strong> It runs in Hermes's own page with the app's authority,
 next to every other plugin. Reins protects the person from the agent; it does not
 protect Hermes from its plugins.</li>
-<li><strong>Not verified in a live Hermes</strong>: that <code>host.composer.submit(null, text)</code> returns
-<code>true</code> when a conversation is in front; that <code>host.state.focusedSessionId</code> names it at
-that moment (without it <code>prompt.send</code> refuses); the exact fields of the <code>message.*</code>
+<li><strong>Seen in the one live run</strong>: <code>host.composer.submit(null, text)</code> returned <code>true</code> with a
+chat in front; <code>host.state.focusedSessionId</code> stayed null although that chat answered,
+which is why <code>prompt.send</code> falls back to learning the session from the turn. <strong>Not
+verified in a live Hermes</strong>: the exact fields of the <code>message.*</code>
 events (the plugin reads <code>payload.text</code>, as the app's own handler does, and looks for
 the session id under <code>session_id</code>, <code>sessionId</code> and <code>payload.session_id</code>; an event that
 carries none is ignored); that the driver's indicator and panel sit well over Hermes's
-interface; that hot reload disposes the driver (<code>ctx.onDispose</code>).</li>
+interface; that hot reload disposes the driver (<code>ctx.onDispose</code>). Read in the Hermes
+source of that install, and not run: <code>host.composer.submit(sessionId, text)</code> returns a
+boolean (<code>apps/desktop/src/sdk/composer.ts</code>); <code>host.state</code> has <code>focusedSessionId</code>,
+<code>busyBySession</code>, <code>busy</code>, <code>awaitingResponse</code>, <code>model</code> and <code>profile</code>
+(<code>apps/desktop/src/sdk/index.ts</code>); a gateway event is <code>{type, session_id, payload}</code>;
+<code>message.interim</code> seals the commentary beside a tool call, and <code>message.complete</code> ends
+the turn once, with its final text and a <code>status</code> of <code>complete</code>, <code>error</code> or
+<code>interrupted</code> (<code>tui_gateway/contracts/events.py</code>).</li>
 <li><strong>Also not verified in a live Hermes</strong>: that Hermes Desktop grants its page the Web
 Notifications API (Electron does by default; an app can refuse it, and then the plugin
 stays silent), and what such a notification looks like on each system.</li>
@@ -384,7 +431,7 @@ before, and the connect card offers nothing.</li>
   </nav>
     </footer>
   </main>
-  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#what-an-agent-gets-and-what-it-does-not">What an agent gets, and what it does not</a></li><li class="toc-2"><a href="#the-levels-and-letting-prompts-through-without-the-question">The levels, and letting prompts through without the question</a></li><li class="toc-2"><a href="#when-you-are-in-another-window">When you are in another window</a></li><li class="toc-2"><a href="#two-conversations-in-one-window">Two conversations in one window</a></li><li class="toc-2"><a href="#build">Build</a></li><li class="toc-2"><a href="#install-not-run">Install (not run)</a></li><li class="toc-2"><a href="#use-not-run">Use (not run)</a></li><li class="toc-2"><a href="#limits-and-what-is-not-known">Limits, and what is not known</a></li></ol></aside>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#what-an-agent-gets-and-what-it-does-not">What an agent gets, and what it does not</a></li><li class="toc-2"><a href="#the-levels-and-letting-prompts-through-without-the-question">The levels, and letting prompts through without the question</a></li><li class="toc-2"><a href="#when-you-are-in-another-window">When you are in another window</a></li><li class="toc-2"><a href="#two-conversations-in-one-window">Two conversations in one window</a></li><li class="toc-2"><a href="#build">Build</a></li><li class="toc-2"><a href="#install-not-run">Install (not run)</a></li><li class="toc-2"><a href="#use-not-run">Use (not run)</a></li><li class="toc-2"><a href="#handing-hermes-a-whole-task">Handing Hermes a whole task</a></li><li class="toc-2"><a href="#limits-and-what-is-not-known">Limits, and what is not known</a></li></ol></aside>
 </div>
 <footer class="site-footer">
   <div class="wrap footer-grid">

@@ -561,7 +561,7 @@ Ops apply in order. A set whose handle is in the tree replaces that node in plac
       "h": "e3",
       "role": "textbox",
       "name": "Name",
-      "val": "Tiko",
+      "val": "Dana",
       "st": [
         "focused"
       ]
@@ -576,7 +576,7 @@ Ops apply in order. A set whose handle is in the tree replaces that node in plac
       "p": "e3"
     }
   ],
-  "text": "e1 heading \"Brew Kiosk\"\ne2 button \"Latte 4.50\" #menu.latte\ne3 textbox \"Name\" = \"Tiko\" [focused]\n e4 checkbox \"Extra shot\" [checked]",
+  "text": "e1 heading \"Brew Kiosk\"\ne2 button \"Latte 4.50\" #menu.latte\ne3 textbox \"Name\" = \"Dana\" [focused]\n e4 checkbox \"Extra shot\" [checked]",
   "lines": [
     {
       "name": "every field, quoting where a token is not bare",

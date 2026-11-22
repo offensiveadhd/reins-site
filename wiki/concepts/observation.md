@@ -26,7 +26,7 @@ An agent addresses an element by its handle (`e12`) or by its semantic id (`#car
 ```
 e1 heading "Brew Kiosk"
 e2 button "Latte 4.50" #menu.latte
-e3 textbox "Name" = "Tiko" [focused]
+e3 textbox "Name" = "Dana" [focused]
  e4 checkbox "Extra shot" [checked]
 ```
 
