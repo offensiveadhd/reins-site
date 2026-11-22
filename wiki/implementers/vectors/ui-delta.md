@@ -1,0 +1,711 @@
+# UI-tree delta operations
+
+> Test vectors: UI-tree delta operations. Shown here as it is in conformance/vectors/ui-delta.json.
+
+Protocol `0.1`. Covers: SPEC.md section 10, "Applying a delta" and "Text rendering".
+
+[Download ui-delta.json](./ui-delta.json): the file itself, as the conformance suite reads it.
+
+## How to use it
+
+`apply`: apply `ops` to `nodes`, expect `expect`. `diff`: your diff, applied to `prev`, must give `next`, with every `del` first. `render`: the compact tree text and single node lines. `renderDelta`: delta text rendered against `prev`.
+
+## Rule
+
+```text
+Ops apply in order. A set whose handle is in the tree replaces that node in place. A set with a new handle is inserted right after the node of the preceding op when that op was a set, and at the front of the list otherwise. A del removes the node with its handle and does nothing when there is none.
+```
+
+## Notes
+
+`apply` cases follow the rule literally, including a del of an absent handle. `diff` cases give (prev, next) pairs: any op list made of set and del, with every del before the first set, that turns prev into next is accepted, since the choice of moved nodes (a longest run of survivors in their old order) can tie. `render` is the node-line example of section 10; `renderDelta` gives delta texts rendered against the tree they apply to.
+
+## apply
+
+8 cases.
+
+```json
+[
+  {
+    "name": "replace in place keeps the position",
+    "nodes": [
+      {
+        "h": "e1",
+        "role": "heading"
+      },
+      {
+        "h": "e2",
+        "role": "button",
+        "name": "A"
+      },
+      {
+        "h": "e3",
+        "role": "link"
+      }
+    ],
+    "ops": [
+      {
+        "op": "set",
+        "n": {
+          "h": "e2",
+          "role": "button",
+          "name": "B"
+        }
+      }
+    ],
+    "expect": [
+      {
+        "h": "e1",
+        "role": "heading"
+      },
+      {
+        "h": "e2",
+        "role": "button",
+        "name": "B"
+      },
+      {
+        "h": "e3",
+        "role": "link"
+      }
+    ]
+  },
+  {
+    "name": "new handle as the first op goes to the front",
+    "nodes": [
+      {
+        "h": "e1",
+        "role": "heading"
+      }
+    ],
+    "ops": [
+      {
+        "op": "set",
+        "n": {
+          "h": "e9",
+          "role": "button"
+        }
+      }
+    ],
+    "expect": [
+      {
+        "h": "e9",
+        "role": "button"
+      },
+      {
+        "h": "e1",
+        "role": "heading"
+      }
+    ]
+  },
+  {
+    "name": "new handle after a set goes right after that node",
+    "nodes": [
+      {
+        "h": "e1",
+        "role": "heading"
+      },
+      {
+        "h": "e2",
+        "role": "button"
+      }
+    ],
+    "ops": [
+      {
+        "op": "set",
+        "n": {
+          "h": "e1",
+          "role": "heading"
+        }
+      },
+      {
+        "op": "set",
+        "n": {
+          "h": "e5",
+          "role": "link"
+        }
+      }
+    ],
+    "expect": [
+      {
+        "h": "e1",
+        "role": "heading"
+      },
+      {
+        "h": "e5",
+        "role": "link"
+      },
+      {
+        "h": "e2",
+        "role": "button"
+      }
+    ]
+  },
+  {
+    "name": "new handle after a del goes to the front",
+    "nodes": [
+      {
+        "h": "e1",
+        "role": "heading"
+      },
+      {
+        "h": "e2",
+        "role": "button"
+      }
+    ],
+    "ops": [
+      {
+        "op": "set",
+        "n": {
+          "h": "e2",
+          "role": "button"
+        }
+      },
+      {
+        "op": "del",
+        "h": "e1"
+      },
+      {
+        "op": "set",
+        "n": {
+          "h": "e7",
+          "role": "link"
+        }
+      }
+    ],
+    "expect": [
+      {
+        "h": "e7",
+        "role": "link"
+      },
+      {
+        "h": "e2",
+        "role": "button"
+      }
+    ]
+  },
+  {
+    "name": "a chain of new handles keeps its order",
+    "nodes": [
+      {
+        "h": "e1",
+        "role": "heading"
+      },
+      {
+        "h": "e2",
+        "role": "button"
+      }
+    ],
+    "ops": [
+      {
+        "op": "set",
+        "n": {
+          "h": "e1",
+          "role": "heading"
+        }
+      },
+      {
+        "op": "set",
+        "n": {
+          "h": "ea",
+          "role": "link"
+        }
+      },
+      {
+        "op": "set",
+        "n": {
+          "h": "eb",
+          "role": "link"
+        }
+      }
+    ],
+    "expect": [
+      {
+        "h": "e1",
+        "role": "heading"
+      },
+      {
+        "h": "ea",
+        "role": "link"
+      },
+      {
+        "h": "eb",
+        "role": "link"
+      },
+      {
+        "h": "e2",
+        "role": "button"
+      }
+    ]
+  },
+  {
+    "name": "move: del then re-set after an anchor",
+    "nodes": [
+      {
+        "h": "e1",
+        "role": "a"
+      },
+      {
+        "h": "e2",
+        "role": "b"
+      },
+      {
+        "h": "e3",
+        "role": "c"
+      }
+    ],
+    "ops": [
+      {
+        "op": "del",
+        "h": "e1"
+      },
+      {
+        "op": "set",
+        "n": {
+          "h": "e3",
+          "role": "c"
+        }
+      },
+      {
+        "op": "set",
+        "n": {
+          "h": "e1",
+          "role": "a"
+        }
+      }
+    ],
+    "expect": [
+      {
+        "h": "e2",
+        "role": "b"
+      },
+      {
+        "h": "e3",
+        "role": "c"
+      },
+      {
+        "h": "e1",
+        "role": "a"
+      }
+    ]
+  },
+  {
+    "name": "an anchor that changed nothing leaves the list as it was",
+    "nodes": [
+      {
+        "h": "e1",
+        "role": "a"
+      },
+      {
+        "h": "e2",
+        "role": "b"
+      }
+    ],
+    "ops": [
+      {
+        "op": "set",
+        "n": {
+          "h": "e2",
+          "role": "b"
+        }
+      }
+    ],
+    "expect": [
+      {
+        "h": "e1",
+        "role": "a"
+      },
+      {
+        "h": "e2",
+        "role": "b"
+      }
+    ]
+  },
+  {
+    "name": "del of an absent handle changes nothing, and a new handle after it goes to the front",
+    "nodes": [
+      {
+        "h": "e1",
+        "role": "a"
+      },
+      {
+        "h": "e2",
+        "role": "b"
+      }
+    ],
+    "ops": [
+      {
+        "op": "set",
+        "n": {
+          "h": "e1",
+          "role": "a"
+        }
+      },
+      {
+        "op": "del",
+        "h": "e9"
+      },
+      {
+        "op": "set",
+        "n": {
+          "h": "e5",
+          "role": "c"
+        }
+      }
+    ],
+    "expect": [
+      {
+        "h": "e5",
+        "role": "c"
+      },
+      {
+        "h": "e1",
+        "role": "a"
+      },
+      {
+        "h": "e2",
+        "role": "b"
+      }
+    ]
+  }
+]
+```
+
+## diff
+
+7 cases.
+
+```json
+[
+  {
+    "name": "insert in the middle",
+    "prev": [
+      {
+        "h": "e1",
+        "role": "a"
+      },
+      {
+        "h": "e2",
+        "role": "b"
+      }
+    ],
+    "next": [
+      {
+        "h": "e1",
+        "role": "a"
+      },
+      {
+        "h": "e3",
+        "role": "c"
+      },
+      {
+        "h": "e2",
+        "role": "b"
+      }
+    ]
+  },
+  {
+    "name": "insert at the front",
+    "prev": [
+      {
+        "h": "e1",
+        "role": "a"
+      }
+    ],
+    "next": [
+      {
+        "h": "e2",
+        "role": "b"
+      },
+      {
+        "h": "e1",
+        "role": "a"
+      }
+    ]
+  },
+  {
+    "name": "remove and change",
+    "prev": [
+      {
+        "h": "e1",
+        "role": "a"
+      },
+      {
+        "h": "e2",
+        "role": "b",
+        "name": "x"
+      },
+      {
+        "h": "e3",
+        "role": "c"
+      }
+    ],
+    "next": [
+      {
+        "h": "e2",
+        "role": "b",
+        "name": "y"
+      },
+      {
+        "h": "e3",
+        "role": "c"
+      }
+    ]
+  },
+  {
+    "name": "reverse",
+    "prev": [
+      {
+        "h": "e1",
+        "role": "a"
+      },
+      {
+        "h": "e2",
+        "role": "b"
+      },
+      {
+        "h": "e3",
+        "role": "c"
+      },
+      {
+        "h": "e4",
+        "role": "d"
+      }
+    ],
+    "next": [
+      {
+        "h": "e4",
+        "role": "d"
+      },
+      {
+        "h": "e3",
+        "role": "c"
+      },
+      {
+        "h": "e2",
+        "role": "b"
+      },
+      {
+        "h": "e1",
+        "role": "a"
+      }
+    ]
+  },
+  {
+    "name": "empty to full",
+    "prev": [],
+    "next": [
+      {
+        "h": "e1",
+        "role": "a"
+      },
+      {
+        "h": "e2",
+        "role": "b",
+        "p": "e1"
+      }
+    ]
+  },
+  {
+    "name": "full to empty",
+    "prev": [
+      {
+        "h": "e1",
+        "role": "a"
+      },
+      {
+        "h": "e2",
+        "role": "b"
+      }
+    ],
+    "next": []
+  },
+  {
+    "name": "state change only",
+    "prev": [
+      {
+        "h": "e1",
+        "role": "checkbox",
+        "st": [
+          "checked"
+        ]
+      }
+    ],
+    "next": [
+      {
+        "h": "e1",
+        "role": "checkbox"
+      }
+    ]
+  }
+]
+```
+
+## render
+
+```json
+{
+  "note": "The example of SPEC.md section 10. e4 is indented one space, so its p is one of the unindented nodes; e3 is used.",
+  "nodes": [
+    {
+      "h": "e1",
+      "role": "heading",
+      "name": "Brew Kiosk"
+    },
+    {
+      "h": "e2",
+      "role": "button",
+      "name": "Latte 4.50",
+      "id": "menu.latte"
+    },
+    {
+      "h": "e3",
+      "role": "textbox",
+      "name": "Name",
+      "val": "Tiko",
+      "st": [
+        "focused"
+      ]
+    },
+    {
+      "h": "e4",
+      "role": "checkbox",
+      "name": "Extra shot",
+      "st": [
+        "checked"
+      ],
+      "p": "e3"
+    }
+  ],
+  "text": "e1 heading \"Brew Kiosk\"\ne2 button \"Latte 4.50\" #menu.latte\ne3 textbox \"Name\" = \"Tiko\" [focused]\n e4 checkbox \"Extra shot\" [checked]",
+  "lines": [
+    {
+      "name": "every field, quoting where a token is not bare",
+      "node": {
+        "h": "e5",
+        "role": "button",
+        "id": "menu x",
+        "name": "Say \"hi\"",
+        "val": "1",
+        "st": [
+          "checked",
+          "focused"
+        ],
+        "box": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "text": "e5 button \"Say \\\"hi\\\"\" #\"menu x\" = \"1\" [checked focused] @1,2,3,4"
+    },
+    {
+      "name": "an empty name prints nothing",
+      "node": {
+        "h": "e6",
+        "role": "link",
+        "name": ""
+      },
+      "text": "e6 link"
+    },
+    {
+      "name": "a quoted string is one line to every reader: U+007F to U+009F, U+2028 and U+2029 are written as backslash-u escapes, like the controls JSON escapes itself",
+      "node": {
+        "h": "e7",
+        "role": "button",
+        "name": "a b cde\nf",
+        "val": ""
+      },
+      "text": "e7 button \"a\\u2028b\\u2029c\\u0085d\\u007fe\\nf\" = \"\\u009b\""
+    }
+  ]
+}
+```
+
+## renderDelta
+
+2 cases.
+
+```json
+[
+  {
+    "name": "removed, replaced and new",
+    "prev": [
+      {
+        "h": "e1",
+        "role": "button",
+        "name": "A"
+      },
+      {
+        "h": "e2",
+        "role": "button",
+        "name": "B"
+      },
+      {
+        "h": "e3",
+        "role": "link",
+        "name": "C"
+      }
+    ],
+    "ops": [
+      {
+        "op": "del",
+        "h": "e2"
+      },
+      {
+        "op": "set",
+        "n": {
+          "h": "e1",
+          "role": "button",
+          "name": "A2"
+        }
+      },
+      {
+        "op": "set",
+        "n": {
+          "h": "e4",
+          "role": "link",
+          "name": "D"
+        }
+      }
+    ],
+    "text": "- e2\n~ e1 button \"A2\"\n+ e4 link \"D\""
+  },
+  {
+    "name": "a move shows one ~ line; an unchanged anchor shows none",
+    "prev": [
+      {
+        "h": "e1",
+        "role": "a"
+      },
+      {
+        "h": "e2",
+        "role": "b"
+      }
+    ],
+    "ops": [
+      {
+        "op": "del",
+        "h": "e1"
+      },
+      {
+        "op": "set",
+        "n": {
+          "h": "e2",
+          "role": "b"
+        }
+      },
+      {
+        "op": "set",
+        "n": {
+          "h": "e1",
+          "role": "a"
+        }
+      }
+    ],
+    "text": "~ e1 a"
+  }
+]
+```
+
+Generated by `conformance/tools/make-vectors.mjs` from the formulas in the specification, with `node:crypto` only.

@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Wiki · Reins</title>
+<meta name="description" content="The Reins wiki: getting started, the concepts behind the protocol, guides, reference, notes for implementers and the community pages.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/index.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Wiki">
+<meta property="og:description" content="The Reins wiki: getting started, the concepts behind the protocol, guides, reference, notes for implementers and the community pages.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/index.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/site.css">
+<script src="../assets/theme.js"></script>
+<script type="module" src="../assets/site.js"></script>
+</head>
+<body class="page-doc page-wiki-index">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../playground.html">Playground</a></li>
+        <li><a href="../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc doc-wide wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="./index.html" aria-current="page">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="./start/what-is-reins.html">What is Reins</a></li><li><a href="./start/quickstart.html">Quickstart</a></li><li><a href="./start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="./start/drive-from-node.html">Drive it from Node</a></li><li><a href="./start/mcp.html">Claude Code and MCP</a></li><li><a href="./start/shell-tools.html">Shell tools</a></li><li><a href="./start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="./concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="./concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="./concepts/handshake.html">Handshake and sealing</a></li><li><a href="./concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="./concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="./concepts/policy-profiles.html">Policy profiles</a></li><li><a href="./concepts/consent.html">Consent</a></li><li><a href="./concepts/human-control.html">Human control</a></li><li><a href="./concepts/permission-levels.html">Permission levels</a></li><li><a href="./concepts/observation.html">Observation</a></li><li><a href="./concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="./concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="./concepts/audit-log.html">The audit log</a></li><li><a href="./concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="./guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="./guides/surface-keys.html">Surface keys</a></li><li><a href="./guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="./guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="./guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="./guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="./guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="./guides/troubleshooting.html">Troubleshooting</a></li><li><a href="./guides/electron.html">Electron: build it in</a></li><li><a href="./guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="./guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="./guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="./reference/methods.html">Methods</a></li><li><a href="./reference/events.html">Events</a></li><li><a href="./reference/error-codes.html">Error codes</a></li><li><a href="./reference/policy-fields.html">Policy fields</a></li><li><a href="./reference/limits.html">Limits</a></li><li><a href="./reference/cli.html">CLI</a></li><li><a href="./reference/sdk.html">SDK API</a></li><li><a href="./reference/specification.html">Specification</a></li><li><a href="./reference/security-model.html">Security model</a></li><li><a href="./reference/chat-guide.html">The chat guide</a></li><li><a href="./reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="./implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="./implementers/conformance-suite.html">The conformance suite</a></li><li><a href="./implementers/test-vectors.html">Test vectors</a></li><li><a href="./implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="./community/contributing.html">Contributing</a></li><li><a href="./community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="./community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="./community/faq.html">FAQ</a></li><li><a href="./community/glossary.html">Glossary</a></li><li><a href="./community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <header class="doc-head wiki-head">
+      <p class="eyebrow">The Reins wiki</p>
+      <h1>Everything about the protocol, in one place</h1>
+      <p class="lede">The Reins wiki: getting started, the concepts behind the protocol, guides, reference, notes for implementers and the community pages.</p>
+      <p class="wiki-meta">68 pages. The specification, the security model and the conformance notes are rendered from the repository's own files, so they cannot drift. Every other page is plain Markdown under <code>site/wiki/</code>: <a href="./community/contributing.html">a pull request changes it</a>.</p>
+      <p><button type="button" class="btn btn-quiet needs-js" data-search-open><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span>Search the wiki</span><kbd aria-hidden="true">/</kbd></button></p>
+    </header>
+    <section class="wiki-section" id="start" aria-labelledby="h-start">
+    <div class="wiki-section-head"><h2 id="h-start">Start</h2><p>From nothing to a page an agent can drive.</p></div>
+    <ul class="wiki-list">
+      <li><a href="./start/what-is-reins.html"><span class="wiki-title">What is Reins</span><span class="wiki-desc">A protocol, and a reference implementation, that lets an AI agent drive a web app running in a browser tab, under the control of the app and of the person using it.</span></a></li>
+      <li><a href="./start/quickstart.html"><span class="wiki-title">Quickstart</span><span class="wiki-desc">Run Brew Kiosk, the demo app in the repository, with a hub and a scripted agent, and watch an agent order a coffee under your control.</span></a></li>
+      <li><a href="./start/make-an-app-drivable.html"><span class="wiki-title">Make an app drivable</span><span class="wiki-desc">Install the package, create a driver, declare actions, views and state, and mark the elements an agent should see.</span></a></li>
+      <li><a href="./start/drive-from-node.html"><span class="wiki-title">Drive it from Node</span><span class="wiki-desc">Start a hub, connect with the agent SDK, attach to a page and drive it. Where the SDK finds its key, what the surface handle offers, and how refusals arrive.</span></a></li>
+      <li><a href="./start/mcp.html"><span class="wiki-title">Claude Code and MCP</span><span class="wiki-desc">Register the Reins MCP adapter, a stdio server with a small set of tools, so a model in an agent harness can attach to a page, drive it and talk with the person there.</span></a></li>
+      <li><a href="./start/shell-tools.html"><span class="wiki-title">Shell tools</span><span class="wiki-desc">An agent harness that has a shell reaches a page with one command line, with no registration, no restart and no path. The same tools as the MCP adapter.</span></a></li>
+      <li><a href="./start/in-tab.html"><span class="wiki-title">The in-tab shape</span><span class="wiki-desc">Run the assistant in the page itself. The page hosts the broker and both sides talk over in-memory links, with no hub process and no network.</span></a></li>
+    </ul>
+  </section>
+<section class="wiki-section" id="concepts" aria-labelledby="h-concepts">
+    <div class="wiki-section-head"><h2 id="h-concepts">Concepts</h2><p>How the protocol works, one idea at a time: from the handshake to permission levels and chat.</p></div>
+    <ul class="wiki-list">
+      <li><a href="./concepts/roles-and-trust.html"><span class="wiki-title">Roles and trust</span><span class="wiki-desc">The three roles of the protocol, surface, agent and hub, and who is trusted with what.</span></a></li>
+      <li><a href="./concepts/transports-and-framing.html"><span class="wiki-title">Transports and framing</span><span class="wiki-desc">The two transports, a loopback WebSocket and an in-page port, and the text and binary frames that both carry.</span></a></li>
+      <li><a href="./concepts/handshake.html"><span class="wiki-title">Handshake and sealing</span><span class="wiki-desc">How a peer and the hub prove a shared secret to each other without sending it, and how every message after that carries a MAC bound to the handshake.</span></a></li>
+      <li><a href="./concepts/manifest-and-prompt-card.html"><span class="wiki-title">Manifest and prompt card</span><span class="wiki-desc">How a surface describes itself, and the short text rendered from that description that teaches a model to drive the app.</span></a></li>
+      <li><a href="./concepts/grants-and-scopes.html"><span class="wiki-title">Grants and scopes</span><span class="wiki-desc">What an agent is allowed to do on one page, how it asks, who can narrow the answer, and how a grant ends.</span></a></li>
+      <li><a href="./concepts/policy-profiles.html"><span class="wiki-title">Policy profiles</span><span class="wiki-desc">The three profiles, open, guarded and kiosk, what each row of their table means, how single actions are overridden, and why a request has to pass two policies.</span></a></li>
+      <li><a href="./concepts/consent.html"><span class="wiki-title">Consent</span><span class="wiki-desc">The prompt that asks the person before an agent attaches or runs a sensitive action, and the rules that keep an agent from getting a yes it did not earn.</span></a></li>
+      <li><a href="./concepts/human-control.html"><span class="wiki-title">Human control</span><span class="wiki-desc">The person can always see that an agent is attached, can pause it or stop it at any moment, and wins when both use the page at once.</span></a></li>
+      <li><a href="./concepts/permission-levels.html"><span class="wiki-title">Permission levels</span><span class="wiki-desc">The panel that opens from the indicator. For each attached agent the person sets how much it asks, a rule for single actions and which scopes are on, and sees what it did. Only the person can change any of it.</span></a></li>
+      <li><a href="./concepts/observation.html"><span class="wiki-title">Observation</span><span class="wiki-desc">How an agent reads the screen, as a flat tree of the elements that matter, with stable handles, private fields that are never read, and deltas after the first reading.</span></a></li>
+      <li><a href="./concepts/cursor-and-pointer-stream.html"><span class="wiki-title">Cursor and the pointer stream</span><span class="wiki-desc">One message glides the agent's cursor at display rate. For live trajectories, a binary stream with credit-based flow control carries points.</span></a></li>
+      <li><a href="./concepts/rate-limits-and-capacity.html"><span class="wiki-title">Rate limits and capacity</span><span class="wiki-desc">The token buckets, capacities and admission rates that keep one agent, or a flood from either side, from exhausting the hub or freezing the page.</span></a></li>
+      <li><a href="./concepts/audit-log.html"><span class="wiki-title">The audit log</span><span class="wiki-desc">What the hub records about every connection, grant and request, how the records are chained so that edits show, and why the hub refuses to act when it cannot record.</span></a></li>
+      <li><a href="./concepts/chat.html"><span class="wiki-title">Chat</span><span class="wiki-desc">The chat room in the panel. The person at the page talks with the agents attached to it. Who hears whom, the switch that lets agents hear each other, what chat can never do, and what the page can see of it.</span></a></li>
+    </ul>
+  </section>
+<section class="wiki-section" id="guides" aria-labelledby="h-guides">
+    <div class="wiki-section-head"><h2 id="h-guides">Guides</h2><p>Deploying, annotating, serving the chat, Electron, and fixing things.</p></div>
+    <ul class="wiki-list">
+      <li><a href="./guides/kiosk-deployment.html"><span class="wiki-title">Kiosk deployment</span><span class="wiki-desc">How to run Reins on an unattended station. The kiosk profile, the surface key, the service account, the audit log, and the checklist from the security model.</span></a></li>
+      <li><a href="./guides/surface-keys.html"><span class="wiki-title">Surface keys</span><span class="wiki-desc">A key that lets a page and the hub prove themselves to each other. What it buys, how to set it up, and when it protects nothing.</span></a></li>
+      <li><a href="./guides/actions-and-risk.html"><span class="wiki-title">Actions and risk tiers</span><span class="wiki-desc">How to declare actions an agent can use well, with schemas that reject bad arguments before your code runs, results worth returning, and a risk tier that puts the person in the loop where it matters.</span></a></li>
+      <li><a href="./guides/chat-in-claude-code.html"><span class="wiki-title">Chat from a Claude Code subagent</span><span class="wiki-desc">A Claude Code subagent that serves the Chat tab of a page from inside the session that holds the grant. Rendered from integrations/claude-code/README.md.</span></a></li>
+      <li><a href="./guides/chat-serve.html"><span class="wiki-title">Serve chat from any command-line agent</span><span class="wiki-desc">Answering the chat with any program, and what that hands to whoever is at the page: read the warnings first. Rendered from integrations/chat-serve/README.md.</span></a></li>
+      <li><a href="./guides/privacy-annotations.html"><span class="wiki-title">Privacy annotations</span><span class="wiki-desc">Four attributes decide what an agent sees of your page. Name what it should use, hide what it should not see, and mark what it must never read.</span></a></li>
+      <li><a href="./guides/strict-csp.html"><span class="wiki-title">Running under a strict CSP</span><span class="wiki-desc">The Reins bundles run under a Content Security Policy with no inline script, no inline style and no eval. What to allow, and why a strict policy is part of the security model.</span></a></li>
+      <li><a href="./guides/troubleshooting.html"><span class="wiki-title">Troubleshooting</span><span class="wiki-desc">Every error code of the protocol with what causes it and what to do, and the problems that show up before any code does.</span></a></li>
+      <li><a href="./guides/electron.html"><span class="wiki-title">Electron: build it in</span><span class="wiki-desc">An Electron app you write is a surface with no socket on the page side. Three small pieces, one per place Electron runs your code, and what origin your page has.</span></a></li>
+      <li><a href="./guides/adopting-an-electron-app.html"><span class="wiki-title">Adopt an Electron app</span><span class="wiki-desc">reins-electron loads the driver into an Electron app you did not build, through its debugging connection. What an attached agent can then do, how to narrow it, and what a debugging connection means.</span></a></li>
+      <li><a href="./guides/claude-and-hermes.html"><span class="wiki-title">Claude and Hermes</span><span class="wiki-desc">Two walk-throughs with every step marked as run or not run. Claude Code drives Hermes Desktop, and Claude and Hermes work together on one page while you watch and can pause, stop or change either one.</span></a></li>
+      <li><a href="./guides/hermes-desktop-plugin.html"><span class="wiki-title">The Hermes Desktop plugin</span><span class="wiki-desc">A Hermes Desktop plugin that makes the Hermes window a surface with three named actions. Built and statically checked, not run in Hermes. Rendered from integrations/hermes-desktop/README.md.</span></a></li>
+    </ul>
+  </section>
+<section class="wiki-section" id="reference" aria-labelledby="h-reference">
+    <div class="wiki-section-head"><h2 id="h-reference">Reference</h2><p>Methods, events, codes, fields, commands and the canonical documents.</p></div>
+    <ul class="wiki-list">
+      <li><a href="./reference/methods.html"><span class="wiki-title">Methods</span><span class="wiki-desc">Every request an agent can send, with its parameters, its result and the scope it needs, and how a surface behaves for each.</span></a></li>
+      <li><a href="./reference/events.html"><span class="wiki-title">Events</span><span class="wiki-desc">The event topics, what each carries, who receives it and which need a subscription.</span></a></li>
+      <li><a href="./reference/error-codes.html"><span class="wiki-title">Error codes</span><span class="wiki-desc">The complete list of error codes in protocol 0.1, what each means and where the specification uses it.</span></a></li>
+      <li><a href="./reference/policy-fields.html"><span class="wiki-title">Policy fields</span><span class="wiki-desc">Every field of a policy, what it controls, who enforces it, and its value in each of the three profiles.</span></a></li>
+      <li><a href="./reference/limits.html"><span class="wiki-title">Limits</span><span class="wiki-desc">Every size, time and count the protocol fixes, in one place. Frame sizes, timeouts, capacities, rates and the bounds on prompts and observations.</span></a></li>
+      <li><a href="./reference/cli.html"><span class="wiki-title">CLI</span><span class="wiki-desc">The commands the package installs, with the help text each prints. The hub, the agent command, the MCP adapter, the shell tools and the command that adopts an Electron app.</span></a></li>
+      <li><a href="./reference/sdk.html"><span class="wiki-title">SDK API</span><span class="wiki-desc">The public API of the reference implementation. The driver for pages, the agent SDK, the broker and the hub, the MCP adapter, and the core every part is built on.</span></a></li>
+      <li><a href="./reference/specification.html"><span class="wiki-title">Specification</span><span class="wiki-desc">Reins Protocol 0.1 in full: the normative text, rendered from docs/SPEC.md.</span></a></li>
+      <li><a href="./reference/security-model.html"><span class="wiki-title">Security model</span><span class="wiki-desc">Who can attack an agent-driven page, what stops them, and what Reins does not protect against. Rendered from docs/SECURITY.md.</span></a></li>
+      <li><a href="./reference/chat-guide.html"><span class="wiki-title">The chat guide</span><span class="wiki-desc">How the chat behaves, how an agent uses it and how to serve it from a harness, in full. Rendered from docs/CHAT.md.</span></a></li>
+      <li><a href="./reference/electron-guide.html"><span class="wiki-title">The Electron guide</span><span class="wiki-desc">Reins in Electron in full: building it in, origins, adopting an app, the two walk-throughs with Claude and Hermes, and what was tested. Rendered from docs/ELECTRON.md.</span></a></li>
+    </ul>
+  </section>
+<section class="wiki-section" id="implementers" aria-labelledby="h-implementers">
+    <div class="wiki-section-head"><h2 id="h-implementers">Implementers</h2><p>Writing another implementation and proving it conforms.</p></div>
+    <ul class="wiki-list">
+      <li><a href="./implementers/writing-an-implementation.html"><span class="wiki-title">Writing another implementation</span><span class="wiki-desc">What it takes to implement Reins in another language or runtime. What the contract is, what has to match exactly, and how the vectors and the conformance suite tell you that you got it right.</span></a></li>
+      <li><a href="./implementers/conformance-suite.html"><span class="wiki-title">The conformance suite</span><span class="wiki-desc">What the conformance suite checks, how to run it and what it does not cover. Rendered from conformance/README.md.</span></a></li>
+      <li><a href="./implementers/test-vectors.html"><span class="wiki-title">Test vectors</span><span class="wiki-desc">Language-neutral test vectors for the parts of the protocol that two implementations have to compute identically. Fixed inputs and expected outputs, browsable here and downloadable as JSON.</span></a></li>
+      <li><a href="./implementers/requirements.html"><span class="wiki-title">Requirements index</span><span class="wiki-desc">Every requirement the conformance suite checks, grouped by section of the specification, with the normative sentences it covers and the tests that check it. Generated from conformance/requirements.json.</span></a></li>
+    </ul>
+  </section>
+<section class="wiki-section" id="community" aria-labelledby="h-community">
+    <div class="wiki-section-head"><h2 id="h-community">Community</h2><p>Contributing, proposing changes, reporting problems.</p></div>
+    <ul class="wiki-list">
+      <li><a href="./community/contributing.html"><span class="wiki-title">Contributing</span><span class="wiki-desc">How to work on Reins. Building and testing the repository, what its checks expect of a change, and how to add or fix a page of this wiki with an ordinary pull request.</span></a></li>
+      <li><a href="./community/protocol-changes.html"><span class="wiki-title">Proposing a protocol change</span><span class="wiki-desc">What a change to the wire format or to normative behaviour has to touch, and how versioning lets implementations survive it.</span></a></li>
+      <li><a href="./community/vulnerability-disclosure.html"><span class="wiki-title">Reporting a vulnerability</span><span class="wiki-desc">How to tell the maintainers about a suspected vulnerability in Reins, what to include, and how to tell a vulnerability from a documented limit.</span></a></li>
+      <li><a href="./community/faq.html"><span class="wiki-title">FAQ</span><span class="wiki-desc">Short answers to the questions people ask first, each with a link to the page that has the long answer.</span></a></li>
+      <li><a href="./community/glossary.html"><span class="wiki-title">Glossary</span><span class="wiki-desc">The words Reins uses, each in a sentence or two, with a link to the page that explains it.</span></a></li>
+      <li><a href="./community/showcase.html"><span class="wiki-title">Showcase</span><span class="wiki-desc">Apps, agents and implementations that use Reins. The list is empty so far, and this page says how to get on it.</span></a></li>
+    </ul>
+  </section>
+  </main>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../playground.html">Playground</a></li>
+        <li><a href="../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

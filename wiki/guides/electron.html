@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Electron: build Reins into your app · Reins</title>
+<meta name="description" content="An Electron app you write is a surface with no socket on the page side. Three small pieces, one per place Electron runs your code, and what origin your page has.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/guides/electron.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Electron: build Reins into your app">
+<meta property="og:description" content="An Electron app you write is a surface with no socket on the page side. Three small pieces, one per place Electron runs your code, and what origin your page has.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/guides/electron.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="./kiosk-deployment.html">Kiosk deployment</a></li><li><a href="./surface-keys.html">Surface keys</a></li><li><a href="./actions-and-risk.html">Actions and risk tiers</a></li><li><a href="./chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="./chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="./privacy-annotations.html">Privacy annotations</a></li><li><a href="./strict-csp.html">Running under a strict CSP</a></li><li><a href="./troubleshooting.html">Troubleshooting</a></li><li><a href="./electron.html" aria-current="page">Electron: build it in</a></li><li><a href="./adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="./claude-and-hermes.html">Claude and Hermes</a></li><li><a href="./hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#guides">Guides</a></li><li aria-current="page">Electron: build it in</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Electron: build Reins into your app</h1>
+        <p class="lede">An Electron app you write is a surface with no socket on the page side. Three small pieces, one per place Electron runs your code, and what origin your page has.</p>
+        
+      </header>
+      <h2 id="an-electron-window-is-a-page">An Electron window is a page <a class="anchor" href="#an-electron-window-is-a-page" aria-label="Link to the section An Electron window is a page">#</a></h2>
+<p>An Electron window is a Chromium page, so everything Reins does in a browser tab works in it: the UI tree, the app's own actions, the cursor, the consent prompt, the indicator, the panel with its <a href="../concepts/permission-levels.html">permission levels</a>, and the <a href="../concepts/chat.html">chat</a>. What differs is how the page reaches a hub, and what its origin is.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>You have</th>
+<th>Use</th>
+<th>The page reaches the hub by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>An Electron app you are writing</td>
+<td><code>@offensiveadhd/reins/electron</code></td>
+<td>a <code>MessagePort</code> from the main process</td>
+</tr>
+<tr>
+<td>An Electron app somebody else wrote</td>
+<td><code>reins-electron -- &lt;executable&gt;</code></td>
+<td>the app's debugging connection</td>
+</tr>
+<tr>
+<td>A web app in a browser tab</td>
+<td>the driver, as in the <a href="https://github.com/offensiveadhd/reins/blob/main/README.md#make-an-app-drivable" class="ext">README</a></td>
+<td><code>ws://127.0.0.1:7346</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>This page is about the first row. For the second, see <a href="./adopting-an-electron-app.html">Adopt an Electron app</a>.</p>
+<div class="callout callout-note" role="note"><p class="callout-title">Note</p>
+<p>The <a href="../reference/electron-guide.html">Electron guide</a> marks every statement about a real Electron. <strong>Run</strong> names the scenario of <code>npm run test:electron</code> that checks it. <strong>Stand-ins</strong> means it is checked by the conformance suite with Electron played by test doubles. <strong>Not run</strong> means it was written from source code and documentation and never tried. This page keeps those marks. Not tested at all: a packaged app, macOS and Linux.</p>
+</div>
+<h2 id="three-pieces">Three pieces <a class="anchor" href="#three-pieces" aria-label="Link to the section Three pieces">#</a></h2>
+<p>The example app in <a href="https://github.com/offensiveadhd/reins/tree/main/examples/electron" class="ext"><code>examples/electron</code></a> is these three pieces and nothing else.</p>
+<p><strong>The main process</strong> hosts the broker and decides which windows may be surfaces:</p>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-c">// main.mjs</span>
+<span class="t-k">import</span> { app, BrowserWindow, ipcMain, MessageChannelMain, protocol } <span class="t-k">from</span> <span class="t-s">'electron'</span>;
+<span class="t-k">import</span> { startHub } <span class="t-k">from</span> <span class="t-s">'@offensiveadhd/reins/hub'</span>;
+<span class="t-k">import</span> { preloadPath, reinsMain } <span class="t-k">from</span> <span class="t-s">'@offensiveadhd/reins/electron'</span>;
+
+<span class="t-c">// A scheme of the app's own gives its pages a real origin, app://notes (section 2).</span>
+protocol.registerSchemesAsPrivileged([{ scheme: <span class="t-s">'app'</span>, privileges: { standard: <span class="t-k">true</span>, secure: <span class="t-k">true</span> } }]);
+
+app.whenReady().then(<span class="t-k">async</span> () =&gt; {
+  <span class="t-c">// protocol.handle('app', ...) goes here: serve your files.</span>
+
+  <span class="t-k">const</span> hub = <span class="t-k">await</span> startHub({
+    agents: [{ kid: <span class="t-s">'default'</span>, key }],          <span class="t-c">// a 32-byte secret, from a file only you can read</span>
+    surfaces: { origins: [<span class="t-s">'app://notes'</span>] },     <span class="t-c">// the origin of your own window</span>
+    surfaceSockets: <span class="t-k">false</span>,                      <span class="t-c">// surfaces come over the port, never the socket</span>
+    policy: <span class="t-s">'guarded'</span>,
+  });
+
+  <span class="t-k">const</span> reins = reinsMain({
+    ipcMain,
+    MessageChannelMain,
+    accept: (link, meta) =&gt; hub.broker.accept(link, meta),
+  });
+
+  <span class="t-k">const</span> win = <span class="t-k">new</span> BrowserWindow({
+    webPreferences: { preload: preloadPath, contextIsolation: <span class="t-k">true</span>, sandbox: <span class="t-k">true</span> },
+  });
+  <span class="t-c">// Only this window may ask for a link, and only while it shows this page.</span>
+  reins.allow(win, { url: <span class="t-s">'app://notes/index.html'</span> });
+  <span class="t-k">await</span> win.loadURL(<span class="t-s">'app://notes/index.html'</span>);
+});</code></pre></div>
+<p><strong>The preload</strong> is ready-made. <code>preloadPath</code> names one CommonJS file that needs nothing but <code>electron</code>, which is all a preload may load under <code>sandbox: true</code>. It puts one function in the page and hands the port the main process sends on to the page. It keeps nothing and decides nothing. If the window already has a preload, call the same code from it:</p>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-c">// your-preload.js</span>
+<span class="t-k">import</span> { exposeReins } <span class="t-k">from</span> <span class="t-s">'@offensiveadhd/reins/electron/bridge'</span>;
+<span class="t-k">import</span> { contextBridge, ipcRenderer } <span class="t-k">from</span> <span class="t-s">'electron'</span>;
+exposeReins({ contextBridge, ipcRenderer });</code></pre></div>
+<p><strong>The page</strong> asks for its link and gives it to the driver:</p>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-c">// renderer</span>
+<span class="t-k">import</span> { createDriver } <span class="t-k">from</span> <span class="t-s">'@offensiveadhd/reins/driver'</span>;
+<span class="t-k">import</span> { electronLink } <span class="t-k">from</span> <span class="t-s">'@offensiveadhd/reins/electron/renderer'</span>;
+
+<span class="t-k">const</span> driver = createDriver({
+  app: { id: <span class="t-s">'notes'</span>, name: <span class="t-s">'Notes'</span>, version: <span class="t-s">'1.0.0'</span> },
+  link: <span class="t-k">await</span> electronLink(),
+  policy: <span class="t-s">'guarded'</span>,
+});
+driver.action({ name: <span class="t-s">'note.add'</span>, description: <span class="t-s">'Add a note.'</span>, risk: <span class="t-s">'safe'</span>, params: { <span class="t-c">/* ... */</span> } }, ({ text }) =&gt; addNote(text));
+<span class="t-k">await</span> driver.connect();</code></pre></div>
+<p>A page without a build step imports the same two things from files of the package: <code>dist/bundle/reins-driver.js</code> and <code>dist/bundle/reins-electron.js</code>.</p>
+<h2 id="what-that-gives-you">What that gives you <a class="anchor" href="#what-that-gives-you" aria-label="Link to the section What that gives you">#</a></h2>
+<ul>
+<li><strong>No socket on the page side.</strong> The link is a <code>MessageChannelMain</code> between your main process and your page. It works under any Content Security Policy: the example page runs with <code>connect-src 'none'</code>. Run (<code>builtin</code>).</li>
+<li><strong>The link counts as verified.</strong> The consent prompt does not carry the &quot;unverified hub&quot; mark, because the link never leaves your app. Run (<code>builtin</code>).</li>
+<li><strong><code>surfaceSockets: false</code> closes the hub's socket to surfaces.</strong> Agents still connect to it with their token. A connection to that socket cannot become a surface, whatever <code>Origin</code> it writes. Run (<code>builtin</code>). A hub started from the command line takes the same with <code>reins-hub --no-surface-sockets</code>.</li>
+<li><strong>Agents outside the app</strong> reach the hub on loopback like any other hub. Announce it the way <code>reins-hub</code> does and <code>node &quot;$HOME/.reins/reins.mjs&quot; reins_attach</code> works from any folder: the example does it in ten lines. Run (<code>tools-together</code>).</li>
+<li><strong>An assistant inside the app</strong> needs no hub: build a <code>Broker</code> in the main process and connect the assistant with <code>linkPair()</code>, as in <a href="../start/in-tab.html">the in-tab shape</a>.</li>
+</ul>
+<h2 id="register-the-window-with-its-page">Register the window with its page <a class="anchor" href="#register-the-window-with-its-page" aria-label="Link to the section Register the window with its page">#</a></h2>
+<p><code>allow(win, { url })</code> takes the page's URL (compared without its <code>#fragment</code>), several, or a function. It is checked against the URL Electron reports for the frame when the page asks. A window that shows a page of origin <code>file://</code> or <code>null</code> is not linked unless it was registered with one: such an origin does not say which page it is.</p>
+<div class="callout callout-warning" role="note"><p class="callout-title">Warning</p>
+<p>A window that shows a file has to be registered this way. Every local file has the one origin <code>file://</code>, so without the URL any other file that got into the window, by a link, a dropped file or a redirect, would be linked as your app. Run (<code>builtin-file</code>, <code>windows</code>): another local file loaded into the registered window is refused, and so is a file window registered without a URL. Pin navigation as well, as the example does in <code>will-navigate</code>.</p>
+</div>
+<p>Other rules of the main process, each in <a href="../reference/electron-guide.html#1-build-it-in">section 1 of the guide</a>:</p>
+<ul>
+<li><strong>One window is one surface.</strong> A second request from a window closes the link it had.</li>
+<li><strong>Reloads and navigations.</strong> A port ends with its document. The new document asks again and appears at the hub as a new surface; an agent attaches again, and the person is asked again. The new grant starts at the level Ask, with no rules, and the chat transcript of the old document is gone. Run (<code>builtin</code>).</li>
+<li><strong>A window that is not shown</strong> gets its link when it is shown, and none before: nobody could see a consent prompt in it. <code>allow(win, { hidden: true })</code> links a window unseen. A view registered by its <code>webContents</code> is held to the same rule: Reins asks Electron which window holds the view, links it when that window is shown, and gives a view that is in no window nothing. Run (<code>windows</code>), for a window and for a view. The rule goes by the window: it does not see a view that is hidden or covered inside a window that is shown, nor a window shown behind others.</li>
+<li><strong><code>contextIsolation</code> has to stay on.</strong> In a window without it the preload refuses, and both sides are told why. Run (<code>windows</code>).</li>
+<li><strong>Frames and <code>&lt;webview&gt;</code> guests.</strong> Only the top-level frame of a registered window gets a port. A guest is refused unless you registered it with <code>{ embedded: true }</code>: do that only when the embedding page is your own. Stand-ins.</li>
+<li><strong>Offscreen and background pages</strong> are refused: there is nobody to ask. Run (<code>windows</code>) for an offscreen page; background pages by stand-ins.</li>
+<li><strong><code>nav.go</code> does nothing here.</strong> It takes <code>http:</code> and <code>https:</code> URLs only, so on a <code>file://</code> or <code>app://</code> page it answers <code>E_DENIED</code>. Offer navigation as an action of your own, which then has a risk, a prompt and a place in the panel.</li>
+<li><strong>ESM main files.</strong> A top-level <code>await app.whenReady()</code> that comes after another <code>await</code> never returns (seen with Electron 45.4.1). Use <code>app.whenReady().then(main)</code>.</li>
+</ul>
+<h2 id="what-origin-your-page-has">What origin your page has <a class="anchor" href="#what-origin-your-page-has" aria-label="Link to the section What origin your page has">#</a></h2>
+<p>A hub admits surfaces by origin. A page that was not loaded over <code>http(s)</code> still has one, and Reins defines exactly what it is.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>The page was loaded from</th>
+<th>Its origin</th>
+<th>A hub admits it with</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>http://localhost:5173/...</code></td>
+<td><code>http://localhost:5173</code></td>
+<td>that origin, <code>http://localhost:*</code>, or <code>*</code></td>
+</tr>
+<tr>
+<td>a file, <code>file:///C:/app/index.html</code></td>
+<td><code>file://</code></td>
+<td><code>file://</code> only</td>
+</tr>
+<tr>
+<td>a scheme the app registered as standard, <code>app://notes/index.html</code></td>
+<td><code>app://notes</code></td>
+<td><code>app://notes</code> or <code>app://notes:*</code> only</td>
+</tr>
+<tr>
+<td>the same with the default host of a serving library, <code>app://-/index.html</code>, <code>app://./index.html</code></td>
+<td><code>app://-</code>, <code>app://.</code></td>
+<td>that origin only</td>
+</tr>
+<tr>
+<td>a scheme the app did not register as standard</td>
+<td><code>null</code></td>
+<td><code>null</code> only</td>
+</tr>
+<tr>
+<td>a sandboxed frame, a <code>data:</code> URL</td>
+<td><code>null</code></td>
+<td><code>null</code> only</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>*</code> means every web origin and nothing else. It never admits <code>file://</code>, an app origin or <code>null</code>: each has to be written down.</p>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npx <span class="t-f">--no</span> -- reins-hub <span class="t-f">--profile</span> guarded <span class="t-f">--allow-origin</span> app://notes
+npx <span class="t-f">--no</span> -- reins-hub <span class="t-f">--profile</span> guarded <span class="t-f">--allow-origin</span> file://        <span class="t-c"># read the warnings below first</span></code></pre></div>
+<p>Two entries need more than a name, because countless pages share the origin:</p>
+<ul>
+<li><strong><code>null</code> admits every sandboxed frame on every website.</strong> Do not list <code>null</code> unless every surface has to prove a key (<code>--require-key</code>), or none comes over the socket. <code>reins-hub</code> prints a warning at start when it does.</li>
+<li><strong><code>file://</code> admits every local HTML file.</strong> A hub that admits <code>file://</code> on its socket admits your app, and also any HTML file the person opens in a Chromium browser. <code>reins-hub</code> warns about this entry too.</li>
+</ul>
+<p>Prefer, in this order: the in-process port above with <code>surfaceSockets: false</code> and the window registered with its URL; a scheme of your own (<code>app://notes</code>), which no web page and no file can have; a <a href="./surface-keys.html">surface key</a> with <code>--require-key</code>.</p>
+<p>Give the scheme a host, and register it with <code>standard: true</code> before the app is ready, or Chromium treats it as opaque and the origin is <code>null</code>. What Chromium reports for each kind of page was measured: the table is in <a href="../reference/electron-guide.html#2-origins">section 2 of the guide</a>, and <code>npx electron probe-origins.mjs</code> in the example folder prints it for your machine. The rule itself is in the <a href="../reference/specification.html#5-handshake-and-authentication">specification</a> under &quot;Origins&quot;, with cases for another implementation in <a href="../implementers/vectors/origins.html"><code>origins.json</code></a>.</p>
+<h2 id="the-panel-levels-and-chat">The panel, levels and chat <a class="anchor" href="#the-panel-levels-and-chat" aria-label="Link to the section The panel, levels and chat">#</a></h2>
+<p>The panel is the driver's, so you get it by using the driver; there is nothing to add to the three pieces. What it offers follows from the policy:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>The person can</th>
+<th>Where</th>
+<th>Needs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>make one agent ask more: Strict</td>
+<td>Permissions, &quot;How much it asks you&quot;</td>
+<td>nothing: Strict and Ask are always there</td>
+</tr>
+<tr>
+<td>make one agent ask less: Auto, Bypass</td>
+<td>the same place, with a second step</td>
+<td>the level in <code>human.levels</code> of the page's policy and of the hub's</td>
+</tr>
+<tr>
+<td>set one action of one agent to Allow, Ask or Block</td>
+<td>Permissions, the list of your actions</td>
+<td></td>
+</tr>
+<tr>
+<td>switch one scope of one agent off and on</td>
+<td>Permissions, &quot;What it may do&quot;</td>
+<td></td>
+</tr>
+<tr>
+<td>end one agent's grant</td>
+<td>Permissions, Disconnect</td>
+<td><code>human.stop</code></td>
+</tr>
+<tr>
+<td>see the last 50 commands and what let each run</td>
+<td>Activity</td>
+<td></td>
+</tr>
+<tr>
+<td>talk to the agents</td>
+<td>Chat</td>
+<td>the <code>chat</code> scope (section 5)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Auto and Bypass are on offer only where the page's policy and the hub's policy both list them:</p>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-k">const</span> policy = { profile: <span class="t-s">'guarded'</span>, human: { levels: [<span class="t-s">'auto'</span>] } };              <span class="t-c">// Strict, Ask, Auto: no Bypass</span>
+createDriver({ app, link: <span class="t-k">await</span> electronLink(), policy });                       <span class="t-c">// page</span>
+<span class="t-k">await</span> startHub({ agents, surfaces, surfaceSockets: <span class="t-k">false</span>, policy });             <span class="t-c">// main process</span></code></pre></div>
+<p>One thing is particular to Electron: your main process can send a window real input (<code>webContents.sendInputEvent</code>, the <code>debugger</code> API). The panel keeps an agent from changing its own permissions. It cannot keep an app from pressing its own buttons, and does not try to.</p>
+<h2 id="try-the-example">Try the example <a class="anchor" href="#try-the-example" aria-label="Link to the section Try the example">#</a></h2>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npm install            <span class="t-c"># in the repository root: builds the packages the example imports</span>
+cd examples/electron
+npm install            <span class="t-c"># the Electron package; the first run downloads about 160 MB</span>
+npx electron .         <span class="t-c"># terminal 1: the app. It prints where its hub listens.</span>
+node agent-demo.mjs    <span class="t-c"># terminal 2: a scripted agent</span></code></pre></div>
+<p>The example folder is not an npm workspace, so that installing and testing the repository never downloads Electron. Its <a href="https://github.com/offensiveadhd/reins/blob/main/examples/electron/README.md" class="ext">README</a> has the rest: the same app from <code>file://</code>, two scripted agents in one window, and the same app adopted.</p>
+<h2 id="further-reading">Further reading <a class="anchor" href="#further-reading" aria-label="Link to the section Further reading">#</a></h2>
+<ul>
+<li><a href="../reference/electron-guide.html">The Electron guide</a>: every point above with its details, <a href="../reference/electron-guide.html#9-troubleshooting">troubleshooting</a> and <a href="../reference/electron-guide.html#10-what-was-tested">what was tested</a>.</li>
+<li><a href="./adopting-an-electron-app.html">Adopt an Electron app</a> and <a href="./claude-and-hermes.html">Claude and Hermes</a>.</li>
+<li><a href="../reference/sdk.html#electron">SDK API</a>: <code>reinsMain</code>, <code>preloadPath</code>, <code>electronLink</code>.</li>
+<li><a href="../reference/security-model.html#threats-and-what-stops-them">Threats and what stops them</a>: T57 to T59.</li>
+</ul>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/guides/electron.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/guides/electron.md</code></span><a class="md-link" href="./electron.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./troubleshooting.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Troubleshooting</span></a>
+    <a class="pager-next" href="./adopting-an-electron-app.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Adopt an Electron app</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#an-electron-window-is-a-page">An Electron window is a page</a></li><li class="toc-2"><a href="#three-pieces">Three pieces</a></li><li class="toc-2"><a href="#what-that-gives-you">What that gives you</a></li><li class="toc-2"><a href="#register-the-window-with-its-page">Register the window with its page</a></li><li class="toc-2"><a href="#what-origin-your-page-has">What origin your page has</a></li><li class="toc-2"><a href="#the-panel-levels-and-chat">The panel, levels and chat</a></li><li class="toc-2"><a href="#try-the-example">Try the example</a></li><li class="toc-2"><a href="#further-reading">Further reading</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

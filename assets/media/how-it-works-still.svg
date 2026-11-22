@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 450" role="img" aria-labelledby="wt wd">
+<title id="wt">How Reins works</title>
+<desc id="wd">An agent talks to a loopback hub and the hub talks to a driver in the browser tab, both over the reins.v1 protocol. A safe action passes the policy and runs. A sensitive action waits in the tab until the person approves it on screen.</desc>
+<style>
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:#f1f1f6}
+.m{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+.t{font-size:28px;font-weight:700;text-anchor:middle}
+.s{font-size:21px;fill:#a3a4b5;text-anchor:middle}
+.k{font-size:20px;fill:#a3a4b5;text-anchor:middle}
+.b{fill:#1d1d25;stroke:#3a3a48;stroke-width:2.5}
+</style>
+<rect x="1" y="1" width="1278" height="448" rx="24" fill="#16161d" stroke="#ffffff" stroke-opacity=".1" stroke-width="2"/>
+<path d="M360 145H490M790 145H920" stroke="#5c5d6e" stroke-width="2.5"/>
+<path d="M1070 220V276" stroke="#5c5d6e" stroke-width="2.5"/>
+<text class="k m" x="425" y="128">reins.v1</text><text class="k" x="425" y="174">WebSocket</text>
+<text class="k m" x="855" y="128">reins.v1</text><text class="k" x="855" y="174">WebSocket</text>
+<rect class="b" x="60" y="70" width="300" height="150" rx="16"/>
+<text class="t" x="210" y="122">Agent</text><text class="s" x="210" y="160">agent SDK</text><text class="s" x="210" y="188">or MCP tools</text>
+<rect class="b" x="490" y="70" width="300" height="150" rx="16" stroke="#3a3a48"></rect>
+<text class="t" x="640" y="122">Hub (loopback)</text><text class="s" x="640" y="160">auth, grants,</text><text class="s" x="640" y="188">policy, audit</text>
+<rect class="b" x="920" y="70" width="300" height="150" rx="16" stroke="#3a3a48"></rect>
+<text class="t" x="1070" y="122">Browser tab</text><text class="s" x="1070" y="160">driver: app actions,</text><text class="s" x="1070" y="188">UI tree, cursor</text>
+<circle cx="1070" cy="292" r="16" fill="#16161d" stroke="#f1f1f6" stroke-width="5"></circle>
+<text x="1070" y="344" font-size="22" font-weight="600" text-anchor="middle">You approve, pause or stop</text>
+<text x="1100" y="299" font-size="20" font-weight="700" style="fill:#f5a524" opacity="0">Allow?</text>
+<text x="1100" y="299" font-size="20" font-weight="700" style="fill:#4ade80" opacity="0">Allowed</text>
+<circle cy="145" r="9" fill="#8f8fff" opacity="0" cx="360"></circle>
+<circle cy="145" r="9" fill="#8f8fff" opacity="0" cx="790"></circle>
+<circle cy="145" r="9" fill="#4ade80" opacity="1" cx="855"></circle>
+<circle cy="145" r="9" fill="#4ade80" opacity="0" cx="490"></circle>
+<text class="m" x="60" y="300" font-size="26" font-weight="700" opacity="1">act cart.add</text>
+<text x="60" y="336" font-size="22" style="fill:#4ade80" opacity="1">Safe action: the policy allows it and it runs.</text>
+<text class="m" x="60" y="300" font-size="26" font-weight="700" opacity="0">act order.submit</text>
+<text x="60" y="336" font-size="22" style="fill:#f5a524" opacity="0">Sensitive action: it waits until the person approves on screen.</text>
+<text x="60" y="336" font-size="22" style="fill:#4ade80" opacity="0">Approved on screen: now it runs.</text>
+<text x="60" y="410" font-size="20" style="fill:#a3a4b5">In-tab shape: assistant, broker and driver share one tab over in-memory links. Same protocol.</text>
+</svg>

@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Contributing · Reins</title>
+<meta name="description" content="How to work on Reins. Building and testing the repository, what its checks expect of a change, and how to add or fix a page of this wiki with an ordinary pull request.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/community/contributing.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Contributing">
+<meta property="og:description" content="How to work on Reins. Building and testing the repository, what its checks expect of a change, and how to add or fix a page of this wiki with an ordinary pull request.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/community/contributing.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="./contributing.html" aria-current="page">Contributing</a></li><li><a href="./protocol-changes.html">Proposing a protocol change</a></li><li><a href="./vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="./faq.html">FAQ</a></li><li><a href="./glossary.html">Glossary</a></li><li><a href="./showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#community">Community</a></li><li aria-current="page">Contributing</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Contributing</h1>
+        <p class="lede">How to work on Reins. Building and testing the repository, what its checks expect of a change, and how to add or fix a page of this wiki with an ordinary pull request.</p>
+        
+      </header>
+      <h2 id="the-repository">The repository <a class="anchor" href="#the-repository" aria-label="Link to the section The repository">#</a></h2>
+<p>Reins is developed in one repository, <a href="https://github.com/offensiveadhd/reins" class="ext">offensiveadhd/reins</a>, under the Apache-2.0 licence.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Folder</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/offensiveadhd/reins/tree/main/packages/core" class="ext"><code>packages/core</code></a></td>
+<td>Wire types, codec, schema validation, policy engine, flow control, crypto, RPC. Runs anywhere, no dependencies.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/offensiveadhd/reins/tree/main/packages/hub" class="ext"><code>packages/hub</code></a></td>
+<td>The broker, its loopback WebSocket server and the <code>reins-hub</code> command.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/offensiveadhd/reins/tree/main/packages/driver" class="ext"><code>packages/driver</code></a></td>
+<td>The in-page runtime: UI tree, command execution, cursor, consent prompt, indicator and its panel.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/offensiveadhd/reins/tree/main/packages/agent" class="ext"><code>packages/agent</code></a></td>
+<td>The agent SDK and the <code>reins</code> command.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/offensiveadhd/reins/tree/main/packages/mcp" class="ext"><code>packages/mcp</code></a></td>
+<td>The MCP adapter and the <code>reins-mcp</code> command.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/offensiveadhd/reins/tree/main/packages/kit" class="ext"><code>packages/kit</code></a></td>
+<td>The single entry point for browser projects.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/offensiveadhd/reins/tree/main/packages/electron" class="ext"><code>packages/electron</code></a></td>
+<td>Electron: a window as a surface over a <code>MessagePort</code>, and the <code>reins-electron</code> command.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/offensiveadhd/reins/tree/main/conformance" class="ext"><code>conformance</code></a></td>
+<td>The conformance suite and test vectors.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/offensiveadhd/reins/tree/main/examples/kiosk" class="ext"><code>examples/kiosk</code></a></td>
+<td>Brew Kiosk, the demo app, a scripted agent, and the in-tab example.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/offensiveadhd/reins/tree/main/examples/electron" class="ext"><code>examples/electron</code></a></td>
+<td>Notes, an Electron app that is a surface, and the same app adopted. Installs Electron by itself; not a workspace.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/offensiveadhd/reins/tree/main/integrations/hermes-desktop" class="ext"><code>integrations/hermes-desktop</code></a></td>
+<td>A Hermes Desktop plugin that makes Hermes a surface. Not run in Hermes.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/offensiveadhd/reins/tree/main/site" class="ext"><code>site</code></a></td>
+<td>The website: landing page, wiki and playground. Built by <code>site/build.mjs</code>, apart from the npm workspaces.</td>
+</tr>
+</tbody>
+</table></div>
+<p>This site lives in <code>site/</code>, apart from the npm workspaces.</p>
+<h2 id="build-and-test">Build and test <a class="anchor" href="#build-and-test" aria-label="Link to the section Build and test">#</a></h2>
+<p>Node 22 or newer.</p>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npm install            <span class="t-c"># also builds</span>
+npm run build          <span class="t-c"># type-check, bundle, assemble dist/</span>
+npm test               <span class="t-c"># every test</span>
+npm run test:conformance
+npm run test:package   <span class="t-c"># pack, install into an empty project, import, type-check</span>
+npm run test:electron  <span class="t-c"># opt-in: a real Electron, after npm install in examples/electron</span></code></pre></div>
+<p>CI runs all of these on Ubuntu and Windows. Tests run against the package sources, so no build is needed before <code>npm test</code>.</p>
+<h2 id="what-the-checks-expect-of-a-change">What the checks expect of a change <a class="anchor" href="#what-the-checks-expect-of-a-change" aria-label="Link to the section What the checks expect of a change">#</a></h2>
+<p>The repository is strict about a few things, and a pull request passes more easily if you know them.</p>
+<ul>
+<li><strong>The specification and the wire types move together.</strong> <code>docs/SPEC.md</code> describes the behaviour and <code>packages/core/src/protocol.ts</code> holds the wire types. If the two ever disagree, fix both in one change.</li>
+<li><strong>Every normative sentence has a test.</strong> A meta-test in <code>conformance/</code> fails when a MUST, MUST NOT or SHALL sentence in the specification has no entry in <code>conformance/requirements.json</code>, or when an entry names a test that does not exist. A change to the specification comes with its requirement and its test.</li>
+<li><strong>The vectors are regenerated, not edited.</strong> <code>node conformance/tools/make-vectors.mjs --check</code> exits 1 if a vector file would change.</li>
+<li><strong>The published package is tested as installed.</strong> <code>npm run test:package</code> packs the package, installs it into an empty project, imports it and type-checks against it. The commands the README hands out are run against the installed tarball.</li>
+<li><strong>Security fixes come with a regression test.</strong></li>
+<li><strong>A real Electron is opt-in.</strong> <code>npm run test:electron</code> runs the Electron checks after <code>npm install</code> in <code>examples/electron</code>. It is not part of <code>npm test</code>, and the repository never installs Electron by itself.</li>
+</ul>
+<p>A change to the wire format is a protocol change: see <a href="./protocol-changes.html">How to propose a protocol change</a>.</p>
+<h2 id="this-wiki">This wiki <a class="anchor" href="#this-wiki" aria-label="Link to the section This wiki">#</a></h2>
+<p>Every page of the wiki that is not one of the canonical documents is a Markdown file under <a href="https://github.com/offensiveadhd/reins/tree/main/site/wiki" class="ext"><code>site/wiki/</code></a>, in the folder of its section. Each page has an &quot;Edit this page on GitHub&quot; link at the bottom. A pull request that changes the file changes the page.</p>
+<h3 id="add-a-page">Add a page <a class="anchor" href="#add-a-page" aria-label="Link to the section Add a page">#</a></h3>
+<p>Create <code>site/wiki/&lt;section&gt;/&lt;name&gt;.md</code>. The sections are <code>start</code>, <code>concepts</code>, <code>guides</code>, <code>reference</code>, <code>implementers</code> and <code>community</code>. The file starts with front matter:</p>
+<div class="code" data-lang="text"><div class="code-bar"><span class="code-lang">Text</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>---
+title: The title of the page
+description: One sentence that says what the page is for. It is shown under the title, in search results and in link previews.
+order: 45
+---</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td>The page's heading. The text starts at <code>##</code> headings.</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>One sentence. Required.</td>
+</tr>
+<tr>
+<td><code>order</code></td>
+<td>A number that places the page in its section's list. Required.</td>
+</tr>
+<tr>
+<td><code>nav</code></td>
+<td>A shorter title for the sidebar. Optional.</td>
+</tr>
+<tr>
+<td><code>draft</code></td>
+<td><code>true</code> keeps the page out of the published site, its navigation, search and sitemap. Optional.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="write-it">Write it <a class="anchor" href="#write-it" aria-label="Link to the section Write it">#</a></h3>
+<ul>
+<li>Link to another wiki page with a relative path to its <code>.md</code> file: <code>[Consent](../concepts/consent.md)</code>. Link to the canonical documents from the repository root: <code>[section 5](/docs/SPEC.md#5-handshake-and-authentication)</code>. Both forms also work when the file is read on GitHub.</li>
+<li><strong>State only what the sources say.</strong> Every technical statement, command and number on this site comes from the specification, the security model, the README, the conformance suite or the code. Where the README says something is untested, say the same.</li>
+<li><strong>Do not copy a table or a code sample out of the canonical files.</strong> Include it, and the build takes it from the real file every time:</li>
+</ul>
+<div class="code" data-lang="text"><div class="code-bar"><span class="code-lang">Text</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>| method | params | result | scope |
+|---|---|---|---|
+| `hub.info` | | `HubInfo` | |
+| `surfaces.list` | | `{surfaces}` | |
+| `surface.attach` | `scopes, reason?` | `{grant, surface, manifest}` | |
+| `surface.detach` | | `{}` | |
+| `observe` | `since?, boxes?` | `Observation` | observe |
+| `read` | `h?, max?` | `{text, truncated}` | observe |
+| `state.get` | `name?` | `{state}` | observe |
+| `sub` / `unsub` | `topics` | `{topics}` now subscribed | observe |
+| `act` | `a, args?` | `{result?, rev}` | act |
+| `ui.click` | `h` | `{rev}` | ui |
+| `ui.type` | `h, text, clear?, enter?` | `{rev}` | ui |
+| `ui.select` | `h, value` | `{rev}` | ui |
+| `ui.scroll` | `h?, dx?, dy?, to?` | `{rev}` | ui |
+| `ui.key` | `key, h?` | `{rev}` | ui |
+| `cursor.move` | `to, ms?, wait?` | `{x, y}` | cursor |
+| `cursor.set` | `visible?, label?, color?` | `{}` | cursor |
+| `show.toast` | `text, kind?, ms?` | `{}` | show |
+| `show.highlight` | `h, label?, ms?` | `{}` | show |
+| `show.view` | `view, data?` | `{result?}` | show |
+| `show.clear` | | `{}` | show |
+| `nav.go` | `url` | `{}` | nav |
+| `chat.say` | `text, to?` | `{id}` | chat |
+| `chat.read` | `since?, max?` | `{messages, next}` | chat |
+| `chat.status` | `state, note?` | `{}` | chat |
+| `stream.open` | `kind:&quot;pointer&quot;` | `{ch, credit}` | cursor |
+| `stream.close` | `ch` | `{}` | |
+```js
+import { createDriver } from '@offensiveadhd/reins';
+
+const driver = createDriver({
+  app: { id: 'brew-kiosk', name: 'Brew Kiosk', version: '1.0.0' },
+  hub: 'ws://127.0.0.1:7346',
+  policy: 'guarded', // or 'open', 'kiosk', or a profile with overrides
+});
+
+driver
+  .action(
+    {
+      name: 'cart.add',
+      description: 'Add a drink to the order.',
+      risk: 'safe',
+      params: {
+        type: 'object',
+        properties: { sku: { type: 'string', enum: ['latte', 'mocha'] }, qty: { type: 'integer', minimum: 1, maximum: 9 } },
+        required: ['sku'],
+      },
+    },
+    ({ sku, qty = 1 }) =&gt; cart.add(sku, qty),
+  )
+  .action({ name: 'order.submit', description: 'Place the order.', risk: 'sensitive' }, () =&gt; cart.submit())
+  .view({ name: 'chart', description: 'Bar chart panel.' }, (data) =&gt; renderChart(data))
+  .state('cart', () =&gt; cart.summary());
+
+await driver.connect();</code></pre></div>
+<div class="code" data-lang="text"><div class="code-bar"><span class="code-lang">Text</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>usage: reins-hub [--port 7346] [--profile open|guarded|kiosk] [--allow-origin &lt;origin&gt;]...
+                 [--config hub.json] [--token-file &lt;path&gt;] [--audit &lt;path&gt;] [--audit-key-file &lt;path&gt;]
+                 [--surface-key &lt;appId&gt;=&lt;path&gt;]... [--require-key] [--no-announce]
+                 [--agent &lt;kid&gt;=&lt;path&gt;]... [--no-surface-sockets]
+
+--agent adds a credential of its own for one agent, with its key in that file (created
+when missing): the agent then starts with --kid &lt;kid&gt; --token-file &lt;path&gt;. The first
+--agent replaces the default token file; --token-file, when given too, stays the
+credential &quot;default&quot;.
+--no-surface-sockets makes the socket take agents only, for a hub whose pages are all
+linked in-process (an Electron app's main process).
+
+A running hub announces itself in the user's Reins folder (~/.reins, or REINS_HOME) and
+leaves a launcher there, so an agent on this machine can reach it from a shell:
+  node &quot;$HOME/.reins/reins.mjs&quot; reins_attach
+--no-announce writes neither.</code></pre></div>
+<div class="code"><div class="code-bar"><span class="code-lang"></span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>
+The wiki pages on chat and on Electron lean on `docs/CHAT.md`, `docs/ELECTRON.md` and the READMEs under `integrations/`, which the site also renders in full. Change the text there and the site follows.
+
+- Raw HTML in Markdown is not rendered. Callouts are GitHub's: a block quote that starts with `[!NOTE]`, `[!TIP]` or `[!WARNING]`.
+
+### Build it
+
+```bash
+npm ci                    # in the repository root: builds the package the playground runs
+cd site
+npm ci
+npm run build             # writes site/dist and checks every link and anchor
+npm run preview           # serves site/dist on http://127.0.0.1:4173</code></pre></div>
+<p>The build fails on a dead link or anchor, on a resource from another host, and on anything the site's Content Security Policy would block. <a href="https://github.com/offensiveadhd/reins/blob/main/site/README.md" class="ext"><code>site/README.md</code></a> has the details.</p>
+<h2 id="reporting-problems">Reporting problems <a class="anchor" href="#reporting-problems" aria-label="Link to the section Reporting problems">#</a></h2>
+<ul>
+<li>A bug or an unclear page: an issue in the repository.</li>
+<li>A suspected vulnerability: not in a public issue. See <a href="./vulnerability-disclosure.html">Reporting a vulnerability</a>.</li>
+</ul>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/community/contributing.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/community/contributing.md</code></span><a class="md-link" href="./contributing.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="../implementers/requirements.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Requirements index</span></a>
+    <a class="pager-next" href="./protocol-changes.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Proposing a protocol change</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#the-repository">The repository</a></li><li class="toc-2"><a href="#build-and-test">Build and test</a></li><li class="toc-2"><a href="#what-the-checks-expect-of-a-change">What the checks expect of a change</a></li><li class="toc-2"><a href="#this-wiki">This wiki</a></li><li class="toc-3"><a href="#add-a-page">Add a page</a></li><li class="toc-3"><a href="#write-it">Write it</a></li><li class="toc-2"><a href="#reporting-problems">Reporting problems</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

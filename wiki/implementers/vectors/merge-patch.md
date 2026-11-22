@@ -1,0 +1,376 @@
+# JSON merge patch for state events
+
+> Test vectors: JSON merge patch for state events. Shown here as it is in conformance/vectors/merge-patch.json.
+
+Protocol `0.1`. Covers: SPEC.md section 10 ("an RFC 7396 merge patch"); RFC 7396 section 2 and appendix A.
+
+[Download merge-patch.json](./merge-patch.json): the file itself, as the conformance suite reads it.
+
+## How to use it
+
+`apply`: RFC 7396 appendix A. `diff`: any patch P with apply(from, P) == to passes. `equal`: no patch at all; some cases differ only in null properties, which read as absent.
+
+## Notes
+
+`apply` cases are the examples of RFC 7396 appendix A. `diff` cases list (from, to) pairs; any patch P with apply(from, P) == to is correct, so only that property is checked. The diff of equal values is undefined (section 15, mergeDiff). Merge patch cannot express a property whose value is null: such a property reads as absent (section 10). So no `to` under `diff` contains one, and the `equal` cases include values that differ only in null properties: a patch for them would say nothing a reader can see.
+
+## apply
+
+15 cases.
+
+```json
+[
+  {
+    "target": {
+      "a": "b"
+    },
+    "patch": {
+      "a": "c"
+    },
+    "result": {
+      "a": "c"
+    }
+  },
+  {
+    "target": {
+      "a": "b"
+    },
+    "patch": {
+      "b": "c"
+    },
+    "result": {
+      "a": "b",
+      "b": "c"
+    }
+  },
+  {
+    "target": {
+      "a": "b"
+    },
+    "patch": {
+      "a": null
+    },
+    "result": {}
+  },
+  {
+    "target": {
+      "a": "b",
+      "b": "c"
+    },
+    "patch": {
+      "a": null
+    },
+    "result": {
+      "b": "c"
+    }
+  },
+  {
+    "target": {
+      "a": [
+        "b"
+      ]
+    },
+    "patch": {
+      "a": "c"
+    },
+    "result": {
+      "a": "c"
+    }
+  },
+  {
+    "target": {
+      "a": "c"
+    },
+    "patch": {
+      "a": [
+        "b"
+      ]
+    },
+    "result": {
+      "a": [
+        "b"
+      ]
+    }
+  },
+  {
+    "target": {
+      "a": {
+        "b": "c"
+      }
+    },
+    "patch": {
+      "a": {
+        "b": "d",
+        "c": null
+      }
+    },
+    "result": {
+      "a": {
+        "b": "d"
+      }
+    }
+  },
+  {
+    "target": {
+      "a": [
+        {
+          "b": "c"
+        }
+      ]
+    },
+    "patch": {
+      "a": [
+        1
+      ]
+    },
+    "result": {
+      "a": [
+        1
+      ]
+    }
+  },
+  {
+    "target": [
+      "a",
+      "b"
+    ],
+    "patch": [
+      "c",
+      "d"
+    ],
+    "result": [
+      "c",
+      "d"
+    ]
+  },
+  {
+    "target": {
+      "a": "b"
+    },
+    "patch": [
+      "c"
+    ],
+    "result": [
+      "c"
+    ]
+  },
+  {
+    "target": {
+      "a": "foo"
+    },
+    "patch": null,
+    "result": null
+  },
+  {
+    "target": {
+      "a": "foo"
+    },
+    "patch": "bar",
+    "result": "bar"
+  },
+  {
+    "target": {
+      "e": null
+    },
+    "patch": {
+      "a": 1
+    },
+    "result": {
+      "e": null,
+      "a": 1
+    }
+  },
+  {
+    "target": [
+      1,
+      2
+    ],
+    "patch": {
+      "a": "b",
+      "c": null
+    },
+    "result": {
+      "a": "b"
+    }
+  },
+  {
+    "target": {},
+    "patch": {
+      "a": {
+        "bb": {
+          "ccc": null
+        }
+      }
+    },
+    "result": {
+      "a": {
+        "bb": {}
+      }
+    }
+  }
+]
+```
+
+## diff
+
+7 cases.
+
+```json
+[
+  {
+    "from": {
+      "items": [],
+      "total": 0
+    },
+    "to": {
+      "items": [
+        {
+          "sku": "latte",
+          "qty": 1
+        }
+      ],
+      "total": 4.5
+    }
+  },
+  {
+    "from": {
+      "a": 1,
+      "b": 2
+    },
+    "to": {
+      "a": 1
+    }
+  },
+  {
+    "from": {
+      "a": {
+        "b": {
+          "c": 1,
+          "d": 2
+        }
+      }
+    },
+    "to": {
+      "a": {
+        "b": {
+          "c": 1,
+          "d": 3
+        }
+      }
+    }
+  },
+  {
+    "from": {
+      "a": 1
+    },
+    "to": "scalar"
+  },
+  {
+    "from": "scalar",
+    "to": {
+      "a": 1
+    }
+  },
+  {
+    "from": [
+      1,
+      2,
+      3
+    ],
+    "to": [
+      1,
+      2
+    ]
+  },
+  {
+    "from": {
+      "n": 0
+    },
+    "to": {
+      "n": 0,
+      "m": false
+    }
+  }
+]
+```
+
+## equal
+
+7 cases.
+
+```json
+[
+  {
+    "from": {
+      "a": [
+        1,
+        {
+          "b": 2
+        }
+      ]
+    },
+    "to": {
+      "a": [
+        1,
+        {
+          "b": 2
+        }
+      ]
+    }
+  },
+  {
+    "from": 3,
+    "to": 3
+  },
+  {
+    "from": {
+      "lab": null
+    },
+    "to": {
+      "lab": null
+    }
+  },
+  {
+    "from": {
+      "lab": null,
+      "runs": 1
+    },
+    "to": {
+      "lab": null,
+      "runs": 1
+    }
+  },
+  {
+    "from": {
+      "a": {
+        "lab": null
+      }
+    },
+    "to": {
+      "a": {
+        "lab": null
+      }
+    }
+  },
+  {
+    "from": {
+      "lab": null,
+      "runs": 1
+    },
+    "to": {
+      "runs": 1
+    }
+  },
+  {
+    "from": {
+      "runs": 1
+    },
+    "to": {
+      "lab": null,
+      "runs": 1
+    }
+  }
+]
+```
+
+Generated by `conformance/tools/make-vectors.mjs` from the formulas in the specification, with `node:crypto` only.

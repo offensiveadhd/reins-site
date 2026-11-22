@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Chat: texts, messages and who hears them · Reins</title>
+<meta name="description" content="Test vectors: Chat: texts, messages and who hears them. Shown here as it is in conformance/vectors/chat.json.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/implementers/vectors/chat.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Chat: texts, messages and who hears them">
+<meta property="og:description" content="Test vectors: Chat: texts, messages and who hears them. Shown here as it is in conformance/vectors/chat.json.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/implementers/vectors/chat.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../../assets/site.css">
+<script src="../../../assets/theme.js"></script>
+<script type="module" src="../../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../../playground.html">Playground</a></li>
+        <li><a href="../../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../../start/what-is-reins.html">What is Reins</a></li><li><a href="../../start/quickstart.html">Quickstart</a></li><li><a href="../../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../../start/mcp.html">Claude Code and MCP</a></li><li><a href="../../start/shell-tools.html">Shell tools</a></li><li><a href="../../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../../concepts/consent.html">Consent</a></li><li><a href="../../concepts/human-control.html">Human control</a></li><li><a href="../../concepts/permission-levels.html">Permission levels</a></li><li><a href="../../concepts/observation.html">Observation</a></li><li><a href="../../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../../concepts/audit-log.html">The audit log</a></li><li><a href="../../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../../guides/surface-keys.html">Surface keys</a></li><li><a href="../../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../../guides/electron.html">Electron: build it in</a></li><li><a href="../../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../../reference/methods.html">Methods</a></li><li><a href="../../reference/events.html">Events</a></li><li><a href="../../reference/error-codes.html">Error codes</a></li><li><a href="../../reference/policy-fields.html">Policy fields</a></li><li><a href="../../reference/limits.html">Limits</a></li><li><a href="../../reference/cli.html">CLI</a></li><li><a href="../../reference/sdk.html">SDK API</a></li><li><a href="../../reference/specification.html">Specification</a></li><li><a href="../../reference/security-model.html">Security model</a></li><li><a href="../../reference/chat-guide.html">The chat guide</a></li><li><a href="../../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../writing-an-implementation.html">Writing another implementation</a></li><li><a href="../conformance-suite.html">The conformance suite</a></li><li><a href="../test-vectors.html" aria-current="page">Test vectors</a></li><li><a href="../requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../../community/contributing.html">Contributing</a></li><li><a href="../../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../../community/faq.html">FAQ</a></li><li><a href="../../community/glossary.html">Glossary</a></li><li><a href="../../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../../index.html">Wiki</a></li><li><a href="../../index.html#implementers">Implementers</a></li><li><a href="../test-vectors.html">Test vectors</a></li><li aria-current="page">chat.json</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Chat: texts, messages and who hears them</h1>
+        <p class="lede">Test vectors: Chat: texts, messages and who hears them. Shown here as it is in conformance/vectors/chat.json.</p>
+        <p class="source-note">Generated at build time from <code>conformance/vectors/chat.json</code>.</p>
+      </header>
+      <p>Protocol <code>0.1</code>. Covers: SPEC.md section 9 (chat.say, chat.read, chat.status), section 12 (&quot;Chat&quot;) and section 13 (&quot;Chat relay&quot;).</p>
+<p><a href="./chat.json">Download chat.json</a>: the file itself, as the conformance suite reads it.</p>
+<h2 id="how-to-use-it">How to use it <a class="anchor" href="#how-to-use-it" aria-label="Link to the section How to use it">#</a></h2>
+<p><code>text.cases</code>: trim the text (<code>unit</code> and <code>times</code> stand for a repeated unit between <code>before</code> and <code>after</code>); with <code>ok</code> it is kept and has <code>length</code>, otherwise <code>chat.say</code> answers <code>E_BAD_ARGS</code>. <code>statusNote.cases</code>: the note as it is kept, or refused. <code>message</code>: take the <code>valid</code> messages, keeping only <code>fields</code>, and drop the <code>invalid</code> ones. <code>audience.rows</code>: split each row on spaces into <code>columns</code>; from the agents in the room, the agents among them that hear each other, who speaks and whom they address (<code>person</code> for the person alone), your decision must give <code>outcome</code> and <code>result</code>. <code>relay</code>: the three values of <code>chatRelay</code>, and for every pair the stricter one. <code>auditDigest</code>: the canonical JSON and the unkeyed digest a chat text is recorded with, whatever else was sent with it. <code>lines</code>: a chat text as the `</p>
+<h2 id="notes">Notes <a class="anchor" href="#notes" aria-label="Link to the section Notes">#</a></h2>
+<p>A length in characters counts UTF-16 code units (the conventions at the top of the spec). Trimming is that of ECMAScript String.prototype.trim. Cases with <code>unit</code> and <code>times</code> stand for the text before + unit repeated times + after. <code>text.cases</code>: with ok the text is kept, <code>length</code> is its length after trimming and <code>kept</code> the text itself where it is short; without ok chat.say answers E_BAD_ARGS. <code>audience.rows</code>: split each row on spaces into <code>columns</code>.</p>
+<h2 id="limits">limits <a class="anchor" href="#limits" aria-label="Link to the section limits">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;maxTextChars&quot;</span>: <span class="t-n">4000</span>,
+  <span class="t-p">&quot;maxNoteChars&quot;</span>: <span class="t-n">80</span>,
+  <span class="t-p">&quot;transcriptMessages&quot;</span>: <span class="t-n">200</span>,
+  <span class="t-p">&quot;readDefault&quot;</span>: <span class="t-n">20</span>,
+  <span class="t-p">&quot;readMax&quot;</span>: <span class="t-n">50</span>,
+  <span class="t-p">&quot;readBytes&quot;</span>: <span class="t-n">131072</span>,
+  <span class="t-p">&quot;statusTtlMs&quot;</span>: <span class="t-n">120000</span>
+}</code></pre></div>
+<h2 id="relay">relay <a class="anchor" href="#relay" aria-label="Link to the section relay">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;note&quot;</span>: <span class="t-s">&quot;policy.chatRelay, strictest first. The stricter of the surface policy and the hub policy applies: `stricter` lists every pair as \&quot;surface hub result\&quot;. In a policy file true reads as on and false as off. `toPerson` is the reserved value of `to` for a message to the person alone.&quot;</span>,
+  <span class="t-p">&quot;values&quot;</span>: [
+    <span class="t-s">&quot;off&quot;</span>,
+    <span class="t-s">&quot;person&quot;</span>,
+    <span class="t-s">&quot;on&quot;</span>
+  ],
+  <span class="t-p">&quot;legacy&quot;</span>: {
+    <span class="t-p">&quot;true&quot;</span>: <span class="t-s">&quot;on&quot;</span>,
+    <span class="t-p">&quot;false&quot;</span>: <span class="t-s">&quot;off&quot;</span>
+  },
+  <span class="t-p">&quot;toPerson&quot;</span>: <span class="t-s">&quot;person&quot;</span>,
+  <span class="t-p">&quot;stricter&quot;</span>: [
+    <span class="t-s">&quot;off off off&quot;</span>,
+    <span class="t-s">&quot;off person off&quot;</span>,
+    <span class="t-s">&quot;off on off&quot;</span>,
+    <span class="t-s">&quot;person off off&quot;</span>,
+    <span class="t-s">&quot;person person person&quot;</span>,
+    <span class="t-s">&quot;person on person&quot;</span>,
+    <span class="t-s">&quot;on off off&quot;</span>,
+    <span class="t-s">&quot;on person person&quot;</span>,
+    <span class="t-s">&quot;on on on&quot;</span>
+  ]
+}</code></pre></div>
+<h2 id="states">states <a class="anchor" href="#states" aria-label="Link to the section states">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>[
+  <span class="t-s">&quot;idle&quot;</span>,
+  <span class="t-s">&quot;thinking&quot;</span>,
+  <span class="t-s">&quot;working&quot;</span>
+]</code></pre></div>
+<h2 id="text">text <a class="anchor" href="#text" aria-label="Link to the section text">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;cases&quot;</span>: [
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;plain&quot;</span>,
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;add a latte&quot;</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">true</span>,
+      <span class="t-p">&quot;length&quot;</span>: <span class="t-n">11</span>,
+      <span class="t-p">&quot;kept&quot;</span>: <span class="t-s">&quot;add a latte&quot;</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;trimmed at both ends, white space inside kept&quot;</span>,
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;  two\n lines \t &quot;</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">true</span>,
+      <span class="t-p">&quot;length&quot;</span>: <span class="t-n">10</span>,
+      <span class="t-p">&quot;kept&quot;</span>: <span class="t-s">&quot;two\n lines&quot;</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;line and paragraph separators are white space to trim&quot;</span>,
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;  hello  ﻿&quot;</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">true</span>,
+      <span class="t-p">&quot;length&quot;</span>: <span class="t-n">5</span>,
+      <span class="t-p">&quot;kept&quot;</span>: <span class="t-s">&quot;hello&quot;</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;only white space&quot;</span>,
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot; \n\t &quot;</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">false</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;empty&quot;</span>,
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;&quot;</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">false</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;exactly 4000 characters&quot;</span>,
+      <span class="t-p">&quot;unit&quot;</span>: <span class="t-s">&quot;x&quot;</span>,
+      <span class="t-p">&quot;times&quot;</span>: <span class="t-n">4000</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">true</span>,
+      <span class="t-p">&quot;length&quot;</span>: <span class="t-n">4000</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;4000 characters after trimming&quot;</span>,
+      <span class="t-p">&quot;before&quot;</span>: <span class="t-s">&quot;  &quot;</span>,
+      <span class="t-p">&quot;unit&quot;</span>: <span class="t-s">&quot;x&quot;</span>,
+      <span class="t-p">&quot;times&quot;</span>: <span class="t-n">4000</span>,
+      <span class="t-p">&quot;after&quot;</span>: <span class="t-s">&quot;\n&quot;</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">true</span>,
+      <span class="t-p">&quot;length&quot;</span>: <span class="t-n">4000</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;4001 characters&quot;</span>,
+      <span class="t-p">&quot;unit&quot;</span>: <span class="t-s">&quot;x&quot;</span>,
+      <span class="t-p">&quot;times&quot;</span>: <span class="t-n">4001</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">false</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;a length is counted in UTF-16 code units: 2000 pairs fit&quot;</span>,
+      <span class="t-p">&quot;unit&quot;</span>: <span class="t-s">&quot;😀&quot;</span>,
+      <span class="t-p">&quot;times&quot;</span>: <span class="t-n">2000</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">true</span>,
+      <span class="t-p">&quot;length&quot;</span>: <span class="t-n">4000</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;2001 pairs do not&quot;</span>,
+      <span class="t-p">&quot;unit&quot;</span>: <span class="t-s">&quot;😀&quot;</span>,
+      <span class="t-p">&quot;times&quot;</span>: <span class="t-n">2001</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">false</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;a lone surrogate is not well-formed&quot;</span>,
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;half \ud83d a pair&quot;</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">false</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;invisible and bidi characters are kept as they are: whoever shows the text escapes them&quot;</span>,
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;a​‮b&quot;</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">true</span>,
+      <span class="t-p">&quot;length&quot;</span>: <span class="t-n">4</span>,
+      <span class="t-p">&quot;kept&quot;</span>: <span class="t-s">&quot;a​‮b&quot;</span>
+    }
+  ]
+}</code></pre></div>
+<h2 id="statusnote">statusNote <a class="anchor" href="#statusnote" aria-label="Link to the section statusNote">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;note&quot;</span>: <span class="t-s">&quot;chat.status: `kept` is the note as it is shown; without ok the answer is E_BAD_ARGS. A note with the state idle is dropped.&quot;</span>,
+  <span class="t-p">&quot;cases&quot;</span>: [
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;absent&quot;</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">true</span>,
+      <span class="t-p">&quot;kept&quot;</span>: <span class="t-s">&quot;&quot;</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;plain&quot;</span>,
+      <span class="t-p">&quot;note&quot;</span>: <span class="t-s">&quot;adding a latte&quot;</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">true</span>,
+      <span class="t-p">&quot;kept&quot;</span>: <span class="t-s">&quot;adding a latte&quot;</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;one line: white space and controls become one space&quot;</span>,
+      <span class="t-p">&quot;note&quot;</span>: <span class="t-s">&quot; adding\r\n\ta   latte\u0007 now &quot;</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">true</span>,
+      <span class="t-p">&quot;kept&quot;</span>: <span class="t-s">&quot;adding a latte now&quot;</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;80 characters&quot;</span>,
+      <span class="t-p">&quot;unit&quot;</span>: <span class="t-s">&quot;n&quot;</span>,
+      <span class="t-p">&quot;times&quot;</span>: <span class="t-n">80</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">true</span>,
+      <span class="t-p">&quot;kept&quot;</span>: <span class="t-s">&quot;nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn&quot;</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;81 characters&quot;</span>,
+      <span class="t-p">&quot;unit&quot;</span>: <span class="t-s">&quot;n&quot;</span>,
+      <span class="t-p">&quot;times&quot;</span>: <span class="t-n">81</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">false</span>
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;not a string&quot;</span>,
+      <span class="t-p">&quot;note&quot;</span>: <span class="t-n">7</span>,
+      <span class="t-p">&quot;ok&quot;</span>: <span class="t-k">false</span>
+    }
+  ]
+}</code></pre></div>
+<h2 id="message">message <a class="anchor" href="#message" aria-label="Link to the section message">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;note&quot;</span>: <span class="t-s">&quot;The shape of a chat message on the wire (evt chat, and the entries of chat.read). A receiver takes a `valid` message, keeping the fields listed in `fields` and nothing else, and drops an `invalid` one.&quot;</span>,
+  <span class="t-p">&quot;fields&quot;</span>: [
+    <span class="t-s">&quot;id&quot;</span>,
+    <span class="t-s">&quot;from&quot;</span>,
+    <span class="t-s">&quot;text&quot;</span>,
+    <span class="t-s">&quot;ts&quot;</span>,
+    <span class="t-s">&quot;to&quot;</span>
+  ],
+  <span class="t-p">&quot;valid&quot;</span>: [
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;from the person&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-n">12</span>,
+        <span class="t-p">&quot;from&quot;</span>: {
+          <span class="t-p">&quot;kind&quot;</span>: <span class="t-s">&quot;person&quot;</span>
+        },
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;add a latte&quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-n">1700000000000</span>
+      }
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;from an agent, addressed&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-n">1</span>,
+        <span class="t-p">&quot;from&quot;</span>: {
+          <span class="t-p">&quot;kind&quot;</span>: <span class="t-s">&quot;agent&quot;</span>,
+          <span class="t-p">&quot;id&quot;</span>: <span class="t-s">&quot;a2&quot;</span>,
+          <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;Helper&quot;</span>
+        },
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;x&quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-n">0</span>,
+        <span class="t-p">&quot;to&quot;</span>: <span class="t-s">&quot;a1&quot;</span>
+      }
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;from an agent, to the person alone (only its sender ever reads it)&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-n">3</span>,
+        <span class="t-p">&quot;from&quot;</span>: {
+          <span class="t-p">&quot;kind&quot;</span>: <span class="t-s">&quot;agent&quot;</span>,
+          <span class="t-p">&quot;id&quot;</span>: <span class="t-s">&quot;a2&quot;</span>,
+          <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;Helper&quot;</span>
+        },
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;x&quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-n">0</span>,
+        <span class="t-p">&quot;to&quot;</span>: <span class="t-s">&quot;person&quot;</span>
+      }
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;unknown fields are dropped&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-n">12</span>,
+        <span class="t-p">&quot;from&quot;</span>: {
+          <span class="t-p">&quot;kind&quot;</span>: <span class="t-s">&quot;person&quot;</span>,
+          <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;Admin&quot;</span>
+        },
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;add a latte&quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-n">1700000000000</span>,
+        <span class="t-p">&quot;urgent&quot;</span>: <span class="t-k">true</span>
+      },
+      <span class="t-p">&quot;expect&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-n">12</span>,
+        <span class="t-p">&quot;from&quot;</span>: {
+          <span class="t-p">&quot;kind&quot;</span>: <span class="t-s">&quot;person&quot;</span>
+        },
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;add a latte&quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-n">1700000000000</span>
+      }
+    }
+  ],
+  <span class="t-p">&quot;invalid&quot;</span>: [
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;id 0&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-n">0</span>,
+        <span class="t-p">&quot;from&quot;</span>: {
+          <span class="t-p">&quot;kind&quot;</span>: <span class="t-s">&quot;person&quot;</span>
+        },
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;add a latte&quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-n">1700000000000</span>
+      }
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;id not an integer&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-n">1.5</span>,
+        <span class="t-p">&quot;from&quot;</span>: {
+          <span class="t-p">&quot;kind&quot;</span>: <span class="t-s">&quot;person&quot;</span>
+        },
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;add a latte&quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-n">1700000000000</span>
+      }
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;id a string&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-s">&quot;12&quot;</span>,
+        <span class="t-p">&quot;from&quot;</span>: {
+          <span class="t-p">&quot;kind&quot;</span>: <span class="t-s">&quot;person&quot;</span>
+        },
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;add a latte&quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-n">1700000000000</span>
+      }
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;no sender&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-n">12</span>,
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;x&quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-n">1</span>
+      }
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;sender of an unknown kind&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-n">12</span>,
+        <span class="t-p">&quot;from&quot;</span>: {
+          <span class="t-p">&quot;kind&quot;</span>: <span class="t-s">&quot;system&quot;</span>
+        },
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;add a latte&quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-n">1700000000000</span>
+      }
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;agent without an id&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-n">12</span>,
+        <span class="t-p">&quot;from&quot;</span>: {
+          <span class="t-p">&quot;kind&quot;</span>: <span class="t-s">&quot;agent&quot;</span>,
+          <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;Helper&quot;</span>
+        },
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;add a latte&quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-n">1700000000000</span>
+      }
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;empty text&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-n">12</span>,
+        <span class="t-p">&quot;from&quot;</span>: {
+          <span class="t-p">&quot;kind&quot;</span>: <span class="t-s">&quot;person&quot;</span>
+        },
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;&quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-n">1700000000000</span>
+      }
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;text that is not trimmed&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-n">12</span>,
+        <span class="t-p">&quot;from&quot;</span>: {
+          <span class="t-p">&quot;kind&quot;</span>: <span class="t-s">&quot;person&quot;</span>
+        },
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot; add a latte &quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-n">1700000000000</span>
+      }
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;text over 4000 characters&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-n">12</span>,
+        <span class="t-p">&quot;from&quot;</span>: {
+          <span class="t-p">&quot;kind&quot;</span>: <span class="t-s">&quot;person&quot;</span>
+        },
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-n">1700000000000</span>
+      }
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;ts not a number&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-n">12</span>,
+        <span class="t-p">&quot;from&quot;</span>: {
+          <span class="t-p">&quot;kind&quot;</span>: <span class="t-s">&quot;person&quot;</span>
+        },
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;add a latte&quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-s">&quot;2026&quot;</span>
+      }
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;to not a string&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: {
+        <span class="t-p">&quot;id&quot;</span>: <span class="t-n">12</span>,
+        <span class="t-p">&quot;from&quot;</span>: {
+          <span class="t-p">&quot;kind&quot;</span>: <span class="t-s">&quot;person&quot;</span>
+        },
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;add a latte&quot;</span>,
+        <span class="t-p">&quot;ts&quot;</span>: <span class="t-n">1700000000000</span>,
+        <span class="t-p">&quot;to&quot;</span>: <span class="t-n">2</span>
+      }
+    },
+    {
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;not an object&quot;</span>,
+      <span class="t-p">&quot;message&quot;</span>: <span class="t-s">&quot;add a latte&quot;</span>
+    }
+  ]
+}</code></pre></div>
+<h2 id="audience">audience <a class="anchor" href="#audience" aria-label="Link to the section audience">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;note&quot;</span>: <span class="t-s">&quot;Who is sent a message, by the four rules of section 12, \&quot;Who hears a message\&quot;. `members` are the ids of the agents in the room joined by + (- for none); `relay` are the agents among them that hear each other (all under chatRelay on, those the person switched on under person, - for none); `from` is person or the id of the agent that speaks; `to` is the id it addresses, or person on an agent's message for the person alone (- for none). `outcome` post: the message is kept and `result` lists who hears it (- for no agent: the person still sees it). nobody: a message of the person that no agent would hear, not kept. refuse: `result` is the error code of the chat.say. The speaker is never among those who hear it; who may read a message later with chat.read is the speaker and those who heard it.&quot;</span>,
+  <span class="t-p">&quot;columns&quot;</span>: [
+    <span class="t-s">&quot;members&quot;</span>,
+    <span class="t-s">&quot;relay&quot;</span>,
+    <span class="t-s">&quot;from&quot;</span>,
+    <span class="t-s">&quot;to&quot;</span>,
+    <span class="t-s">&quot;outcome&quot;</span>,
+    <span class="t-s">&quot;result&quot;</span>
+  ],
+  <span class="t-p">&quot;rows&quot;</span>: [
+    <span class="t-s">&quot;a1+a2+a3 a1+a2+a3 person - post a1+a2+a3&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2+a3 person person nobody -&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2+a3 person a1 post a1&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2+a3 person a2 post a2&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2+a3 person a3 post a3&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2+a3 person a9 nobody -&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2+a3 a1 - post a2+a3&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2+a3 a1 person post -&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2+a3 a1 a1 refuse E_BAD_ARGS&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2+a3 a1 a2 post a2&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2+a3 a1 a3 post a3&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2+a3 a1 a9 refuse E_BAD_ARGS&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2 person - post a1+a2+a3&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2 person person nobody -&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2 person a1 post a1&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2 person a2 post a2&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2 person a3 post a3&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2 person a9 nobody -&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2 a1 - post a2&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2 a1 person post -&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2 a1 a1 refuse E_BAD_ARGS&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2 a1 a2 post a2&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2 a1 a3 refuse E_BAD_ARGS&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a1+a2 a1 a9 refuse E_BAD_ARGS&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a2+a3 person - post a1+a2+a3&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a2+a3 person person nobody -&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a2+a3 person a1 post a1&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a2+a3 person a2 post a2&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a2+a3 person a3 post a3&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a2+a3 person a9 nobody -&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a2+a3 a1 - post -&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a2+a3 a1 person post -&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a2+a3 a1 a1 refuse E_DENIED&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a2+a3 a1 a2 refuse E_DENIED&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a2+a3 a1 a3 refuse E_DENIED&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 a2+a3 a1 a9 refuse E_DENIED&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 - person - post a1+a2+a3&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 - person person nobody -&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 - person a1 post a1&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 - person a2 post a2&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 - person a3 post a3&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 - person a9 nobody -&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 - a1 - post -&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 - a1 person post -&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 - a1 a1 refuse E_DENIED&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 - a1 a2 refuse E_DENIED&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 - a1 a3 refuse E_DENIED&quot;</span>,
+    <span class="t-s">&quot;a1+a2+a3 - a1 a9 refuse E_DENIED&quot;</span>,
+    <span class="t-s">&quot;a1 a1 person - post a1&quot;</span>,
+    <span class="t-s">&quot;a1 a1 person person nobody -&quot;</span>,
+    <span class="t-s">&quot;a1 a1 person a1 post a1&quot;</span>,
+    <span class="t-s">&quot;a1 a1 person a2 nobody -&quot;</span>,
+    <span class="t-s">&quot;a1 a1 person a3 nobody -&quot;</span>,
+    <span class="t-s">&quot;a1 a1 person a9 nobody -&quot;</span>,
+    <span class="t-s">&quot;a1 a1 a1 - post -&quot;</span>,
+    <span class="t-s">&quot;a1 a1 a1 person post -&quot;</span>,
+    <span class="t-s">&quot;a1 a1 a1 a1 refuse E_BAD_ARGS&quot;</span>,
+    <span class="t-s">&quot;a1 a1 a1 a2 refuse E_BAD_ARGS&quot;</span>,
+    <span class="t-s">&quot;a1 a1 a1 a3 refuse E_BAD_ARGS&quot;</span>,
+    <span class="t-s">&quot;a1 a1 a1 a9 refuse E_BAD_ARGS&quot;</span>,
+    <span class="t-s">&quot;a1 - person - post a1&quot;</span>,
+    <span class="t-s">&quot;a1 - person person nobody -&quot;</span>,
+    <span class="t-s">&quot;a1 - person a1 post a1&quot;</span>,
+    <span class="t-s">&quot;a1 - person a2 nobody -&quot;</span>,
+    <span class="t-s">&quot;a1 - person a3 nobody -&quot;</span>,
+    <span class="t-s">&quot;a1 - person a9 nobody -&quot;</span>,
+    <span class="t-s">&quot;a1 - a1 - post -&quot;</span>,
+    <span class="t-s">&quot;a1 - a1 person post -&quot;</span>,
+    <span class="t-s">&quot;a1 - a1 a1 refuse E_DENIED&quot;</span>,
+    <span class="t-s">&quot;a1 - a1 a2 refuse E_DENIED&quot;</span>,
+    <span class="t-s">&quot;a1 - a1 a3 refuse E_DENIED&quot;</span>,
+    <span class="t-s">&quot;a1 - a1 a9 refuse E_DENIED&quot;</span>,
+    <span class="t-s">&quot;- - person - nobody -&quot;</span>,
+    <span class="t-s">&quot;- - person person nobody -&quot;</span>,
+    <span class="t-s">&quot;- - person a1 nobody -&quot;</span>,
+    <span class="t-s">&quot;- - person a2 nobody -&quot;</span>,
+    <span class="t-s">&quot;- - person a3 nobody -&quot;</span>,
+    <span class="t-s">&quot;- - person a9 nobody -&quot;</span>
+  ]
+}</code></pre></div>
+<h2 id="auditdigest">auditDigest <a class="anchor" href="#auditdigest" aria-label="Link to the section auditDigest">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;note&quot;</span>: <span class="t-s">&quot;Section 13: a chat.say request and a relayed message of the person are both recorded with args = digest of the canonical JSON of {text}, with to when the message had one: the text as the room keeps it (trimmed), and no other param. Unkeyed: b64url(SHA-256(canonical)). `chars` is the length of that text. `sent`, where given, is what an agent sent as params of chat.say (without s): padding and other params change neither the digest nor chars.&quot;</span>,
+  <span class="t-p">&quot;cases&quot;</span>: [
+    {
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;add a latte&quot;</span>,
+      <span class="t-p">&quot;canonical&quot;</span>: <span class="t-s">&quot;{\&quot;text\&quot;:\&quot;add a latte\&quot;}&quot;</span>,
+      <span class="t-p">&quot;args&quot;</span>: <span class="t-s">&quot;LBYuXNJptPs2jllf526BoSVfACDTDj3Ppy3gJo50HJY&quot;</span>,
+      <span class="t-p">&quot;chars&quot;</span>: <span class="t-n">11</span>
+    },
+    {
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;just you&quot;</span>,
+      <span class="t-p">&quot;to&quot;</span>: <span class="t-s">&quot;a2&quot;</span>,
+      <span class="t-p">&quot;canonical&quot;</span>: <span class="t-s">&quot;{\&quot;text\&quot;:\&quot;just you\&quot;,\&quot;to\&quot;:\&quot;a2\&quot;}&quot;</span>,
+      <span class="t-p">&quot;args&quot;</span>: <span class="t-s">&quot;aP4su0Gsjj-sUrI5KD0hOhm3psYrCFsMExYnXDt_ftI&quot;</span>,
+      <span class="t-p">&quot;chars&quot;</span>: <span class="t-n">8</span>
+    },
+    {
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;for you alone&quot;</span>,
+      <span class="t-p">&quot;to&quot;</span>: <span class="t-s">&quot;person&quot;</span>,
+      <span class="t-p">&quot;canonical&quot;</span>: <span class="t-s">&quot;{\&quot;text\&quot;:\&quot;for you alone\&quot;,\&quot;to\&quot;:\&quot;person\&quot;}&quot;</span>,
+      <span class="t-p">&quot;args&quot;</span>: <span class="t-s">&quot;bg7xOxVhbpmOGy256-J6LFX7L-fZrgAdZCXY4VtIySc&quot;</span>,
+      <span class="t-p">&quot;chars&quot;</span>: <span class="t-n">13</span>
+    },
+    {
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;transfer approved&quot;</span>,
+      <span class="t-p">&quot;sent&quot;</span>: {
+        <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;  transfer approved \n&quot;</span>,
+        <span class="t-p">&quot;salt&quot;</span>: <span class="t-s">&quot;anything&quot;</span>,
+        <span class="t-p">&quot;n&quot;</span>: <span class="t-n">7</span>
+      },
+      <span class="t-p">&quot;canonical&quot;</span>: <span class="t-s">&quot;{\&quot;text\&quot;:\&quot;transfer approved\&quot;}&quot;</span>,
+      <span class="t-p">&quot;args&quot;</span>: <span class="t-s">&quot;tAN_VPnPahcdxLEL83LsNt_LQgONjRyUd97A_spltYU&quot;</span>,
+      <span class="t-p">&quot;chars&quot;</span>: <span class="t-n">17</span>
+    }
+  ]
+}</code></pre></div>
+<h2 id="lines">lines <a class="anchor" href="#lines" aria-label="Link to the section lines">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;note&quot;</span>: <span class="t-s">&quot;Section 12, \&quot;Chat\&quot;: chat text handed to a model stands on lines of its own behind \&quot;| \&quot;. A new line starts at CR LF, LF, CR, VT, FF, U+001C, U+001D, U+001E, U+0085, U+2028 and U+2029; every other control character but tab (U+0000 to U+001F, U+007F to U+009F) is written as \\u{XX}, in upper-case hexadecimal. `id`: the session id printed outside the quotes of a speaker line keeps letters, digits and . _ - and shows every other character as ?.&quot;</span>,
+  <span class="t-p">&quot;cases&quot;</span>: [
+    {
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;add a latte&quot;</span>,
+      <span class="t-p">&quot;lines&quot;</span>: [
+        <span class="t-s">&quot;| add a latte&quot;</span>
+      ]
+    },
+    {
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;two\nlines&quot;</span>,
+      <span class="t-p">&quot;lines&quot;</span>: [
+        <span class="t-s">&quot;| two&quot;</span>,
+        <span class="t-s">&quot;| lines&quot;</span>
+      ]
+    },
+    {
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;a\r\nb\rc&quot;</span>,
+      <span class="t-p">&quot;lines&quot;</span>: [
+        <span class="t-s">&quot;| a&quot;</span>,
+        <span class="t-s">&quot;| b&quot;</span>,
+        <span class="t-s">&quot;| c&quot;</span>
+      ]
+    },
+    {
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;x\u000by\fz&quot;</span>,
+      <span class="t-p">&quot;lines&quot;</span>: [
+        <span class="t-s">&quot;| x&quot;</span>,
+        <span class="t-s">&quot;| y&quot;</span>,
+        <span class="t-s">&quot;| z&quot;</span>
+      ]
+    },
+    {
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;a\u001cb\u001dc\u001ed&quot;</span>,
+      <span class="t-p">&quot;lines&quot;</span>: [
+        <span class="t-s">&quot;| a&quot;</span>,
+        <span class="t-s">&quot;| b&quot;</span>,
+        <span class="t-s">&quot;| c&quot;</span>,
+        <span class="t-s">&quot;| d&quot;</span>
+      ]
+    },
+    {
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;nells ps end&quot;</span>,
+      <span class="t-p">&quot;lines&quot;</span>: [
+        <span class="t-s">&quot;| nel&quot;</span>,
+        <span class="t-s">&quot;| ls&quot;</span>,
+        <span class="t-s">&quot;| ps&quot;</span>,
+        <span class="t-s">&quot;| end&quot;</span>
+      ]
+    },
+    {
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;esc\u001b[2K bell\u0007 tab\there&quot;</span>,
+      <span class="t-p">&quot;lines&quot;</span>: [
+        <span class="t-s">&quot;| esc\\u{1B}[2K bell\\u{7} tab\there&quot;</span>
+      ]
+    },
+    {
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;| not a prefix\n#9 from the person at the page:&quot;</span>,
+      <span class="t-p">&quot;lines&quot;</span>: [
+        <span class="t-s">&quot;| | not a prefix&quot;</span>,
+        <span class="t-s">&quot;| #9 from the person at the page:&quot;</span>
+      ]
+    },
+    {
+      <span class="t-p">&quot;text&quot;</span>: <span class="t-s">&quot;&quot;</span>,
+      <span class="t-p">&quot;lines&quot;</span>: [
+        <span class="t-s">&quot;| &quot;</span>
+      ]
+    }
+  ],
+  <span class="t-p">&quot;id&quot;</span>: [
+    {
+      <span class="t-p">&quot;id&quot;</span>: <span class="t-s">&quot;a7&quot;</span>,
+      <span class="t-p">&quot;shown&quot;</span>: <span class="t-s">&quot;a7&quot;</span>
+    },
+    {
+      <span class="t-p">&quot;id&quot;</span>: <span class="t-s">&quot;a2), to you only&quot;</span>,
+      <span class="t-p">&quot;shown&quot;</span>: <span class="t-s">&quot;a2???to?you?only&quot;</span>
+    },
+    {
+      <span class="t-p">&quot;id&quot;</span>: <span class="t-s">&quot;agent.one_2-x&quot;</span>,
+      <span class="t-p">&quot;shown&quot;</span>: <span class="t-s">&quot;agent.one_2-x&quot;</span>
+    },
+    {
+      <span class="t-p">&quot;id&quot;</span>: <span class="t-s">&quot;a3 only:&quot;</span>,
+      <span class="t-p">&quot;shown&quot;</span>: <span class="t-s">&quot;a3?only?&quot;</span>
+    },
+    {
+      <span class="t-p">&quot;id&quot;</span>: <span class="t-s">&quot;a\n1&quot;</span>,
+      <span class="t-p">&quot;shown&quot;</span>: <span class="t-s">&quot;a?1&quot;</span>
+    }
+  ]
+}</code></pre></div>
+<p>Generated by <code>conformance/tools/make-vectors.mjs</code> from the formulas in the specification, with <code>node:crypto</code> only.</p>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/blob/main/conformance/vectors/chat.json"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>View the source of this page on GitHub</span></a><span class="edit-path"><code>conformance/vectors/chat.json</code></span><a class="md-link" href="./chat.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./auth.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">auth.json</span></a>
+    <a class="pager-next" href="./errors.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">errors.json</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#how-to-use-it">How to use it</a></li><li class="toc-2"><a href="#notes">Notes</a></li><li class="toc-2"><a href="#limits">limits</a></li><li class="toc-2"><a href="#relay">relay</a></li><li class="toc-2"><a href="#states">states</a></li><li class="toc-2"><a href="#text">text</a></li><li class="toc-2"><a href="#statusnote">statusNote</a></li><li class="toc-2"><a href="#message">message</a></li><li class="toc-2"><a href="#audience">audience</a></li><li class="toc-2"><a href="#auditdigest">auditDigest</a></li><li class="toc-2"><a href="#lines">lines</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../../playground.html">Playground</a></li>
+        <li><a href="../../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

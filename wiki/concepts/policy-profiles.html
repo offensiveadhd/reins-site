@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Policy profiles · Reins</title>
+<meta name="description" content="The three profiles, open, guarded and kiosk, what each row of their table means, how single actions are overridden, and why a request has to pass two policies.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/concepts/policy-profiles.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Policy profiles">
+<meta property="og:description" content="The three profiles, open, guarded and kiosk, what each row of their table means, how single actions are overridden, and why a request has to pass two policies.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/concepts/policy-profiles.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="./roles-and-trust.html">Roles and trust</a></li><li><a href="./transports-and-framing.html">Transports and framing</a></li><li><a href="./handshake.html">Handshake and sealing</a></li><li><a href="./manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="./grants-and-scopes.html">Grants and scopes</a></li><li><a href="./policy-profiles.html" aria-current="page">Policy profiles</a></li><li><a href="./consent.html">Consent</a></li><li><a href="./human-control.html">Human control</a></li><li><a href="./permission-levels.html">Permission levels</a></li><li><a href="./observation.html">Observation</a></li><li><a href="./cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="./rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="./audit-log.html">The audit log</a></li><li><a href="./chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#concepts">Concepts</a></li><li aria-current="page">Policy profiles</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Policy profiles</h1>
+        <p class="lede">The three profiles, open, guarded and kiosk, what each row of their table means, how single actions are overridden, and why a request has to pass two policies.</p>
+        
+      </header>
+      <h2 id="a-policy-is-a-profile-plus-overrides">A policy is a profile plus overrides <a class="anchor" href="#a-policy-is-a-profile-plus-overrides" aria-label="Link to the section A policy is a profile plus overrides">#</a></h2>
+<p>A policy answers one question for everything an agent asks: <strong>allow</strong>, <strong>confirm</strong> or <strong>deny</strong>. <code>confirm</code> means the person is asked on screen. The strictness order is allow &lt; confirm &lt; deny.</p>
+<p>Three profiles exist:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>open</code></th>
+<th><code>guarded</code></th>
+<th><code>kiosk</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>intended for</td>
+<td>local development</td>
+<td>a person's own browser</td>
+<td>unattended stations</td>
+</tr>
+<tr>
+<td>attach</td>
+<td>allow</td>
+<td>confirm</td>
+<td>allow, with a provisioned agent</td>
+</tr>
+<tr>
+<td>safe / sensitive / dangerous</td>
+<td>allow / confirm / confirm</td>
+<td>allow / confirm / deny</td>
+<td>allow / deny / deny</td>
+</tr>
+<tr>
+<td>scopes</td>
+<td>all</td>
+<td>all</td>
+<td>observe, act, cursor, show</td>
+</tr>
+<tr>
+<td>exposure</td>
+<td>auto</td>
+<td>auto</td>
+<td>annotated</td>
+</tr>
+<tr>
+<td>raw coordinates</td>
+<td>yes</td>
+<td>yes</td>
+<td>no</td>
+</tr>
+<tr>
+<td>a page inside a frame (<code>framed</code>)</td>
+<td>refused</td>
+<td>refused</td>
+<td>refused</td>
+</tr>
+<tr>
+<td>navigation</td>
+<td>same origin</td>
+<td>same origin</td>
+<td>off</td>
+</tr>
+<tr>
+<td>user controls</td>
+<td>pause, stop</td>
+<td>pause, stop</td>
+<td>pause</td>
+</tr>
+<tr>
+<td>levels the person may set (<code>human.levels</code>; strict and ask are always on offer)</td>
+<td>strict, ask, auto, bypass</td>
+<td>strict, ask, auto, bypass</td>
+<td>strict, ask</td>
+</tr>
+<tr>
+<td>the indicator opens the panel (<code>human.panel</code>)</td>
+<td>yes</td>
+<td>yes</td>
+<td>no</td>
+</tr>
+<tr>
+<td>agents hear each other in the chat (<code>chatRelay</code>)</td>
+<td><code>on</code>: always</td>
+<td><code>person</code>: once the person switches it on</td>
+<td><code>off</code>: never</td>
+</tr>
+<tr>
+<td>remember approvals (<code>consent.remember</code>)</td>
+<td>session</td>
+<td>never</td>
+<td>never</td>
+</tr>
+<tr>
+<td><code>consent.timeoutMs</code></td>
+<td>60 s</td>
+<td>60 s</td>
+<td>30 s</td>
+</tr>
+<tr>
+<td><code>human.yieldMs</code></td>
+<td>600 ms</td>
+<td>800 ms</td>
+<td>400 ms</td>
+</tr>
+<tr>
+<td>grant <code>ttlMs</code> / <code>idleMs</code></td>
+<td>8 h / 30 min</td>
+<td>2 h / 15 min</td>
+<td>8 h / 5 min</td>
+</tr>
+<tr>
+<td><code>rates</code> per second: observe, act, ui, cursor, show, nav, chat</td>
+<td>30, 30, 60, 120, 30, 2, 10</td>
+<td>20, 20, 40, 60, 20, 1, 5</td>
+<td>20, 10, 0, 60, 10, 0, 0</td>
+</tr>
+<tr>
+<td><code>pointerRate</code> per second</td>
+<td>4000</td>
+<td>2000</td>
+<td>2000</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong><code>open</code></strong> is for local development. Everything is reachable, and risky actions still ask. It is the only profile that remembers an approval for the rest of a grant.</li>
+<li><strong><code>guarded</code></strong> is the default, for a person's own browser. The person approves every attach and every sensitive action. Dangerous actions are denied. The person can change how much one agent asks, and agents in the chat hear each other only once the person says so.</li>
+<li><strong><code>kiosk</code></strong> is for unattended stations, where nobody is there to ask: a fixed allowlist, no synthetic input, no navigation, annotated elements only, no Stop button for visitors, no panel, no level to switch and no chat.</li>
+</ul>
+<h2 id="reading-the-table">Reading the table <a class="anchor" href="#reading-the-table" aria-label="Link to the section Reading the table">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Row</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>attach</td>
+<td>How a request to attach is decided. Under <code>kiosk</code> it is allowed for an agent the hub was provisioned with, and the page must hold a surface key.</td>
+</tr>
+<tr>
+<td>safe / sensitive / dangerous</td>
+<td>The decision for an action of each risk tier.</td>
+</tr>
+<tr>
+<td>scopes</td>
+<td>The ceiling on the scopes a grant may carry.</td>
+</tr>
+<tr>
+<td>exposure</td>
+<td>What the UI tree shows: <code>auto</code> is interactive elements, headings and the like, plus what is annotated; <code>annotated</code> is only what is annotated.</td>
+</tr>
+<tr>
+<td>raw coordinates</td>
+<td>Whether <code>cursor.move</code> may take a point, and whether a pointer stream may open. <code>ui.*</code> never takes coordinates.</td>
+</tr>
+<tr>
+<td>a page inside a frame</td>
+<td>No profile lets the driver connect inside a frame. An app opts in with <code>framed: true</code>.</td>
+</tr>
+<tr>
+<td>navigation</td>
+<td>Whether <code>nav.go</code> may open same-origin paths.</td>
+</tr>
+<tr>
+<td>user controls</td>
+<td>Which buttons the indicator has.</td>
+</tr>
+<tr>
+<td>levels the person may set</td>
+<td>Which <a href="./permission-levels.html">permission levels</a> the panel offers. <code>strict</code> and <code>ask</code> are always on offer; the kiosk profile offers no other.</td>
+</tr>
+<tr>
+<td>the indicator opens the panel</td>
+<td>Whether the indicator's text is a button that opens the panel with its Permissions, Activity and Chat tabs.</td>
+</tr>
+<tr>
+<td>agents hear each other in the chat</td>
+<td><code>chatRelay</code>: always, once the person switches it on, or never. See <a href="./chat.html">Chat</a>.</td>
+</tr>
+<tr>
+<td>remember approvals</td>
+<td>With <code>session</code>, an approved action is not asked again under the same grant.</td>
+</tr>
+<tr>
+<td><code>consent.timeoutMs</code></td>
+<td>A prompt nobody answers is a refusal after this long.</td>
+</tr>
+<tr>
+<td><code>human.yieldMs</code></td>
+<td>After real input from the person, input-synthesising commands wait this long.</td>
+</tr>
+<tr>
+<td>grant <code>ttlMs</code> / <code>idleMs</code></td>
+<td>The lifetime of a grant, and how long it survives without a request.</td>
+</tr>
+<tr>
+<td><code>rates</code></td>
+<td>Requests per second by scope, enforced by the hub. A rate of 0 means the scope cannot be used.</td>
+</tr>
+<tr>
+<td><code>pointerRate</code></td>
+<td>Points per second on pointer streams.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Every field is described in <a href="../reference/policy-fields.html">Policy fields</a>.</p>
+<h2 id="choosing-and-overriding">Choosing and overriding <a class="anchor" href="#choosing-and-overriding" aria-label="Link to the section Choosing and overriding">#</a></h2>
+<p>Pass a profile name, or a profile with overrides. Nested objects merge one level deep.</p>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>createDriver({
+  app,
+  policy: {
+    profile: <span class="t-s">'guarded'</span>,
+    nav: [],                              <span class="t-c">// one page: no agent navigation at all</span>
+    actions: {
+      <span class="t-s">'order.refund'</span>: <span class="t-s">'deny'</span>,             <span class="t-c">// off, whatever its risk tier says</span>
+      <span class="t-s">'cart.*'</span>: <span class="t-s">'allow'</span>,                  <span class="t-c">// a prefix</span>
+    },
+    consent: { timeoutMs: <span class="t-n">30_000</span> },
+  },
+});</code></pre></div>
+<p>An unknown field, or a value of the wrong type, is an error when the policy is resolved: a mistyped restriction never means &quot;any&quot;.</p>
+<h2 id="how-an-action-is-decided">How an action is decided <a class="anchor" href="#how-an-action-is-decided" aria-label="Link to the section How an action is decided">#</a></h2>
+<p>The driver looks for an override in <code>policy.actions</code>: the exact name first, then the longest matching <code>prefix.*</code>. Without one it uses <code>policy.risk[action.risk]</code>.</p>
+<p>With the overrides above, <code>order.refund</code> is denied, <code>cart.add</code> and <code>cart.clear</code> are allowed, and <code>order.submit</code>, which is <code>sensitive</code> and has no override, is <code>confirm</code> under <code>guarded</code>.</p>
+<h2 id="two-enforcement-points">Two enforcement points <a class="anchor" href="#two-enforcement-points" aria-label="Link to the section Two enforcement points">#</a></h2>
+<p>The hub has a policy of its own. A request has to pass both.</p>
+<p>The hub evaluates its policy on every request and either refuses, forwards, or forwards with <code>c:1</code>, which says that the hub's policy demands a human confirmation. The surface evaluates the app's policy and takes the stricter of its decision, of what the hub said at attach that it decides for the action, and of <code>c:1</code>.</p>
+<p>Rate limits and grant expiry are the hub's job. Exposure, privacy, frames, consent and human control are the surface's. The person sets levels, rules and scope switches on the surface; the hub caps the levels by its own policy and enforces the scopes. The page enforces its policy by itself, so the app's guardrails hold even behind a misconfigured hub.</p>
+<p>Start the hub with a profile, and optionally a configuration file that carries a whole policy object:</p>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npx <span class="t-f">--no</span> -- reins-hub <span class="t-f">--profile</span> kiosk <span class="t-f">--allow-origin</span> http://localhost:5173</code></pre></div>
+<h2 id="frames">Frames <a class="anchor" href="#frames" aria-label="Link to the section Frames">#</a></h2>
+<p>A page inside a frame is not in charge of what the person sees of it. The page around the frame can cover or overlay any part of it, the consent prompt and the indicator included, and the framed page cannot tell.</p>
+<p>A driver whose document is not the top-level document of its tab does not connect to a hub unless the app's policy sets <code>framed: true</code>. Its <code>connect()</code> fails with <code>E_DENIED</code> before anything is sent to the hub or added to the page. No profile sets <code>framed</code>. An app that sets it should also say which pages may embed it, with a <code>Content-Security-Policy: frame-ancestors</code> header.</p>
+<p>An Electron <code>&lt;webview&gt;</code> guest is in the same position, and its driver cannot tell: the guest is the top-level document of its own frame tree, while the page that embeds it can draw over it. That check is the main process's.</p>
+<h2 id="see-the-profiles-side-by-side">See the profiles side by side <a class="anchor" href="#see-the-profiles-side-by-side" aria-label="Link to the section See the profiles side by side">#</a></h2>
+<p>The <a href="../../playground.html">playground</a> runs the same scripted assistant under each profile: switch between <code>guarded</code>, <code>kiosk</code> and <code>open</code> at the top of the page.</p>
+<h2 id="for-implementers">For implementers <a class="anchor" href="#for-implementers" aria-label="Link to the section For implementers">#</a></h2>
+<p>The profile table, the override precedence and the strictness order are in the test vectors: <a href="../implementers/vectors/policy.html"><code>policy.json</code></a>.</p>
+<h2 id="further-reading">Further reading <a class="anchor" href="#further-reading" aria-label="Link to the section Further reading">#</a></h2>
+<ul>
+<li><a href="./consent.html">Consent</a> and <a href="./human-control.html">Human control</a></li>
+<li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li>
+<li><a href="../reference/specification.html#12-policy">Specification, section 12</a></li>
+</ul>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/concepts/policy-profiles.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/concepts/policy-profiles.md</code></span><a class="md-link" href="./policy-profiles.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./grants-and-scopes.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Grants and scopes</span></a>
+    <a class="pager-next" href="./consent.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Consent</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#a-policy-is-a-profile-plus-overrides">A policy is a profile plus overrides</a></li><li class="toc-2"><a href="#reading-the-table">Reading the table</a></li><li class="toc-2"><a href="#choosing-and-overriding">Choosing and overriding</a></li><li class="toc-2"><a href="#how-an-action-is-decided">How an action is decided</a></li><li class="toc-2"><a href="#two-enforcement-points">Two enforcement points</a></li><li class="toc-2"><a href="#frames">Frames</a></li><li class="toc-2"><a href="#see-the-profiles-side-by-side">See the profiles side by side</a></li><li class="toc-2"><a href="#for-implementers">For implementers</a></li><li class="toc-2"><a href="#further-reading">Further reading</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

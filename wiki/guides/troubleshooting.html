@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Troubleshooting · Reins</title>
+<meta name="description" content="Every error code of the protocol with what causes it and what to do, and the problems that show up before any code does.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/guides/troubleshooting.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Troubleshooting">
+<meta property="og:description" content="Every error code of the protocol with what causes it and what to do, and the problems that show up before any code does.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/guides/troubleshooting.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="./kiosk-deployment.html">Kiosk deployment</a></li><li><a href="./surface-keys.html">Surface keys</a></li><li><a href="./actions-and-risk.html">Actions and risk tiers</a></li><li><a href="./chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="./chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="./privacy-annotations.html">Privacy annotations</a></li><li><a href="./strict-csp.html">Running under a strict CSP</a></li><li><a href="./troubleshooting.html" aria-current="page">Troubleshooting</a></li><li><a href="./electron.html">Electron: build it in</a></li><li><a href="./adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="./claude-and-hermes.html">Claude and Hermes</a></li><li><a href="./hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#guides">Guides</a></li><li aria-current="page">Troubleshooting</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Troubleshooting</h1>
+        <p class="lede">Every error code of the protocol with what causes it and what to do, and the problems that show up before any code does.</p>
+        
+      </header>
+      <p>Every refusal in Reins carries a code and a short message. The codes are a closed list: <a href="../reference/error-codes.html">Error codes</a> has the table. This page says, for each one, what usually causes it and what to do. A receiver reads an unknown code in a response as <code>E_INTERNAL</code> and in a <code>bye</code> as <code>E_GONE</code>.</p>
+<h2 id="before-any-code-setup-problems">Before any code: setup problems <a class="anchor" href="#before-any-code-setup-problems" aria-label="Link to the section Before any code: setup problems">#</a></h2>
+<h3 id="the-mcp-tools-are-listed-and-every-call-fails-with-e_auth">The MCP tools are listed, and every call fails with E_AUTH <a class="anchor" href="#the-mcp-tools-are-listed-and-every-call-fails-with-e_auth" aria-label="Link to the section The MCP tools are listed, and every call fails with E_AUTH">#</a></h3>
+<p>The registration holds a relative path. The harness starts the adapter in whatever folder the session is in, and from there a relative <code>.reins/token</code> is not found. Register with full paths, or register the launcher, which needs none:</p>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>claude mcp add <span class="t-f">--scope</span> user reins node <span class="t-s">&quot;$HOME/.reins/reins.mjs&quot;</span> mcp</code></pre></div>
+<p>See <a href="../start/mcp.html">Use it from Claude Code and other MCP harnesses</a>.</p>
+<h3 id="a-session-has-no-reins-tools-at-all">A session has no Reins tools at all <a class="anchor" href="#a-session-has-no-reins-tools-at-all" aria-label="Link to the section A session has no Reins tools at all">#</a></h3>
+<p>Either it was running before you registered the adapter (start a new agent session: one that is already running does not get the tools), or the adapter was registered without <code>--scope user</code> and the session was opened in another folder.</p>
+<h3 id="npx-offers-to-install-a-package-called-reins-mcp">npx offers to install a package called reins-mcp <a class="anchor" href="#npx-offers-to-install-a-package-called-reins-mcp" aria-label="Link to the section npx offers to install a package called reins-mcp">#</a></h3>
+<p>Reins is not on the npm registry, and <code>reins-mcp</code> there is the name of an unrelated package. In a folder that does not have Reins, a plain <code>npx reins-mcp</code> offers to install that package instead, and installs it without asking when there is no terminal. Always run the commands as <code>npx --no -- &lt;command&gt;</code> in the project that installed the package: with <code>--no</code>, npx runs what is installed or stops.</p>
+<h3 id="unknown-option---no-in-powershell">unknown option '--no' in PowerShell <a class="anchor" href="#unknown-option---no-in-powershell" aria-label="Link to the section unknown option '--no' in PowerShell">#</a></h3>
+<p>When <code>claude</code> was installed with npm, PowerShell drops a bare <code>--</code>. Quote it: <code>'--'</code>. The Windows form of the registration command is in <a href="../start/mcp.html#without-the-launcher">the MCP page</a>.</p>
+<h3 id="the-arguments-are-not-valid-json-in-windows-powershell">The arguments are not valid JSON, in Windows PowerShell <a class="anchor" href="#the-arguments-are-not-valid-json-in-windows-powershell" aria-label="Link to the section The arguments are not valid JSON, in Windows PowerShell">#</a></h3>
+<p>Windows PowerShell (5.1, and PowerShell before 7.3) removes the double quotes inside an argument. Pipe the JSON and pass <code>-</code> in its place:</p>
+<div class="code" data-lang="powershell"><div class="code-bar"><span class="code-lang">PowerShell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-s">'{&quot;action&quot;:&quot;cart.add&quot;}'</span> | node <span class="t-s">&quot;$HOME/.reins/reins.mjs&quot;</span> reins_act -</code></pre></div>
+<h3 id="there-is-no-launcher-at-reinsreinsmjs">There is no launcher at ~/.reins/reins.mjs <a class="anchor" href="#there-is-no-launcher-at-reinsreinsmjs" aria-label="Link to the section There is no launcher at ~/.reins/reins.mjs">#</a></h3>
+<p>A hub writes it when it starts, and so does <code>npx --no -- reins-tools setup</code> in a project that has the package. A hub started with <code>--no-announce</code> writes none.</p>
+<h3 id="the-hub-does-not-start">The hub does not start <a class="anchor" href="#the-hub-does-not-start" aria-label="Link to the section The hub does not start">#</a></h3>
+<ul>
+<li><code>profile guarded needs at least one --allow-origin &lt;origin&gt;</code>: only the <code>open</code> profile has default origins. Name the origin of your page.</li>
+<li><code>invalid configuration ...</code>: the configuration file has a field of the wrong type, a key shorter than 32 characters, or a limit that is not a positive number.</li>
+<li>A secret file is refused: on POSIX the hub refuses an existing token, key or audit file if group or others have any permission on it. Restrict the file to your account. A failure to restrict a secret stops the hub.</li>
+<li>The audit log is refused: its chain or its head does not verify, a line is longer than 1 MiB, or the last line is incomplete. The hub does not continue a log it cannot vouch for.</li>
+</ul>
+<h3 id="the-page-stays-offline">The page stays offline <a class="anchor" href="#the-page-stays-offline" aria-label="Link to the section The page stays offline">#</a></h3>
+<p>The driver reports a blocked or refused connection as <code>offline</code> and keeps retrying with backoff. Check, in this order: that a hub is running on the port the page dials; that the hub admits the page's origin (<code>--allow-origin</code>); that your Content Security Policy allows the WebSocket in <code>connect-src</code>; and that the browser lets the page reach loopback. A page served from a public <code>https:</code> origin may need a permission in Chrome and Edge, and Safari has historically blocked it: see <a href="../reference/security-model.html#browser-access-to-loopback">Browser access to loopback</a>.</p>
+<h3 id="a-level-a-rule-or-a-scope-switch-is-gone">A level, a rule or a scope switch is gone <a class="anchor" href="#a-level-a-rule-or-a-scope-switch-is-gone" aria-label="Link to the section A level, a rule or a scope switch is gone">#</a></h3>
+<p>What lets an agent do more lasts for one grant: Auto, Bypass, an Allow rule, a remembered approval and &quot;Agents can hear each other&quot; are gone when the agent detaches and attaches again. Set them again. What the person tightened (Strict, the rules Ask and Block, scopes switched off) stays with that agent for as long as the page is open; a reload of the page ends those too.</p>
+<h3 id="an-agent-is-still-held-back-after-it-attached-again">An agent is still held back after it attached again <a class="anchor" href="#an-agent-is-still-held-back-after-it-attached-again" aria-label="Link to the section An agent is still held back after it attached again">#</a></h3>
+<p>That is meant. Strict, the person's Ask and Block rules and the scopes they switched off stay with an agent across grants, whatever session id or name it comes back under, until the person lifts them in the panel. The attach result carries <code>kept</code>, and <code>grant.scopes</code> lists the scopes in force. Where the page cannot tell agents apart (no credential id from the hub, or an unverified hub), what was tightened for one agent is put on every later grant, and such an attach asks the person even under <code>attach: allow</code>.</p>
+<h3 id="enter-or-space-does-not-answer-a-prompt">Enter or Space does not answer a prompt <a class="anchor" href="#enter-or-space-does-not-answer-a-prompt" aria-label="Link to the section Enter or Space does not answer a prompt">#</a></h3>
+<p>That is meant, for a moment. A prompt takes the focus, and keys that could be typing meant for the page answer nothing: a key answers only as Enter or Space on a button of the prompt that has the focus, or as Escape, at least 500 ms after the prompt appeared, after the focus landed on that button and after any other key, and at least 3 s after the last key that types. While that lock runs the card says &quot;Keys do not answer this request right now, because something was just typed.&quot; Use the pointer, or Tab to the button, let the focus rest there, and press Enter. See <a href="../concepts/consent.html#what-keeps-prompts-honest">Consent</a>.</p>
+<h3 id="allow-does-nothing-on-a-tall-card">Allow does nothing on a tall card <a class="anchor" href="#allow-does-nothing-on-a-tall-card" aria-label="Link to the section Allow does nothing on a tall card">#</a></h3>
+<p>A card taller than the window says &quot;Scroll to the end to review everything before allowing.&quot; Allow, &quot;Always allow&quot; and its second step wait until the card was scrolled to its end.</p>
+<h3 id="attach-and-every-command-that-changes-the-page-answer-e_paused-on-a-page-that-uses-zoom">Attach and every command that changes the page answer E_PAUSED on a page that uses zoom <a class="anchor" href="#attach-and-every-command-that-changes-the-page-answer-e_paused-on-a-page-that-uses-zoom" aria-label="Link to the section Attach and every command that changes the page answer E_PAUSED on a page that uses zoom">#</a></h3>
+<p>A page that puts <code>zoom</code> on <code>html</code> or <code>body</code> fails the driver's check that its overlay is drawn where the person can see and use it, for as long as it does. Reading still works; nothing else does. Reins does not drive such a page. See <a href="../concepts/human-control.html#the-indicator-has-to-stay-visible-and-usable">Human control</a>.</p>
+<h3 id="a-tool-option-is-refused-on-a-running-session">A tool option is refused on a running session <a class="anchor" href="#a-tool-option-is-refused-on-a-running-session" aria-label="Link to the section A tool option is refused on a running session">#</a></h3>
+<p>A shell session takes <code>--scopes</code>, <code>--kid</code>, <code>--token-file</code>, <code>--data-dir</code> and <code>--name</code> when it starts. A later command that names another value is refused with <code>E_BAD_ARGS</code>, and the message says what the session has. End the session with <code>stop</code> and start it again with the new value.</p>
+<h3 id="chat-serve-refuses-the-command">chat-serve refuses the command <a class="anchor" href="#chat-serve-refuses-the-command" aria-label="Link to the section chat-serve refuses the command">#</a></h3>
+<p><code>chat-serve</code> settles which file <code>--exec</code> names before it takes a message. A bare name is looked for in the folders of <code>PATH</code>, never in the working directory: write a path (<code>./agent</code>, <code>.\agent.exe</code>) for a file there. A <code>.cmd</code>, <code>.bat</code> or <code>.ps1</code> script needs a shell, and the runner uses none: name the program it wraps. On Windows a run is held in a job object made by a Windows PowerShell helper; where that helper cannot run, <code>chat-serve</code> starts no command at all and says why.</p>
+<h3 id="the-panel-offers-no-auto-or-bypass">The panel offers no Auto or Bypass <a class="anchor" href="#the-panel-offers-no-auto-or-bypass" aria-label="Link to the section The panel offers no Auto or Bypass">#</a></h3>
+<p><code>auto</code> and <code>bypass</code> are on offer only where the page's policy and the hub's policy both list them in <code>human.levels</code>. The kiosk profile offers neither and has no panel. The panel of an app adopted with <code>reins-electron</code> offers them only when the command was started with <code>--levels</code>.</p>
+<h3 id="one-agent-does-not-hear-the-other-in-the-chat">One agent does not hear the other in the chat <a class="anchor" href="#one-agent-does-not-hear-the-other-in-the-chat" aria-label="Link to the section One agent does not hear the other in the chat">#</a></h3>
+<p>Under the <code>guarded</code> profile agents hear each other only after the person switches &quot;Agents can hear each other&quot; on in the Chat tab, and an agent that attached later has to be added there. A <code>chat.say</code> to another agent answers <code>E_DENIED</code> until then. See <a href="../concepts/chat.html">Chat</a>.</p>
+<h3 id="chat-serve-refuses-to-serve-the-page">chat-serve refuses to serve the page <a class="anchor" href="#chat-serve-refuses-to-serve-the-page" aria-label="Link to the section chat-serve refuses to serve the page">#</a></h3>
+<p>The page did not prove a surface key to the hub, so any program on the computer that can reach the hub's port could be that page and write as its person. Give the app a <a href="./surface-keys.html">surface key</a>, or read what <code>--allow-unverified</code> accepts in <a href="./chat-serve.html">Serve chat from any command-line agent</a> before you pass it.</p>
+<h3 id="something-about-an-electron-window">Something about an Electron window <a class="anchor" href="#something-about-an-electron-window" aria-label="Link to the section Something about an Electron window">#</a></h3>
+<p>The Electron guide has a table of its own, from a missing preload to an app that does not answer on its debugging connection: see <a href="../reference/electron-guide.html#9-troubleshooting">Troubleshooting</a> there. Two that come up often: a page adopted through a debugging port (<code>--attach</code>, <code>--debug-port</code>) always shows &quot;Unverified hub&quot; and is listed as unverified, so <code>chat-serve</code> needs <code>--allow-unverified</code> there; and the Hermes plugin's <code>prompt.send</code> answers <code>E_DENIED</code> behind a hub that runs the plain guarded profile, which refuses dangerous actions: start the hub with the plugin's <code>hub.json</code>.</p>
+<h3 id="createdriver-throws-under-the-kiosk-profile">createDriver throws under the kiosk profile <a class="anchor" href="#createdriver-throws-under-the-kiosk-profile" aria-label="Link to the section createDriver throws under the kiosk profile">#</a></h3>
+<p>The kiosk profile has nobody to ask, so the driver must be able to verify the hub: pass <code>key</code>, the surface key. See <a href="./surface-keys.html">Surface keys</a>.</p>
+<h2 id="the-connection">The connection <a class="anchor" href="#the-connection" aria-label="Link to the section The connection">#</a></h2>
+<h3 id="e_bad_frame">E_BAD_FRAME <a class="anchor" href="#e_bad_frame" aria-label="Link to the section E_BAD_FRAME">#</a></h3>
+<p>A malformed frame, an unknown frame type, or a frame out of place: not valid JSON, an unknown <code>t</code>, a missing field, or something other than <code>hello</code> as the first frame.</p>
+<p><strong>What to do.</strong> This is a bug in whatever built the frame. If you are writing an implementation, check the frame against <code>protocol.ts</code> and decode it with the test vectors. A peer speaking another subprotocol, or plain HTTP, never gets this far: the hub requires <code>reins.v1</code>.</p>
+<h3 id="e_version">E_VERSION <a class="anchor" href="#e_version" aria-label="Link to the section E_VERSION">#</a></h3>
+<p>No protocol version in common. <code>challenge.v</code> lists what the hub speaks, and the peer has to pick one of them.</p>
+<p><strong>What to do.</strong> Update the older side. Protocol 0.1 is the only version so far.</p>
+<h3 id="e_auth">E_AUTH <a class="anchor" href="#e_auth" aria-label="Link to the section E_AUTH">#</a></h3>
+<p>A missing or wrong proof, an unknown <code>kid</code>, a surface key that is required and was not proved, or a key confirmation that failed.</p>
+<p><strong>What to do.</strong></p>
+<ul>
+<li>For an agent: check where the key comes from. The SDK looks in <code>options.key</code>, <code>REINS_TOKEN</code>, the file named by <code>REINS_TOKEN_FILE</code>, the token file the running hub announced, then <code>.reins/token</code> in the working directory. An old token file from another hub is the usual cause.</li>
+<li>For a page: &quot;surface key required&quot; means the hub holds a key for the app id the page claims, or runs with <code>--require-key</code>. Give the driver the same key.</li>
+<li>Failed proofs are answered slower each time, up to 3 s. A correct proof is never delayed.</li>
+</ul>
+<h3 id="e_origin">E_ORIGIN <a class="anchor" href="#e_origin" aria-label="Link to the section E_ORIGIN">#</a></h3>
+<p>The connection's origin is not allowed for its role. A surface's origin is not on the hub's allowlist, <code>hello.surface.url</code> has another origin, an agent connected from a browser page whose origin is not listed on its credential, or a surface tried a socket that takes agents only (<code>--no-surface-sockets</code>).</p>
+<p><strong>What to do.</strong> Start the hub with <code>--allow-origin</code> naming the page's exact origin: scheme, host and port. <code>http://localhost:5173</code> and <code>http://127.0.0.1:5173</code> are different origins. For an agent that runs in a page, list the page's origin in the credential's <code>origins</code>. A page loaded from a file has the origin <code>file://</code>, and one on an app's own scheme <code>app://name</code>: <code>*</code> does not cover either, and each has to be named. See <a href="./electron.html#what-origin-your-page-has">Electron: build Reins into your app</a>.</p>
+<h3 id="e_too_large">E_TOO_LARGE <a class="anchor" href="#e_too_large" aria-label="Link to the section E_TOO_LARGE">#</a></h3>
+<p>A frame, a manifest, a result or a set of consent arguments over its limit: a text frame over 256 KiB, a manifest over 64 KiB, an action result over 32 KiB, or arguments too large to show on a consent card (more than 40 entries, nesting deeper than 4, or 2000 code points).</p>
+<p><strong>What to do.</strong> Send less. Return a summary from an action, not a dataset. Give sensitive actions few and plain arguments. Send bulk data to a view with <code>show.view</code>.</p>
+<h3 id="e_timeout">E_TIMEOUT <a class="anchor" href="#e_timeout" aria-label="Link to the section E_TIMEOUT">#</a></h3>
+<p>The other side did not answer in time: 15 s for an ordinary request by default.</p>
+<p><strong>What to do.</strong> On <code>surface.attach</code> or <code>act</code>, treat it as a prompt nobody answered: ask the person to bring the page to the front, then ask again. The prompt can still be on the page, and a request approved there later still takes effect. Before repeating an action that is not safe to run twice, observe whether it ran. On other requests, the page is probably busy or in a background tab that runs its timers late.</p>
+<h3 id="e_gone">E_GONE <a class="anchor" href="#e_gone" aria-label="Link to the section E_GONE">#</a></h3>
+<p>The other side disconnected: the page was closed, reloaded or navigated while a request was pending.</p>
+<p><strong>What to do.</strong> List the surfaces again and attach again. A navigation that reloads the page ends the surface session, and the new page is a new surface with a new id.</p>
+<h2 id="the-grant">The grant <a class="anchor" href="#the-grant" aria-label="Link to the section The grant">#</a></h2>
+<h3 id="e_no_surface">E_NO_SURFACE <a class="anchor" href="#e_no_surface" aria-label="Link to the section E_NO_SURFACE">#</a></h3>
+<p>No such surface id, or a surface the credential may not attach to. The two cases get exactly the same answer, so an agent cannot probe for surfaces it is not meant to see.</p>
+<p><strong>What to do.</strong> Call <code>surfaces.list</code> and use an id from the answer. Surface ids change when a page reconnects. If the page is missing from the list, it is not connected to this hub, or the credential's <code>surfaces</code> restriction excludes its origin.</p>
+<h3 id="e_not_attached">E_NOT_ATTACHED <a class="anchor" href="#e_not_attached" aria-label="Link to the section E_NOT_ATTACHED">#</a></h3>
+<p>No live grant for this surface. The agent never attached, the person pressed Stop, the grant expired or went idle, or the page reloaded.</p>
+<p><strong>What to do.</strong> Attach again. With the MCP adapter and the shell tools, call <code>reins_attach</code>: it is the only tool that attaches. After Stop, the page asks the person before any new attach until it is reloaded.</p>
+<h3 id="e_scope">E_SCOPE <a class="anchor" href="#e_scope" aria-label="Link to the section E_SCOPE">#</a></h3>
+<p>The grant lacks the method's scope, the person switched that scope off, or no requested scope is permitted.</p>
+<p><strong>What to do.</strong> Read the scopes in force (<code>grant.scopes</code>; the MCP adapter tells them in a notice). The scope was cut by the credential's cap, the hub's policy or the page's policy, or the person switched it off in the panel: only they can switch it back on. The kiosk profile has no <code>ui</code>, no <code>nav</code> and no <code>chat</code>: use the app's actions there.</p>
+<h2 id="policy-and-the-person">Policy and the person <a class="anchor" href="#policy-and-the-person" aria-label="Link to the section Policy and the person">#</a></h2>
+<h3 id="e_denied">E_DENIED <a class="anchor" href="#e_denied" aria-label="Link to the section E_DENIED">#</a></h3>
+<p>Policy says no. An action whose risk tier or override is <code>deny</code>, at the page or at the hub, an attach under <code>attach: deny</code>, synthetic input aimed at a private field, a navigation outside <code>policy.nav</code> or on a page that is not <code>http(s)</code>, raw coordinates or a pointer stream where <code>policy.coordinates</code> is off, a <code>chat.say</code> to another agent while no agent hears the speaker, a manifest that does not match its pin, or a driver that was asked to connect inside a frame. No level the person sets relaxes a <code>deny</code>.</p>
+<p><strong>What to do.</strong> Do not retry: the answer will not change. Tell the person what could not be done. If you own the app and the denial is wrong, change the action's risk tier or the policy.</p>
+<h3 id="e_consent">E_CONSENT <a class="anchor" href="#e_consent" aria-label="Link to the section E_CONSENT">#</a></h3>
+<p>The person refused or blocked the action, or the prompt timed out.</p>
+<p><strong>What to do.</strong> Do not ask again at once: the same request is answered <code>E_RATE</code> during a cool-off, and three explicit refusals in a row revoke the grant. Say what you wanted to do and why, and let the person decide. When the answer came with no prompt (&quot;the user blocked this action&quot;), the person set the rule Block for that action in the panel: retrying changes nothing.</p>
+<h3 id="e_paused">E_PAUSED <a class="anchor" href="#e_paused" aria-label="Link to the section E_PAUSED">#</a></h3>
+<p>Control is paused, the indicator cannot be shown, or the person is using the page.</p>
+<p><strong>What to do.</strong> Wait. Reading still works while control is paused (<code>observe</code>, <code>read</code>, <code>state.get</code>). For <code>ui.*</code> commands the cause can be the person typing or clicking: the command waits for a quiet moment and gives up after 5 s. Subscribe to <code>user</code> events to learn when the person resumes.</p>
+<h2 id="limits">Limits <a class="anchor" href="#limits" aria-label="Link to the section Limits">#</a></h2>
+<h3 id="e_rate">E_RATE <a class="anchor" href="#e_rate" aria-label="Link to the section E_RATE">#</a></h3>
+<p>A rate or admission limit, or a consent cool-off: too many requests per second in one scope, more than 3 attaches in a burst, pointer points over <code>pointerRate</code>, or a request made during the cool-off after a refused prompt.</p>
+<p><strong>What to do.</strong> Slow down and retry after a pause. After a refusal the cool-off is 2 s and doubles with each further refusal, up to 60 s. A <code>stream.close</code> answered with <code>E_RATE</code> tells you that the hub had already closed that stream for going over its rate or its credit.</p>
+<h3 id="e_busy">E_BUSY <a class="anchor" href="#e_busy" aria-label="Link to the section E_BUSY">#</a></h3>
+<p>A capacity, a pending attach or consent prompt, a permission that changed while the request waited, or a peer that does not read: another attach by the same credential is in flight, a consent prompt is showing or queued on the page, the page already holds 32 grants, the hub is full (64 surfaces, 32 agents, 4 sessions per credential, 8 streams per agent), or 16 handshakes are already pending.</p>
+<p><strong>What to do.</strong> Wait for the prompt to be answered, then retry. <code>chat.say</code> and <code>chat.status</code> answer <code>E_BUSY</code> while a prompt is up as well: nothing talks over a decision. An action that used to run without asking and now answers <code>E_BUSY</code> may ask when you send it again: the person tightened something meanwhile. If sessions are the problem, close the ones you do not use: a shell session ends with <code>stop</code>.</p>
+<h2 id="the-request">The request <a class="anchor" href="#the-request" aria-label="Link to the section The request">#</a></h2>
+<h3 id="e_unknown_method">E_UNKNOWN_METHOD <a class="anchor" href="#e_unknown_method" aria-label="Link to the section E_UNKNOWN_METHOD">#</a></h3>
+<p>The method does not exist. An unknown method is answered before any parameter is checked.</p>
+<p><strong>What to do.</strong> Check the name against <a href="../reference/methods.html">Methods</a>. A method from a newer protocol version is unknown to an older peer.</p>
+<h3 id="e_bad_args">E_BAD_ARGS <a class="anchor" href="#e_bad_args" aria-label="Link to the section E_BAD_ARGS">#</a></h3>
+<p>Params fail validation: an unknown action, arguments that fail the action's schema (the message names the failing path), a property that was not declared, a target that takes no text, a label over 40 characters, or params nested too deeply.</p>
+<p><strong>What to do.</strong> Read the message, then the prompt card: it gives every action's signature. A model that gets <code>E_BAD_ARGS</code> can usually correct itself.</p>
+<h3 id="e_no_target">E_NO_TARGET <a class="anchor" href="#e_no_target" aria-label="Link to the section E_NO_TARGET">#</a></h3>
+<p>The target is not a live, exposed, enabled element, or is read-only: an unknown handle, an element that left the page, one that is hidden or not exposed, a disabled control, or a read-only field.</p>
+<p><strong>What to do.</strong> Observe again and use a handle from the new tree. Prefer semantic ids (<code>#cart.checkout</code>) to handles. Under the kiosk profile only annotated elements exist.</p>
+<h3 id="e_internal">E_INTERNAL <a class="anchor" href="#e_internal" aria-label="Link to the section E_INTERNAL">#</a></h3>
+<p>An unexpected failure: an action handler threw, a result is not JSON, or the audit log is unavailable. The message never carries internals.</p>
+<p><strong>What to do.</strong> Look at the page's console and the hub's output. If audited requests and attach all fail with <code>E_INTERNAL</code> while reads work, the hub cannot write its audit log and is failing closed on purpose: fix the log. If you own the handler, throw a <code>ReinsError</code> for refusals that are the agent's to fix.</p>
+<h2 id="still-stuck">Still stuck <a class="anchor" href="#still-stuck" aria-label="Link to the section Still stuck">#</a></h2>
+<p>Watch the frames. The <a href="../../playground.html">playground</a> shows every frame of a working session, which is a good reference for what a request and its answer look like. For a suspected vulnerability, do not open a public issue: see <a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a>.</p>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/guides/troubleshooting.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/guides/troubleshooting.md</code></span><a class="md-link" href="./troubleshooting.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./strict-csp.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Running under a strict CSP</span></a>
+    <a class="pager-next" href="./electron.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Electron: build it in</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#before-any-code-setup-problems">Before any code: setup problems</a></li><li class="toc-3"><a href="#the-mcp-tools-are-listed-and-every-call-fails-with-e_auth">The MCP tools are listed, and every call fails with E_AUTH</a></li><li class="toc-3"><a href="#a-session-has-no-reins-tools-at-all">A session has no Reins tools at all</a></li><li class="toc-3"><a href="#npx-offers-to-install-a-package-called-reins-mcp">npx offers to install a package called reins-mcp</a></li><li class="toc-3"><a href="#unknown-option---no-in-powershell">unknown option '--no' in PowerShell</a></li><li class="toc-3"><a href="#the-arguments-are-not-valid-json-in-windows-powershell">The arguments are not valid JSON, in Windows PowerShell</a></li><li class="toc-3"><a href="#there-is-no-launcher-at-reinsreinsmjs">There is no launcher at ~/.reins/reins.mjs</a></li><li class="toc-3"><a href="#the-hub-does-not-start">The hub does not start</a></li><li class="toc-3"><a href="#the-page-stays-offline">The page stays offline</a></li><li class="toc-3"><a href="#a-level-a-rule-or-a-scope-switch-is-gone">A level, a rule or a scope switch is gone</a></li><li class="toc-3"><a href="#an-agent-is-still-held-back-after-it-attached-again">An agent is still held back after it attached again</a></li><li class="toc-3"><a href="#enter-or-space-does-not-answer-a-prompt">Enter or Space does not answer a prompt</a></li><li class="toc-3"><a href="#allow-does-nothing-on-a-tall-card">Allow does nothing on a tall card</a></li><li class="toc-3"><a href="#attach-and-every-command-that-changes-the-page-answer-e_paused-on-a-page-that-uses-zoom">Attach and every command that changes the page answer E_PAUSED on a page that uses zoom</a></li><li class="toc-3"><a href="#a-tool-option-is-refused-on-a-running-session">A tool option is refused on a running session</a></li><li class="toc-3"><a href="#chat-serve-refuses-the-command">chat-serve refuses the command</a></li><li class="toc-3"><a href="#the-panel-offers-no-auto-or-bypass">The panel offers no Auto or Bypass</a></li><li class="toc-3"><a href="#one-agent-does-not-hear-the-other-in-the-chat">One agent does not hear the other in the chat</a></li><li class="toc-3"><a href="#chat-serve-refuses-to-serve-the-page">chat-serve refuses to serve the page</a></li><li class="toc-3"><a href="#something-about-an-electron-window">Something about an Electron window</a></li><li class="toc-3"><a href="#createdriver-throws-under-the-kiosk-profile">createDriver throws under the kiosk profile</a></li><li class="toc-2"><a href="#the-connection">The connection</a></li><li class="toc-3"><a href="#e_bad_frame">E_BAD_FRAME</a></li><li class="toc-3"><a href="#e_version">E_VERSION</a></li><li class="toc-3"><a href="#e_auth">E_AUTH</a></li><li class="toc-3"><a href="#e_origin">E_ORIGIN</a></li><li class="toc-3"><a href="#e_too_large">E_TOO_LARGE</a></li><li class="toc-3"><a href="#e_timeout">E_TIMEOUT</a></li><li class="toc-3"><a href="#e_gone">E_GONE</a></li><li class="toc-2"><a href="#the-grant">The grant</a></li><li class="toc-3"><a href="#e_no_surface">E_NO_SURFACE</a></li><li class="toc-3"><a href="#e_not_attached">E_NOT_ATTACHED</a></li><li class="toc-3"><a href="#e_scope">E_SCOPE</a></li><li class="toc-2"><a href="#policy-and-the-person">Policy and the person</a></li><li class="toc-3"><a href="#e_denied">E_DENIED</a></li><li class="toc-3"><a href="#e_consent">E_CONSENT</a></li><li class="toc-3"><a href="#e_paused">E_PAUSED</a></li><li class="toc-2"><a href="#limits">Limits</a></li><li class="toc-3"><a href="#e_rate">E_RATE</a></li><li class="toc-3"><a href="#e_busy">E_BUSY</a></li><li class="toc-2"><a href="#the-request">The request</a></li><li class="toc-3"><a href="#e_unknown_method">E_UNKNOWN_METHOD</a></li><li class="toc-3"><a href="#e_bad_args">E_BAD_ARGS</a></li><li class="toc-3"><a href="#e_no_target">E_NO_TARGET</a></li><li class="toc-3"><a href="#e_internal">E_INTERNAL</a></li><li class="toc-2"><a href="#still-stuck">Still stuck</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

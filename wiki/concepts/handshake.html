@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Handshake, authentication and sealed sessions · Reins</title>
+<meta name="description" content="How a peer and the hub prove a shared secret to each other without sending it, and how every message after that carries a MAC bound to the handshake.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/concepts/handshake.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Handshake, authentication and sealed sessions">
+<meta property="og:description" content="How a peer and the hub prove a shared secret to each other without sending it, and how every message after that carries a MAC bound to the handshake.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/concepts/handshake.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="./roles-and-trust.html">Roles and trust</a></li><li><a href="./transports-and-framing.html">Transports and framing</a></li><li><a href="./handshake.html" aria-current="page">Handshake and sealing</a></li><li><a href="./manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="./grants-and-scopes.html">Grants and scopes</a></li><li><a href="./policy-profiles.html">Policy profiles</a></li><li><a href="./consent.html">Consent</a></li><li><a href="./human-control.html">Human control</a></li><li><a href="./permission-levels.html">Permission levels</a></li><li><a href="./observation.html">Observation</a></li><li><a href="./cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="./rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="./audit-log.html">The audit log</a></li><li><a href="./chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#concepts">Concepts</a></li><li aria-current="page">Handshake and sealing</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Handshake, authentication and sealed sessions</h1>
+        <p class="lede">How a peer and the hub prove a shared secret to each other without sending it, and how every message after that carries a MAC bound to the handshake.</p>
+        
+      </header>
+      <h2 id="three-frames">Three frames <a class="anchor" href="#three-frames" aria-label="Link to the section Three frames">#</a></h2>
+<div class="code" data-lang="text"><div class="code-bar"><span class="code-lang">Text</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>hub  → peer   challenge { v:[&quot;0.1&quot;], nonce, hub }
+peer → hub    hello     { v, role, name, cnonce, auth?, surface? }
+hub  → peer   welcome   { v, session, role, limits, proof? }      or   bye { code }</code></pre></div>
+<p>The hub speaks first. <code>challenge.v</code> lists the versions it speaks; the peer picks one and states it in <code>hello.v</code>. No common version is <code>E_VERSION</code>. <code>nonce</code> and <code>cnonce</code> are 32 random bytes, base64url, fresh per connection.</p>
+<p>A peer that sends anything but <code>hello</code> first, or takes longer than 5 s, is closed.</p>
+<h2 id="the-proof">The proof <a class="anchor" href="#the-proof" aria-label="Link to the section The proof">#</a></h2>
+<p>A peer that holds a key proves it without sending it:</p>
+<div class="code" data-lang="text"><div class="code-bar"><span class="code-lang">Text</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>auth.proof = b64url(HMAC-SHA256(key, &quot;reins.v1.auth\n&quot; + role + &quot;\n&quot; + kid + &quot;\n&quot; + nonce + &quot;\n&quot; + cnonce))</code></pre></div>
+<p>The key is the UTF-8 bytes of the shared secret and the message the UTF-8 bytes of the string. Secrets are 32 random bytes, base64url. A secret never appears in a URL or a log, and it never crosses the wire.</p>
+<p><strong>The hub proves itself too.</strong> When the peer authenticated, <code>welcome.proof</code> is the same HMAC with the context <code>reins.v1.hub</code>. A peer that holds a key MUST verify it and close on mismatch. This defeats a process squatting on the hub's port: without the secret it cannot answer.</p>
+<h2 id="when-a-proof-fails">When a proof fails <a class="anchor" href="#when-a-proof-fails" aria-label="Link to the section When a proof fails">#</a></h2>
+<ul>
+<li>The hub compares proofs in constant time, answers a failed hello with <code>bye {code:&quot;E_AUTH&quot;}</code>, and closes.</li>
+<li>A failed proof is answered after a delay: 200 ms, doubling with each failure in the last minute, up to 3 s. Nothing more the peer sends is kept.</li>
+<li>A correct proof is never delayed and never refused because others failed.</li>
+<li>At most 16 handshakes may be pending or waiting out a delay; further connections are closed with <code>E_BUSY</code>.</li>
+<li>Keys shorter than 32 characters are rejected when the hub is configured.</li>
+</ul>
+<h2 id="sealed-sessions">Sealed sessions <a class="anchor" href="#sealed-sessions" aria-label="Link to the section Sealed sessions">#</a></h2>
+<p>When a peer authenticated with a key, every message after <code>welcome</code> is sealed in both directions. A process relaying the connection cannot inject, alter or reorder a message or replay one, and cannot drop one unless it also withholds everything after it in that direction: the next message fails to verify.</p>
+<p>Both sides derive one key per direction from the shared secret and the transcript of the handshake:</p>
+<div class="code" data-lang="text"><div class="code-bar"><span class="code-lang">Text</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>th = b64url(SHA-256(L(c) || c || L(h) || h || L(w) || w))
+k  = HMAC-SHA256(key, context + &quot;\n&quot; + nonce + &quot;\n&quot; + cnonce + &quot;\n&quot; + th)</code></pre></div>
+<p>Here c, h and w are the UTF-8 bytes of the <code>challenge</code>, <code>hello</code> and <code>welcome</code> frame texts exactly as sent, and L(x) is the byte length of x as an unsigned 32-bit big-endian integer. The context is <code>reins.v1.seal.peer</code> for what the peer sends and <code>reins.v1.seal.hub</code> for what the hub sends. The two ends agree on the keys only if both saw the same three frames.</p>
+<p>Each direction counts its messages from 0, and the counter is never sent:</p>
+<div class="code" data-lang="text"><div class="code-bar"><span class="code-lang">Text</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>mac = HMAC-SHA256(k, u64be(seq) || kind || payload)      kind: 0x74 for text, 0x62 for binary</code></pre></div>
+<p>On the wire:</p>
+<ul>
+<li>a sealed <strong>text</strong> message is the base64url MAC (43 characters), <code>.</code>, then the text;</li>
+<li>a sealed <strong>binary</strong> message is the bytes followed by the 32 MAC bytes.</li>
+</ul>
+<p>A message that does not verify closes the connection and is not delivered. Text that is not well-formed Unicode (it holds a lone surrogate) is never sealed or opened.</p>
+<p>The <a href="../../playground.html">playground</a> shows this live: the assistant's frames are marked <code>sealed</code>, and opening one shows its MAC.</p>
+<h3 id="key-confirmation">Key confirmation <a class="anchor" href="#key-confirmation" aria-label="Link to the section Key confirmation">#</a></h3>
+<p>Right after <code>welcome</code> the peer sends a sealed <code>ping</code>. The hub answers with a sealed <code>pong</code> and only then registers the peer and acts on anything that was in <code>hello</code>. The peer treats the session as established only when that <code>pong</code> verifies. Either side gives up after 5 s.</p>
+<h3 id="what-sealing-does-not-do">What sealing does not do <a class="anchor" href="#what-sealing-does-not-do" aria-label="Link to the section What sealing does not do">#</a></h3>
+<p>Sealing protects integrity, not secrecy. Frames are plain text on <code>127.0.0.1</code>: anyone able to capture loopback traffic or relay a connection can read commands and observations. And withholding the last messages of a direction is not detected; neither end notices until the heartbeat drops the silent peer.</p>
+<h2 id="agents">Agents <a class="anchor" href="#agents" aria-label="Link to the section Agents">#</a></h2>
+<p><strong>Agents MUST authenticate.</strong> Each agent credential has a <code>kid</code>, a key, and optional caps:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>The display name shown to the person. It overrides the name the agent declares.</td>
+</tr>
+<tr>
+<td><code>scopes</code></td>
+<td>A cap on the scopes this agent may hold.</td>
+</tr>
+<tr>
+<td><code>origins</code></td>
+<td>Browser origins this agent may connect from. Without it, browser-origin connections are refused.</td>
+</tr>
+<tr>
+<td><code>surfaces</code></td>
+<td>Surface origin patterns this agent may attach to, and hear about. Without it, any admitted surface.</td>
+</tr>
+<tr>
+<td><code>maxSessions</code></td>
+<td>Concurrent sessions for this credential. Default 4.</td>
+</tr>
+</tbody>
+</table></div>
+<p>If the connection carries an <code>Origin</code> header, the agent is a browser page, and that origin MUST be listed on the credential, else <code>E_ORIGIN</code>.</p>
+<p>With one token, two agents are two sessions of one credential: they share its rate limits and its cap on sessions, and the log cannot tell them apart by credential. <code>reins-hub --agent &lt;kid&gt;=&lt;file&gt;</code> gives an agent a credential of its own, and the agent names it with <code>--kid</code>.</p>
+<p>The name shown to users is the credential's <code>name</code> when the operator set one, otherwise the name the agent declared, with control characters and the bidirectional marks and overrides removed, cut to 64 code points.</p>
+<h2 id="surfaces">Surfaces <a class="anchor" href="#surfaces" aria-label="Link to the section Surfaces">#</a></h2>
+<p><strong>Surfaces are identified by origin.</strong> The hub takes the origin from the WebSocket <code>Origin</code> header, or from the embedding code for in-page links, and MUST find it in the configured allowlist, else <code>E_ORIGIN</code>. Entries are exact origins, <code>scheme://host:*</code> for any port, or <code>*</code>. <code>hello.surface.url</code> MUST have that origin.</p>
+<h3 id="origins">Origins <a class="anchor" href="#origins" aria-label="Link to the section Origins">#</a></h3>
+<p>An origin is compared as text, in one of four forms:</p>
+<ul>
+<li>a <strong>web origin</strong>: <code>scheme://host</code>, with <code>:port</code> unless the port is the scheme's default;</li>
+<li><strong><code>file://</code></strong>: the origin of every <code>file:</code> URL, whatever its host and path;</li>
+<li>an <strong>app origin</strong>: <code>scheme://host</code> with any other scheme, which is what a page has when an Electron app serves it from a scheme of its own (<code>app://notes</code>);</li>
+<li><strong><code>null</code></strong>: an opaque origin, as a <code>data:</code> URL, a sandboxed frame, or a page on a scheme the browser gives no hosts has.</li>
+</ul>
+<p>An implementation computes the origin of a URL by the rule of the specification (<code>urlOrigin</code>) and does not take what a URL library reports, which for a <code>file:</code> or app-scheme URL is <code>null</code> in some engines and not in others.</p>
+<p>In an allowlist, an exact entry matches that origin. <code>scheme://host:*</code> matches a web or app origin of that scheme and host with any port or none. <strong><code>*</code> matches every web origin and nothing else</strong>: <code>file://</code>, an app origin and <code>null</code> are admitted only by an entry that names them.</p>
+<p>Two entries admit by an origin that countless pages share. <code>null</code> is the origin of every sandboxed frame on every website, and <code>file://</code> of every local file. The reference hub warns at start when its socket admits either without requiring a surface key. See <a href="../guides/electron.html#what-origin-your-page-has">Electron: build Reins into your app</a>.</p>
+<p>A hub may also hold <strong>surface keys</strong> by app id. A surface whose manifest claims an app id the hub holds a key for MUST prove that key; without a proof it is refused with <code>E_AUTH</code>. <code>requireKey</code> also refuses every surface without a key. See <a href="../guides/surface-keys.html">Surface keys</a>.</p>
+<p>A hub MAY pin an app id to a manifest digest and refuse a surface whose manifest differs (<code>E_DENIED</code>). Pinning catches a modified build of the app. It does not stop a forger, who can copy the manifest.</p>
+<h2 id="an-unverified-hub">An unverified hub <a class="anchor" href="#an-unverified-hub" aria-label="Link to the section An unverified hub">#</a></h2>
+<p>A surface that holds no key cannot check the hub's proof, so it cannot tell the hub from another process listening on the same port. Such a surface treats the hub as <strong>unverified</strong>: it never accepts an attach silently (the decision is at least <code>confirm</code>), and it tells the user so in the consent prompt and in the indicator.</p>
+<p>The kiosk profile has nobody to ask, so a kiosk surface MUST hold a key. A link the app built itself, the in-page transport, counts as verified.</p>
+<h2 id="closing">Closing <a class="anchor" href="#closing" aria-label="Link to the section Closing">#</a></h2>
+<p>Either side sends <code>bye</code> before closing on purpose. On shutdown the hub sends <code>bye {code:&quot;OK&quot;}</code> to every peer.</p>
+<h2 id="for-implementers">For implementers <a class="anchor" href="#for-implementers" aria-label="Link to the section For implementers">#</a></h2>
+<p>Fixed inputs and expected outputs for the proofs and for sealing are in the test vectors: <a href="../implementers/vectors/auth.html"><code>auth.json</code></a> and <a href="../implementers/vectors/seal.html"><code>seal.json</code></a>. The origin of a URL and the allowlist matches are in <a href="../implementers/vectors/origins.html"><code>origins.json</code></a>.</p>
+<h2 id="further-reading">Further reading <a class="anchor" href="#further-reading" aria-label="Link to the section Further reading">#</a></h2>
+<ul>
+<li><a href="../reference/specification.html#5-handshake-and-authentication">Specification, section 5</a></li>
+<li><a href="../reference/security-model.html#threats-and-what-stops-them">Threats and what stops them</a>: T3 to T11 are about this page.</li>
+</ul>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/concepts/handshake.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/concepts/handshake.md</code></span><a class="md-link" href="./handshake.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./transports-and-framing.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Transports and framing</span></a>
+    <a class="pager-next" href="./manifest-and-prompt-card.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Manifest and prompt card</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#three-frames">Three frames</a></li><li class="toc-2"><a href="#the-proof">The proof</a></li><li class="toc-2"><a href="#when-a-proof-fails">When a proof fails</a></li><li class="toc-2"><a href="#sealed-sessions">Sealed sessions</a></li><li class="toc-3"><a href="#key-confirmation">Key confirmation</a></li><li class="toc-3"><a href="#what-sealing-does-not-do">What sealing does not do</a></li><li class="toc-2"><a href="#agents">Agents</a></li><li class="toc-2"><a href="#surfaces">Surfaces</a></li><li class="toc-3"><a href="#origins">Origins</a></li><li class="toc-2"><a href="#an-unverified-hub">An unverified hub</a></li><li class="toc-2"><a href="#closing">Closing</a></li><li class="toc-2"><a href="#for-implementers">For implementers</a></li><li class="toc-2"><a href="#further-reading">Further reading</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

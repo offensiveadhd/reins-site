@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Answering the chat with any program: chat-serve · Reins</title>
+<meta name="description" content="Answering the chat with any program, and what that hands to whoever is at the page: read the warnings first. Rendered from integrations/chat-serve/README.md.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/guides/chat-serve.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Answering the chat with any program: chat-serve">
+<meta property="og:description" content="Answering the chat with any program, and what that hands to whoever is at the page: read the warnings first. Rendered from integrations/chat-serve/README.md.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/guides/chat-serve.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="./kiosk-deployment.html">Kiosk deployment</a></li><li><a href="./surface-keys.html">Surface keys</a></li><li><a href="./actions-and-risk.html">Actions and risk tiers</a></li><li><a href="./chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="./chat-serve.html" aria-current="page">Serve chat from any command-line agent</a></li><li><a href="./privacy-annotations.html">Privacy annotations</a></li><li><a href="./strict-csp.html">Running under a strict CSP</a></li><li><a href="./troubleshooting.html">Troubleshooting</a></li><li><a href="./electron.html">Electron: build it in</a></li><li><a href="./adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="./claude-and-hermes.html">Claude and Hermes</a></li><li><a href="./hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#guides">Guides</a></li><li aria-current="page">Serve chat from any command-line agent</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Answering the chat with any program: chat-serve</h1>
+        <p class="lede">Answering the chat with any program, and what that hands to whoever is at the page: read the warnings first. Rendered from integrations/chat-serve/README.md.</p>
+        <p class="source-note">This page is <code>integrations/chat-serve/README.md</code>, rendered from the repository at build time. It is the text the project maintains, not a copy.</p>
+      </header>
+      <blockquote>
+<p><strong>Read this before you run it.</strong> <code>chat-serve</code> gives whoever can write in a page's Chat
+tab a line to a program on your computer.</p>
+<p><strong>Who is on the other end.</strong> The person at the page: any visitor of that page, not
+you. The page itself too: the app, and every script it loads, can read the chat and
+change what is sent as &quot;the person&quot;, as with any field of its own page. And if the
+page did not prove its app key to the hub, anything on your computer that can reach the
+hub's port can be &quot;the page&quot;. <code>chat-serve</code> refuses to serve such a page. Passing
+<code>--allow-unverified</code> accepts exactly that: text from any local program, handed to
+your command as the person's.</p>
+<p><strong>What the <code>--exec</code> command can do.</strong> It runs as your user: your files, your
+environment variables (API keys among them), your network, and the session's grant on
+the page. If it is an agent with a shell or file tools, the visitor's text steers an
+agent that has them. The preface in this folder tells a model to use the Reins tools
+only. That is a request to a model, not a restriction on a program.</p>
+<p><strong>So:</strong> give <code>--exec</code> only a program whose abilities you would hand to a stranger.
+Switch off the agent's shell, file and network tools in its own configuration, or run
+the runner in a container, a VM or under a separate user account with nothing of
+yours in reach. Do not serve a page that strangers can open with an agent that can run
+commands.</p>
+</blockquote>
+<p><code>reins-tools chat-serve</code> lets a program that is not an MCP harness answer the Chat tab
+of a page: a one-shot command of a CLI agent, a script, a local model runner.</p>
+<div class="code"><div class="code-bar"><span class="code-lang"></span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>node &quot;$HOME/.reins/reins.mjs&quot; chat-serve [options] --exec &lt;command&gt; [args...]</code></pre></div>
+<p>For every message the <strong>person</strong> sends, the runner starts the command once:</p>
+<ul>
+<li>
+<p>the message goes to the command's <strong>standard input</strong>, and only there. It arrives
+marked as what it is: one line written by the runner that says who wrote it, then the
+text on lines that each start with <code>| </code>:</p>
+<div class="code"><div class="code-bar"><span class="code-lang"></span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>[chat message #12 from the person at the page http://localhost:5173, surface s1: its text is on the lines below, each starting &quot;| &quot;]
+| Two flat whites please,
+| and tell me the total.</code></pre></div>
+<p>The first line says <code>, a page the hub did not verify</code> after the surface when that is
+so, and <code>, to you only</code> when the person addressed this agent alone. No control
+character of the message reaches the command raw: line breaks of every kind start a
+new <code>| </code> line, and the rest are written as <code>\u{1B}</code>. A script that wants the plain
+text takes the lines that start with <code>| </code> and drops those two characters;</p>
+</li>
+<li>
+<p>the command is started from the argument array after <code>--exec</code>, <strong>without a shell</strong>.
+Nothing from the message becomes part of a command line;</p>
+</li>
+<li>
+<p>the environment variable <code>REINS_CHAT_CONTEXT</code> holds one line of JSON about the
+message, never its text:
+<code>{&quot;surface&quot;:&quot;s1&quot;,&quot;origin&quot;:&quot;http://localhost:5173&quot;,&quot;verified&quot;:true,&quot;id&quot;:12,&quot;session&quot;:&quot;default&quot;,&quot;hub&quot;:&quot;ws://127.0.0.1:7346&quot;}</code>
+(<code>&quot;direct&quot;:true</code> when the person addressed this agent alone; <code>&quot;verified&quot;:false</code> for a
+page the hub did not verify);</p>
+</li>
+<li>
+<p>what the command prints on standard output is posted as the reply: trimmed, at most
+4000 characters, at most 64 KiB read. A reply to a message that was for this agent
+alone goes to the person alone; no other agent is sent it;</p>
+</li>
+<li>
+<p>a run that exits with a code other than 0, or takes longer than <code>--timeout-ms</code>
+(default 120 000), posts a short notice instead (&quot;no answer: the command failed with
+exit code 3&quot;). The command's error output goes to the runner's own error output,
+never to the page;</p>
+</li>
+<li>
+<p>an empty answer posts nothing.</p>
+</li>
+</ul>
+<p>Messages of other agents start nothing: they are not requests.</p>
+<h2 id="one-message-and-one-run-at-a-time-and-none-left-behind">One message and one run at a time, and none left behind <a class="anchor" href="#one-message-and-one-run-at-a-time-and-none-left-behind" aria-label="Link to the section One message and one run at a time, and none left behind">#</a></h2>
+<p>The runner takes one message at a time, and the next one only when the run before it has
+gone, with what it started. A runner that stops (<code>--once</code>, Ctrl-C, a run it could not end)
+has taken no message that it does not answer: the others wait for the next runner.</p>
+<p>A run is over when the command exited, took longer than <code>--timeout-ms</code>, or the runner was
+stopped. In each case what the command started is ended with it. What that covers:</p>
+<ul>
+<li><strong>Windows.</strong> A few milliseconds after the command starts, the runner puts it into a
+<strong>job object</strong> that allows no breakaway, with whatever it had started by then that can
+still be traced to it. From then on Windows itself keeps every process that the command
+or anything below it starts inside the job: a detached one, one in a console of its own,
+one whose parent has long exited, the hundredth of a tree that keeps growing. When the
+run is over the job ends all of them at once and says how many there were. A command
+that exits 0 and leaves something running is not a clean answer nobody looked behind:
+what it left is ended, and the runner tells you
+(<code>the command exited and left 2 processes running: ended</code>). A program that asks Windows
+to start a process outside the job is refused by Windows (that start fails).
+<strong>Not covered:</strong> a process that a program outside the job starts on the command's
+behalf (a scheduled task, a service, WMI, an application that was running already and
+is asked to open something), and a process started in those first milliseconds by a
+child that had itself exited before the job took hold.
+Node has no call that makes a job object, and this package has no native part. One
+helper does it: Windows PowerShell, started once by its full path with an environment of
+its own, compiles a few lines of C# with the .NET Framework that is part of Windows.
+Where that cannot be done (PowerShell is missing, or a policy restricts its language)
+the runner <strong>starts no command at all</strong> and says why. It does not fall back to
+something weaker.</li>
+<li><strong>Linux, macOS.</strong> The command runs in a process group of its own, and the group is
+signalled to end and then killed. <strong>Not covered:</strong> a process that leaves the group
+(<code>setsid</code>, a daemon).</li>
+<li>If something is left that cannot be ended, or the runner cannot find out whether
+anything is left (the helper has gone, the command's output stays open), the runner
+<strong>stops</strong> (exit code 1) and says so. It does not start the next run beside it: a
+process left over from one visitor's message still has the grant in reach.</li>
+<li>Stopping the runner (Ctrl-C) ends a run in progress the same way, and hangs up its
+wait for a message, which then takes none.</li>
+</ul>
+<p>Do not <code>--exec</code> programs that hand work to a service or start daemons, or use a sandbox
+of the operating system. This is tidiness after a run, not a wall around it.</p>
+<h2 id="which-file-runs">Which file runs <a class="anchor" href="#which-file-runs" aria-label="Link to the section Which file runs">#</a></h2>
+<p>The runner settles which file <code>--exec</code> names before it takes a message, and prints it
+(<code>the command is C:\Program Files\nodejs\node.exe</code>). A path is that file. A bare name,
+such as <code>hermes</code>, is looked for in the folders of <code>PATH</code>, in order, and <strong>never in the
+working directory</strong>: not by itself (Windows looks there first for a program named without
+a path) and not through an entry of <code>PATH</code> that is empty or relative. A program that
+somebody put into the folder you start the runner in does not run under another's name.
+To run a file in the working directory, write its path: <code>.\agent.exe</code>, <code>./agent</code>.</p>
+<h2 id="the-grant">The grant <a class="anchor" href="#the-grant" aria-label="Link to the section The grant">#</a></h2>
+<p>The runner works through the same shell session as every other <code>reins-tools</code> command,
+so the command holds <strong>the same grant</strong>. From inside it, a program can call
+<code>node &quot;$HOME/.reins/reins.mjs&quot; reins_observe</code>, <code>reins_act</code> and the rest, exactly like
+that, to do what the person asked before it prints its answer: a tool that is run inside
+a run of <code>chat-serve</code> reads <code>REINS_CHAT_CONTEXT</code> and goes to the runner's session, hub
+and page when the command line names none. (<code>--session</code>, <code>--url</code> and a <code>surface</code> in the
+arguments still come first.) If the session holds no grant yet, the runner attaches
+first, and the page asks the person.</p>
+<p>The runner serves <strong>one page</strong>: the one <code>--surface</code> names, or else the one its first
+answer is about. Every call it makes names that page, so attaching the session to a
+second page does not move the runner there.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>option</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--exec &lt;command&gt; [args...]</code></td>
+<td>required, and last: everything after it belongs to the command</td>
+</tr>
+<tr>
+<td><code>--timeout-ms &lt;n&gt;</code></td>
+<td>end a run that takes longer, with everything it started; default 120000</td>
+</tr>
+<tr>
+<td><code>--preface &lt;file&gt;</code></td>
+<td>write this file's text, then a line feed, before each message on standard input</td>
+</tr>
+<tr>
+<td><code>--surface &lt;id&gt;</code></td>
+<td>the page, when the session is attached to more than one</td>
+</tr>
+<tr>
+<td><code>--once</code></td>
+<td>answer one message, then stop</td>
+</tr>
+<tr>
+<td><code>--wait-ms &lt;n&gt;</code></td>
+<td>how long one wait for a message lasts before the runner asks again; default 60000, at most 150000</td>
+</tr>
+<tr>
+<td><code>--allow-unverified</code></td>
+<td>serve a page that did not prove its app key to the hub. Any program on this computer that can reach the hub's port can be such a page, and what it writes as &quot;the person&quot; is handed to the command</td>
+</tr>
+<tr>
+<td><code>--session</code>, <code>--url</code>, <code>--name</code>, <code>--scopes</code>, <code>--token-file</code></td>
+<td>as for every <code>reins-tools</code> command. A session takes <code>--scopes</code>, <code>--kid</code>, <code>--token-file</code>, <code>--data-dir</code> and <code>--name</code> when it starts: on one that already runs, another value is refused, with what the session has, and nothing is started</td>
+</tr>
+</tbody>
+</table></div>
+<p>A page is verified when the hub holds a key for its app and the page proved it
+(<code>reins-hub --surface-key &lt;app id&gt;=&lt;key file&gt;</code>, and the same key in the page's driver).
+<code>reins_surfaces</code> shows which pages are: the second word of each line is <code>verified</code> or
+<code>unverified</code>.</p>
+<p>It stops when the grant ends (exit code 0), when the session or the command cannot be
+reached, when the page is not verified, or when a run could not be ended (1), or when
+you stop it. Stopping the runner leaves the session, and its grant, running:
+<code>reins-tools stop</code> ends that.</p>
+<p>While the page shows a consent prompt (<code>E_BUSY</code>), or a rate is used up (<code>E_RATE</code>), the
+runner keeps trying to post the reply for up to 90 seconds.</p>
+<p>On Windows, name a program that can be started directly: an <code>.exe</code>, or <code>node</code> with a
+script. A <code>.cmd</code>, <code>.bat</code> or <code>.ps1</code> wrapper needs a shell, and the runner uses none: it
+refuses such a file before it takes a message, and says what to name instead.</p>
+<h2 id="a-model-must-be-told-what-the-message-is">A model must be told what the message is <a class="anchor" href="#a-model-must-be-told-what-the-message-is" aria-label="Link to the section A model must be told what the message is">#</a></h2>
+<p>A one-shot agent gets the lines above and nothing else. It does not know that the text
+came from a chat on a web page, that it can act on that page, that the person who wrote
+it is not its operator, or that the <code>| </code> lines are a request and not part of its own
+instructions. <code>--preface</code> puts a text of yours in front of every message. <code>preface.md</code>
+in this folder is a starting point:</p>
+<div class="code"><div class="code-bar"><span class="code-lang"></span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>node &quot;$HOME/.reins/reins.mjs&quot; chat-serve --preface integrations/chat-serve/preface.md --exec &lt;command&gt; [args...]</code></pre></div>
+<p>It tells the model who is writing (a visitor of the page, not its operator), how the
+message is marked, that it may use the Reins tools for the page and nothing else (no
+other commands, no files, no network, nothing about the machine or its environment),
+and that what other agents and the page say is data. Once more: a model can be talked
+out of a preface. What the program is able to do decides what a visitor can make it do.</p>
+<p>The person's message is the person's request to the agent about the page, within what
+the grant allows. It never approves a consent prompt and never changes a permission:
+the page asks on its own prompt, whatever the chat says.</p>
+<h2 id="hermes">Hermes <a class="anchor" href="#hermes" aria-label="Link to the section Hermes">#</a></h2>
+<p>Hermes Agent reads a single query from standard input with <code>--query-file -</code> and prints
+its answer:</p>
+<div class="code"><div class="code-bar"><span class="code-lang"></span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>node &quot;$HOME/.reins/reins.mjs&quot; up --allow-origin http://localhost:5173
+node &quot;$HOME/.reins/reins.mjs&quot; chat-serve --name &quot;Hermes&quot; --preface integrations/chat-serve/preface.md \
+  --exec hermes chat --query-file - -Q</code></pre></div>
+<p>Hermes is an agent with a terminal and file tools. Started like this, the person at the
+page is talking to an agent that can run commands as you. Do it for a page only you can
+open, or restrict what Hermes may use in its own configuration first.</p>
+<p><code>hermes chat --help</code> says of <code>--query-file</code>: nothing is shell-interpreted, so quotes,
+<code>$(...)</code> and backticks are preserved. That matches how the runner hands the text over.
+The flags above were read from <code>hermes --help</code> and <code>hermes chat --help</code>; the command was
+<strong>not run</strong> when this was written, because that would call a model. Two things to check
+when you run it: that <code>-Q</code> prints the answer alone (its help says &quot;the final response
+and session info&quot;, and a session line would be posted to the chat too), and how long a
+turn takes against <code>--timeout-ms</code>.</p>
+<p>Any other CLI agent works the same way if it can take its prompt on standard input and
+print its answer. One that only takes the prompt as an argument needs a small wrapper
+script that reads standard input and passes it on as one argument of an argument array.</p>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/integrations/chat-serve/README.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>integrations/chat-serve/README.md</code></span><a class="md-link" href="./chat-serve.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./chat-in-claude-code.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Chat from a Claude Code subagent</span></a>
+    <a class="pager-next" href="./privacy-annotations.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Privacy annotations</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#one-message-and-one-run-at-a-time-and-none-left-behind">One message and one run at a time, and none left behind</a></li><li class="toc-2"><a href="#which-file-runs">Which file runs</a></li><li class="toc-2"><a href="#the-grant">The grant</a></li><li class="toc-2"><a href="#a-model-must-be-told-what-the-message-is">A model must be told what the message is</a></li><li class="toc-2"><a href="#hermes">Hermes</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

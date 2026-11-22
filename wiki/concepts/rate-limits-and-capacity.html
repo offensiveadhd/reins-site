@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Rate limits and capacity · Reins</title>
+<meta name="description" content="The token buckets, capacities and admission rates that keep one agent, or a flood from either side, from exhausting the hub or freezing the page.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/concepts/rate-limits-and-capacity.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Rate limits and capacity">
+<meta property="og:description" content="The token buckets, capacities and admission rates that keep one agent, or a flood from either side, from exhausting the hub or freezing the page.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/concepts/rate-limits-and-capacity.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="./roles-and-trust.html">Roles and trust</a></li><li><a href="./transports-and-framing.html">Transports and framing</a></li><li><a href="./handshake.html">Handshake and sealing</a></li><li><a href="./manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="./grants-and-scopes.html">Grants and scopes</a></li><li><a href="./policy-profiles.html">Policy profiles</a></li><li><a href="./consent.html">Consent</a></li><li><a href="./human-control.html">Human control</a></li><li><a href="./permission-levels.html">Permission levels</a></li><li><a href="./observation.html">Observation</a></li><li><a href="./cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="./rate-limits-and-capacity.html" aria-current="page">Rate limits and capacity</a></li><li><a href="./audit-log.html">The audit log</a></li><li><a href="./chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#concepts">Concepts</a></li><li aria-current="page">Rate limits and capacity</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Rate limits and capacity</h1>
+        <p class="lede">The token buckets, capacities and admission rates that keep one agent, or a flood from either side, from exhausting the hub or freezing the page.</p>
+        
+      </header>
+      <h2 id="two-answers-slow-down-or-no-room">Two answers: slow down, or no room <a class="anchor" href="#two-answers-slow-down-or-no-room" aria-label="Link to the section Two answers: slow down, or no room">#</a></h2>
+<p>Limits answer with one of two codes.</p>
+<ul>
+<li><strong><code>E_RATE</code></strong>: you are going too fast. A rate limit, an admission limit, or a cool-off after a refused prompt. Wait and try again.</li>
+<li><strong><code>E_BUSY</code></strong>: there is no room right now. A capacity is reached, an attach or a consent prompt is pending, or a peer does not read.</li>
+</ul>
+<h2 id="requests">Requests <a class="anchor" href="#requests" aria-label="Link to the section Requests">#</a></h2>
+<p>The hub keeps one token bucket per credential, surface and scope, sized by <code>policy.rates</code>, with a burst of one second. The bucket is shared by all of that credential's sessions, so opening more sessions does not buy more requests.</p>
+<p>Requests per second by scope, per profile:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>scope</th>
+<th><code>open</code></th>
+<th><code>guarded</code></th>
+<th><code>kiosk</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>observe</code></td>
+<td>30</td>
+<td>20</td>
+<td>20</td>
+</tr>
+<tr>
+<td><code>act</code></td>
+<td>30</td>
+<td>20</td>
+<td>10</td>
+</tr>
+<tr>
+<td><code>ui</code></td>
+<td>60</td>
+<td>40</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>cursor</code></td>
+<td>120</td>
+<td>60</td>
+<td>60</td>
+</tr>
+<tr>
+<td><code>show</code></td>
+<td>30</td>
+<td>20</td>
+<td>10</td>
+</tr>
+<tr>
+<td><code>nav</code></td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>chat</code></td>
+<td>10</td>
+<td>5</td>
+<td>0</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>hub.info</code> and <code>surfaces.list</code> share one bucket per credential: 10 a second, burst 20.</p>
+<h2 id="attaching">Attaching <a class="anchor" href="#attaching" aria-label="Link to the section Attaching">#</a></h2>
+<p>Each attach may put a prompt in front of a person, so:</p>
+<ul>
+<li>the hub forwards one attach at a time per credential and surface (<code>E_BUSY</code> for another);</li>
+<li>a credential gets a burst of 3 attaches per surface, then one every 2 s (<code>E_RATE</code>);</li>
+<li>a surface holds at most 32 grants at a time, and refuses an attach from a further agent with <code>E_BUSY</code> before it asks the person.</li>
+</ul>
+<h2 id="prompts">Prompts <a class="anchor" href="#prompts" aria-label="Link to the section Prompts">#</a></h2>
+<p>On the page: one pending prompt per agent and four in total (<code>E_BUSY</code>). After a refusal or a timeout, a cool-off of 2 s that doubles up to 60 s (<code>E_RATE</code>). See <a href="./consent.html">Consent</a>.</p>
+<h2 id="chat">Chat <a class="anchor" href="#chat" aria-label="Link to the section Chat">#</a></h2>
+<p><code>rates.chat</code> bounds <code>chat.say</code>, <code>chat.read</code> and <code>chat.status</code> together, per credential and page. At the hub each sender also has a budget of its own for each agent that listens, and none uses up another's: the person's messages 5 a second after a burst of 10, for each agent, and an agent's words no faster than its own <code>rates.chat</code>, after a burst of twice that. A message of the person that the hub does not relay is put on record, and the page shows it as not delivered. A message is at most 4000 characters, a status note 80, and the room keeps the last 200 messages. See <a href="./chat.html">Chat</a>.</p>
+<h2 id="what-the-person-sets">What the person sets <a class="anchor" href="#what-the-person-sets" aria-label="Link to the section What the person sets">#</a></h2>
+<p>A page reports each level, rule and scope switch the person sets to the hub. A grant for which a surface reports more than 20 changes within one second is ended: no person makes them. So is a grant whose surface reports a change that lets the agent do more while the hub cannot write its audit log.</p>
+<h2 id="pointer-streams">Pointer streams <a class="anchor" href="#pointer-streams" aria-label="Link to the section Pointer streams">#</a></h2>
+<p>The points of all pointer streams one credential has open on one surface are capped at <code>policy.pointerRate</code> per second, a token bucket with a burst of one second. Every forwarded frame costs at least one point of rate. See <a href="./cursor-and-pointer-stream.html">Cursor and the pointer stream</a>.</p>
+<h2 id="capacity">Capacity <a class="anchor" href="#capacity" aria-label="Link to the section Capacity">#</a></h2>
+<p>By default a hub takes at most:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>What</th>
+<th>Limit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>surfaces</td>
+<td>64</td>
+</tr>
+<tr>
+<td>agents</td>
+<td>32</td>
+</tr>
+<tr>
+<td>sessions per credential</td>
+<td>4</td>
+</tr>
+<tr>
+<td>open streams per agent</td>
+<td>8</td>
+</tr>
+</tbody>
+</table></div>
+<p>Beyond that: <code>E_BUSY</code>.</p>
+<p>A peer whose send buffer at the hub holds more than max(8 MiB, 4 × <code>maxText</code>) after a send is not reading: it is sent <code>bye {code:&quot;E_BUSY&quot;}</code> and closed.</p>
+<h2 id="admission">Admission <a class="anchor" href="#admission" aria-label="Link to the section Admission">#</a></h2>
+<p>Connections are admitted at a rate, too.</p>
+<ul>
+<li><strong>Surfaces</strong> from an allowed origin are admitted by a token bucket per origin: 2 a second by default, with a burst of twice the surface capacity, so a full set of tabs can reconnect at once after a hub restart. All origins together get 5 times the rate and twice the burst. A full hub answers <code>E_BUSY</code> first; an attempt without a token is <code>E_RATE</code>.</li>
+<li><strong>Agent sessions</strong> are admitted after a correct proof by a bucket per credential: 2 a second, burst 20, else <code>E_RATE</code>.</li>
+</ul>
+<h2 id="before-authentication">Before authentication <a class="anchor" href="#before-authentication" aria-label="Link to the section Before authentication">#</a></h2>
+<p>A connection that has not authenticated gets very little:</p>
+<ul>
+<li>at most 16 handshakes may be pending or waiting out a delay; further connections are closed with <code>E_BUSY</code>;</li>
+<li>the hub holds at most 16 inbound messages and 64 KiB from it;</li>
+<li>a failed proof is answered after a delay that doubles, from 200 ms up to 3 s.</li>
+</ul>
+<h2 id="on-the-page">On the page <a class="anchor" href="#on-the-page" aria-label="Link to the section On the page">#</a></h2>
+<p>The driver has a budget of its own: it runs queued commands at the start of each animation frame and stops when the frame has used 6 ms. Observations are size-bounded: names are cut to 120 characters and values to 200, and <code>read</code> returns at most 8000 characters.</p>
+<h2 id="the-audit-log-is-bounded-as-well">The audit log is bounded as well <a class="anchor" href="#the-audit-log-is-bounded-as-well" aria-label="Link to the section The audit log is bounded as well">#</a></h2>
+<p>At most 20 refusal records per second per connection and 20 failed-connection records per second overall are written, and 20 records per second per surface for reports of the person that change nothing. The excess is counted and written as one <code>suppressed</code> record. A change of what the person set is always recorded, and so is a message of the person that is relayed. See <a href="./audit-log.html">The audit log</a>.</p>
+<h2 id="changing-the-numbers">Changing the numbers <a class="anchor" href="#changing-the-numbers" aria-label="Link to the section Changing the numbers">#</a></h2>
+<p>Rates and grant lifetimes are part of the policy: override them in the hub's policy. Capacities and admission rates are hub configuration (<code>maxSurfaces</code>, <code>maxAgents</code>, <code>maxStreams</code>, <code>surfaceAdmission</code>, <code>agentAdmission</code>, and <code>maxSessions</code> on a credential), given in the hub's configuration file. A hub refuses malformed configuration at start: a limit that is not a positive number stops it.</p>
+<h2 id="further-reading">Further reading <a class="anchor" href="#further-reading" aria-label="Link to the section Further reading">#</a></h2>
+<ul>
+<li><a href="../reference/limits.html">Limits</a>: every number, from the test vectors.</li>
+<li><a href="../reference/specification.html#13-hub-behaviour">Specification, section 13</a></li>
+<li><a href="../reference/security-model.html#threats-and-what-stops-them">Threats and what stops them</a>: T16 and T24.</li>
+</ul>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/concepts/rate-limits-and-capacity.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/concepts/rate-limits-and-capacity.md</code></span><a class="md-link" href="./rate-limits-and-capacity.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./cursor-and-pointer-stream.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Cursor and the pointer stream</span></a>
+    <a class="pager-next" href="./audit-log.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">The audit log</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#two-answers-slow-down-or-no-room">Two answers: slow down, or no room</a></li><li class="toc-2"><a href="#requests">Requests</a></li><li class="toc-2"><a href="#attaching">Attaching</a></li><li class="toc-2"><a href="#prompts">Prompts</a></li><li class="toc-2"><a href="#chat">Chat</a></li><li class="toc-2"><a href="#what-the-person-sets">What the person sets</a></li><li class="toc-2"><a href="#pointer-streams">Pointer streams</a></li><li class="toc-2"><a href="#capacity">Capacity</a></li><li class="toc-2"><a href="#admission">Admission</a></li><li class="toc-2"><a href="#before-authentication">Before authentication</a></li><li class="toc-2"><a href="#on-the-page">On the page</a></li><li class="toc-2"><a href="#the-audit-log-is-bounded-as-well">The audit log is bounded as well</a></li><li class="toc-2"><a href="#changing-the-numbers">Changing the numbers</a></li><li class="toc-2"><a href="#further-reading">Further reading</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

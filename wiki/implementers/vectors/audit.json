@@ -1,0 +1,95 @@
+{
+  "reins": "0.1",
+  "generator": "conformance/tools/make-vectors.mjs",
+  "title": "Audit hash chain",
+  "spec": "SPEC.md section 13, \"Audit\"",
+  "formula": [
+    "hash = b64url(SHA-256(prev + \"\\n\" + canonicalJson(record without hash))), or b64url(HMAC-SHA256(auditKey, same input)) when the hub has an audit key; prev of the first record is \"\"",
+    "args = b64url(SHA-256(canonical JSON of the params without s)), or b64url(HMAC-SHA256(auditKey, same input)) when the hub has an audit key"
+  ],
+  "note": "All of this is stated in SPEC 13. `argsCanonical` is the canonical JSON both chains digest into `args`.",
+  "key": "-iH_QbYEGjOOgX9OdllDT0Jw245dyudNBRahIpz2O5A",
+  "argsCanonical": "{\"a\":\"cart.add\",\"args\":{\"sku\":\"latte\"}}",
+  "unkeyed": [
+    {
+      "seq": 1,
+      "ts": 1700000000000,
+      "kind": "connect",
+      "outcome": "ok",
+      "role": "agent",
+      "agent": "a1",
+      "kid": "default",
+      "prev": "",
+      "hash": "f18pWevHDj3MXc_3Q93dKZ-80brIbziPQUR_1hQqiEY"
+    },
+    {
+      "seq": 2,
+      "ts": 1700000000100,
+      "kind": "request",
+      "outcome": "accepted",
+      "agent": "a1",
+      "surface": "s1",
+      "method": "act",
+      "action": "cart.add",
+      "args": "Dqe_mC_mK_ASMJOf26YkpIZwxlJg5BJkdC351lJ4D3w",
+      "prev": "f18pWevHDj3MXc_3Q93dKZ-80brIbziPQUR_1hQqiEY",
+      "hash": "lXBQcDevQBVS5aNlGIu5dluNlr_LTmOTTi8jNR2dDnM"
+    },
+    {
+      "seq": 3,
+      "ts": 1700000000150,
+      "kind": "request",
+      "outcome": "ok",
+      "agent": "a1",
+      "surface": "s1",
+      "method": "act",
+      "action": "cart.add",
+      "args": "Dqe_mC_mK_ASMJOf26YkpIZwxlJg5BJkdC351lJ4D3w",
+      "ms": 50,
+      "ref": 2,
+      "prev": "lXBQcDevQBVS5aNlGIu5dluNlr_LTmOTTi8jNR2dDnM",
+      "hash": "Tv8mXy0Ydf6l8rpM1FYeZmZxx4ORgQJf68B3IAf6sOM"
+    }
+  ],
+  "keyed": [
+    {
+      "seq": 1,
+      "ts": 1700000000000,
+      "kind": "connect",
+      "outcome": "ok",
+      "role": "agent",
+      "agent": "a1",
+      "kid": "default",
+      "prev": "",
+      "hash": "J-ocw5eH8LBqrAnJ7pBQvaApGswMsHYjJXLBeR-qR5c"
+    },
+    {
+      "seq": 2,
+      "ts": 1700000000100,
+      "kind": "request",
+      "outcome": "accepted",
+      "agent": "a1",
+      "surface": "s1",
+      "method": "act",
+      "action": "cart.add",
+      "args": "eVJ1v_Up1aCkC6eSkIoxoklmAopnxpXJ2-3YkOw9vmY",
+      "prev": "J-ocw5eH8LBqrAnJ7pBQvaApGswMsHYjJXLBeR-qR5c",
+      "hash": "9h5ZGKezqQANXzSOtt9NH5UpiDg57qs9QAsj9akr02M"
+    },
+    {
+      "seq": 3,
+      "ts": 1700000000150,
+      "kind": "request",
+      "outcome": "ok",
+      "agent": "a1",
+      "surface": "s1",
+      "method": "act",
+      "action": "cart.add",
+      "args": "eVJ1v_Up1aCkC6eSkIoxoklmAopnxpXJ2-3YkOw9vmY",
+      "ms": 50,
+      "ref": 2,
+      "prev": "9h5ZGKezqQANXzSOtt9NH5UpiDg57qs9QAsj9akr02M",
+      "hash": "12NVVw2hdTKIhg_G7vb9Ku5dS02WF8AetnwxPgCi6KU"
+    }
+  ]
+}

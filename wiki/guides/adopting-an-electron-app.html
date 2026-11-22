@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Adopt an Electron app · Reins</title>
+<meta name="description" content="reins-electron loads the driver into an Electron app you did not build, through its debugging connection. What an attached agent can then do, how to narrow it, and what a debugging connection means.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/guides/adopting-an-electron-app.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Adopt an Electron app">
+<meta property="og:description" content="reins-electron loads the driver into an Electron app you did not build, through its debugging connection. What an attached agent can then do, how to narrow it, and what a debugging connection means.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/guides/adopting-an-electron-app.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="./kiosk-deployment.html">Kiosk deployment</a></li><li><a href="./surface-keys.html">Surface keys</a></li><li><a href="./actions-and-risk.html">Actions and risk tiers</a></li><li><a href="./chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="./chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="./privacy-annotations.html">Privacy annotations</a></li><li><a href="./strict-csp.html">Running under a strict CSP</a></li><li><a href="./troubleshooting.html">Troubleshooting</a></li><li><a href="./electron.html">Electron: build it in</a></li><li><a href="./adopting-an-electron-app.html" aria-current="page">Adopt an Electron app</a></li><li><a href="./claude-and-hermes.html">Claude and Hermes</a></li><li><a href="./hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#guides">Guides</a></li><li aria-current="page">Adopt an Electron app</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Adopt an Electron app</h1>
+        <p class="lede">reins-electron loads the driver into an Electron app you did not build, through its debugging connection. What an attached agent can then do, how to narrow it, and what a debugging connection means.</p>
+        
+      </header>
+      <h2 id="what-adopting-is">What adopting is <a class="anchor" href="#what-adopting-is" aria-label="Link to the section What adopting is">#</a></h2>
+<p><code>reins-electron</code> loads the driver into an Electron app from the outside, through the app's debugging connection. Nothing in the app is changed on disk.</p>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-c"># in the project that has the package</span>
+npx <span class="t-f">--no</span> -- reins-electron -- <span class="t-s">&quot;C:\Path\To\TheApp.exe&quot;</span></code></pre></div>
+<p>From then on the app is a surface like any other. In another terminal, or from an agent:</p>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>node <span class="t-s">&quot;$HOME/.reins/reins.mjs&quot;</span> reins_attach <span class="t-s">'{&quot;reason&quot;:&quot;tidy my notes&quot;}'</span>   <span class="t-c"># the app's window asks you</span>
+node <span class="t-s">&quot;$HOME/.reins/reins.mjs&quot;</span> reins_observe
+node <span class="t-s">&quot;$HOME/.reins/reins.mjs&quot;</span> reins_ui <span class="t-s">'{&quot;op&quot;:&quot;type&quot;,&quot;target&quot;:&quot;#note.input&quot;,&quot;text&quot;:&quot;Water the plants&quot;}'</span>
+node <span class="t-s">&quot;$HOME/.reins/reins.mjs&quot;</span> reins_read <span class="t-s">'{&quot;target&quot;:&quot;#notes.list&quot;}'</span></code></pre></div>
+<h2 id="read-this-first">Read this first <a class="anchor" href="#read-this-first" aria-label="Link to the section Read this first">#</a></h2>
+<div class="callout callout-warning" role="note"><p class="callout-title">Warning</p>
+<p><strong>What an attached agent can do in an adopted app is everything a person can do with the mouse and the keyboard in that window.</strong> The app declared no actions, so the agent works through the UI tree: it sees every control the page exposes and can press, fill and scroll any of them. One Allow at attach covers all of it. There is no second question for &quot;Send&quot;, &quot;Delete&quot; or &quot;Approve&quot;, because to Reins those are buttons like any other. If the app is itself an agent that asks its user before it runs a tool, the attached agent can press that approval too.</p>
+</div>
+<p>Adopt an app for an agent only when that is what you mean, and narrow it when it is not: <code>--scopes observe,chat</code> adopts an app to look at and talk about, not to operate.</p>
+<div class="callout callout-warning" role="note"><p class="callout-title">Warning</p>
+<p><strong>A debugging connection is total control.</strong> The driver's guardrails stand between the agent and the app. They do not stand between the app and the program that loaded the driver, which can do everything a person at the keyboard can: press Allow, open the panel, raise a level, switch a scope on, type in the chat as the person. Adopt only apps you would let <code>reins-electron</code> control, and use the pipe: a debugging port extends that control to every program on the machine.</p>
+</div>
+<h2 id="what-the-command-does">What the command does <a class="anchor" href="#what-the-command-does" aria-label="Link to the section What the command does">#</a></h2>
+<p>This is the output of a run against the example app started as a foreign app, with no Reins in it. Run (<code>adopt-pipe</code>):</p>
+<div class="code"><div class="code-bar"><span class="code-lang"></span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>reins-electron: started electron.exe with a debugging pipe (no port is open)
+reins-electron: debugging connection open (Chrome/156.0.8078.100)
+reins-electron: waiting for the app's first page, to learn its origin
+reins-electron: levels the person may set in the panel: strict, ask (--levels offers auto and bypass)
+reins-electron: page: origin app://notes
+reins-electron: adopting; the app ends when this command ends
+reins-electron: hub listening on ws://127.0.0.1:7346/ for agents (profile guarded)
+reins-electron: adopting pages of: app://notes
+reins-electron: the hub lists these pages as verified: this command alone holds the debugging pipe
+reins-electron: token file: C:\...\.reins\token (agent kid &quot;default&quot;, created)
+reins-electron: agent launcher: node &quot;C:\Users\you\.reins\reins.mjs&quot; &lt;tool&gt;
+reins-electron: page app://notes: ready</code></pre></div>
+<ol>
+<li>It starts the app with <code>--remote-debugging-pipe</code>. The DevTools protocol then runs over two inherited pipes. No port is opened, and no other program can connect.</li>
+<li>It hosts a hub (<code>--port</code>, default 7346) whose socket takes agents only, creates the agent token, announces the hub in <code>~/.reins</code> and leaves the launcher there, exactly as <code>reins-hub</code> does.</li>
+<li>For every page of the app, now and later, it runs the driver in each new document, in a JavaScript world of its own. A reload, a navigation and a new window are picked up as they happen. Run (<code>adopt-pipe</code>).</li>
+<li>It carries the driver's frames between the page and the hosted hub over the debugging connection. The page opens no socket, so its Content Security Policy does not matter. Run (<code>adopt-pipe</code>) with <code>connect-src 'none'</code>.</li>
+</ol>
+<p>The command prints the origin of each page it adopts or declines, never a URL: paths and queries are where tokens travel.</p>
+<h2 id="what-an-agent-has-there">What an agent has there <a class="anchor" href="#what-an-agent-has-there" aria-label="Link to the section What an agent has there">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>In an adopted app</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>reins_observe</code></td>
+<td>the controls of the page as a tree</td>
+</tr>
+<tr>
+<td><code>reins_read</code></td>
+<td>the text between them: a paragraph, a message, a whole region, or the page</td>
+</tr>
+<tr>
+<td><code>reins_ui</code></td>
+<td>clicks, typing, selection, scrolling and keys on every exposed element</td>
+</tr>
+<tr>
+<td><code>reins_cursor</code>, <code>reins_show</code></td>
+<td>the agent's cursor, toasts and highlights</td>
+</tr>
+<tr>
+<td><code>reins_chat</code></td>
+<td>the Chat tab, to talk with the person (section 5)</td>
+</tr>
+<tr>
+<td><code>reins_act</code></td>
+<td>nothing to call: the app declared no actions</td>
+</tr>
+</tbody>
+</table></div>
+<p>The person is asked in the app's own window before an agent attaches, sees the indicator while it is attached, and can pause or stop it, open the panel, switch single scopes off and talk to the agent.</p>
+<p>With the hub that <code>reins-electron</code> hosts, the app's own scripts cannot reach the driver or stand in for it: the driver runs in an isolated world with built-ins of its own, and the page's script shares the document with it (elements, styles, timers) and none of its code or objects. Run (<code>adopt-pipe</code>). This does not hold when the pages join a hub elsewhere without a surface key: see below.</p>
+<p>That isolated world is the one place where Reins has a boundary against script in the page itself. In a page that embeds the driver, such script can defeat the overlay (<a href="../concepts/human-control.html#what-script-in-the-page-can-do">What script in the page can do</a>). In an adopted app it cannot answer a prompt or raise a level. What it can still do: style, cover, move or remove the overlay's host element, clear timers (no wait of the driver relies on one firing), and keep the person's clicks and keys from reaching the overlay at all, which takes Pause, Stop and Deny away for as long as the script does it.</p>
+<h2 id="verified-or-not">Verified, or not <a class="anchor" href="#verified-or-not" aria-label="Link to the section Verified, or not">#</a></h2>
+<p>A surface is listed as <code>verified</code> when the hub knows what is at the other end of its link, and a page shows no &quot;Unverified hub&quot; mark when it knows its hub. For an adopted page both depend on one thing: who else can use the debugging connection.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>The app is reached through</th>
+<th>The hub that <code>reins-electron</code> hosts lists the page as</th>
+<th>The page's prompt and indicator</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>the debugging pipe (the default)</td>
+<td>verified</td>
+<td>no mark</td>
+</tr>
+<tr>
+<td>a debugging port (<code>--debug-port</code>, <code>--attach</code>)</td>
+<td><strong>not</strong> verified</td>
+<td>say &quot;Unverified hub&quot;</td>
+</tr>
+</tbody>
+</table></div>
+<p>A pipe belongs to the command alone. Through a port, every program on the machine can type and press in the app and speak on the page's link, so the command vouches for nothing. <code>reins_surfaces</code> shows the difference, a consent prompt names it, and <code>chat-serve</code> refuses a page that is not verified unless it is started with <code>--allow-unverified</code>. Run (<code>adopt-pipe</code>: verified; <code>adopt-port</code>: not verified, and the prompt and the indicator say so). <code>--surface-key-file</code> is refused together with a debugging port: the key could be read out of the page through it.</p>
+<h2 id="options">Options <a class="anchor" href="#options" aria-label="Link to the section Options">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-- &lt;executable&gt; [arguments]</code></td>
+<td>start this app, with <code>--remote-debugging-pipe</code> put before its arguments</td>
+</tr>
+<tr>
+<td><code>--debug-port &lt;n&gt;</code></td>
+<td>start it with <code>--remote-debugging-port=&lt;n&gt;</code> instead of the pipe. The app is then whatever browser answers on that port, also when the executable was only a starter; its pages are not verified</td>
+</tr>
+<tr>
+<td><code>--attach &lt;port | host:port | ws url&gt;</code></td>
+<td>adopt an app that is already running with a debugging port; loopback only</td>
+</tr>
+<tr>
+<td><code>--port &lt;n&gt;</code>, <code>--token-file &lt;path&gt;</code>, <code>--no-announce</code></td>
+<td>the hosted hub, as for <code>reins-hub</code></td>
+</tr>
+<tr>
+<td><code>--allow-origin &lt;origin&gt;</code></td>
+<td>page origins to adopt, repeatable. Default: the origin the app's first pages share (below)</td>
+</tr>
+<tr>
+<td><code>--levels &lt;a,b&gt;</code></td>
+<td>permission levels the person may set in the panel beyond Strict and Ask: <code>auto</code>, <code>bypass</code>. Default none (section 4)</td>
+</tr>
+<tr>
+<td><code>--scopes &lt;a,b,c&gt;</code></td>
+<td>scopes an agent may be granted. Default all of the guarded profile</td>
+</tr>
+<tr>
+<td><code>--hub &lt;ws url&gt;</code></td>
+<td>do not host a hub; connect the pages to one that is running, on a loopback address</td>
+</tr>
+<tr>
+<td><code>--transport auto|ws|bridge</code></td>
+<td>with <code>--hub</code>: who opens the socket (below)</td>
+</tr>
+<tr>
+<td><code>--surface-key-file &lt;path&gt;</code></td>
+<td>with <code>--hub</code>: the key that hub holds for <code>--app-id</code>. Refused with a debugging port: the key could be read out of the page through it</td>
+</tr>
+<tr>
+<td><code>--app-id &lt;id&gt;</code>, <code>--app-name &lt;name&gt;</code></td>
+<td>how the surface names itself. Default: from the executable's name</td>
+</tr>
+<tr>
+<td><code>--match &lt;origin | url&gt;</code></td>
+<td>adopt only documents of this origin (<code>http://127.0.0.1:9120</code>, <code>app://notes</code>), or whose URL is this one or lies under it (<code>file:///C:/app/</code>). Asked of every document: a tab that goes elsewhere is not adopted there</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Which origin, when you name none.</strong> Without <code>--allow-origin</code> the command takes the origin from the app's own pages, and only when there is no doubt. From the first page on it listens for a second; if every page that asked in that time has the same origin, that is the one. If they have more than one, it stops, lists what it saw, and asks for <code>--allow-origin</code>. Two origins are never taken from a page and always have to be named: <code>null</code>, and that of a web site that is not on this machine. This rule is covered by unit tests and was not seen in a real Electron.</p>
+<p><strong><code>--match</code> is an origin or a URL, not a piece of text.</strong> <code>--match http://127.0.0.1:9120</code> adopts the documents of that origin, and <code>--match file:///C:/app/</code> that folder and what lies under it. Pattern and document are both read as URLs and compared by origin and path; query and fragment take no part, so a document elsewhere does not match because its address repeats the text. A pattern that is neither an origin nor a URL is refused at start.</p>
+<div class="code" data-lang="text"><div class="code-bar"><span class="code-lang">Text</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>usage: reins-electron [options] -- &lt;electron app executable&gt; [its arguments...]
+       reins-electron [options] --attach &lt;port | host:port | ws url&gt;
+
+Loads the Reins driver into the pages of an Electron app that was not built for Reins,
+through the app's debugging connection. An agent can then attach to it under the guarded
+profile: the person is asked in the app's window first, and sees and can stop the agent.
+
+Whoever holds a debugging connection controls the app completely. Use this with apps you
+would let this program control, and read docs/ELECTRON.md before using --debug-port.
+
+launch (the default): the app is started with --remote-debugging-pipe, so no port is
+opened, nobody else can use the debugging connection, and the app ends when this
+command ends, however it ends
+  --debug-port &lt;n&gt;        start it with --remote-debugging-port=&lt;n&gt; instead: a loopback
+                          port that any program on this machine can connect to. The
+                          app is whatever browser answers on that port, also when the
+                          executable was only a starter; this command closes it over
+                          the port when it ends, and a small watcher process does when
+                          the command is killed
+
+attach
+  --attach &lt;where&gt;        an app already started with --remote-debugging-port=&lt;n&gt;;
+                          only a loopback address is accepted
+
+With a debugging port (--debug-port, --attach) other programs can use the debugging
+connection too, type and press in the app, and speak to its pages. Pages adopted that
+way are therefore never listed as verified, and their prompts say &quot;Unverified hub&quot;.
+
+the hub (by default one is hosted here; the pages reach it through the debugging
+connection, and its socket takes agents only)
+  --port &lt;n&gt;              port of the hosted hub (default 7346)
+  --token-file &lt;path&gt;     its agent token (default .reins/token)
+  --allow-origin &lt;origin&gt; page origin to adopt, repeatable (default: the origin of the
+                          first page the app shows, such as file://)
+  --no-announce           do not announce the hub or leave the launcher in ~/.reins
+  --hub &lt;ws url&gt;          use a hub that is already running instead, on a loopback
+                          address; it has to admit the app's origin. Without
+                          --surface-key-file the pages cannot tell that hub from
+                          another program, and the app's own scripts can register
+                          there under the same origin
+  --transport &lt;how&gt;       with --hub: auto (default: the page opens the socket, and the
+                          debugging connection carries the frames when it may not),
+                          ws, or bridge
+  --surface-key-file &lt;p&gt;  with --hub: the surface key that hub holds for --app-id.
+                          Not with a debugging port: the key would be readable
+                          through it
+
+what an agent may be given (the pages run under the guarded profile)
+  --levels &lt;a,b&gt;          permission levels the person may set in the panel beyond
+                          Strict and Ask, which only tighten: auto, bypass (default
+                          none; a level decides declared actions, and an adopted app
+                          declares none)
+  --scopes &lt;a,b,c&gt;        scopes an agent may be granted (default observe, act, ui, cursor, show, nav, chat)
+
+the app
+  --app-id &lt;id&gt;           id the surface gives itself (default: from the executable's name)
+  --app-name &lt;name&gt;       name shown to agents and in the prompt card
+  --match &lt;origin|url&gt;    adopt only documents of this origin (http://127.0.0.1:9120,
+                          app://notes), or whose URL is this one or lies under it
+                          (file:///C:/app/). Both sides are read as URLs; query and
+                          fragment are left out. Not a substring: a document elsewhere
+                          that repeats the text does not match
+  --bundle &lt;path&gt;         the page bundle (default: reins-adopt.iife.js of this package)</code></pre></div>
+<h2 id="the-panel-in-an-adopted-app">The panel in an adopted app <a class="anchor" href="#the-panel-in-an-adopted-app" aria-label="Link to the section The panel in an adopted app">#</a></h2>
+<p>The adopted page has the same indicator and the same panel. <strong>By default the panel of an adopted app offers Strict and Ask, and neither Auto nor Bypass.</strong></p>
+<p>A level decides one thing: whether an action the app declared asks the person first. An adopted app declares no actions, so Auto or Bypass would let an agent do nothing it cannot do at Ask, and a red &quot;Bypass&quot; in the indicator would tell the person that something was unlocked when nothing was. The person who starts <code>reins-electron</code> decides: <code>--levels</code> lists what the panel offers beyond those two. Run (<code>adopt-levels</code>).</p>
+<p>What the panel is for in an adopted app is the rest of it:</p>
+<ul>
+<li><strong>Scope switches.</strong> Switch <code>ui</code> off and the agent can look, read and talk, and can no longer click or type. Run (<code>adopt-pipe</code>): with <code>ui</code> off, <code>reins_ui</code> answers <code>E_SCOPE</code>; switched back on, it works.</li>
+<li><strong>Disconnect</strong> ends one agent's grant and leaves the others.</li>
+<li><strong>Activity</strong> shows what each agent did, without arguments or page text.</li>
+<li><strong>Chat.</strong> In an adopted app, chat is how the person steers: the app has no actions to name, so &quot;add a note about milk&quot; in the chat, carried out with <code>reins_observe</code>, <code>reins_ui</code> and <code>reins_read</code>, is the whole interface.</li>
+</ul>
+<p>Both flags only ever narrow or label: the guarded profile, the consent prompt at attach, and Pause and Stop are not negotiable from the command line. See <a href="../concepts/permission-levels.html">Permission levels</a>.</p>
+<h2 id="the-app-ends-with-the-command-and-the-driver-lives-no-longer-than-it">The app ends with the command, and the driver lives no longer than it <a class="anchor" href="#the-app-ends-with-the-command-and-the-driver-lives-no-longer-than-it" aria-label="Link to the section The app ends with the command, and the driver lives no longer than it">#</a></h2>
+<ul>
+<li><strong>With the pipe</strong>, an app that <code>reins-electron</code> started ends when the command ends, however it ends: Chromium exits when its debugging pipe closes. Run (<code>lifetime</code>).</li>
+<li><strong>With <code>--debug-port</code></strong> there is no such tie, and the process the command started need not be the app: it may be a starter that exits, and an app may start itself again. So the command goes by the port. When it ends, it closes the browser that answers there over the port, asks the port again, and says so in capitals and ends with 1 if something still answers. For a command that is killed, a small watcher process does the same. Neither ends a process by its id. Before it starts the app, the command checks that nothing answers on that port yet. Run (<code>lifetime</code>). Not covered: the watcher itself being killed in the seconds it needs, and an app that is asked to close and stays (the command then tells you). With the pipe neither can happen.</li>
+<li><strong>An app it attached to</strong> (<code>--attach</code>) is left running, and the driver is taken out of it. On Ctrl+C the command tells every document to disconnect for good, whatever carries its frames. Run (<code>adopt-stop</code>): the surface is gone at once and does not come back.</li>
+<li><strong>A command that is killed</strong> cannot say goodbye. Every document therefore holds a lease: the command renews it every 2 s, and a document that has not heard it for 10 s hands its driver no frame and sends none for it, asks the command once, and stops the driver for good when 5 s more pass without an answer. That is decided by the clock at the moment a frame arrives or is to leave, so it holds whether or not any timer fires: a script of the page can clear every timer of its document, the driver's world included. Run (<code>adopt-stop</code>): after a kill the page leaves the hub within the lease, also after a script in the page's own world cleared every timer id. What is not promised is the 15 s when a page keeps its own thread busy without pause.</li>
+</ul>
+<h2 id="a-debugging-port">A debugging port <a class="anchor" href="#a-debugging-port" aria-label="Link to the section A debugging port">#</a></h2>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-s">&quot;C:\Path\To\TheApp.exe&quot;</span> <span class="t-f">--remote-debugging-port</span>=9222      <span class="t-c"># started by you, or by its own launcher</span>
+npx <span class="t-f">--no</span> -- reins-electron <span class="t-f">--attach</span> 9222</code></pre></div>
+<p>Run (<code>adopt-port</code>). Use this when you cannot start the app yourself. Know what it is: for as long as the app runs, any program on the machine that can open <code>127.0.0.1:9222</code> controls the app completely. It can read every page, run any script, press the Allow button of a Reins prompt, raise a permission level in the panel and type in the chat as you, because input sent through that port is real input to the page. <code>reins-electron</code> refuses a debugging port that is not on a loopback address, but it cannot make a loopback port private. Prefer the pipe.</p>
+<p>That is why a page adopted through a port, with <code>--attach</code> or with <code>--debug-port</code>, is never called verified: its prompts and its indicator say &quot;Unverified hub&quot;, the hub lists it as unverified, and <code>chat-serve</code> will not serve its chat unless you pass <code>--allow-unverified</code> and so accept that &quot;the person&quot; there may be any local program.</p>
+<h2 id="joining-a-hub-that-is-already-running">Joining a hub that is already running <a class="anchor" href="#joining-a-hub-that-is-already-running" aria-label="Link to the section Joining a hub that is already running">#</a></h2>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npx <span class="t-f">--no</span> -- reins-hub <span class="t-f">--profile</span> guarded <span class="t-f">--allow-origin</span> app://notes <span class="t-f">--surface-key</span> notes-app=.reins/notes-app.key <span class="t-f">--require-key</span>
+npx <span class="t-f">--no</span> -- reins-electron <span class="t-f">--hub</span> ws://127.0.0.1:7346 <span class="t-f">--app-id</span> notes-app <span class="t-f">--surface-key-file</span> .reins/notes-app.key -- <span class="t-s">&quot;C:\Path\To\TheApp.exe&quot;</span></code></pre></div>
+<p>The pages then connect to that hub as ordinary surfaces, next to your browser tabs, and it has to admit their origin. The hub has to be on a loopback address; any other is refused before anything is dialled. The key goes with the pipe only: with <code>--attach</code> or <code>--debug-port</code> the command refuses <code>--surface-key-file</code>, and the pages stay unverified. Where the page's Content Security Policy forbids the connection, <code>reins-electron</code> opens the socket instead, states the page's origin itself, and carries the frames over the debugging connection. Run (<code>adopt-hub</code>, <code>adopt-hub-open</code>) both ways, without a surface key.</p>
+<p><strong>Join a hub with a surface key, as above.</strong> Without one, two things are true, and the command warns at start (run, <code>adopt-hub</code>):</p>
+<ul>
+<li>The page cannot tell that hub from another program on its port, so the prompt and the indicator say &quot;Unverified hub&quot;.</li>
+<li>The hub admits by origin alone, and the app's own scripts have the same origin as the page. A script of the app, or anything injected into it, can open a socket to that hub and register as the same app, next to the real driver or in place of it.</li>
+</ul>
+<p>Joining with a key was not run.</p>
+<h2 id="apps-that-refuse-and-other-trouble">Apps that refuse, and other trouble <a class="anchor" href="#apps-that-refuse-and-other-trouble" aria-label="Link to the section Apps that refuse, and other trouble">#</a></h2>
+<p>An app that is already running usually keeps a single instance: quit it first, the tray icon included. Some installers leave a small starter that is not the app: with the pipe, name the real executable, because a starter does not pass the pipe on; with <code>--debug-port</code> a starter that passes its arguments on works, at the price of a port. No Electron fuse turns the debugging switches off, but an app can refuse in its own code. <a href="../reference/electron-guide.html#apps-that-refuse">Section 3 of the guide</a> lists each case, and its <a href="../reference/electron-guide.html#9-troubleshooting">troubleshooting table</a> says what each message of the command means.</p>
+<p>Not tested: store builds that run in an OS sandbox, macOS, Linux.</p>
+<h2 id="further-reading">Further reading <a class="anchor" href="#further-reading" aria-label="Link to the section Further reading">#</a></h2>
+<ul>
+<li><a href="../reference/electron-guide.html#3-adopt-an-app-you-did-not-build">The Electron guide, section 3</a> and its <a href="../reference/electron-guide.html#8-security-notes">security notes</a>.</li>
+<li><a href="./claude-and-hermes.html">Claude and Hermes</a>: adopting an app that is itself an agent, and the plugin that avoids it.</li>
+<li><a href="../reference/security-model.html#what-reins-does-not-protect-against">What Reins does not protect against</a>: &quot;Whoever holds an app's debugging connection&quot; and &quot;An agent with <code>ui</code> in an adopted app&quot;.</li>
+<li><a href="../reference/security-model.html#threats-and-what-stops-them">Threats and what stops them</a>: T60 to T65, and T75 for the timers of an adopted page.</li>
+</ul>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/guides/adopting-an-electron-app.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/guides/adopting-an-electron-app.md</code></span><a class="md-link" href="./adopting-an-electron-app.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./electron.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Electron: build it in</span></a>
+    <a class="pager-next" href="./claude-and-hermes.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Claude and Hermes</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#what-adopting-is">What adopting is</a></li><li class="toc-2"><a href="#read-this-first">Read this first</a></li><li class="toc-2"><a href="#what-the-command-does">What the command does</a></li><li class="toc-2"><a href="#what-an-agent-has-there">What an agent has there</a></li><li class="toc-2"><a href="#verified-or-not">Verified, or not</a></li><li class="toc-2"><a href="#options">Options</a></li><li class="toc-2"><a href="#the-panel-in-an-adopted-app">The panel in an adopted app</a></li><li class="toc-2"><a href="#the-app-ends-with-the-command-and-the-driver-lives-no-longer-than-it">The app ends with the command, and the driver lives no longer than it</a></li><li class="toc-2"><a href="#a-debugging-port">A debugging port</a></li><li class="toc-2"><a href="#joining-a-hub-that-is-already-running">Joining a hub that is already running</a></li><li class="toc-2"><a href="#apps-that-refuse-and-other-trouble">Apps that refuse, and other trouble</a></li><li class="toc-2"><a href="#further-reading">Further reading</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

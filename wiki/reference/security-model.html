@@ -1,0 +1,1354 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Reins security model · Reins</title>
+<meta name="description" content="Who can attack an agent-driven page, what stops them, and what Reins does not protect against. Rendered from docs/SECURITY.md.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/reference/security-model.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Reins security model">
+<meta property="og:description" content="Who can attack an agent-driven page, what stops them, and what Reins does not protect against. Rendered from docs/SECURITY.md.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/reference/security-model.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html" aria-current="page">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="./methods.html">Methods</a></li><li><a href="./events.html">Events</a></li><li><a href="./error-codes.html">Error codes</a></li><li><a href="./policy-fields.html">Policy fields</a></li><li><a href="./limits.html">Limits</a></li><li><a href="./cli.html">CLI</a></li><li><a href="./sdk.html">SDK API</a></li><li><a href="./specification.html">Specification</a></li><li><a href="./security-model.html" aria-current="page">Security model</a></li><li><a href="./chat-guide.html">The chat guide</a></li><li><a href="./electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#reference">Reference</a></li><li aria-current="page">Security model</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Reins security model</h1>
+        <p class="lede">Who can attack an agent-driven page, what stops them, and what Reins does not protect against. Rendered from docs/SECURITY.md.</p>
+        <p class="source-note">This page is <code>docs/SECURITY.md</code>, rendered from the repository at build time. It is the text the project maintains, not a copy.</p>
+      </header>
+      <p>Reins gives an AI agent hands inside a web page. This document says who can attack
+that, what stops them, and what Reins does not protect against. The numbered rules it
+refers to are in <a href="./specification.html#14-security-requirements">SPEC.md section 14</a>.</p>
+<h2 id="what-is-being-protected">What is being protected <a class="anchor" href="#what-is-being-protected" aria-label="Link to the section What is being protected">#</a></h2>
+<ul>
+<li><strong>The app session</strong>: whatever the page can do on the user's behalf.</li>
+<li><strong>Data on the page</strong>: names, orders, anything the user typed, and above all
+passwords, card numbers and one-time codes. Also where the user is: the page's URL
+and title.</li>
+<li><strong>The user's say</strong>: nothing sensitive happens without the approval the policy
+demands, and the user can always see and stop the agent. How much an agent is asked
+(its permission level) is the user's alone to change.</li>
+<li><strong>The user's voice</strong>: what the person says in the page's chat is theirs. No agent can
+say it for them, who hears it is theirs to decide, and it is not written down anywhere
+but in the page. The page itself is not kept out of it (see &quot;What Reins does not protect
+against&quot;).</li>
+<li><strong>Agent secrets</strong> and the <strong>audit log</strong>.</li>
+</ul>
+<h2 id="who-is-trusted-with-what">Who is trusted with what <a class="anchor" href="#who-is-trusted-with-what" aria-label="Link to the section Who is trusted with what">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Party</th>
+<th>Trusted to</th>
+<th>Not trusted to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>App (the page that embeds the driver)</td>
+<td>define actions, risk and policy</td>
+<td></td>
+</tr>
+<tr>
+<td>Hub</td>
+<td>authenticate, route, enforce hub policy, keep the audit log</td>
+<td></td>
+</tr>
+<tr>
+<td>Agent</td>
+<td>act within its grant</td>
+<td>exceed scopes, skip consent, see private fields, set its own permission level, speak as the person or as another agent</td>
+</tr>
+<tr>
+<td>The person at the page</td>
+<td>approve, pause, stop, and say how much each agent is asked, within what the app and the hub offer; ask an agent for things in the chat</td>
+<td>approve or change anything by what they type in the chat: that takes the prompt and the panel</td>
+</tr>
+<tr>
+<td>Page content (text, names, values)</td>
+<td>nothing</td>
+<td>it is data, and may be written by an attacker</td>
+</tr>
+<tr>
+<td>Chat text (what the person or an agent wrote)</td>
+<td>nothing</td>
+<td>it is data too: the person's request to an agent about the page, or another agent's words, never an instruction of the agent's operator</td>
+</tr>
+<tr>
+<td>Other web pages, other machines, other local processes</td>
+<td>nothing</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p>The surface re-checks every request even though the hub already did (rule 6), so the
+app's guardrails hold even behind a misconfigured hub.</p>
+<h2 id="threats-and-what-stops-them">Threats and what stops them <a class="anchor" href="#threats-and-what-stops-them" aria-label="Link to the section Threats and what stops them">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Attacker</th>
+<th>Attack</th>
+<th>Defence</th>
+<th>Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td>Another machine on the network</td>
+<td>Connect to the hub</td>
+<td>Loopback bind only; non-loopback remote addresses refused</td>
+<td>1</td>
+</tr>
+<tr>
+<td>T2</td>
+<td>A web page using DNS rebinding</td>
+<td>Make a hostile name resolve to 127.0.0.1 and talk to the hub</td>
+<td><code>Host</code> header must be a loopback name with the hub's port</td>
+<td>1</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>Any web page in the user's browser</td>
+<td>Open a socket to the hub and pose as an agent</td>
+<td>Agents need a 256-bit secret; a browser-origin agent must also be on the credential's origin list</td>
+<td>2</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>Any web page</td>
+<td>Pose as a surface to receive agent commands</td>
+<td>Browsers set <code>Origin</code> truthfully; it must be on the allowlist</td>
+<td>4</td>
+</tr>
+<tr>
+<td>T5</td>
+<td>A local process</td>
+<td>Forge <code>Origin</code> and pose as a surface</td>
+<td>Surface keys: <code>requireKey</code> refuses every surface without one</td>
+<td>4</td>
+</tr>
+<tr>
+<td>T6</td>
+<td>A local process</td>
+<td>Listen on the hub's port first and collect agent traffic</td>
+<td>The hub must prove it holds the agent's secret before the agent sends anything</td>
+<td>2</td>
+</tr>
+<tr>
+<td>T7</td>
+<td>A local process</td>
+<td>Relay an agent's connection to the real hub, then inject, alter, reorder or replay commands on the authenticated session</td>
+<td>Sealed sessions: every message carries a MAC under keys bound to both nonces and to the exact <code>challenge</code>, <code>hello</code> and <code>welcome</code> texts, each behind its byte length, with a sequence number. Text that is not well-formed Unicode is never sealed or opened. Key confirmation before the hub acts on <code>hello</code>. Withholding the tail of a direction is not detected (see below)</td>
+<td>2</td>
+</tr>
+<tr>
+<td>T8</td>
+<td>A local process</td>
+<td>Pose as the hub to a page that holds no key</td>
+<td>The page treats the hub as unverified: no attach is ever silent, the prompt and the indicator say so, and the kiosk profile refuses to run without a key</td>
+<td>4, 11</td>
+</tr>
+<tr>
+<td>T9</td>
+<td>A local process or a log reader</td>
+<td>Steal the agent secret</td>
+<td>Never in URLs or logs; the secret itself never crosses the wire; a new secret file is written inside an owner-only temporary directory and linked into place; an existing one is refused (POSIX) or restricted again (Windows) when others can use it; on Windows every access entry but the current user's is removed, inherited or set on the file itself, and the ACL is read back to confirm it; failing to restrict a secret is fatal</td>
+<td>2, 3</td>
+</tr>
+<tr>
+<td>T10</td>
+<td>Anyone replaying captured traffic</td>
+<td>Replay a handshake or a frame</td>
+<td>Fresh nonces from both sides in every proof; sequence numbers in every sealed frame</td>
+<td>2</td>
+</tr>
+<tr>
+<td>T11</td>
+<td>Someone guessing the secret</td>
+<td>Many handshakes</td>
+<td>256-bit secrets, short keys rejected at configuration, failed proofs delayed and nothing more kept from that peer, 16 handshakes at a time, 16 messages and 64 KiB held per connection before authentication</td>
+<td>2</td>
+</tr>
+<tr>
+<td>T12</td>
+<td>A compromised or manipulated agent</td>
+<td>Do more than it was granted</td>
+<td>Grants, scopes and rate limits at the hub, per credential; policy again at the surface</td>
+<td>5, 6</td>
+</tr>
+<tr>
+<td>T13</td>
+<td>A manipulated agent</td>
+<td>Trigger a destructive action</td>
+<td>Risk tiers: <code>confirm</code> needs a human, <code>deny</code> cannot be overridden by the agent</td>
+<td>6</td>
+</tr>
+<tr>
+<td>T14</td>
+<td>A manipulated agent</td>
+<td>Get a harmful request approved by hiding it: a filler argument first, the payload out of sight, look-alike or invisible characters</td>
+<td>The prompt shows every argument in full, escapes every invisible, blank or look-alike code point (also in agent names, reasons, toasts and labels), refuses to ask about what does not fit on a card, and keeps Allow inactive until a tall card was scrolled to its end</td>
+<td>10</td>
+</tr>
+<tr>
+<td>T15</td>
+<td>A manipulated agent</td>
+<td>Approve its own consent prompt, or raise it under a click already in progress</td>
+<td>Prompts accept trusted input only (what that takes: T67), are outside the exposed tree, and arm Allow after 500 ms; keys that could be typing meant for the page answer no prompt (T70); nothing the agent drew stays on screen with a prompt (T73); the indicator stays above the prompt's backdrop</td>
+<td>10, 11</td>
+</tr>
+<tr>
+<td>T16</td>
+<td>A manipulated agent</td>
+<td>Bury the user in prompts</td>
+<td>One attach in flight per credential and surface, attach rate limit per credential, one pending prompt per agent and four in total, a cool-off after each refusal (T31)</td>
+<td>5, 10</td>
+</tr>
+<tr>
+<td>T17</td>
+<td>A manipulated agent</td>
+<td>Inject script, markup or CSS</td>
+<td>No evaluation path exists; text is inserted as text; one validated colour value</td>
+<td>8</td>
+</tr>
+<tr>
+<td>T18</td>
+<td>A manipulated agent</td>
+<td>Read or change a password, card or OTP field, including after the page reveals it or swaps the node</td>
+<td>Private fields carry no value and no checked state; they refuse every kind of synthetic input, also input that would change them without targeting them (clearing an editable that holds one, a radio of their group, a form reset); Tab never lands on them; they stay private for their lifetime and across a node swap; their text never names another node</td>
+<td>9</td>
+</tr>
+<tr>
+<td>T19</td>
+<td>A manipulated agent</td>
+<td>Send the page somewhere hostile</td>
+<td><code>nav.go</code> is same-origin, http(s), and limited to allowed path prefixes</td>
+<td>8</td>
+</tr>
+<tr>
+<td>T20</td>
+<td>A manipulated agent</td>
+<td>Pass hostile arguments to an app handler</td>
+<td>Schema validation, undeclared properties rejected, size limits</td>
+<td>7</td>
+</tr>
+<tr>
+<td>T21</td>
+<td>A manipulated agent</td>
+<td>Keep acting after Stop or Pause, or behind a dialog that hides the indicator</td>
+<td>Commands re-check right before they act; Pause and Stop halt the cursor and drop queued pointer points; the overlay moves into modal dialogs and fullscreen elements; while it cannot be shown, commands hold; after Stop, attach needs approval again</td>
+<td>11</td>
+</tr>
+<tr>
+<td>T22</td>
+<td>An agent the user never approved</td>
+<td>Learn where the user is, or which surfaces exist, from listings, events and errors</td>
+<td>Without an <code>observe</code> grant an agent sees a surface's origin and app name only, and only for surfaces its credential may attach to; any other surface id answers exactly like a missing one; <code>hub.info</code> counts only what the agent may see; <code>ui</code>, <code>state</code> and <code>nav</code> events reach only grants with <code>observe</code></td>
+<td>5</td>
+</tr>
+<tr>
+<td>T23</td>
+<td>Hostile page content</td>
+<td>Instruct the model through names, values, text or error messages</td>
+<td>Observations are bounded and marked as page data, including listings and relayed errors; whatever the model then tries is still held by T12 to T21</td>
+<td>12, 14</td>
+</tr>
+<tr>
+<td>T24</td>
+<td>A flood, from either side</td>
+<td>Exhaust the hub or freeze the page</td>
+<td>Frame size limits; bounded inbound queues; per-credential token buckets, <code>hub.info</code> and <code>surfaces.list</code> included; admission rates for surfaces and agents; session caps; a peer that does not read is closed; credit-based streams that charge every frame against one point budget per credential and surface; a per-frame time budget in the driver; bounded audit records</td>
+<td>5</td>
+</tr>
+<tr>
+<td>T25</td>
+<td>Someone editing history</td>
+<td>Alter, remove or cut audit records, or act while nothing is recorded</td>
+<td>Hash chain, keyed with an HMAC where configured; argument digests keyed the same way; a head that reveals truncation, replaced atomically; acceptance recorded before a request is forwarded; attach and audited requests refused when the log cannot be written</td>
+<td>13</td>
+</tr>
+<tr>
+<td>T26</td>
+<td>A kiosk visitor</td>
+<td>Use the agent to leave the intended flow</td>
+<td>Kiosk profile: allowlisted actions, annotated elements only, no synthetic input, no navigation, no raw coordinates and no pointer stream</td>
+<td>6</td>
+</tr>
+<tr>
+<td>T27</td>
+<td>A local process without the surface key</td>
+<td>Connect as a surface claiming the app id of a keyed app, to receive the commands meant for it</td>
+<td>The hub demands the key for every app id it holds one for, with or without <code>requireKey</code>; <code>SurfaceInfo.verified</code> tells agents which surfaces proved a key</td>
+<td>4</td>
+</tr>
+<tr>
+<td>T28</td>
+<td>Hostile page content</td>
+<td>Forge the adapter's own status lines (<code>2 ok</code>, <code>3 skipped</code>) inside a <code>reins_batch</code> result, or a notice or a marker inside the text <code>reins_read</code> returns, so the model believes steps ran that did not, or takes page text for the adapter's word</td>
+<td>Page text sits on lines of its own behind <code>| </code>, apart from the step results and from every line the adapter writes</td>
+<td>14</td>
+</tr>
+<tr>
+<td>T29</td>
+<td>Whatever listens on the hub's port</td>
+<td>Put text in front of the model through a handshake that never completes</td>
+<td>An error from an unfinished handshake is one clipped line marked <code>[unverified hub data]</code></td>
+<td>2, 14</td>
+</tr>
+<tr>
+<td>T30</td>
+<td>A user who can write to the hub's working directory</td>
+<td>Plant an <code>icacls.exe</code> for the hub to run with its rights</td>
+<td><code>icacls</code> is run by absolute path from <code>%SystemRoot%\System32</code>, without a shell</td>
+<td>3</td>
+</tr>
+<tr>
+<td>T31</td>
+<td>A manipulated agent</td>
+<td>Re-raise a refused prompt until the person gives in, or change the page while a prompt is up so that what they approve is not what they see</td>
+<td>A cool-off of 2 s doubling to 60 s after each refusal or timeout, per agent for actions and surface-wide for attach; three refusals in a row revoke the grant; while a prompt is showing or queued only read-only methods are served, from every agent; a withdrawn prompt becomes a &quot;Request withdrawn&quot; notice; a remembered approval counts only once its handler ran</td>
+<td>10, 11</td>
+</tr>
+<tr>
+<td>T32</td>
+<td>An agent session that disconnects</td>
+<td>Leave an attach prompt standing for an agent that is gone</td>
+<td>The hub sends the surface <code>detach {why:&quot;agent&quot;}</code>, which withdraws the prompt</td>
+<td>11</td>
+</tr>
+<tr>
+<td>T33</td>
+<td>Hostile page content</td>
+<td>Drive the operator's terminal with escape sequences printed by the agent CLI</td>
+<td>Control characters in page text are printed escaped</td>
+<td>14</td>
+</tr>
+<tr>
+<td>T34</td>
+<td>A web page using DNS rebinding</td>
+<td>Read the demo page, and the surface key it serves, from a hostile name</td>
+<td>The demo server refuses a <code>Host</code> that is not a loopback name with its port</td>
+<td>1</td>
+</tr>
+<tr>
+<td>T35</td>
+<td>A web page that embeds the app in a frame</td>
+<td>Cover or overlay the consent prompt and the indicator with its own content, or place the frame under a click the person is about to make, so that a request is approved, or an agent stays attached, without the person seeing it</td>
+<td>The driver does not connect inside a frame: <code>connect()</code> fails with <code>E_DENIED</code> before anything is sent to the hub or shown, unless the app's policy sets <code>framed</code></td>
+<td>10, 11</td>
+</tr>
+<tr>
+<td>T36</td>
+<td>A web page, or a local process of another user, that finds a shell session's port</td>
+<td>Use the grant the person approved for the agent</td>
+<td>The session listens on loopback, on a port of its own, and answers only a caller that sends its bearer secret, compared in constant time; the secret is in a file only the user's account can read; a request that carries <code>Origin</code>, or names another host, is refused even with the secret</td>
+<td>1, 3</td>
+</tr>
+<tr>
+<td>T37</td>
+<td>A web page</td>
+<td>Learn where the hub's files are, or reach the token, through what the hub leaves in the user's Reins folder</td>
+<td>The announcement and the launcher are files, not something the hub serves: the hub still answers plain HTTP with a bare status, and a page learns nothing a prompt did not tell it. The announcement names the token file and never holds the token</td>
+<td>3</td>
+</tr>
+<tr>
+<td>T38</td>
+<td>A manipulated agent</td>
+<td>Raise its own permission level, set itself a rule, or switch a scope back on</td>
+<td>No protocol message reaches the panel. A level, a rule or a scope switch changes only on trusted input on the driver's own controls (T67 says what that takes, and that script in the page's own realm is outside it), which sit outside the exposed tree; the driver takes no events from the hub; its API reads these and sets none</td>
+<td>10, 15</td>
+</tr>
+<tr>
+<td>T39</td>
+<td>A manipulated agent</td>
+<td>Shed what the person tightened, or keep what they loosened, by its own calls: attach over its own grant, detach and attach again, reconnect, come back under another session id or name, or let the grant run out</td>
+<td>What lets an agent do more belongs to one grant and ends with it: <code>auto</code>, <code>bypass</code>, a rule Allow, a remembered approval. What the person tightened stays with the agent for as long as the page lives: Strict, their Ask and Block rules and the scopes they switched off are on its next grant from the first request. The surface tells the agent by the id of its credential, which the hub sends with every attach, whatever the session id or name. Where it cannot tell (no id, or a hub it did not verify), every such agent is one agent to it: an attach that follows a tightening asks even under <code>attach: allow</code>, and the prompt says what was set and that it stays. The surface names what is kept in its attach answer; the hub starts the grant with it, records it, and reads nothing from an attach answer that lets an agent do more. Only the person lifts a tightening, in the panel</td>
+<td>15</td>
+</tr>
+<tr>
+<td>T40</td>
+<td>A manipulated agent</td>
+<td>Get the level raised under a click already in progress: time a request, or make the panel redraw as the person clicks (a second session attaching or leaving)</td>
+<td>Whatever lets an action run without asking takes a confirm step: <code>auto</code> or <code>bypass</code>, any level under which an action stops asking, the rule Allow always, and a Reset that frees an action. The step names the agent and what stops asking, is armed after 500 ms and armed again when it moves; &quot;Always allow&quot; on a prompt takes a second, armed press. Whenever what is under the pointer changes other than by the person's own click (a redraw, a consent card or its backdrop going away, a confirm step opening or being answered, so also the second half of a double click), the controls that loosen ignore activation for 500 ms; a click that makes the overlay put itself back on top (something had come over it) is not taken either: only a later one is; a change answers no prompt that is already up</td>
+<td>10, 15</td>
+</tr>
+<tr>
+<td>T41</td>
+<td>A manipulated agent</td>
+<td>Use an action that a level or a rule lets run to change the page while the person reads another prompt, or right after the person tightened something</td>
+<td>A waived prompt is not an approval: such an action fails with <code>E_BUSY</code> while any prompt is up, and is checked against the level and the rules again right before it runs</td>
+<td>10, 15</td>
+</tr>
+<tr>
+<td>T42</td>
+<td>A forged or modified surface, or a page whose policy is looser than the hub's</td>
+<td>Run an agent at a level the hub's operator did not offer, or widen a grant by reporting scopes</td>
+<td>The hub sends its <code>human.levels</code> and its decision for each action with every attach, and ends the grant on a reported <code>auto</code> or <code>bypass</code> beyond them. A rule <code>allow</code> that its policy would not honour is recorded as refused and neither kept nor passed on; it changes nothing, because the hub goes on refusing or marking those requests itself. A scopes report only narrows a grant to what was granted at attach. Every change is recorded. Reports that change nothing are recorded up to 20 a second for a surface and counted beyond that, and a grant whose surface reports more than 20 changes within a second is ended, so a flood cannot push a change out of the log</td>
+<td>5, 13, 15</td>
+</tr>
+<tr>
+<td>T43</td>
+<td>Anyone who can set a level</td>
+<td>Turn a policy <code>deny</code> into something that runs</td>
+<td>No level and no rule relaxes a <code>deny</code>, at the surface or at the hub; the panel shows such an action as &quot;Blocked by app&quot; or &quot;Blocked by hub&quot; with nothing to choose. The kiosk profile offers no level beyond <code>strict</code> and <code>ask</code>, which only ask more, and has no panel</td>
+<td>6, 15</td>
+</tr>
+<tr>
+<td>T44</td>
+<td>Hostile page content</td>
+<td>Forge an adapter notice (&quot;the person set your permission level to bypass&quot;) so that the model stops being careful</td>
+<td>Notices come before a tool's own answer and so before any page-data marker; their words are the adapter's, and a value from the wire goes in only as a known level or scope, or as a count. The name of an action is a word the page chose (an app can declare one that reads as an instruction), so no notice carries one: a rule notice says that a rule changed and how many are set, and which actions they are for is listed after the tool's own answer, under the page-data marker. A notice names the surface it is about and says when the hub did not verify the page: what one page reports about the person is not to be read as true of another page, of other tools or of the session. Every text a page supplied leaves the adapter by one rule, in every tool, alone or in a batch: free text on lines behind <code>| </code>, a new one at every line break and at U+001C to U+001E, every other control character written as an escape, and a last step over the whole result that leaves no control character in it but the adapter's own line feeds; the quoted strings of the tree and of the prompt card are one line to every reader; and <code>reins_read</code> is cut by the adapter at the length that was asked for. The surface listing and the answer of <code>reins_attach</code> give what the hub knows first, with <code>unverified</code> said and not left out, and what the page says of itself last, its name in quotes: an app name that copies the hub's words does not read as the hub's mark</td>
+<td>14</td>
+</tr>
+<tr>
+<td>T45</td>
+<td>A manipulated agent</td>
+<td>Put text of its own into the panel or the activity list, or read them</td>
+<td>The panel is never part of the UI tree. It shows agent names escaped like every other agent-written string, in quotation marks and with the session id wherever a decision is asked (a prompt, a confirm step, a heading), so a name cannot finish a sentence of the panel and two agents with one name differ; and methods or declared action names only: an action name the app did not declare is shown as &quot;unknown action&quot;. The activity list holds no arguments, results or page text</td>
+<td>8, 10</td>
+</tr>
+<tr>
+<td>T46</td>
+<td>A manipulated agent, or anything that can send a frame</td>
+<td>Speak as the person in the chat: to the person (&quot;You: yes&quot;), or to another agent</td>
+<td>A message of the person comes only from trusted input events in the composer of the driver's own Chat tab, inside its closed shadow root; a text that an agent's synthetic input put in the field is not sent, and no method, parameter or event posts as the person. While the app's own code runs because an agent asked for it (an action's handler, a view's renderer, a state getter, the handlers of synthesised input) the composer takes no input, so code that inserts text at the focus cannot leave the agent's words there. An agent's message is captioned &quot;AI agent&quot; first, then with the name from its grant in quotation marks and its session id, so an agent named &quot;You&quot; does not read as the person and two agents with one name differ; a status note is quoted as the agent's own words. The hub takes no event from an agent, relays a chat event only for a grant the sending surface holds, and writes the sender's name itself. All of this holds against agents. It does not hold against the page: the app and every script it loads can read and alter the chat like any field of their own page (see &quot;What Reins does not protect against&quot;)</td>
+<td>10, 16</td>
+</tr>
+<tr>
+<td>T47</td>
+<td>Hostile text in the chat: a manipulated agent's message, or something the person was talked into pasting</td>
+<td>Prompt injection: instruct the model through a chat message, or forge a line of the adapter inside one</td>
+<td>In tool results every message is a line of the adapter's that says who spoke, with the text behind <code>| </code>, so a text cannot pass for a header, a notice or another speaker; a new <code>| </code> line starts at every kind of line break and at the separators U+001C to U+001E, every other control character is written as an escape, and a session id is printed with letters, digits and <code>. _ -</code> only; unread messages are announced by number, never by text. The tool and the subagent prompt say what each speaker's words are: the person's are a request about the page, another agent's are that agent's text. Whatever the model then tries is still held by T12 to T21</td>
+<td>14, 16</td>
+</tr>
+<tr>
+<td>T48</td>
+<td>A manipulated agent</td>
+<td>Steer another agent through the room, or listen to what the person asked another agent</td>
+<td>Who hears whom is the person's choice. Under <code>guarded</code> (<code>chatRelay: &quot;person&quot;</code>) no agent hears another until the person switches &quot;Agents can hear each other&quot; on in the Chat tab, through a confirm step that names the agents and that, like every change that lets an agent do more, is not taken while the overlay cannot be relied on (T68); an agent that joins later is not included until the person adds it; a hub that sends another <code>chatRelay</code> with a later attach leaves the switch off for all, told to the hub and said in the tab, never on; and the tab always says who hears what. <code>open</code> relays always and the tab says so; <code>kiosk</code> never does. The stricter of the page's policy and the hub's applies, and the hub enforces its own. What agents hear of each other is marked as another agent's words, not instructions, under the name the hub gave the sender. An agent can always answer the person alone (<code>to: &quot;person&quot;</code>), and the tools do so by themselves after a message that was for one agent only. A message reaches only the agents it was sent to, message ids count each agent's own messages and so tell nothing about what was said to others, the person sees every word, and each agent still acts under its own grant</td>
+<td>5, 16</td>
+</tr>
+<tr>
+<td>T49</td>
+<td>A manipulated agent</td>
+<td>Talk over a consent decision, or get around it: put words next to the prompt (also by saying them just before it comes up), tell the person to press Allow, or have them type &quot;yes&quot; and treat that as approval</td>
+<td>While a prompt is showing or queued the Chat tab shows nothing an agent wrote: no transcript, no status note and no agent's name, only the surface's own line that chat is hidden until the request is answered. <code>chat.say</code> and <code>chat.status</code> fail with <code>E_BUSY</code>, status notes set before the prompt are dropped, and nothing can be typed or sent, so no agent's words stand next to a prompt and the chat cannot be taken for the answer. The same goes for what an agent draws outside the chat: toasts, highlight labels and its cursor's label are taken down when a prompt comes up (T73). A message changes no level, rule or scope and answers no prompt: the action still asks, with every argument shown (T14), and the cool-off and the three-refusals rule still count (T31)</td>
+<td>10, 16</td>
+</tr>
+<tr>
+<td>T50</td>
+<td>A manipulated agent, or a forged surface</td>
+<td>Flood the chat: bury the person's view or an agent's context, or use up the hub's relay so that the person's own message reaches nobody</td>
+<td><code>rates.chat</code> per credential and surface at the hub; a message is at most 4000 characters and a status note 80; the room keeps 200 messages. At the hub each sender has a budget of its own for each agent that listens: the person's messages 5 a second after a burst of 10, which nothing an agent sends uses up, and an agent's words no faster than its own <code>chat</code> rate. A message of the person that the hub does not relay is put on record and told to the page, which shows it as not delivered. The adapter keeps 100 unread messages, announces them as one notice that is replaced, not repeated, and <code>read</code> removes from them only what it showed</td>
+<td>5, 16</td>
+</tr>
+<tr>
+<td>T51</td>
+<td>Another agent, or an agent without the scope</td>
+<td>Read the transcript</td>
+<td>Who may read a message is fixed when it is posted: nothing from before a grant, nothing said while the person had the agent's <code>chat</code> switched off, nothing addressed to another, and nothing another agent said unless the policy or the person lets the two hear each other (T48). The transcript is outside the UI tree, so no <code>observe</code> or <code>read</code> returns it, and the hub relays a message to the one grant it names. This is about agents. The page is not kept out: the driver's API hands the app no text, but the app and every script it loads can read the tab like any part of their own page (see &quot;What Reins does not protect against&quot;)</td>
+<td>5, 10, 16</td>
+</tr>
+<tr>
+<td>T52</td>
+<td>A manipulated agent</td>
+<td>Take what the person types: focus a field of the page while the person is writing in the chat, so that their next words, and the Enter after them, land in the app</td>
+<td>Trusted input in the composer counts as the person using the page, so <code>ui.*</code> commands wait until they pause; when a command or an action moves focus while the person's focus is in the composer, the driver gives it back as soon as the command's synchronous part has run. Synthetic keys are never trusted, so none sends a message</td>
+<td>11, 16</td>
+</tr>
+<tr>
+<td>T53</td>
+<td>A reader of the audit log</td>
+<td>Learn what was said in the chat</td>
+<td>The log holds the length of a message and a digest of it, keyed with the audit key where there is one, never the text; <code>chat.read</code> and <code>chat.status</code> leave no record of content at all. What a surface relays against the hub's policy is dropped and recorded as refused, within the bound that holds for dropped messages</td>
+<td>13, 16</td>
+</tr>
+<tr>
+<td>T54</td>
+<td>A hostile hub in front of a page that holds no key</td>
+<td>Sit in the chat as a trusted voice (&quot;Your bank&quot;), or forge the person</td>
+<td>The attach still needs the person's approval, with the warning (T8). The Chat tab repeats that the hub is unverified, every message of an agent is captioned &quot;AI agent&quot;, and the driver takes no event from the hub, so nothing the hub sends becomes a message of the person</td>
+<td>4, 10, 16</td>
+</tr>
+<tr>
+<td>T55</td>
+<td>A local process that poses as the page (T5), or hostile script in it</td>
+<td>Speak to the agent as &quot;the person at the page&quot;: to turn page data into instructions, or to reach what the agent's operator can do</td>
+<td>The adapter names a page that proved no key as &quot;a page the hub did not verify&quot; on the first line of every chat result, and says what a person's message is: a request about that page, to be carried out with the Reins tools within the grant, not the operator speaking. The shipped subagent has eight Reins tools and no others, cannot attach, and reports back counts and codes, never chat text, so that nothing a page's person wrote enters the operator's session. <code>chat-serve</code> refuses to serve an unverified page unless <code>--allow-unverified</code> is given, tells the command whether the page is verified, writes every message behind a header line of its own on lines starting <code>| </code>, and ships a preface that says the person at the page is not the operator. None of that restricts what the <code>--exec</code> program is able to do (see &quot;What Reins does not protect against&quot;). Surface keys (T5, T27) are what makes &quot;the person at the page&quot; mean the app's own page</td>
+<td>4, 14, 16</td>
+</tr>
+<tr>
+<td>T56</td>
+<td>Whoever writes a chat message</td>
+<td>Run a command through <code>chat-serve</code> by putting shell syntax in the message, or leave something running with the grant when a run is cut off</td>
+<td>The runner writes the message to the command's standard input and nowhere else, starts the command from an argument array without a shell, and passes only ids and addresses in the environment. Which file the command is, it settles before it takes a message and prints: a bare name is looked for in the folders of <code>PATH</code> and never in the working directory. One message and one run at a time. When a run is over (the command exited, took too long, or the runner was stopped) what the command started is ended with it: on Windows everything in the job object the command was put into, which allows no breakaway and so holds every process started below it, whether or not its parent is still there; elsewhere the process group. What a command left running when it exited is ended and told to the operator, and the runner takes no further message until all of it is gone; when it cannot be ended, or the runner cannot find out whether anything is left, it stops. On a Windows machine where no job object can be made, no command is started. What stays out of reach is listed under &quot;What Reins does not protect against&quot;</td>
+<td>8, 16</td>
+</tr>
+<tr>
+<td>T57</td>
+<td>A local HTML file, or any other page loaded from <code>file://</code></td>
+<td>Pose as an Electron app's window to receive the commands meant for it: by connecting to a hub that admits <code>file://</code>, or by getting into the app's own window (a link, a dropped file, a redirect) and asking for that window's in-process link</td>
+<td>Every file page has the one origin <code>file://</code>, so neither an allowlist nor a window can tell them apart by origin. <code>*</code> never admits it, and the hub warns at start when its socket admits <code>file://</code> without requiring a key. In-process, a window is registered for a URL (<code>allow(window, { url })</code>), checked against the URL Electron reports for the frame when the page asks; a window that shows a file is not linked without one. Such a hub closes its socket to surfaces (<code>surfaceSockets: false</code>). Where a socket has to be used: a surface key, or a scheme of the app's own in place of files</td>
+<td>4</td>
+</tr>
+<tr>
+<td>T58</td>
+<td>A page that is not on a web origin (a file, another app's scheme, an opaque origin), or a sandboxed frame on any website</td>
+<td>Be admitted by a hub whose operator wrote <code>*</code> and meant web pages, or by an entry <code>null</code>, and then claim to be an app at a <code>file:</code> or app URL</td>
+<td><code>*</code> matches web origins only. <code>file://</code>, an app origin and <code>null</code> are admitted only by an entry that names them, and the origin of a URL is computed the same way in every engine, not taken from a URL library. <code>null</code> is the origin of every sandboxed frame: the hub warns at start when its socket admits it without requiring a key, <code>reins-electron</code> never takes it from a page as the origin to admit, and the documents say not to list it (see below)</td>
+<td>4</td>
+</tr>
+<tr>
+<td>T59</td>
+<td>A page inside an Electron app: a frame in the window, a fenced frame, a <code>&lt;webview&gt;</code> guest, another window, a window nobody sees</td>
+<td>Obtain the window's link to the broker, pass a port of its own off as that link, cover the prompt of a guest it embeds, or be attached to where no person can see the prompt</td>
+<td>The main process answers only the frame the window's contents report as their main frame (a frame without a parent that is not it, such as a fenced frame's root, is refused), of a window the app registered, under the origin Electron reports and never one the page states; a <code>&lt;webview&gt;</code> guest only if the app registered it as embedded; an offscreen or background page never; a window that is not shown only once it is shown, unless the app registered it to be driven unseen. The preload refuses to work without context isolation. The page takes a port only from a message its own window posted, for a token it made</td>
+<td>4, 10, 11</td>
+</tr>
+<tr>
+<td>T60</td>
+<td>A local process</td>
+<td>Connect to the debugging port of an app that was started with one, take the app over, or press Allow on a prompt itself; or feed <code>reins-electron</code> more than it can hold through the debugging connection</td>
+<td><code>reins-electron</code> starts an app with a debugging pipe, which has no port. A port is used only when asked for, only on a loopback address, and the command says what it means; an app it started with a port is closed over that port when the command ends, by the command or, when it was killed, by a watcher process, so that the port does not outlive it: both know the app by its port, whichever process it has become (the executable may be a starter, the app may start itself again), and neither ends a process by its id. A page adopted through a port is never listed as verified and gets no surface key (T62). A message over the debugging connection is bounded (256 MiB), and nothing the app sends there throws. Against a process that does reach a debugging port there is no defence (see below)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>T61</td>
+<td>The own scripts of a page in an adopted app (an XSS payload, a third-party script)</td>
+<td>Reach the driver that was loaded into the page, write frames on its channel, read a surface key, or stand in for the driver at the hub</td>
+<td>The driver runs in a world of its own, named afresh for each run: the page's scripts share the document with it and nothing else. The function that carries its frames exists in that world only, a call of it from any other context is ignored, and a surface key never enters the page's world. The hub that <code>reins-electron</code> hosts takes no surface over its socket, so the page's scripts cannot register there. At a hub elsewhere they can, unless that hub requires a surface key: the command warns when it joins one without (see below)</td>
+<td>8, 10</td>
+</tr>
+<tr>
+<td>T62</td>
+<td>The process that carries an adopted page's frames (<code>reins-electron</code>), or one that takes its place on the way to a hub</td>
+<td>Alter the frames, state another origin for the page, or carry them to a hub somewhere else</td>
+<td>To the hub it hosts, that process is the embedder: the link never leaves it, and it counts as verified because the person started it and it holds the debugging connection alone, which is true of a pipe. Through a debugging port any local program can speak on the same link and type and press in the page, so the command vouches for no page it adopted that way: the hub lists it as unverified, the page's prompt says &quot;Unverified hub&quot;, and <code>chat-serve</code> does not serve it unless told to. To a hub elsewhere the page treats the hub as unverified unless it holds a surface key; with one, the session is sealed from the page's world to the hub, through the relay. The hub sees an <code>Origin</code> that a local process wrote either way, which <code>requireKey</code> is for (T5). The command dials a hub only on a loopback address</td>
+<td>2, 4</td>
+</tr>
+<tr>
+<td>T63</td>
+<td>An agent that was allowed to attach to an adopted app</td>
+<td>Do through the app's own buttons what Reins would ask about, or what the app itself asks its user about: press Send, Delete, or the button with which the person approves a tool call of an app that is itself an agent</td>
+<td>Nothing, by design: an adopted app declares no actions, and the <code>ui</code> scope is the mouse and the keyboard on every exposed control. The documents say so where the command is introduced; <code>--scopes</code> adopts an app without <code>ui</code>; and where an app can carry a plugin, the plugin exposes named actions and nothing of the page (the Hermes Desktop plugin: no <code>ui</code> scope, <code>exposure: none</code>; <code>prompt.send</code> and <code>prompt.draft</code> are dangerous actions, so each asks under Strict, Ask and Auto alike and shows the whole prompt or is refused, and only the person's Bypass, or their rule Allow for one of the two, lets a prompt through unasked)</td>
+<td>9, 12</td>
+</tr>
+<tr>
+<td>T64</td>
+<td>The driver that <code>reins-electron</code> loaded, after the command has gone</td>
+<td>Stay in the app as a live surface: an agent that attached keeps driving, and new ones can ask, with nothing running that the person started</td>
+<td>A command that stops tells every document to disconnect for good, whatever carries its frames, and takes its script out of documents to come. A command that is killed is missed: each document holds a lease that the command renews every 2 s. Once it has not heard the command for 10 s it hands its driver no frame and sends none, asks once, and stops the driver for good when the command stays silent (about 15 s after its last sign of life). That is decided by the clock when a frame arrives or is to leave, not by a timer: a script of the page can clear every timer of its document, the driver's world included</td>
+<td>11</td>
+</tr>
+<tr>
+<td>T65</td>
+<td>A tab that an adoption matched, after it navigated elsewhere</td>
+<td>Be adopted where it went (<code>--match</code> names a web app; the tab is now on another site)</td>
+<td><code>--match</code> is asked of every document with its own URL, not once of the tab; a document that does not match is told to stop and gets no link. It is an origin or a URL prefix, compared as URLs: a document on another site does not match because its address repeats the text. What the command prints about pages is their origin, never a URL</td>
+<td>4</td>
+</tr>
+<tr>
+<td>T66</td>
+<td>A background conversation in an app that is an agent (the Hermes Desktop plugin), the end of an answer to the person's own message, or a second agent attached to the same window</td>
+<td>Put its text into the reply another agent reads as the answer to its prompt; or read the reply to another agent's prompt</td>
+<td><code>reply.read</code> takes only events that name a session, and only the session the prompt went to; <code>prompt.send</code> is refused when the app does not say which conversation is in front, while a turn is under way there, and when the app gives no sign of whether one is. The reply is held to the agent whose prompt it answers: it is given by an action that knows its caller, not by a state, and forgotten when that agent's grant ends</td>
+<td>14</td>
+</tr>
+<tr>
+<td>T67</td>
+<td>Script in the page (a third-party tag, an injected payload)</td>
+<td>Answer a prompt or raise a level in the person's place with an event it makes or borrows: replace <code>EventTarget.prototype.addEventListener</code> to collect the overlay's listeners and call them with an object that says <code>isTrusted: true</code>; hand a control's listener a real click the person made somewhere else; replace the clock and the timers to cut an arming delay short</td>
+<td>That much is closed. The driver keeps, from the moment its script first runs, the functions it registers listeners, builds elements, attaches its shadow root, sets timers and reads the clock with, and every element of the overlay carries its own non-writable <code>addEventListener</code>. <code>isTrusted</code> is read only through the getter the browser defines on the event itself, and an event counts only while the browser is delivering it to the control the listener belongs to. <strong>Nothing else about script in the page is closed, and the order in which it and the driver load does not matter.</strong> The driver is ordinary script in the page's own JavaScript realm. The second review approved prompts with no input at all by replacing <code>Array.prototype.push</code>, set Bypass by replacing <code>Map.prototype.get</code>, and reached the closed shadow root through <code>Element.prototype.setAttribute</code> and then borrowed the person's click, each from a script injected after the driver had attached. Such script is outside what Reins defends against (below). A real boundary exists where the driver has a realm of its own: an app adopted by <code>reins-electron</code> (T61, T75)</td>
+<td>10</td>
+</tr>
+<tr>
+<td>T68</td>
+<td>The page's stylesheet alone: CSS the app loads from elsewhere, or an injected <code>&lt;style&gt;</code></td>
+<td>Change what the person reads in the indicator, the panel or a prompt, with no script: set or register (<code>@property</code>) the custom properties the overlay took its colours from; define a font under a name the overlay used; set <code>direction</code>; give the host element <code>::before</code> or <code>::after</code> boxes that lie over the prompt, also only while it holds the focus; shrink the overlay to a dot with <code>zoom</code> while the page looks as before; render nothing at all; put a filter, an opacity, a transform, a clip, a mask or a blend mode on <code>html</code>; or lay something over the overlay that clicks pass through</td>
+<td>The overlay's stylesheet reads no custom property, names only generic font families, which no <code>@font-face</code> can redefine, and no system colour; the host resets every property, pins <code>direction</code> and <code>unicode-bidi</code>, and has no <code>::before</code>, <code>::after</code>, <code>::marker</code> or <code>::backdrop</code> that a page rule can bring back. Where the browser has the Popover API the host is in the top layer and is shown again whenever something enters it later, so that no effect on an ancestor and no <code>z-index</code> reaches it. <code>check()</code> fails when such an effect does reach the host, when a <code>zoom</code> reaches it (top layer or not), when nothing is rendered, when the host is not last in the top layer, when the indicator is not what a hit test finds, and, where the browser can tell (IntersectionObserver v2, in Chromium), when the indicator, the open panel or the prompt that is showing is painted over. While it fails, commands that change the page and attach are <code>E_PAUSED</code>, no click is taken on Allow or on anything else that lets an agent do more (the chat's switch among them), and the person is told afterwards why a click was not taken. A click that makes the check put the overlay back on top is itself not taken. <code>scripts/browser-check.mjs</code> runs each of these in Chromium and compares the overlay pixel by pixel. What is left where a browser lacks the Popover API or the visibility observer, and what the observer does not watch, is listed below</td>
+<td>10, 11</td>
+</tr>
+<tr>
+<td>T69</td>
+<td>A manipulated agent, behind a hub whose policy asks about more than the app's does</td>
+<td>Have the hub's confirmation waived by one honest click: the panel knows only the app's policy, shows the action as running without asking, and takes Allow as a change that waives nothing; or have that click end the grant</td>
+<td>The hub sends its decision for each action with every attach. The panel and the surface reason from the stricter of the two, and take a hub that says nothing as one that may confirm anything; the surface holds the hub to what it said. The rule Allow always takes the armed confirm step, which says that it answers the hub's prompt. Where no level on offer would waive what the hub asks, Allow is switched off and says why, and a rule the hub would not honour changes nothing there and ends nothing (T42)</td>
+<td>6, 15</td>
+</tr>
+<tr>
+<td>T70</td>
+<td>A manipulated agent</td>
+<td>Time a request so that keys the person is typing for the page answer it. The prompt takes the focus: their Tab and Enter, a name and password typed without looking up, or Tab, Enter, Tab, Enter then land on its buttons and grant an attach or set &quot;Always allow&quot;; or their Enter refuses it, three times over, which revokes the grant</td>
+<td>Keys that could be typing meant for the page answer no prompt. The prompt takes the focus onto itself, the dialog, where no key presses anything. A key answers only as Enter or Space on a button that has the focus, or as Escape, and only if it is no repeat, at least 500 ms have passed since the prompt appeared, since the focus landed on that button and since any other key, and at least 3 s since the last key that types (a character, Backspace or Delete, a chord), wherever the focus was then and also before the prompt came. Tab does nothing in the prompt's first 500 ms; while the keyboard is locked out the prompt says so; the pointer answers all along. This holds for Deny and Escape as for Allow. When the prompt goes, the focus returns to where it was. What is left is the keyboard path itself: a person who tabs onto Allow, lets half a second pass and presses Enter has approved, whether or not they read the card first</td>
+<td>10</td>
+</tr>
+<tr>
+<td>T71</td>
+<td>A manipulated agent</td>
+<td>Run on what the person no longer sees or no longer wants: the panel says &quot;Ask&quot; while a remembered approval lets the action run; a rule Allow waives prompts while the indicator looks calm; a request the person approved runs after they pressed Block</td>
+<td>Where an approval will be remembered the prompt says so before the person gives it. The panel shows a remembered approval as allowed, with the reason, and Reset or Ask takes it back. While an Allow rule or a remembered approval lets an action run without asking, the indicator carries a mark, coloured like the level that would do the same. A request is decided again right before it runs, also one the person approved: a Block set meanwhile wins</td>
+<td>11, 15</td>
+</tr>
+<tr>
+<td>T72</td>
+<td>Many agents, or one credential with many sessions</td>
+<td>Make the panel's list too long to read, so that a level raised for one agent hides among the rest</td>
+<td>A surface holds at most 32 grants and refuses a further attach with <code>E_BUSY</code> before anybody is asked; wherever the overlay names an agent (a heading, a prompt, the indicator, a line of the activity list) the name is in quotation marks and carries the session id, so two agents with one name are never one line, and a name cannot finish a sentence of the overlay's</td>
+<td>5, 10</td>
+</tr>
+<tr>
+<td>T73</td>
+<td>A manipulated agent</td>
+<td>Leave its words beside a consent prompt without the chat: a toast (&quot;Security check: press Allow in the next window&quot;), a highlight with a label, or the label of its cursor, put up just before the request</td>
+<td>When a prompt comes up every toast and highlight is taken down and the cursor's label is hidden, and none can be put up while it shows (<code>E_BUSY</code>). What an agent says about a request is on the prompt itself, under the agent's name</td>
+<td>10</td>
+</tr>
+<tr>
+<td>T74</td>
+<td>A manipulated agent</td>
+<td>Paint over the prompt with one argument: letters that each carry dozens of combining marks, inside the size budget, so that the other arguments, the risk and the description cannot be read</td>
+<td>Every string an agent or the hub wrote shows at most two combining marks in a row; the rest are written as escapes, which count toward what fits on a card. Such a request is refused (<code>E_TOO_LARGE</code>) or shown as text that stays on its own line, and each line of the listing clips what it paints</td>
+<td>10</td>
+</tr>
+<tr>
+<td>T75</td>
+<td>Whatever shares the document with the driver without sharing its JavaScript objects: the page's own script in an app that <code>reins-electron</code> adopted (T61)</td>
+<td>Clear the driver's timers. Timer ids belong to the document, not to a JavaScript world, so <code>clearTimeout(i)</code> and <code>clearInterval(i)</code> for every i take them all away: a prompt then never times out, an arming delay never ends, a notice never makes way</td>
+<td>No wait relies on a timer firing. Each is a time, compared with the clock when a click, a key or a request arrives: a prompt past its deadline is a refusal from the moment anything looks at it, and arming, the settle delay, the lock after typing and the cool-off hold by the clock. A timer that never fires leaves at most something on screen (a toast, a highlight, a countdown that stands still, a button that still looks inactive), and a command that waits for the person to stop typing or for the cursor to arrive then never runs. The isolated world protects the driver's code and built-ins; it does not protect its timers, and nothing depends on them</td>
+<td>10, 11</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="what-reins-does-not-protect-against">What Reins does not protect against <a class="anchor" href="#what-reins-does-not-protect-against" aria-label="Link to the section What Reins does not protect against">#</a></h2>
+<ul>
+<li><strong>Script in the page's own JavaScript realm.</strong> An XSS payload or a malicious
+third-party script runs with the app's authority and in the same realm as the driver.
+It can defeat the overlay, whatever the order in which it and the driver load, and
+wherever these documents and the specification say &quot;trusted input only&quot;, such script
+is outside that claim. What the driver does about it (T67) closes one family of
+attacks, events that a script forges or borrows and hands to the overlay's listeners.
+It closes nothing else:
+<ul>
+<li><em>The driver's own data.</em> The driver is ordinary script. It queues prompts in an
+array, keeps sessions in a map, and sets attributes and reads properties through
+methods any script can replace. The second review, from a script injected after the
+driver had attached, approved an attach and an action with no card on screen and no
+click (a replaced <code>Array.prototype.push</code> was handed each prompt), put a session at
+Bypass with nothing shown and nothing told to the hub (a replaced
+<code>Map.prototype.get</code> was handed the session), and reached the closed shadow root
+through <code>Element.prototype.setAttribute</code> and the <code>activeElement</code> getter, hid the
+card, and let the person's own click on the page land on the real Allow. Loading the
+driver first does not prevent any of this, and an earlier version of this document
+that advised it was wrong to suggest that it would.</li>
+<li><em>A copy.</em> Any script can draw its own indicator, panel or prompt in the page, or
+hide the page's own content, and a person cannot tell a copy from the real one by
+looking.</li>
+<li><em>The app's functions.</em> Script that can call the app's own code does not need the
+agent, the prompt or the panel at all.
+Keep a strict Content Security Policy: what must not happen is hostile script in the
+page. Where that cannot be ruled out and the app is an Electron app, adopt it with
+<code>reins-electron</code> instead of embedding the driver: there the driver runs in an isolated
+world, with built-ins of its own, and the page's script shares the document with it
+and none of its objects (T61). In that setting what the page's script can still do to
+the overlay is what the page's stylesheet can do (T68), plus three things: remove or
+move the host element, clear timers (T75), and keep the person's clicks and keys from
+reaching the overlay at all, since a capturing listener on the window sees every event
+before anything inside the overlay does. The first two stop commands or leave a prompt
+unanswered. The third takes Pause, Stop and Deny away from the person for as long as
+the script does it, while the indicator still shows; nothing in the page can tell. None
+of the three answers a prompt or raises a level. The chat has a paragraph of its own
+next.</li>
+</ul>
+</li>
+<li><strong>A browser without the top layer or without the visibility observer.</strong> Against the
+page's stylesheet (T68) the overlay relies on three things, and not every browser has
+all of them. Its own stylesheet (no custom properties, generic fonts, pinned
+direction) works everywhere. The top layer needs the Popover API (Chrome and Edge
+114, Safari 17, Firefox 125): without it the host is an ordinary fixed element, a
+filter, opacity, transform, clip, mask or blend mode on <code>html</code> or <code>body</code> does reach
+it, and <code>check()</code> is what is left. That check reads computed styles and does a hit
+test, so it stops commands and loosening clicks while such a style is in force; it
+does not undo the style, and the person sees a recoloured or missing indicator until
+the page takes it away. A page that puts <code>zoom</code> on an ancestor of the overlay, for
+whatever reason, fails the check for as long as it does: Reins does not drive such a
+page. Being told that something is painted over the overlay without taking clicks
+needs IntersectionObserver v2 (<code>trackVisibility</code>), which only Chromium has, and there
+it is asked about three things: the indicator, the open panel and the prompt that is
+showing. It is not a statement that nothing is painted over anything: a cover the
+observer is slow to report (it answers within a few hundred milliseconds), or one over
+another part of the overlay, is not noticed by it. Elsewhere a cover goes unnoticed
+when the document does not list it: a layer with <code>pointer-events: none</code> over a host
+outside the top layer, or a popover that a script opens inside a closed shadow root of
+its own after the driver's. The second takes script (above); the first is open to CSS
+alone in a browser that has neither API. What holds in every browser: a top-layer
+element the document lists is found by the check, and the click that finds it is not
+taken.</li>
+<li><strong>The page reads and alters the chat.</strong> The chat lives in the app's own page. The app,
+and every script it loads (a third-party tag, an XSS payload), can read what the person
+types in the composer, read the whole transcript, and replace what the person sends. A
+listener on the window is given every key before the driver is; the browser's editing
+and selection commands (<code>execCommand</code>, <code>getSelection</code>, <code>window.find</code>) reach into the
+closed shadow root; and text such a command inserts arrives as trusted input. The
+independent review confirmed each of these in Chromium. The closed shadow root, the
+trusted-input checks and an API without the text keep agents out. They do not make the
+chat secret from the page, nothing inside one document can, and earlier versions of this
+document that said otherwise were wrong. Treat the chat as you treat any field of that
+page: what the person types there, the app can have. The driver stops the events of
+typing and editing at its tab, so that listeners a page registered in the ordinary way
+(hotkeys, analytics) do not record them; that is hygiene, not a wall.
+<strong>The fix that was not taken</strong> is the tab in a browsing context of its own: a frame
+from another origin, or a window that belongs to the browser or to an extension, which
+the page's script cannot enter. It needs a second origin to be served and trusted and a
+channel between that origin and the driver, and Reins 0.1 does not have it.</li>
+<li><strong>A process running as the same OS user.</strong> It can read the token file, the file of a
+running shell session and the browser's memory, and it can replace the launcher that
+agents run. On a kiosk, run the hub as a separate service account, and start it with
+<code>--no-announce</code>: nobody there needs the launcher.</li>
+<li><strong>A Reins folder that someone else can write.</strong> The hub creates <code>~/.reins</code> for the
+current user alone, but it does not take a folder back that already exists with wider
+permissions. Whoever can write there can replace the launcher, which agents run with
+the user's rights, or point agents at another token file.</li>
+<li><strong>A surface key that the attacker can read.</strong> A key served to a web page is readable
+by anyone who can fetch that page. It only authenticates the hub to the page, and
+the page to the hub, where the page's source is out of the attacker's reach: a
+packaged kiosk app, not a page any local process can download. The demo serves its
+key over loopback for convenience and says so.</li>
+<li><strong>A page that chose to run inside a frame.</strong> With <code>policy.framed</code> the driver connects
+in a framed page, and it cannot see what the embedding page draws over the prompt or
+the indicator (T35). Set it only for a page whose embedders you control, and enforce
+that with a <code>Content-Security-Policy: frame-ancestors</code> header. A page that is never
+meant to be framed should send <code>frame-ancestors 'none'</code> in any case, as the demo does.</li>
+<li><strong>Whoever holds an app's debugging connection.</strong> <code>reins-electron</code> adopts an app through
+the DevTools protocol, and that protocol is total: its holder reads every page, runs any
+script, and sends input that the page receives as trusted, so it can press Allow. The
+consent prompt protects the person from the agent. It does not protect the app from
+the program that loaded the driver, and nothing in a page could. The same input opens
+the panel, raises a permission level and types in the chat as the person. A debugging pipe keeps
+that power with <code>reins-electron</code> alone. A debugging port (<code>--remote-debugging-port</code>,
+<code>--debug-port</code>, <code>--attach</code>) hands it to every program of every user on the machine that
+can open a loopback socket, for as long as the app runs. Use the pipe; treat an app
+that was started with a port as controlled by all of them. Reins says so where it
+can: a page adopted through a port is never listed as verified, its prompt says
+&quot;Unverified hub&quot;, and it is given no surface key. An app that the command started with
+a port is closed over that port when the command ends or is killed. What is left: an
+app that is asked to close and stays (the command reports it), and a watcher that is
+itself killed in the seconds it needs (nothing reports that). The pipe has neither.</li>
+<li><strong>Pages from <code>file://</code> on a socket.</strong> A hub whose allowlist names <code>file://</code> admits
+every local HTML file: an attachment the person opened in a Chromium browser connects
+as a surface with the same origin as the app (T57). Reins makes this something you
+have to write down (<code>*</code> does not cover it) and offers the ways around it: the
+in-process port with <code>surfaceSockets: false</code>, a scheme of the app's own, or a surface key.</li>
+<li><strong>An agent with <code>ui</code> in an adopted app.</strong> Adoption gives an agent the window, not a
+list of actions. After the one Allow at attach it presses whatever a person can press
+there, and Reins asks about none of it: &quot;Send&quot;, &quot;Delete&quot;, and, in an app that is itself
+an agent, the approval of that agent's tool calls. Adopt an app for an agent only when
+that is what you mean; otherwise adopt it without <code>ui</code> (<code>--scopes observe,chat</code>), or
+give the app a plugin that declares actions.</li>
+<li><strong><code>null</code> in an allowlist.</strong> Every sandboxed frame on every website sends
+<code>Origin: null</code>, and a connection with that origin may state any URL that has no web
+origin. A hub whose socket admits <code>null</code> without requiring surface keys admits any of
+them as any app. The hub warns at start; do not list it.</li>
+<li><strong>A hub joined without a surface key, from an adopted app.</strong> With
+<code>reins-electron --hub</code> and no key, the hub admits the app's pages by origin, and the
+app's own scripts have that origin too. They can connect to that hub and register as
+the same app, beside the driver or in its place. The driver's own world does not help:
+the hub cannot tell them apart. Use the hub the command hosts, or a key with a hub that
+requires one.</li>
+<li><strong>A <code>&lt;webview&gt;</code> guest registered as <code>embedded</code>.</strong> Like <code>policy.framed</code>: the page that
+embeds the guest can draw over its prompt and its indicator, and neither the guest nor
+its driver can tell (T59). Register a guest only when the embedding page is your own.</li>
+<li><strong>A page with no key, in front of a fake hub.</strong> The page cannot tell. Reins makes
+the situation visible and never silent (T8), but the person still has to refuse
+the prompt.</li>
+<li><strong>Traffic confidentiality on loopback.</strong> Frames are plain text on <code>127.0.0.1</code>.
+Sealing protects their integrity, not their secrecy: anyone able to capture
+loopback traffic or relay a connection can read commands and observations, and can
+cut the connection.</li>
+<li><strong>A relay that withholds the tail of one direction.</strong> Injection, alteration,
+reordering, replay, and a drop followed by a later message are detected. Silently
+withholding the last messages of a direction is not: neither end notices until the
+heartbeat drops the silent peer (2.5 × <code>heartbeatMs</code>, 37.5 s by default), and a
+request waiting for an answer fails with <code>E_TIMEOUT</code> first.</li>
+<li><strong>Local denial of service.</strong> A local process can hold the hub's 16 handshake slots
+or its port, or use up a surface origin's admission rate. Legitimate peers are then
+refused, never impersonated.</li>
+<li><strong>An audit log without a key or without an external head.</strong> An unkeyed chain can be
+rewritten by anyone who can write the file. Truncation shows only against a head
+stored where that person cannot change it. Without a key, <code>args</code> is a plain SHA-256,
+so a reader of the log can confirm a guess of a low-entropy argument (a PIN, a
+quantity).</li>
+<li><strong>Activity that is not audited.</strong> <code>cursor.*</code>, <code>show.clear</code> and pointer frames are not
+recorded, and so still flow while the log cannot be written. They are visual and
+change nothing in the app.</li>
+<li><strong>Remembered approvals.</strong> With <code>remember: session</code> one approval covers the action
+name with any arguments for the rest of the grant. Only the <code>open</code> profile remembers
+by default.</li>
+<li><strong>A person who chose <code>bypass</code>.</strong> Under <code>bypass</code> nothing waits for the person: the
+agent runs every action the policy does not deny, with any arguments, until the grant
+ends or the person lowers the level. <code>auto</code> is the same for everything the app did not
+mark <code>dangerous</code>. Reins makes the choice deliberate (a confirm step that lists what
+stops asking) and keeps it in sight (the indicator turns amber or red and names the
+level), and that is all it does. A deployment that must never run unasked leaves
+<code>auto</code> and <code>bypass</code> out of <code>human.levels</code>, in the app's policy or the hub's.</li>
+<li><strong>A standing rule covers any arguments.</strong> The rule <code>allow</code> for <code>pay.send</code> allows every
+payment the agent sends for the rest of the grant, as a remembered approval does. The
+panel and the prompt say so when the rule is set.</li>
+<li><strong><code>auto</code> trusts the app's risk labels.</strong> It asks only about actions marked <code>dangerous</code>.
+An action that is destructive but marked <code>sensitive</code> or <code>safe</code> runs unasked.</li>
+<li><strong>A level set behind a fake hub.</strong> With an unverified hub the panel and the confirm
+step repeat the warning, but as with attach (T8) the person decides. A level given to
+an agent that came through a fake hub is given to whoever runs that hub.</li>
+<li><strong>The hub hears of a level after the page applied it.</strong> A page offers only what the
+hub's list allows, so only a forged or modified page reports more. The hub then ends
+the grant, but an action may have run in between; such a page is one the hub cannot
+hold to the app's policy in any case.</li>
+<li><strong>What the person set is in the audit log in clear.</strong> Levels, scope lists and the names
+of actions with a rule are recorded as they are, like action names today.</li>
+<li><strong>Surface ids reveal a count.</strong> Ids are sequential (<code>s1</code>, <code>s2</code>, ...), so an agent
+learns how many surfaces connected before the ones it sees. This is accepted.</li>
+<li><strong>Inherited permissions on Windows.</strong> The hub restricts the files and directories it
+creates, but a parent directory that grants another user the right to change
+permissions, through inheritance, lets that user take the files back. Keep the hub's
+files under a directory only its account controls.</li>
+<li><strong>A model that is talked into a bad but permitted action.</strong> Policy bounds what an
+agent can do. It cannot judge whether a permitted action was wise. Mark anything
+costly as <code>sensitive</code> or <code>dangerous</code>.</li>
+<li><strong>What the person tells an agent.</strong> A chat message goes to the agent the person
+addressed, and so to whoever runs it and to the model behind it. The Chat tab says who
+is listening before the person types; it cannot say what that agent does with the
+words. Where agents hear each other (always under <code>open</code>; under <code>guarded</code> once the
+person switched it on) they hear what any of them says to all, and what the person
+says to all.</li>
+<li><strong>A surface speaks for its person.</strong> The hub cannot tell what a person typed from what
+a page says they typed. A forged or modified page (T5, T27), and script inside the app
+(above), can send an agent messages &quot;from the person&quot;. The agent is told when the page
+proved no key (T55), and a message is still only a request within the grant on that
+page; but a harness that gives the same model a shell or other tools has to keep a
+page's person apart from its own operator. The subagent in <code>integrations/</code> has no
+other tools for that reason, cannot attach, and reports nothing of the chat back.</li>
+<li><strong><code>chat-serve</code> runs what you give it.</strong> The <code>--exec</code> command runs as the operator's
+user, with their files, environment variables and network, and its input is a
+visitor's text. The preface asks a model to keep to the Reins tools; it restricts
+nothing. An agent with a shell behind <code>chat-serve</code> is a shell for whoever can write in
+that page's chat: the visitor, the page's own script, and with <code>--allow-unverified</code>
+any local program. Restrict the program, not the prompt: switch its other tools off, or
+run it under an account or in a sandbox that holds nothing of the operator's. The
+runner ends a run with what it started, and that is tidiness, not a wall. On Windows it
+is what the run's job object holds: every process started below the command from a few
+milliseconds after its start. Out of reach there: a process that a program outside the
+job starts on the command's behalf (a scheduled task, a service, WMI, an application
+that was running already), and one started in those first milliseconds by a child that
+had itself exited before the job took hold. Elsewhere it is the command's process group;
+a process that leaves the group on purpose (<code>setsid</code>, a daemon) is out of reach. And the
+helper that makes the job object is Windows PowerShell compiling a few lines of C#:
+where a policy forbids that, <code>chat-serve</code> starts no command at all.</li>
+<li><strong>Whoever can change the user's Reins folder, or the runner's environment.</strong> The shell
+tools find the hub, the session and its bearer secret there, <code>REINS_CHAT_CONTEXT</code>
+tells a tool inside a run of <code>chat-serve</code> which session and page to use, and <code>PATH</code>
+decides which program a bare <code>--exec</code> name is. All of that is the operator's own
+account: a process that can write there is the operator already.</li>
+<li><strong>A model that takes a request in the chat too far.</strong> The person's words are the
+person's request, also when they pasted something a page or a mail told them to paste.
+Policy and consent bound what follows from it, as for any request.</li>
+<li><strong>Short messages in an unkeyed audit log.</strong> A chat message is recorded as a plain
+SHA-256 when the hub has no audit key. A reader of the log can then confirm a guess of
+a short message (&quot;yes&quot;, &quot;cancel my order&quot;). Key the log (<code>--audit-key-file</code>).</li>
+<li><strong>Chat that is not on record.</strong> <code>chat.status</code> notes are shown to the person and not
+audited, and the room's transcript is kept nowhere: when the page is closed, what was
+said is gone. An agent can also push old messages out of the room by writing 200 new
+ones, at the rate the hub allows.</li>
+<li><strong>Browser extensions</strong> with access to the page.</li>
+</ul>
+<h2 id="browser-access-to-loopback">Browser access to loopback <a class="anchor" href="#browser-access-to-loopback" aria-label="Link to the section Browser access to loopback">#</a></h2>
+<p>A tab reaches the hub at <code>ws://127.0.0.1:7346</code>. What the browser allows depends on
+where the page was loaded from. These notes were checked in November 2026 and browser
+behaviour here is still changing, so test your target browser.</p>
+<ul>
+<li><strong>Page served from loopback</strong> (<code>http://localhost:...</code>): no permission needed.</li>
+<li><strong>Page served from a public <code>https:</code> origin, Chrome and Edge</strong>: <code>ws://</code> to an IP
+literal or <code>localhost</code> is exempt from mixed-content blocking, but Local Network
+Access applies. The user is asked to allow the site to reach apps on the device
+(permission <code>loopback-network</code>). Chrome announced WebSocket coverage for version
+147; expect the prompt. A cross-origin iframe also needs
+<code>allow=&quot;loopback-network&quot;</code> from its embedder, and the driver connects inside a frame
+only with <code>policy.framed</code> (T35). Public pages on plain <code>http:</code> are
+refused without a prompt.</li>
+<li><strong>Firefox</strong>: loopback counts as a secure origin for mixed content. WebSocket
+behaviour was not verified.</li>
+<li><strong>Safari</strong>: has historically blocked <code>ws://127.0.0.1</code> from <code>https:</code> pages. Treat it
+as unsupported unless you have tested it. Serve the app from loopback, or use the
+in-page port transport.</li>
+<li><strong>Electron</strong>: a page loaded from a file or from a scheme of the app reached
+<code>ws://127.0.0.1</code> without any prompt in Electron 44 and 45, and sent <code>file://</code> or its
+app origin as <code>Origin</code> (docs/ELECTRON.md has the measurements). The page's own
+Content Security Policy applies to that socket, also when the driver runs in a world
+of its own. A window that is linked over the app's port needs no network at all.</li>
+<li><strong>Managed devices and kiosks</strong>: Edge documents the policies
+<code>LoopbackNetworkAllowedForUrls</code> and <code>LoopbackNetworkBlockedForUrls</code>, and the older
+<code>LocalNetworkAccessAllowedForUrls</code>. Chrome is reported to use the same names. Use
+them to pre-approve the kiosk app's origin so no prompt appears.</li>
+</ul>
+<p>The driver reports a blocked or refused connection as <code>offline</code> and keeps retrying
+with backoff. It never treats a failed connection as permission to skip policy.</p>
+<h2 id="relation-to-the-model-context-protocol">Relation to the Model Context Protocol <a class="anchor" href="#relation-to-the-model-context-protocol" aria-label="Link to the section Relation to the Model Context Protocol">#</a></h2>
+<p>The MCP adapter follows the MCP security guidance for local servers:</p>
+<ul>
+<li>It speaks <strong>stdio</strong>, the transport the guidance recommends for local servers, so it
+opens no listening socket of its own.</li>
+<li>The shell tools give the same ten tools to an agent that has a shell and no
+registration. A grant ends with the agent's connection, so one process holds the
+connection between commands and listens on loopback for them (T36). It ends when
+asked, or after 30 minutes without a call, and the hub then ends the grant and tells
+the page.</li>
+<li>The hub, which does listen, binds loopback only, validates <code>Origin</code> and <code>Host</code>, and
+authenticates every connection.</li>
+<li>Session and surface ids are labels. Holding one authorises nothing.</li>
+<li>Tools carry annotations (<code>readOnlyHint</code>, <code>destructiveHint</code>, <code>openWorldHint</code>) so a
+host can ask its user before a call that changes the page.</li>
+<li>Only <code>reins_attach</code> attaches, so a tool marked read-only never raises a prompt on
+the page or obtains scopes.</li>
+<li>Text from a page or the hub in tool results is marked as data, by one rule for every
+tool (T44): what a page supplied sits on lines of its own behind <code>| </code>, alone or in a
+batch, with no control character left raw, and the shell tools print the same text
+character for character. The surface listing and the answer of <code>reins_attach</code> put the
+hub's own facts first and say <code>unverified</code> where a page proved no key. An error from an
+unfinished handshake is marked <code>[unverified hub data]</code>. The MCP
+specification asks hosts to keep a human able to refuse tool calls; Reins adds its
+own on-screen consent for sensitive actions, which holds even if the host does not
+ask.</li>
+<li>The scopes the adapter is started with are a ceiling. A model cannot ask for more
+in a tool call.</li>
+<li>What the person sets on the page (the level, a rule, the scopes) reaches the model as
+a notice: a line starting <code>[reins] </code> at the start of the next tool result, before any
+page-data marker (T44). A notice holds no word the page chose: which actions the
+person's rules are for comes at the end of the result, as page data. It names the
+surface it is about, and says when the hub did not verify that page: a notice is true
+to what a surface reported, and a hostile page can report that the person lifted every
+prompt on it. What that changes is that page's own prompts, which were the page's to
+show or not in the first place; the hub's policy and the adapter's scopes do not move.
+No tool sets any of it.</li>
+<li>Chat reaches the model through one tool, <code>reins_chat</code>, as data: a line of the
+adapter's for each message that says who spoke, the text behind <code>| </code> (T47), and the
+page named as not verified when it proved no key (T55). That messages wait is told by a
+notice with their number. A long-poll (<code>wait</code>) ends after 150 s at the latest, so a
+call never outlives the session or the harness that made it.</li>
+<li><code>reins-tools chat-serve</code> hands a person's message to a program on standard input,
+without a shell (T56), marked as <code>reins_chat</code> marks it: a line of the runner's that
+says who wrote it, then the text behind <code>| </code>. It serves one page, refuses one the hub
+did not verify unless told otherwise (T55), takes one message and runs one command at a
+time, and ends a run with what it started as far as the operating system lets it be
+followed: a job object on Windows, the process group elsewhere, with the limits named
+under T56 and &quot;What Reins does not protect against&quot;. What that program does with the text is its own business:
+if it is a model, it has to be told that the text is a request from a person at a page,
+who is not its operator. <code>integrations/chat-serve/preface.md</code> is such a text, and a
+text is all it is.</li>
+<li>A <code>reins_chat</code> <code>wait</code> whose caller has gone takes no message, <code>read</code> removes only what
+it showed, and while a <code>wait</code> is in flight the adapter keeps the grant in use, so that
+an agent that only listens neither loses messages nor its grant. Over the shell
+session a <code>wait</code> only shows the messages, and they are taken when the caller, with the
+answer in hand, says so: a caller that died in between took nothing.</li>
+<li>The shell tools end a hub (<code>down</code>, and <code>up</code> when it restarts its own) only when what
+listens on the port proves that it is a hub with the announced key and the process
+named in the announcement is older than the announcement: a stale announcement does
+not get another program ended. An option that a running session cannot take
+(<code>--scopes</code> among them) is refused, not dropped. And <code>up</code> prints the hub's warning
+about an allowlist that names no page (<code>null</code>, <code>file://</code>) itself, because the hub it
+starts writes to a log file.</li>
+</ul>
+<p>The adapter is built on MCP TypeScript SDK 1.x, which negotiates protocol revisions
+up to <code>2025-11-25</code>. The stateless revision <code>2026-07-28</code> needs a newer SDK.</p>
+<h2 id="kiosk-deployment-checklist">Kiosk deployment checklist <a class="anchor" href="#kiosk-deployment-checklist" aria-label="Link to the section Kiosk deployment checklist">#</a></h2>
+<ol>
+<li>Run the hub with <code>--profile kiosk</code>, and create the driver with <code>policy: 'kiosk'</code>.
+The profile offers no permission level but <code>ask</code> and has no panel: a visitor cannot
+make the assistant ask less. Leave <code>human.levels</code> and <code>human.panel</code> as they are.</li>
+<li>Give the app a surface key (<code>--surface-key &lt;appId&gt;=&lt;file&gt;</code>); the hub then demands it
+from any surface claiming that app id. Start the hub with <code>--require-key</code> as well,
+so that every surface without a key is refused. Ship the key inside the packaged
+app, not from a URL other processes can fetch. Check that the app is listed as
+<code>verified</code>.</li>
+<li>Allow exactly one origin, the kiosk app's.</li>
+<li>Give the agent credential a name, only the scopes it needs, and the origins it may
+attach to.</li>
+<li>Annotate only the elements the assistant should see with <code>data-reins-id</code>.</li>
+<li>Mark every action with the right risk. Add <code>actions</code> overrides for anything that
+must stay off whatever its risk tier says.</li>
+<li>Run the hub under its own OS account, from a working directory and under parent
+directories that only that account controls. The hub restricts the token, key and
+audit files, and the directories it creates, to that account, and stops if it
+cannot. It refuses an existing secret file or audit log that others can use (POSIX) or
+restricts it again (Windows).</li>
+<li>Pre-approve loopback access for the kiosk origin by browser policy.</li>
+<li>Key the audit log (<code>--audit-key-file</code>), ship the log and its head off the machine,
+and verify the chain against the head on arrival.</li>
+<li>Reset the app session whenever the assistant detaches.</li>
+<li>A kiosk built with Electron links its window in-process (<code>reinsMain</code>) and starts its
+hub with <code>surfaceSockets: false</code>. Its allowlist then names the origin of its own
+window, an app scheme rather than <code>file://</code>, and nothing can pose as that window
+over the socket. Never ship it with a debugging port.</li>
+</ol>
+<h2 id="review">Review <a class="anchor" href="#review" aria-label="Link to the section Review">#</a></h2>
+<p>Version 0.1 had two adversarial reviews, by reviewers that did not write the code.</p>
+<p>The first reported twenty findings, most with a proof against the running code.</p>
+<p>The second was run on the fixes by four independent reviewers, one each for sealing
+and the handshake; the driver; hub authorisation and limits; and the audit log, secret
+files, the MCP adapter and the demo. They reported 35 findings, none high and six
+medium, each with a proof against the running code.</p>
+<p>Every finding of both reviews was fixed, except the limits listed under &quot;What Reins
+does not protect against&quot;. The fixes have regression tests; those of the second review
+are named <code>R2-</code> and live mostly in <code>security.test.ts</code> in <code>packages/driver/test</code> and
+<code>packages/hub/test</code>, in <code>seal.test.ts</code>, <code>link.test.ts</code> and <code>rpc.test.ts</code> in
+<code>packages/core/test</code>, in <code>packages/mcp/test/mcp.test.ts</code>, in <code>packages/agent/test</code> and in
+<code>examples/kiosk/test</code>. A few smaller gaps that turned up afterwards, while these
+documents were brought in line with the code and when the tests first ran on hosted
+Windows and Linux machines, were closed the same way.</p>
+<p>Permission levels, per-action rules, scope switches and the panel (T38 to T45, rule 15;
+now also T67 to T75)
+were added after both reviews, and then had an adversarial review of their own, by a
+reviewer that did not write the code: 23 proofs against the running code, and a page of
+attacks in a real Chromium. It found that the panel could be defeated from the page and
+that it did not always tell the person the truth:</p>
+<ul>
+<li>A script that loaded after the driver could collect the overlay's click listeners and
+call them with an object that said <code>isTrusted: true</code>, and so answer a prompt or raise a
+level (T67).</li>
+<li>The page's stylesheet alone could blank, recolour or cover the indicator, the panel and
+the prompts while the driver's own check passed (T68). The fix found one more way than
+the review had, <code>@property</code>, which defeats a custom property however it is set, so the
+overlay now reads none at all.</li>
+<li>The panel did not know what the hub confirms, so one honest click on Allow could waive
+the hub's prompt without a confirm step, and another could end the grant (T69, T42).</li>
+<li>A notice of the MCP adapter carried the name of an action, a word the page chose
+(T44).</li>
+<li>The panel showed &quot;Ask&quot; for an action that ran on a remembered approval, a Reset could
+loosen in one click, an approved request ran after the person had blocked the action,
+a click could fall through a card or a confirm step that went away onto a control that
+loosens, an Allow rule left the indicator unmarked, and an agent's name could pass for
+words of the panel (T40, T45, T71).</li>
+<li>At the hub, a flood of reports could keep a change of level out of the audit log, a
+value the hub's policy did not offer could be kept and relayed, and nothing bounded the
+number of agents a surface holds (T42, T72).</li>
+</ul>
+<p>A review of the chat that ran alongside added that a prompt took the focus and did not
+give it back, and that a key on its way to the page could answer it (T70).</p>
+<p>All of these were fixed. The regression tests are in
+<code>packages/driver/test/hardening.test.ts</code>, in the <code>review:</code> blocks of
+<code>packages/driver/test/levels.test.ts</code>, in <code>packages/hub/test/levels.test.ts</code> and
+<code>packages/mcp/test/notices.test.ts</code>, and in the conformance tests <code>LV-15</code> to <code>LV-26</code>; <code>scripts/browser-check.mjs</code> repeats the attacks on
+the overlay in a real Chromium (<code>npm run test:browser</code>).</p>
+<p>Those fixes then had a second independent review, by a reviewer that had written neither
+the code nor the fixes: 31 tests against the running code, 19 of them proofs of a
+finding, and a script of 25 attacks in a real Chromium, with real keys and clicks, of
+which 18 worked. It broke three of the seven areas the fixes had changed, and showed
+that this document claimed more than was true:</p>
+<ul>
+<li>Keys the person typed for the page still answered a prompt. Tab moved the focus to
+Allow, which restarted nothing; an arming time that started with the prompt had run out
+by the time a word and an Enter arrived; and Tab, Enter, Tab, Enter granted an attach
+and set &quot;Always allow&quot; (T70). No key now answers a prompt unless the person plainly
+means the prompt; the rule is in T70 and in section 12 of the specification.</li>
+<li>The page's stylesheet could still cover a prompt: <code>::before</code> and <code>::after</code> of the host
+element are boxes of the host, in the top layer with it, and a rule of the page gave
+them content. <code>zoom</code> on <code>html</code> shrank the overlay to a dot, and <code>html { display: none }</code>
+rendered nothing, while the check passed (T68). The host now has no generated box a
+page rule can bring back, the check fails under a zoom and when nothing is rendered,
+and the visibility observer watches the open panel and the prompt as well as the
+indicator.</li>
+<li>A click that made the check put the overlay back on top was itself taken. Such a click
+is now not taken; only a later one counts (T68).</li>
+<li>An agent shed Strict, a Block rule or a scope the person had switched off by attaching
+again. What the person tightened now stays with the agent for as long as the page
+lives, told by the id of its credential, and where the page cannot tell agents apart
+an attach that follows a tightening asks and says what stays (T39).</li>
+<li>An agent could leave a toast, a highlight or the label of its cursor beside a prompt
+(T73), paint over a prompt with combining marks (T74), and have the app's own code
+write into the chat composer through a view or a state getter (T46).</li>
+<li>Smaller ones: letting agents hear each other was taken while the overlay could not be
+relied on, and a hub that sent another <code>chatRelay</code> cleared the person's switch without
+a word (T48); the activity list named agents without the session id (T72); relays the
+hub refused left no audit record; the check on an app's theme stylesheet let through
+what it could not prove safe (T68); and a remembered approval showed no mark on the
+indicator (T71).</li>
+<li>This document said that script which loads after the driver cannot answer a prompt.
+The reviewer answered prompts with no input from the person at all, from a script
+injected after the driver had attached, by replacing <code>Array.prototype.push</code> and
+<code>Map.prototype.get</code>, and reached the closed shadow root through
+<code>Element.prototype.setAttribute</code>. That is not fixed and is not going to be inside one
+JavaScript realm: T67 and &quot;What Reins does not protect against&quot; now say exactly what
+is closed (forged and borrowed events through hooks on listener registration) and that
+nothing else about script in the page is, whichever loaded first.</li>
+</ul>
+<p>The review of the Electron fixes added one finding that belongs here: timer ids belong
+to the document, so in an adopted app the page's script can clear the driver's timers
+although it shares none of its objects. No wait of the overlay or the driver now relies
+on a timer firing (T75).</p>
+<p>Everything but the last item of the list was fixed: of the 18 attacks that worked in
+the browser, 16 no longer do, and the two that still do are the ones of that last item,
+which replace built-ins the driver uses. The regression tests are the blocks
+named <code>round 2</code> in <code>hardening.test.ts</code>, <code>levels.test.ts</code> and <code>chat.test.ts</code> in
+<code>packages/driver/test</code>, <code>packages/driver/test/timers.test.ts</code>, the <code>round 2</code> block of
+<code>packages/hub/test/levels.test.ts</code>, and the conformance tests <code>LV-27</code> to <code>LV-37</code> with
+the rewritten <code>LV-6</code> and <code>LV-23</code>; <code>scripts/browser-check.mjs</code> now types real keys at a
+prompt and runs the generated-box, zoom and <code>display: none</code> attacks in Chromium. What is
+stated as a limit, in the rows named and under &quot;What Reins does not protect against&quot;:
+script in the page's own JavaScript realm, whatever the load order; the keyboard path
+itself (a person who tabs to Allow, waits and presses Enter has approved, T70); pages
+that set <code>zoom</code> on <code>html</code> or <code>body</code>, which Reins does not drive at all; that the
+visibility observer exists in Chromium only and is asked about the indicator, the open
+panel and the prompt, nothing else; and browsers without the Popover API. These second
+fixes have not been reviewed by someone else. How the overlay is painted was checked in
+Chromium on Windows only.</p>
+<p>Chat (T46 to T56, rule 16) was added after that. It has tests, in <code>chat.test.ts</code> in
+<code>packages/driver/test</code>, <code>packages/hub/test</code>, <code>packages/mcp/test</code> and <code>examples/kiosk/test</code>,
+in <code>chat-serve.test.ts</code>, and in the <code>CH-</code> conformance tests. Its author attacked it once,
+as the page, as a hostile agent and as a hostile hub; that found three things, which are
+fixed and kept by the tests named &quot;attacks&quot; in <code>packages/driver/test/chat.test.ts</code> and
+&quot;whose request a chat message is&quot; in <code>packages/mcp/test/chat.test.ts</code>: an agent could name
+itself &quot;You&quot; and read as the person at a glance (T46), the Chat tab did not repeat the
+warning about an unverified hub (T54), and a page that proved no key spoke to the model as
+&quot;the person at the page&quot; without a mark (T55).</p>
+<p>Chat then had one independent review, by a reviewer that did not write it, against the
+running code and, for the Chat tab, a real Chromium. It reported eighteen findings, two of
+them high, each with a proof. Both high ones were in <code>chat-serve</code>. As documented, it
+handed whoever could speak as &quot;the person&quot; (with an unverified page: any local program) an
+agent with a shell, with nothing that marked the text or said who was writing; it now
+refuses an unverified page unless told otherwise, marks every message, and its documents
+say what the <code>--exec</code> program can do (T55). And a run that timed out left what it had
+started running with the grant, beside the next run; a run is now ended with its whole
+tree, and no message is taken until that is gone (T56). The others, in short: the page
+can read the composer and the transcript and replace what is sent, which this document
+denied (it cannot be closed inside one document, and is now stated under &quot;What Reins does
+not protect against&quot;, with the fix that was not taken); one agent could use up the hub's
+relay so that the person's message reached nobody while the tab showed it as sent (T50);
+<code>reins_chat read</code> threw away unread messages it had not shown; <code>chat-serve</code> followed
+whichever page attached last; an agent could put words next to a consent prompt by saying
+them just before it (T49); a message for one agent went to all when that agent left
+before Enter; agent names and status notes read in the tab's own voice, and two agents
+with one name could not be told apart (T46); the subagent could attach and reported chat
+text into its operator's session (T55); an abandoned <code>wait</code> lost the next message; an
+agent that only listened lost its grant to the idle timer; the audit record of <code>chat.say</code>
+need not match what was said; message ids told an agent that others were talking (T48);
+<code>chat.read</code> returned the older part of &quot;the latest&quot;; a session id was printed outside the
+quotes of the adapter's line (T47); and <code>chat-serve</code> gave up on <code>E_RATE</code>. One finding
+belongs to the consent prompt (it takes the focus from the composer, and a stray Space
+pressed Deny) and is dealt with there. The rest are fixed and kept by the tests whose
+names start with <code>review</code> in <code>chat.test.ts</code> (<code>packages/core/test</code>, <code>packages/driver/test</code>,
+<code>packages/hub/test</code>, <code>packages/mcp/test</code>, <code>examples/kiosk/test</code>) and <code>chat-serve.test.ts</code>,
+and by the <code>CH-17</code> to <code>CH-27</code> conformance tests. The review also changed a default: under
+<code>guarded</code> agents no longer hear each other until the person says so (T48).</p>
+<p>The part of those fixes that a model reads and that a runner executes (the MCP adapter,
+the shell tools and their session, <code>chat-serve</code>) then had a second independent review,
+against the running code and with real processes on Windows. For that part it reported
+nine findings, none high, each with a proof, and one suspicion. The largest was that
+<code>chat-serve</code> on Windows still did not end everything a run started. It looked for what was
+left only when the command's output stayed open, so a command that exited 0 and left a
+background process was a clean answer; a process whose parent had exited was not found;
+a tree that kept starting processes outran the one list that was taken; and a kill script
+that could not run counted as done. The repository's own tests had not shown it, because
+Node ends its own children with itself on Windows, and the tests used Node in between.
+The fix is not a better search. A run is now put into a job object that allows no
+breakaway, by a small helper (Windows PowerShell, started by its full path with an
+environment of its own, compiling a few lines of C#), so that Windows itself keeps and
+ends every process below the command; where that cannot be done nothing is run; and a
+bare <code>--exec</code> name is no longer looked up in the working directory (T56). What a job
+object does not hold is stated under &quot;What Reins does not protect against&quot;. The others:
+<code>reins_surfaces</code> printed the app's own name before the hub's fields and had no mark for
+an unverified page, so a name could read as &quot;verified&quot;; line and control characters that
+chat escaped passed raw through <code>reins_read</code>, <code>reins_observe</code>, <code>reins_act</code>, batches and
+the prompt card, where a step line or a notice could be forged after one, and
+<code>reins_read</code> had no bound of its own (T44); <code>reins-tools up</code> showed nothing of the hub's
+warning about <code>null</code> and <code>file://</code>; the commands of the shipped preface reached session
+<code>default</code> and not the runner's; <code>--scopes</code> on a later command was dropped without a word;
+<code>down</code> and <code>up</code> ended whatever process held the id in a stale announcement; and three
+small losses of chat messages (a caller that died after the answer was written, <code>--once</code>
+on a batch, and a private question answered in the room after a <code>read</code> of an older
+message). The suspicion was that a hostile page can make the adapter say, in its own
+voice, that the person set the permission level to bypass: that is true to what the
+surface reported, and a notice now names the surface and says when the hub did not verify
+the page. All of it is fixed and kept by tests: the blocks named <code>review round 2</code> in
+<code>chat-serve.test.ts</code> and <code>shell.test.ts</code>, <code>text.test.ts</code> and <code>chat-handover.test.ts</code> in
+<code>packages/mcp/test</code>, and the conformance tests <code>MCP-8</code>, <code>MCP-9</code>, <code>CH-28</code> and <code>CH-29</code>.
+The Windows tests put cmd.exe, PowerShell and Python between the command and what is left
+running, not Node.</p>
+<p>These fixes have not been reviewed by someone else. Chat was not run with a model, or
+under a real harness. The job-object helper was run on one machine (Windows 11, Windows
+PowerShell 5.1); the process-group path was not run for this change, and what Linux and
+macOS report as a process's creation time (used before <code>down</code> ends a hub) was read from
+their documentation, not run.</p>
+<p>Electron support (T57 to T66; sections 3, 5 and 15 of the
+specification; <code>docs/ELECTRON.md</code>) had one independent review, by a reviewer that did not
+write it, against the running code and a real Electron. It reported fourteen findings,
+one high, each with a proof. The high one was in the Hermes Desktop plugin: it granted
+the <code>ui</code> scope over a page that is an agent's own interface, so that after one approved
+attach an agent could send prompts unasked and press that agent's approval buttons. The
+plugin now exposes nothing of the page and grants no <code>ui</code>, both of its writing actions
+ask (since the second review as dangerous actions, which no level short of Bypass
+waives), and the documents say what adopting such an app means. The others: a driver that
+outlived a stopped or killed <code>reins-electron</code> when the page had its own socket to a hub;
+any other local file in a registered <code>file://</code> window being linked as the app; the
+adopted page's own scripts being able to register at a hub that was joined without a
+surface key; an allowlist entry <code>null</code> admitting every sandboxed frame; an unbounded
+reader on the debugging pipe; <code>nav</code> reports of <code>file://</code> and app-origin pages dropped
+by the hub; app origins such as <code>app://-</code> that the grammar could not express; an adopted
+document that could not reconnect after the broker closed its link; <code>--match</code> checked
+per tab and not per document; <code>--hub</code> accepting any host; the plugin's reply not held
+to one session; a preload that failed unclearly without context isolation and linked
+windows nobody could see; and calls from unknown contexts being accepted, with page URLs
+in the log. All fourteen are fixed, or, where the weakness is in what an origin can say
+(<code>null</code>, <code>file://</code>, a hub joined without a key), warned about at start and written down
+under &quot;What Reins does not protect against&quot;. Three suspicions were followed up: a killed
+command with <code>--debug-port</code> did leave the app and its port running, and a watcher
+process now ends it; a frame without a parent that is not the page's top frame is now
+refused, whether or not a fenced frame could have passed; and the driver's world, whose
+fixed name another world could have taken, is now named afresh for each run. The fixes
+have regression tests: the <code>OR-6</code> and <code>EL-9</code> to <code>EL-13</code> conformance tests,
+<code>packages/electron/test</code>, and, in a real Electron, the scenarios <code>builtin-file</code>,
+<code>adopt-stop</code>, <code>adopt-hub</code>, <code>windows</code> and <code>lifetime</code> of <code>npm run test:electron</code>. The
+review also found statements in the Electron guide that said &quot;tested&quot; for things no
+check covered; every such statement now names the check that backs it, or says that
+there is none.</p>
+<p>Those fixes then had a second independent review, again against the running code and a
+real Electron. For Electron and the Hermes plugin it reported four findings, none high,
+and followed up on smaller points. The lease of an adopted page was one <code>setInterval</code>
+in the driver's world, and timer ids belong to the document: a script of the page could
+clear it, and after a killed command the driver stayed a live surface that an agent
+attached to and typed through. The lease is now judged by the clock at every frame, so
+that no timer has to fire (T64). An app started with <code>--debug-port</code> through a starter
+executable was left running with its port open, because the watcher watched the
+starter's process: the command and its watcher now go by the port, close the browser
+behind it over the port, and end no process by its id (T60). <code>--match</code> was a substring
+of the whole URL and matched a document elsewhere that repeated the text: it is now an
+origin or a URL prefix (T65). The Hermes plugin's two writing actions were sensitive, so
+at Auto, which the plugin offered, neither asked, and a prompt too long for a consent
+card went to Hermes unseen: both are now dangerous, ask under every level but Bypass,
+and are refused when the card cannot show them whole (T63). The smaller points: the
+plugin's reply was one object for the window, which a second agent with <code>observe</code> alone
+could read, and is now held to the agent that sent the prompt; the rule that a window
+which is not shown gets no link covered a registered window but not a view registered
+by its contents, and now covers both; a hub hosted by <code>reins-electron</code> listed every
+adopted page as verified, also behind a debugging port where any local program can type
+as the person, and now does so over a pipe only (T62); the origin the hosted hub admits
+was that of whichever window loaded first, and is now taken only when the first pages
+agree, and never from a web site elsewhere; and without a sign from Hermes that a turn
+is under way, the end of an answer to the person's own message could be read as the
+reply to an agent's prompt, so <code>prompt.send</code> now refuses without that sign (T66). The
+fixes have regression tests: the <code>EL-15</code> to <code>EL-18</code> conformance tests and the extended
+<code>EL-10</code>, <code>packages/electron/test</code>, and, in a real Electron, the scenarios <code>adopt-stop</code>,
+<code>lifetime</code>, <code>adopt-port</code>, <code>adopt-pipe</code> and <code>windows</code> of <code>npm run test:electron</code>. How
+the origin is taken from the first pages is covered by unit tests and was not seen in a
+real Electron. These second fixes have not been reviewed by someone else. Electron
+support has not been run on macOS or Linux, against Hermes Desktop, or with a model.</p>
+<h2 id="reporting">Reporting <a class="anchor" href="#reporting" aria-label="Link to the section Reporting">#</a></h2>
+<p>Report a suspected vulnerability privately to the maintainers of this repository, not
+in a public issue. Include what you did, what happened and what you expected.</p>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/docs/SECURITY.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>docs/SECURITY.md</code></span><a class="md-link" href="./security-model.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./specification.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Specification</span></a>
+    <a class="pager-next" href="./chat-guide.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">The chat guide</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#what-is-being-protected">What is being protected</a></li><li class="toc-2"><a href="#who-is-trusted-with-what">Who is trusted with what</a></li><li class="toc-2"><a href="#threats-and-what-stops-them">Threats and what stops them</a></li><li class="toc-2"><a href="#what-reins-does-not-protect-against">What Reins does not protect against</a></li><li class="toc-2"><a href="#browser-access-to-loopback">Browser access to loopback</a></li><li class="toc-2"><a href="#relation-to-the-model-context-protocol">Relation to the Model Context Protocol</a></li><li class="toc-2"><a href="#kiosk-deployment-checklist">Kiosk deployment checklist</a></li><li class="toc-2"><a href="#review">Review</a></li><li class="toc-2"><a href="#reporting">Reporting</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

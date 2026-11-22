@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>SDK API · Reins</title>
+<meta name="description" content="The public API of the reference implementation. The driver for pages, the agent SDK, the broker and the hub, the MCP adapter, and the core every part is built on.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/reference/sdk.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="SDK API">
+<meta property="og:description" content="The public API of the reference implementation. The driver for pages, the agent SDK, the broker and the hub, the MCP adapter, and the core every part is built on.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/reference/sdk.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="./methods.html">Methods</a></li><li><a href="./events.html">Events</a></li><li><a href="./error-codes.html">Error codes</a></li><li><a href="./policy-fields.html">Policy fields</a></li><li><a href="./limits.html">Limits</a></li><li><a href="./cli.html">CLI</a></li><li><a href="./sdk.html" aria-current="page">SDK API</a></li><li><a href="./specification.html">Specification</a></li><li><a href="./security-model.html">Security model</a></li><li><a href="./chat-guide.html">The chat guide</a></li><li><a href="./electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#reference">Reference</a></li><li aria-current="page">SDK API</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>SDK API</h1>
+        <p class="lede">The public API of the reference implementation. The driver for pages, the agent SDK, the broker and the hub, the MCP adapter, and the core every part is built on.</p>
+        
+      </header>
+      <h2 id="one-package-several-entry-points">One package, several entry points <a class="anchor" href="#one-package-several-entry-points" aria-label="Link to the section One package, several entry points">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Import</th>
+<th>Use it for</th>
+<th>Runs in</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@offensiveadhd/reins</code></td>
+<td>The kit: <code>createDriver</code>, <code>connect</code>, <code>Broker</code>, <code>linkPair</code>, <code>randomToken</code>, <code>ReinsError</code> and the protocol types</td>
+<td>browser, Node</td>
+</tr>
+<tr>
+<td><code>@offensiveadhd/reins/driver</code></td>
+<td>Making a page drivable</td>
+<td>browser</td>
+</tr>
+<tr>
+<td><code>@offensiveadhd/reins/agent</code></td>
+<td>Driving a page from an agent</td>
+<td>browser, Node</td>
+</tr>
+<tr>
+<td><code>@offensiveadhd/reins/broker</code></td>
+<td>Hosting the broker yourself, for example inside the tab</td>
+<td>browser, Node</td>
+</tr>
+<tr>
+<td><code>@offensiveadhd/reins/hub</code></td>
+<td>The loopback WebSocket hub, <code>startHub</code></td>
+<td>Node</td>
+</tr>
+<tr>
+<td><code>@offensiveadhd/reins/mcp</code></td>
+<td>The MCP adapter, <code>createReinsMcpServer</code></td>
+<td>Node</td>
+</tr>
+<tr>
+<td><code>@offensiveadhd/reins/core</code></td>
+<td>Wire types, codec, policy, crypto, links</td>
+<td>browser, Node</td>
+</tr>
+<tr>
+<td><code>@offensiveadhd/reins/electron</code></td>
+<td>An Electron window as a surface: <code>reinsMain</code>, <code>preloadPath</code></td>
+<td>Electron main process</td>
+</tr>
+<tr>
+<td><code>@offensiveadhd/reins/electron/renderer</code></td>
+<td>The page half, <code>electronLink</code></td>
+<td>Electron page</td>
+</tr>
+<tr>
+<td><code>@offensiveadhd/reins/electron/adopt</code></td>
+<td>Adopting an app through its debugging connection</td>
+<td>Node</td>
+</tr>
+</tbody>
+</table></div>
+<p>The signatures on this page are taken from section 15 of the specification when the site is built. There, the packages go by their internal names: <code>@reins/driver</code> is <code>@offensiveadhd/reins/driver</code>, and so on.</p>
+<h2 id="the-driver">The driver <a class="anchor" href="#the-driver" aria-label="Link to the section The driver">#</a></h2>
+<p><code>@offensiveadhd/reins/driver</code>, also exported by the kit. Browser only.</p>
+<div class="code" data-lang="ts"><div class="code-bar"><span class="code-lang">TypeScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>createDriver(options: {
+  app: AppInfo
+  hub?: string                       <span class="t-c">// ws URL, default ws://127.0.0.1:7346</span>
+  link?: Link                        <span class="t-c">// use this link instead of a WebSocket</span>
+  key?: string                       <span class="t-c">// surface key, when the hub requires one</span>
+  policy?: PolicyInput               <span class="t-c">// default 'guarded'</span>
+  consent?: (req: ConsentRequest) =&gt; Promise&lt;boolean&gt;
+  indicator?: boolean                <span class="t-c">// default true</span>
+  reconnect?: boolean                <span class="t-c">// default true, with backoff 0.5 s to 10 s</span>
+  root?: Element                     <span class="t-c">// subtree to expose, default document.body</span>
+}): Driver
+
+<span class="t-k">interface</span> Driver {
+  action&lt;A = any&gt;(def: ActionDef, handler: (args: A, ctx: CommandContext) =&gt; unknown | Promise&lt;unknown&gt;): <span class="t-k">this</span>
+  view&lt;D = any&gt;(def: ViewDef, render: (data: D, ctx: CommandContext) =&gt; unknown | Promise&lt;unknown&gt;): <span class="t-k">this</span>
+  state(name: string, get: () =&gt; unknown, description?: string): <span class="t-k">this</span>
+  notify(name?: string): <span class="t-k">void</span>        <span class="t-c">// an exposed state changed</span>
+  connect(): Promise&lt;<span class="t-k">void</span>&gt;           <span class="t-c">// resolves once the hub has welcomed the surface</span>
+  disconnect(): <span class="t-k">void</span>
+  on(event: <span class="t-s">'status'</span> | <span class="t-s">'attach'</span> | <span class="t-s">'detach'</span> | <span class="t-s">'command'</span> | <span class="t-s">'level'</span> | <span class="t-s">'rule'</span> | <span class="t-s">'scopes'</span> | <span class="t-s">'chat'</span>, fn: (e: any) =&gt; <span class="t-k">void</span>): () =&gt; <span class="t-k">void</span>
+  <span class="t-k">readonly</span> status: <span class="t-s">'idle'</span> | <span class="t-s">'connecting'</span> | <span class="t-s">'ready'</span> | <span class="t-s">'controlled'</span> | <span class="t-s">'paused'</span> | <span class="t-s">'offline'</span>
+  <span class="t-k">readonly</span> manifest: Manifest
+  <span class="t-k">readonly</span> policy: Policy
+  <span class="t-k">readonly</span> hubVerified: boolean      <span class="t-c">// the session is sealed, or the app supplied the link</span>
+  agents(): AttachedAgent[]          <span class="t-c">// a copy: each attached agent with what the person set for it</span>
+  pause(): <span class="t-k">void</span>; resume(): <span class="t-k">void</span>; stop(): <span class="t-k">void</span>
+}
+<span class="t-k">interface</span> AttachedAgent { agent: AgentInfo; level: Level; scopes: Scope[]; granted: Scope[]; rules: Record&lt;string, Decision&gt; }
+<span class="t-k">interface</span> CommandContext { agent: AgentInfo; scopes: Scope[] }
+<span class="t-k">interface</span> ConsentRequest { kind: <span class="t-s">'attach'</span> | <span class="t-s">'action'</span>; agent: AgentInfo; scopes?: Scope[]; action?: ActionDef; args?: unknown; reason?: string; hubVerified?: <span class="t-k">false</span>; kept?: string[] }   <span class="t-c">// kept: on an attach, what the person tightened for this agent before and that stays, one line each</span></code></pre></div>
+<p>Actions, views and state are registered before <code>connect()</code>. <code>createDriver</code> throws when the profile is <code>kiosk</code> and the driver would dial a hub without a <code>key</code>. <code>connect()</code> rejects with <code>E_DENIED</code>, and connects to nothing, in a page inside a frame whose policy does not set <code>framed</code>.</p>
+<p>The events <code>level</code>, <code>rule</code> and <code>scopes</code> fire when the person changes one in the panel, and <code>agents()</code> returns each attached agent with what the person set for it. The API only reads them: nothing in it sets a level, a rule or a scope switch, and no option opens the panel. The event <code>chat</code> says who posted a message and how long it is, not its text, and nothing in the API posts a message or reads the transcript.</p>
+<p>Guides: <a href="../start/make-an-app-drivable.html">Make an app drivable</a>, <a href="../guides/actions-and-risk.html">Writing good actions and risk tiers</a>.</p>
+<h2 id="the-agent-sdk">The agent SDK <a class="anchor" href="#the-agent-sdk" aria-label="Link to the section The agent SDK">#</a></h2>
+<p><code>@offensiveadhd/reins/agent</code>, also exported by the kit. Node and browser.</p>
+<div class="code" data-lang="ts"><div class="code-bar"><span class="code-lang">TypeScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>connect(options: { url?: string; link?: Link; kid?: string; key?: string; name?: string }): Promise&lt;ReinsClient&gt;
+isHandshakeError(e: unknown): boolean            <span class="t-c">// connect threw e during the handshake: its message came from an unverified peer</span>
+
+<span class="t-k">interface</span> ReinsClient {
+  <span class="t-k">readonly</span> session: string
+  info(): Promise&lt;HubInfo&gt;
+  surfaces(): Promise&lt;SurfaceInfo[]&gt;
+  attach(s: string, opts?: { scopes?: Scope[]; reason?: string }): Promise&lt;SurfaceHandle&gt;
+  ping(): Promise&lt;number&gt;
+  on(event: <span class="t-s">'surface'</span> | <span class="t-s">'close'</span>, fn: (e: any) =&gt; <span class="t-k">void</span>): () =&gt; <span class="t-k">void</span>
+  close(): <span class="t-k">void</span>
+}
+<span class="t-k">interface</span> SurfaceHandle {
+  <span class="t-k">readonly</span> info: SurfaceInfo; <span class="t-k">readonly</span> manifest: Manifest; <span class="t-k">readonly</span> grant: Grant
+  <span class="t-k">readonly</span> level: Level                            <span class="t-c">// the level the person last set for this grant; `ask` until told, `strict` from the start when that was kept (section 8)</span>
+  <span class="t-k">readonly</span> rules: Record&lt;string, Decision&gt;         <span class="t-c">// the person's rules for single actions, by name</span>
+  <span class="t-k">readonly</span> chatRelay: boolean                      <span class="t-c">// the person switched &quot;Agents can hear each other&quot; on for this agent</span>
+  card(): string                                   <span class="t-c">// the prompt card</span>
+  observe(opts?: { full?: boolean; boxes?: boolean }): Promise&lt;Observation&gt;   <span class="t-c">// tracks `since` itself</span>
+  observeText(opts?: { full?: boolean }): Promise&lt;string&gt;
+  read(h?: Target, max?: number): Promise&lt;string&gt;
+  readText(h?: Target, max?: number): Promise&lt;{ text: string; truncated: boolean }&gt;   <span class="t-c">// read, with whether it was cut at max</span>
+  state(name?: string): Promise&lt;Record&lt;string, unknown&gt;&gt;
+  act&lt;R = unknown&gt;(action: string, args?: object): Promise&lt;R&gt;
+  click(h: Target): Promise&lt;<span class="t-k">void</span>&gt;
+  <span class="t-k">type</span>(h: Target, text: string, opts?: { clear?: boolean; enter?: boolean }): Promise&lt;<span class="t-k">void</span>&gt;
+  select(h: Target, value: string): Promise&lt;<span class="t-k">void</span>&gt;
+  scroll(opts: { h?: Target; dx?: number; dy?: number; to?: <span class="t-s">'top'</span> | <span class="t-s">'bottom'</span> | <span class="t-s">'view'</span> }): Promise&lt;<span class="t-k">void</span>&gt;
+  key(key: UiKey, h?: Target): Promise&lt;<span class="t-k">void</span>&gt;
+  cursor: { move(to: Target | Point, opts?: { ms?: number; wait?: boolean }): Promise&lt;Point&gt;; show(label?: string, color?: string): Promise&lt;<span class="t-k">void</span>&gt;; hide(): Promise&lt;<span class="t-k">void</span>&gt; }
+  show: { toast(text: string, kind?: ToastKind, ms?: number): Promise&lt;<span class="t-k">void</span>&gt;; highlight(h: Target, label?: string, ms?: number): Promise&lt;<span class="t-k">void</span>&gt;; view(view: string, data?: unknown): Promise&lt;unknown&gt;; clear(): Promise&lt;<span class="t-k">void</span>&gt; }
+  go(url: string): Promise&lt;<span class="t-k">void</span>&gt;
+  pointer(): Promise&lt;PointerStream&gt;
+  chat: { say(text: string, opts?: { to?: string }): Promise&lt;{ id: number }&gt;; read(opts?: { since?: number; max?: number }): Promise&lt;{ messages: ChatMessage[]; next: number }&gt;; status(state: <span class="t-s">'idle'</span> | <span class="t-s">'thinking'</span> | <span class="t-s">'working'</span>, note?: string): Promise&lt;<span class="t-k">void</span>&gt; }
+  subscribe(topics: Topic[]): Promise&lt;<span class="t-k">void</span>&gt;
+  on(event: Topic, fn: (d: any) =&gt; <span class="t-k">void</span>): () =&gt; <span class="t-k">void</span>
+  detach(): Promise&lt;<span class="t-k">void</span>&gt;
+}
+<span class="t-k">interface</span> PointerStream { push(x: number, y: number, dt?: number): <span class="t-k">void</span>; end(): Promise&lt;<span class="t-k">void</span>&gt;; <span class="t-k">readonly</span> stats: { sent: number; dropped: number } }</code></pre></div>
+<p><code>connect</code> reads the key from <code>options.key</code>, else <code>REINS_TOKEN</code>, else the file named by <code>REINS_TOKEN_FILE</code>, else the token file that the running hub at <code>options.url</code> announced in the Reins folder, else <code>.reins/token</code> in the working directory (Node only).</p>
+<p><code>attach</code> asks for <code>observe</code>, <code>act</code>, <code>cursor</code> and <code>show</code> unless told otherwise: an agent that wants to be in the chat room names <code>chat</code>. <code>grant.scopes</code> holds the scopes in force and follows the person's switches; <code>level</code> and <code>rules</code> hold what the person last set. An agent cannot change any of it.</p>
+<p>Guide: <a href="../start/drive-from-node.html">Drive it from Node</a>.</p>
+<h2 id="the-broker-and-the-hub">The broker and the hub <a class="anchor" href="#the-broker-and-the-hub" aria-label="Link to the section The broker and the hub">#</a></h2>
+<p><code>@offensiveadhd/reins/broker</code> is isomorphic: it runs in Node and in a page. <code>@offensiveadhd/reins/hub</code> is Node only and binds the broker to a loopback WebSocket.</p>
+<div class="code" data-lang="ts"><div class="code-bar"><span class="code-lang">TypeScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-c">// @reins/hub/broker: isomorphic, runs in Node and in a page</span>
+<span class="t-k">interface</span> AgentCredential { kid: string; key: string; name?: string; scopes?: Scope[]; origins?: string[]; surfaces?: string[]; maxSessions?: number }
+<span class="t-k">interface</span> BrokerConfig {
+  name?: string
+  agents: AgentCredential[]
+  surfaces: { origins: string[]; requireKey?: boolean; keys?: Record&lt;string, string&gt;; pins?: Record&lt;string, string&gt; }
+  policy?: PolicyInput
+  limits?: Partial&lt;Limits&gt;
+  audit?: AuditSink
+  auditKey?: string                              <span class="t-c">// keys the audit chain with HMAC-SHA256</span>
+  maxSurfaces?: number; maxAgents?: number; maxStreams?: number
+  surfaceAdmission?: { rate?: number; burst?: number }   <span class="t-c">// per origin; defaults 2/s, 2 x maxSurfaces</span>
+  agentAdmission?: { rate?: number; burst?: number }     <span class="t-c">// per credential; defaults 2/s, 20</span>
+  now?: () =&gt; number
+}
+<span class="t-k">interface</span> LinkMeta { origin?: string; remote?: string; role?: Role; vouched?: boolean }   <span class="t-c">// role: the only role the link may take, else E_ORIGIN; vouched: the embedder built the link, the surface is verified</span>
+<span class="t-k">interface</span> AuditSink { write(record: AuditRecord): <span class="t-k">void</span>; <span class="t-k">readonly</span> last?: { seq: number; hash: string } }   <span class="t-c">// throwing means the log is unavailable</span>
+<span class="t-k">class</span> Broker {
+  constructor(config: BrokerConfig)              <span class="t-c">// throws a TypeError on malformed configuration, keys shorter than 32 characters included</span>
+  accept(link: Link, meta?: LinkMeta): <span class="t-k">void</span>      <span class="t-c">// runs the hub side of the handshake, then serves the peer</span>
+  info(): HubInfo
+  auditHead(): { seq: number; hash: string } | <span class="t-k">undefined</span>
+  flushAudit(): Promise&lt;<span class="t-k">void</span>&gt;
+  close(): <span class="t-k">void</span>
+}
+memoryAudit(): AuditSink &amp; { records: AuditRecord[] }
+verifyAuditChain(records: AuditRecord[], opts?: { key?: string; head?: { seq: number; hash: string } }): Promise&lt;{ ok: boolean; badSeq?: number }&gt;
+
+<span class="t-c">// @reins/hub: Node only</span>
+<span class="t-k">interface</span> HubOptions <span class="t-k">extends</span> BrokerConfig { host?: string; port?: number; auditFile?: string; surfaceSockets?: boolean }   <span class="t-c">// surfaceSockets false: agents only on the socket</span>
+startHub(opts: HubOptions): Promise&lt;{ broker: Broker; port: number; url: string; close(): Promise&lt;<span class="t-k">void</span>&gt; }&gt;
+fileAudit(path: string, opts?: { key?: string; head?: { seq: number; hash: string } }): AuditSink   <span class="t-c">// one JSON record per line; verifies an existing log first, throws if it is broken</span>
+
+<span class="t-c">// the user's Reins folder: REINS_HOME, else .reins in the home folder</span>
+reinsHome(env?: NodeJS.ProcessEnv): string
+announceHub(hub: Omit&lt;HubFile, <span class="t-s">'v'</span>&gt;, home?: string): string     <span class="t-c">// writes hub-&lt;port&gt;.json and returns its path</span>
+withdrawHub(port: number, pid: number, home?: string): <span class="t-k">void</span>     <span class="t-c">// only the announcement of that process</span>
+readHubFile(port: number, home?: string): HubFile | <span class="t-k">undefined</span>
+writeLauncher(target: string, home?: string): string            <span class="t-c">// writes reins.mjs, which runs the shell tools at `target`</span>
+pidAlive(pid: number): boolean
+ensureOwnerDir(dir: string): <span class="t-k">void</span>                               <span class="t-c">// creates missing directories owner-only</span>
+writeOwnerOnlyNew(file: string, text: string): <span class="t-k">void</span>             <span class="t-c">// a new owner-only file; refuses to replace one</span></code></pre></div>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-k">import</span> { startHub } <span class="t-k">from</span> <span class="t-s">'@offensiveadhd/reins/hub'</span>;
+
+<span class="t-k">const</span> hub = <span class="t-k">await</span> startHub({
+  agents: [{ kid: <span class="t-s">'default'</span>, key }],
+  surfaces: { origins: [<span class="t-s">'http://localhost:5173'</span>] },
+  policy: <span class="t-s">'guarded'</span>,
+});
+console.log(hub.url);
+<span class="t-c">// ...</span>
+<span class="t-k">await</span> hub.close();</code></pre></div>
+<p>The <code>Broker</code> constructor throws a <code>TypeError</code> on malformed configuration, keys shorter than 32 characters included. Guides: <a href="../start/in-tab.html">The in-tab shape</a>, <a href="../concepts/audit-log.html">The audit log</a>.</p>
+<h2 id="the-mcp-adapter">The MCP adapter <a class="anchor" href="#the-mcp-adapter" aria-label="Link to the section The MCP adapter">#</a></h2>
+<p><code>@offensiveadhd/reins/mcp</code>. Node only.</p>
+<div class="code" data-lang="ts"><div class="code-bar"><span class="code-lang">TypeScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>createReinsMcpServer(options?: {
+  url?: string            <span class="t-c">// hub URL, passed to the SDK's connect</span>
+  key?: string            <span class="t-c">// else the SDK's own lookup</span>
+  kid?: string
+  name?: string           <span class="t-c">// agent name shown to the user, default &quot;mcp-agent&quot;</span>
+  scopes?: Scope[]        <span class="t-c">// scopes requested on attach, default observe, act, ui, cursor, show, chat</span>
+  dataDir?: string        <span class="t-c">// directory reins_show may read files from; unset disables `file`</span>
+  notices?: Notices       <span class="t-c">// post notices of your own into the same tool results</span>
+  chatMeta?: boolean      <span class="t-c">// also give the messages of a reins_chat result as data, in the result's _meta</span>
+}): McpServer</code></pre></div>
+<p>It returns a server of the MCP TypeScript SDK; connect it to a transport yourself. The <code>reins-mcp</code> command does that with stdio. Guide: <a href="../start/mcp.html">Use it from Claude Code and other MCP harnesses</a>.</p>
+<h2 id="electron">Electron <a class="anchor" href="#electron" aria-label="Link to the section Electron">#</a></h2>
+<p><code>@offensiveadhd/reins/electron</code> for the main process, <code>/electron/bridge</code> for a preload of your own, <code>/electron/renderer</code> for the page, and <code>/electron/adopt</code> for adopting an app that was not built for Reins. Nothing in the package imports <code>electron</code>.</p>
+<div class="code" data-lang="ts"><div class="code-bar"><span class="code-lang">TypeScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-c">// @reins/electron: the main process. Nothing in the package imports `electron`.</span>
+mainPortLink(port: MessagePortMainLike): Link                  <span class="t-c">// the main-process end of a MessageChannelMain</span>
+reinsMain(options: {
+  ipcMain: IpcMainLike
+  MessageChannelMain: <span class="t-k">new</span> () =&gt; { port1: MessagePortMainLike; port2: MessagePortMainLike }
+  accept(link: Link, meta: { origin: string; vouched: <span class="t-k">true</span> }): <span class="t-k">void</span>   <span class="t-c">// (link, meta) =&gt; broker.accept(link, meta)</span>
+  channel?: string                                             <span class="t-c">// IPC channel, default &quot;reins&quot;</span>
+  onRefused?(reason: string, event: IpcMainEventLike): <span class="t-k">void</span>
+}): ReinsMain
+<span class="t-k">interface</span> ReinsMain {
+  allow(target: BrowserWindow | WebContents, options?: {
+    url?: string | string[] | ((url: string) =&gt; boolean)       <span class="t-c">// the page the window is registered for; needed for file:// and null</span>
+    hidden?: boolean                                           <span class="t-c">// link the window while it is not shown</span>
+    embedded?: boolean                                         <span class="t-c">// link a &lt;webview&gt; guest</span>
+  }): () =&gt; <span class="t-k">void</span>                                               <span class="t-c">// returns a function that takes it back</span>
+  close(): <span class="t-k">void</span>
+}
+preloadPath: string                                            <span class="t-c">// the ready-made preload script, one CommonJS file</span>
+
+<span class="t-c">// @reins/electron/bridge: the preload script</span>
+exposeReins(electron: { contextBridge; ipcRenderer }, win?: Window, channel?: string): <span class="t-k">void</span>   <span class="t-c">// puts window.reinsElectron in the page</span>
+
+<span class="t-c">// @reins/electron/renderer: the page (also dist/bundle/reins-electron.js)</span>
+electronLink(options?: { timeoutMs?: number; window?: Window }): Promise&lt;Link&gt;   <span class="t-c">// E_GONE without the preload, E_DENIED when refused, E_TIMEOUT</span>
+
+<span class="t-c">// @reins/electron/adopt: Node, for an app that was not built for Reins</span>
+<span class="t-k">class</span> Cdp { constructor(t: CdpTransport); send&lt;R&gt;(method: string, params?: object, sessionId?: string): Promise&lt;R&gt;; on(fn: (e: CdpEvent) =&gt; <span class="t-k">void</span>): () =&gt; <span class="t-k">void</span>; onClose(fn: () =&gt; <span class="t-k">void</span>): <span class="t-k">void</span>; close(): <span class="t-k">void</span>; <span class="t-k">readonly</span> closed: boolean }
+pipeTransport(toBrowser: Writable, fromBrowser: Readable): CdpTransport   <span class="t-c">// --remote-debugging-pipe: JSON texts, each ended by a zero byte</span>
+wsTransport(url: string): Promise&lt;CdpTransport&gt;
+debugEndpoint(target: string): { host: string; port: number; ws?: string }   <span class="t-c">// throws for anything but a loopback address</span>
+adopt(options: {
+  cdp: Cdp
+  pageSource: string                                           <span class="t-c">// the text of dist/bundle/reins-adopt.iife.js</span>
+  app: AppInfo
+  connect: { link(link: Link, page: { origin; url; title }): boolean | Promise&lt;boolean&gt; }    <span class="t-c">// a broker in this process</span>
+         | { hub: string; transport?: <span class="t-s">'auto'</span> | <span class="t-s">'ws'</span> | <span class="t-s">'bridge'</span>; key?: string }                <span class="t-c">// a hub that runs elsewhere</span>
+  levels?: Level[]                                             <span class="t-c">// levels the person may set besides strict and ask; default none</span>
+  scopes?: Scope[]                                             <span class="t-c">// scopes an agent may be granted; default those of guarded</span>
+  exclusive?: boolean                                          <span class="t-c">// false for a debugging port, which other programs can use: nothing is vouched for, no key is given</span>
+  match?(target: { <span class="t-k">type</span>: string; url: string; title: string }): boolean
+  log?(line: string): <span class="t-k">void</span>
+  leaseMs?: number                                             <span class="t-c">// how long a document goes on without hearing this process; default 10 s</span>
+}): Promise&lt;{ pages(): { origin; url; title }[]; stop(): Promise&lt;<span class="t-k">void</span>&gt;; close(): <span class="t-k">void</span> }&gt;   <span class="t-c">// stop: every driver ends for good</span>
+hubEndpoint(url: string): string                               <span class="t-c">// throws for anything but ws:// on a loopback address</span>
+portBrowser(end: { host; port }): Promise&lt;{ id; ws; product; userAgent } | <span class="t-k">undefined</span>&gt;   <span class="t-c">// the browser behind a debugging port</span>
+closePortBrowser(end, same: (b) =&gt; boolean, waitMs?: number): Promise&lt;<span class="t-s">'none'</span> | <span class="t-s">'other'</span> | <span class="t-s">'closed'</span> | <span class="t-s">'still'</span>&gt;   <span class="t-c">// Browser.close over the port</span>
+pagePolicy(options?: { levels?: Level[]; scopes?: Scope[] }): PolicyInput   <span class="t-c">// the policy of an adopted page, and of the hub hosted for it</span></code></pre></div>
+<p>Guides: <a href="../guides/electron.html">Electron: build Reins into your app</a>, <a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a>.</p>
+<h2 id="the-core">The core <a class="anchor" href="#the-core" aria-label="Link to the section The core">#</a></h2>
+<p><code>@offensiveadhd/reins/core</code>: wire types, codec, schema validation, the policy engine, flow control, crypto, links and RPC. Isomorphic, no dependencies. It holds everything in <code>protocol.ts</code>, plus:</p>
+<div class="code" data-lang="ts"><div class="code-bar"><span class="code-lang">TypeScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-c">// everything in protocol.ts, plus:</span>
+
+<span class="t-c">// codec</span>
+encodeFrame(f: Frame): string
+decodeFrame(text: string, maxBytes?: number): Frame            <span class="t-c">// throws ReinsError E_BAD_FRAME / E_TOO_LARGE</span>
+encodePointer(f: PointerFrame): Uint8Array                     <span class="t-c">// clamps x, y to 0..1 and dt to 0..65535</span>
+decodePointer(bytes: Uint8Array): PointerFrame                 <span class="t-c">// throws E_BAD_FRAME</span>
+binaryKind(bytes: Uint8Array): number
+utf8Length(text: string): number
+
+<span class="t-c">// schema</span>
+validate(schema: Schema | <span class="t-k">undefined</span>, value: unknown): string | <span class="t-k">null</span>   <span class="t-c">// null when valid, else &quot;path: reason&quot;</span>
+checkSchema(schema: unknown): string | <span class="t-k">null</span>                           <span class="t-c">// is this a well-formed Schema</span>
+schemaSignature(schema: Schema | <span class="t-k">undefined</span>): string                   <span class="t-c">// &quot;(sku: &quot;latte&quot;|&quot;mocha&quot;, qty?: int 1..9)&quot;</span>
+
+<span class="t-c">// manifest</span>
+validateManifest(m: unknown): Manifest                         <span class="t-c">// throws E_BAD_ARGS / E_TOO_LARGE</span>
+canonicalJson(v: unknown): string                              <span class="t-c">// section 7; throws E_BAD_ARGS when nested deeper than 100, cyclic or BigInt</span>
+manifestDigest(m: Manifest): Promise&lt;string&gt;
+renderCard(m: Manifest, ctx?: { surface?: SurfaceInfo; scopes?: Scope[]; policy?: Policy }): string
+
+<span class="t-c">// policy</span>
+resolvePolicy(input?: PolicyInput): Policy                     <span class="t-c">// validated deep copy of a preset plus overrides</span>
+decideAction(policy: Policy, action: { name: string; risk: Risk }): Decision
+decideAct(q: { base: Decision; risk: Risk; c?: boolean; level: Level; rule?: Decision; offered: Level[] }): { outcome: <span class="t-s">'run'</span> | <span class="t-s">'prompt'</span> | <span class="t-s">'denied'</span> | <span class="t-s">'blocked'</span>; by?: <span class="t-s">'policy'</span> | <span class="t-s">'level'</span> | <span class="t-s">'rule'</span>; remember?: boolean }   <span class="t-c">// section 12, levels and rules</span>
+capLevels(...lists: Level[][]): Level[]                        <span class="t-c">// the levels on offer: `strict` and `ask`, and `auto` and `bypass` where every list names them</span>
+allowRulePermitted(risk: Risk, offered: Level[]): boolean      <span class="t-c">// may the rule `allow` waive a prompt the policy demands</span>
+actionDecisions(policy: Policy, actions: { name: string; risk: Risk }[]): Record&lt;string, Decision&gt;   <span class="t-c">// what a hub sends in attach as `decisions`</span>
+hubDecision(decisions: unknown, name: string): Decision        <span class="t-c">// what a surface reads from it: `confirm` for anything missing or malformed</span>
+keptSettings(v: unknown, granted: Scope[], actions: Iterable&lt;string&gt;): { level?: <span class="t-s">'strict'</span>; rules: Map&lt;string, <span class="t-s">'confirm'</span> | <span class="t-s">'deny'</span>&gt;; off: Scope[] }   <span class="t-c">// what a hub reads from `kept` in an attach answer: only what tightens</span>
+stricter(a: Decision, b: Decision): Decision
+capScopes(requested: Scope[], ...caps: (Scope[] | <span class="t-k">undefined</span>)[]): Scope[]   <span class="t-c">// intersection, canonical order</span>
+methodScope(m: string): Scope | <span class="t-k">undefined</span>
+navAllowed(policy: Policy, url: string, pageUrl: string): boolean
+originAllowed(origin: string, patterns: string[]): boolean
+urlOrigin(url: string): string | <span class="t-k">null</span>                          <span class="t-c">// section 5, &quot;Origins&quot;; null when `url` is not a URL</span>
+urlHasOrigin(url: string, origin: string): boolean             <span class="t-c">// does hello.surface.url have the connection's origin</span>
+
+<span class="t-c">// chat (sections 9, 12 and 13)</span>
+chatText(v: unknown): string | <span class="t-k">undefined</span>                       <span class="t-c">// trimmed, 1 to CHAT_MAX_TEXT characters, well-formed; undefined otherwise</span>
+chatNote(v: unknown): string | <span class="t-k">undefined</span>                       <span class="t-c">// a status note on one line, at most CHAT_MAX_NOTE characters, '' when absent; undefined otherwise</span>
+chatMessage(v: unknown): ChatMessage | <span class="t-k">undefined</span>               <span class="t-c">// a message off the wire, rebuilt from its checked fields</span>
+chatAudience(q: { relay: <span class="t-k">readonly</span> string[]; <span class="t-k">from</span>: <span class="t-s">'person'</span> | { agent: string }; to?: string; members: <span class="t-k">readonly</span> string[] }): { outcome: <span class="t-s">'post'</span>; hear: string[] } | { outcome: <span class="t-s">'nobody'</span> } | { outcome: <span class="t-s">'refuse'</span>; code: <span class="t-s">'E_BAD_ARGS'</span> | <span class="t-s">'E_DENIED'</span> }   <span class="t-c">// section 12, who is sent a message; relay: the agents that hear each other</span>
+chatRelayMode(v: unknown): <span class="t-s">'off'</span> | <span class="t-s">'person'</span> | <span class="t-s">'on'</span> | <span class="t-k">undefined</span>   <span class="t-c">// a value of policy.chatRelay; true is on, false is off</span>
+stricterRelay(a: ChatRelay, b: ChatRelay): ChatRelay            <span class="t-c">// off before person before on</span>
+chatDataLines(text: string): string[]                          <span class="t-c">// a chat text as &quot;| &quot; lines for a model: cut at every line break and separator, no control character left raw</span>
+chatPlain(s: string): string                                   <span class="t-c">// control characters but tab as \u{XX}</span>
+chatIdShown(id: string): string                                <span class="t-c">// a session id as it is printed outside quotes: letters, digits and . _ - only</span>
+chatWellFormed(text: string): string                           <span class="t-c">// a lone surrogate becomes U+FFFD</span>
+isChatState(v: unknown): boolean                               <span class="t-c">// idle, thinking or working</span>
+
+<span class="t-c">// observation</span>
+diffNodes(prev: UiNode[], next: UiNode[]): TreeOp[]
+applyOps(nodes: UiNode[], ops: TreeOp[]): UiNode[]
+renderTree(nodes: UiNode[]): string
+renderOps(ops: TreeOp[], prev?: UiNode[]): string              <span class="t-c">// with `prev`, new (+) and replaced (~) nodes are told apart and anchors are hidden</span>
+renderObservation(o: Observation, prev?: UiNode[]): string     <span class="t-c">// header line plus tree or delta</span>
+
+<span class="t-c">// state deltas (RFC 7396)</span>
+mergeDiff(<span class="t-k">from</span>: unknown, to: unknown): unknown                 <span class="t-c">// undefined when equal; a null property counts as absent on both sides</span>
+mergeApply(target: unknown, patch: unknown): unknown
+
+<span class="t-c">// flow control</span>
+<span class="t-k">class</span> TokenBucket { constructor(ratePerSec: number, burst?: number, now?: () =&gt; number); take(n?: number): boolean }
+<span class="t-k">class</span> CreditWindow { constructor(initial?: number); <span class="t-k">readonly</span> available: number; consume(n: number): boolean; grant(n: number): <span class="t-k">void</span> }
+<span class="t-k">class</span> CreditGranter { constructor(window: number); consumed(n: number): number }   <span class="t-c">// returns credit to send now, or 0</span>
+<span class="t-k">class</span> PointerCoalescer { constructor(maxBacklog?: number); push(p: PointerPoint): <span class="t-k">void</span>; take(max: number): PointerPoint[]; <span class="t-k">readonly</span> size: number; <span class="t-k">readonly</span> dropped: number }
+playbackRate(queuedMs: number): number                         <span class="t-c">// 1 up to 120 ms of lag, rising linearly to 4 at 600 ms</span>
+
+<span class="t-c">// crypto (WebCrypto)</span>
+randomToken(bytes?: number): string
+b64urlEncode(bytes: Uint8Array): string
+b64urlDecode(text: string): Uint8Array
+sha256(data: string | Uint8Array): Promise&lt;string&gt;             <span class="t-c">// base64url</span>
+hmacSha256(key: string, msg: string): Promise&lt;string&gt;          <span class="t-c">// base64url</span>
+timingSafeEqual(a: string, b: string): boolean
+peerProof(key: string, f: { role: Role; kid: string; nonce: string; cnonce: string }): Promise&lt;string&gt;
+hubProof(key: string, f: { role: Role; kid: string; nonce: string; cnonce: string }): Promise&lt;string&gt;
+
+<span class="t-c">// links</span>
+linkPair(): [Link, Link]                                       <span class="t-c">// in-memory, ordered, asynchronous delivery</span>
+wsLink(ws: WebSocketLike): Promise&lt;Link&gt;                       <span class="t-c">// resolves when the socket is open</span>
+portLink(port: MessagePortLike): Link
+
+<span class="t-c">// rpc</span>
+<span class="t-k">class</span> Peer {
+  constructor(link: Link, handlers: PeerHandlers, opts?: { limits?: Partial&lt;Limits&gt;; now?: () =&gt; number; maxBuffered?: number })   <span class="t-c">// over maxBuffered bytes waiting after a send: bye E_BUSY</span>
+  request&lt;R = unknown&gt;(m: string, p?: object, opts?: { timeoutMs?: number; ag?: string; c?: <span class="t-n">1</span> }): Promise&lt;R&gt;
+  event(topic: Topic, d?: unknown, extra?: { s?: string; ag?: string }): <span class="t-k">void</span>
+  sendBinary(bytes: Uint8Array): <span class="t-k">void</span>
+  flow(ch: number, credit: number): <span class="t-k">void</span>
+  ping(timeoutMs?: number): Promise&lt;number&gt;                    <span class="t-c">// round-trip time in ms</span>
+  bye(code?: ErrorCode | <span class="t-s">'OK'</span>, msg?: string): <span class="t-k">void</span>             <span class="t-c">// sends bye and closes</span>
+  <span class="t-k">readonly</span> closed: boolean
+  <span class="t-k">readonly</span> lastSeen: number
+  <span class="t-k">readonly</span> bufferedAmount: number
+}
+<span class="t-k">interface</span> PeerHandlers {
+  request?(m: string, p: Record&lt;string, unknown&gt;, frame: ReqFrame): unknown | Promise&lt;unknown&gt;   <span class="t-c">// throw ReinsError to refuse</span>
+  event?(frame: EvtFrame): <span class="t-k">void</span>
+  binary?(bytes: Uint8Array): <span class="t-k">void</span>
+  flow?(frame: FlowFrame): <span class="t-k">void</span>
+  close?(code: ErrorCode | <span class="t-s">'OK'</span> | <span class="t-s">'E_GONE'</span>, msg?: string): <span class="t-k">void</span>
+}
+clientConnect(link: Link, hello: { role: Role; name: string; kid?: string; key?: string; surface?: SurfaceHello }, opts?: { timeoutMs?: number }): Promise&lt;{ welcome: WelcomeFrame; link: Link; sealed: boolean }&gt;
+clientHandshake(link, hello, opts?): Promise&lt;WelcomeFrame&gt;     <span class="t-c">// unauthenticated sessions only; rejects when given a key</span>
+
+<span class="t-c">// sealed sessions</span>
+deriveSealKeys(key: string, t: { nonce; cnonce; challengeText; helloText; welcomeText }, side: <span class="t-s">'peer'</span> | <span class="t-s">'hub'</span>): Promise&lt;SealKeys&gt;   <span class="t-c">// directional keys from the secret and the transcript; E_AUTH on a text that is not well-formed</span>
+sealLink(link: Link, keys: SealKeys): Link                     <span class="t-c">// a Link that seals what it sends and opens what it receives</span>
+hubSeal(link: Link, handshake: { key; nonce; cnonce; challengeText; helloText; welcomeText }, opts?): Promise&lt;Link&gt;   <span class="t-c">// the hub's half, with key confirmation</span>
+
+<span class="t-c">// the user's Reins folder: names and shapes only, no file access</span>
+HOME_DIR                                                       <span class="t-c">// &quot;.reins&quot;</span>
+LAUNCHER_FILE                                                  <span class="t-c">// &quot;reins.mjs&quot;</span>
+SESSION_ID_PATTERN                                             <span class="t-c">// 1 to 32 letters, digits, &quot;-&quot; or &quot;_&quot;</span>
+hubFileName(port: number): string                              <span class="t-c">// &quot;hub-7346.json&quot;</span>
+sessionFileName(port: number, id: string): string              <span class="t-c">// &quot;session-7346-default.json&quot;</span>
+parseHubFile(text: string): HubFile | <span class="t-k">undefined</span>                <span class="t-c">// { v: 1, url, port, pid, started, profile, origins, tokenFile?, managed? }</span>
+parseSessionFile(text: string): SessionFile | <span class="t-k">undefined</span>        <span class="t-c">// { v: 1, port, pid, secret, hub, name, started }</span>
+hubPort(url?: string): number | <span class="t-k">undefined</span>                      <span class="t-c">// the port a ws URL names; the default port without a URL</span></code></pre></div>
+<p><code>clientConnect</code> runs the handshake and, when a key was used, returns the sealed link after key confirmation. Build the <code>Peer</code> on the link it returns. <code>Peer</code> answers <code>ping</code> itself, turns a thrown <code>ReinsError</code> into an error response and anything else into <code>E_INTERNAL</code>, and fails pending requests with <code>E_GONE</code> when the link closes. It runs no timers of its own: the owner of a connection sends <code>ping</code> when the link has been idle.</p>
+<h2 id="the-wire-types">The wire types <a class="anchor" href="#the-wire-types" aria-label="Link to the section The wire types">#</a></h2>
+<p>Every frame, method, event and data shape is a TypeScript type in <a href="https://github.com/offensiveadhd/reins/blob/main/packages/core/src/protocol.ts" class="ext"><code>packages/core/src/protocol.ts</code></a>. That file is the single source of truth for the wire contract, and holds types and constants only. The kit re-exports the types an app needs.</p>
+<h2 id="further-reading">Further reading <a class="anchor" href="#further-reading" aria-label="Link to the section Further reading">#</a></h2>
+<ul>
+<li><a href="./specification.html#15-reference-implementation">Specification, section 15</a></li>
+<li><a href="./cli.html">CLI</a></li>
+</ul>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/reference/sdk.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/reference/sdk.md</code></span><a class="md-link" href="./sdk.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./cli.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">CLI</span></a>
+    <a class="pager-next" href="./specification.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Specification</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#one-package-several-entry-points">One package, several entry points</a></li><li class="toc-2"><a href="#the-driver">The driver</a></li><li class="toc-2"><a href="#the-agent-sdk">The agent SDK</a></li><li class="toc-2"><a href="#the-broker-and-the-hub">The broker and the hub</a></li><li class="toc-2"><a href="#the-mcp-adapter">The MCP adapter</a></li><li class="toc-2"><a href="#electron">Electron</a></li><li class="toc-2"><a href="#the-core">The core</a></li><li class="toc-2"><a href="#the-wire-types">The wire types</a></li><li class="toc-2"><a href="#further-reading">Further reading</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

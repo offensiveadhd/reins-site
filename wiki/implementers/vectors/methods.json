@@ -1,0 +1,300 @@
+{
+  "reins": "0.1",
+  "generator": "conformance/tools/make-vectors.mjs",
+  "title": "Agent methods, their scopes, and which take a surface id",
+  "spec": "SPEC.md section 9 table; section 6 (hub methods); section 8 (scope order)",
+  "scopes": [
+    "observe",
+    "act",
+    "ui",
+    "cursor",
+    "show",
+    "nav",
+    "chat"
+  ],
+  "note": "scope null means the method needs no grant scope. `takesSurface` follows \"All but the first two and stream.close take s\". `hub` marks HUB_METHODS, which section 6 lists.",
+  "methods": [
+    {
+      "m": "hub.info",
+      "scope": null,
+      "takesSurface": false,
+      "hub": true
+    },
+    {
+      "m": "surfaces.list",
+      "scope": null,
+      "takesSurface": false,
+      "hub": true
+    },
+    {
+      "m": "surface.attach",
+      "scope": null,
+      "takesSurface": true,
+      "hub": true
+    },
+    {
+      "m": "surface.detach",
+      "scope": null,
+      "takesSurface": true,
+      "hub": true
+    },
+    {
+      "m": "observe",
+      "scope": "observe",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "read",
+      "scope": "observe",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "state.get",
+      "scope": "observe",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "sub",
+      "scope": "observe",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "unsub",
+      "scope": "observe",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "act",
+      "scope": "act",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "ui.click",
+      "scope": "ui",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "ui.type",
+      "scope": "ui",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "ui.select",
+      "scope": "ui",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "ui.scroll",
+      "scope": "ui",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "ui.key",
+      "scope": "ui",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "cursor.move",
+      "scope": "cursor",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "cursor.set",
+      "scope": "cursor",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "show.toast",
+      "scope": "show",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "show.highlight",
+      "scope": "show",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "show.view",
+      "scope": "show",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "show.clear",
+      "scope": "show",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "nav.go",
+      "scope": "nav",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "chat.say",
+      "scope": "chat",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "chat.read",
+      "scope": "chat",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "chat.status",
+      "scope": "chat",
+      "takesSurface": true,
+      "hub": false
+    },
+    {
+      "m": "stream.open",
+      "scope": "cursor",
+      "takesSurface": true,
+      "hub": true
+    },
+    {
+      "m": "stream.close",
+      "scope": null,
+      "takesSurface": false,
+      "hub": true
+    }
+  ],
+  "readOnly": {
+    "note": "READ_ONLY_METHODS as listed in SPEC.md section 9, \"Pause\": served while control is paused and while a consent prompt is up.",
+    "methods": [
+      "observe",
+      "read",
+      "state.get",
+      "sub",
+      "unsub",
+      "chat.read"
+    ]
+  },
+  "chatSpeak": {
+    "note": "CHAT_SPEAK_METHODS of SPEC.md section 9, \"Pause\" and \"Prompt up\": served while control is paused, refused with E_BUSY while a consent prompt is up.",
+    "methods": [
+      "chat.say",
+      "chat.status"
+    ]
+  },
+  "capScopes": [
+    {
+      "requested": [
+        "nav",
+        "observe",
+        "act"
+      ],
+      "caps": [],
+      "expect": [
+        "observe",
+        "act",
+        "nav"
+      ]
+    },
+    {
+      "requested": [
+        "observe",
+        "act",
+        "ui"
+      ],
+      "caps": [
+        [
+          "act",
+          "observe"
+        ]
+      ],
+      "expect": [
+        "observe",
+        "act"
+      ]
+    },
+    {
+      "requested": [
+        "ui"
+      ],
+      "caps": [
+        [
+          "observe",
+          "act",
+          "cursor",
+          "show"
+        ]
+      ],
+      "expect": []
+    },
+    {
+      "requested": [
+        "show",
+        "cursor",
+        "act",
+        "observe"
+      ],
+      "caps": [
+        [
+          "observe",
+          "act",
+          "ui",
+          "cursor",
+          "show",
+          "nav"
+        ],
+        [
+          "cursor",
+          "observe"
+        ]
+      ],
+      "expect": [
+        "observe",
+        "cursor"
+      ]
+    },
+    {
+      "requested": [
+        "chat",
+        "observe",
+        "nav"
+      ],
+      "caps": [],
+      "expect": [
+        "observe",
+        "nav",
+        "chat"
+      ]
+    },
+    {
+      "requested": [
+        "chat",
+        "observe"
+      ],
+      "caps": [
+        [
+          "observe",
+          "act",
+          "cursor",
+          "show"
+        ]
+      ],
+      "expect": [
+        "observe"
+      ]
+    }
+  ]
+}

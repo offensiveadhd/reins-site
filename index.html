@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Reins: Let an AI agent drive your web app. You hold the reins.</title>
+<meta name="description" content="Reins is an open protocol, and a reference implementation, for letting an AI agent drive a web app that is running in a browser tab, under the control of the app and of the person using it.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Let an AI agent drive your web app. You hold the reins.">
+<meta property="og:description" content="Reins is an open protocol, and a reference implementation, for letting an AI agent drive a web app that is running in a browser tab, under the control of the app and of the person using it.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./assets/site.css">
+<script src="./assets/theme.js"></script>
+<script type="module" src="./assets/site.js"></script>
+</head>
+<body class="page-home">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="./index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="./wiki/index.html">Wiki</a></li>
+        <li><a href="./playground.html">Playground</a></li>
+        <li><a href="./wiki/reference/specification.html">Specification</a></li>
+        <li><a href="./wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<main id="main">
+
+  <!-- ─────────────── what Reins is, in one screen ─────────────── -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">An open protocol · version 0.1</p>
+        <h1 id="hero-title">Let an AI agent drive your web app. <span class="hl">You hold the reins.</span></h1>
+        <p class="lede">Reins is a protocol, and a reference implementation, for letting an AI agent drive a web app that is running in a browser tab. The agent reads the screen as a compact tree, calls the app's own actions, moves a visible cursor and puts data in front of the person. The app decides what an agent may do, the person watches and can stop it, and a kiosk can lock it down to a fixed allowlist.</p>
+        <p class="btn-row">
+          <a class="btn btn-primary" href="./playground.html">Try it in this tab <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="btn" href="./wiki/start/what-is-reins.html">Read the wiki</a>
+          <a class="btn btn-quiet" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg> GitHub</a>
+        </p>
+        <p class="hero-meta">Protocol 0.1, package 0.1.0, Apache-2.0. A first version: the wire format may change before 1.0.</p>
+      </div>
+
+      <figure class="stage" data-rein-stage>
+        <svg viewBox="0 0 520 380" width="520" height="380" role="img" aria-labelledby="rs-title rs-desc">
+          <title id="rs-title">An agent on a rein</title>
+          <desc id="rs-desc">The cursor of an AI agent runs two app actions, cart.add and customer.set. A rein held by the person stops it short of the third, order.submit, which waits for the person.</desc>
+          <g class="rs-node is-done" data-node="0" transform="translate(150 150)"><circle class="rs-ring" r="13"/><g class="rs-ok"><circle r="14"/><path d="M-6.5 .5l4.5 4.5 8.5-9.5"/></g><text class="rs-label" y="-30">cart.add</text></g>
+          <g class="rs-node is-done" data-node="1" transform="translate(290 84)"><circle class="rs-ring" r="13"/><g class="rs-ok"><circle r="14"/><path d="M-6.5 .5l4.5 4.5 8.5-9.5"/></g><text class="rs-label" y="-30">customer.set</text></g>
+          <g class="rs-node is-waiting" data-node="2" transform="translate(430 150)"><circle class="rs-ring" r="13"/><g class="rs-wait"><circle r="14"/><path d="M-4.5 -6v12M4.5 -6v12"/></g><text class="rs-label" y="-30">order.submit</text><text class="rs-waits" y="-54">waits for you</text></g>
+          <path class="rs-rein" data-rein d="M64 318Q232.5 267.3 401 187"/>
+          <g data-hand><circle class="rs-hand" cx="64" cy="318" r="15"/></g>
+          <text class="rs-you" x="64" y="360">you</text>
+          <g class="rs-agent" data-agent transform="translate(394 163)"><path d="M0 0v24l6.6-5.9 4.6 10.3 4.2-1.8-4.5-10.1h8.7z"/><rect x="16" y="25" width="76" height="24" rx="12"/><text x="54" y="41.5">AI agent</text></g>
+        </svg>
+        <figcaption>
+          <span><i class="dot dot-ok" aria-hidden="true"></i>A safe action runs.</span>
+          <span><i class="dot dot-warn" aria-hidden="true"></i>A sensitive one waits for you.</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ─────────────── the demo film ─────────────── -->
+  <section class="section" aria-labelledby="film-title">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow">See it run</p>
+        <h2 id="film-title">One real session, thirty seconds</h2>
+        <p>One real session of the Brew Kiosk demo in the repository, recorded in Chromium. The agent works through the hub, and Allow, Pause, Resume and Stop are real clicks. The film and the stills were recorded before the panel existed: today the indicator's text opens it, and the card for an action has a third button, “Always allow”. The <a href="./playground.html">playground</a> runs the current driver.</p>
+      </header>
+      <figure class="film">
+        <video controls playsinline preload="none" width="1920" height="1080" poster="./assets/film-poster.jpg" aria-describedby="film-desc">
+          <source src="./assets/media/reins-demo.mp4" type="video/mp4">
+        </video>
+        <figcaption id="film-desc">What happens in the film, which has no sound: the page asks before the agent Barista AI may attach, and the person allows it. The agent adds a latte and two mochas and types a name. The person presses Pause, and the agent's next two commands come back refused. Placing the order waits for the person, who allows it, and the order is placed. The person presses Stop, and the agent's access is gone. <a href="https://github.com/offensiveadhd/reins/tree/main/docs/media/film">How the film was made</a>.</figcaption>
+      </figure>
+      <ul class="stills" aria-label="Five moments from the demo">
+        <li><figure><img src="./assets/media/1-attach-consent.jpg" alt="The Brew Kiosk page dimmed behind a card: Barista AI wants to control this page. The card lists the scopes it asks for, and has Deny and Allow." width="800" height="500" loading="lazy" decoding="async"><figcaption>The page asks before an agent may attach.</figcaption></figure></li>
+        <li><figure><img src="./assets/media/2-cursor-toast-highlight.jpg" alt="The kiosk menu with the agent's labelled cursor over the Latte card, a highlight around it and a toast from the agent at the top." width="800" height="500" loading="lazy" decoding="async"><figcaption>The agent's cursor, a captioned toast, a highlight.</figcaption></figure></li>
+        <li><figure><img src="./assets/media/3-order-chart-pointer-stream.jpg" alt="The order filled in with a latte and two mochas, a name typed, a bar chart in the Insights panel, and the agent's cursor at the total." width="800" height="500" loading="lazy" decoding="async"><figcaption>Order filled in, chart sent from a file, the live pointer stream circling the total.</figcaption></figure></li>
+        <li><figure><img src="./assets/media/4-action-consent.jpg" alt="A card: Barista AI wants to run an action, order.submit, marked sensitive, with Deny and Allow." width="800" height="500" loading="lazy" decoding="async"><figcaption>A sensitive action waits for the person.</figcaption></figure></li>
+        <li><figure><img src="./assets/media/5-indicator-over-modal-dialog.jpg" alt="A modal dialog opened by the app. The indicator, with Pause and Stop, stays in the corner above it." width="800" height="500" loading="lazy" decoding="async"><figcaption>The indicator stays reachable when the app opens a modal dialog.</figcaption></figure></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ─────────────── how it works, and the two shapes ─────────────── -->
+  <section class="section" aria-labelledby="how-title">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2 id="how-title">One protocol, two shapes</h2>
+        <p>An agent talks to a hub, and the hub talks to the driver in the browser tab, both over <code>reins.v1</code>. A safe action passes the policy and runs. A sensitive action waits until the person approves it on screen.</p>
+      </header>
+      <figure class="diagram">
+        <picture><source media="(prefers-reduced-motion: reduce)" srcset="./assets/media/how-it-works-still.svg"><img src="./assets/media/how-it-works.svg" alt="An agent talks to a loopback hub, and the hub talks to the driver in the browser tab, both over reins.v1. A safe action passes the policy and runs. A sensitive action waits until the person approves it on screen." width="1280" height="450" loading="lazy" decoding="async"></picture>
+      </figure>
+      <div class="shapes">
+        <article class="shape">
+          <ul class="chain" aria-label="agent, hub, browser tab">
+            <li>agent</li><li class="link" aria-hidden="true">⇄</li><li>hub on loopback</li><li class="link" aria-hidden="true">⇄</li><li>driver in the tab</li>
+          </ul>
+          <h3>With a hub</h3>
+          <p>The agent is outside the browser and reaches the tab through a broker on loopback. The hub authenticates both sides, issues grants, enforces its own policy and rate limits, and keeps the audit log. This is the shape for an agent harness: the agent SDK, the shell tools, or the MCP adapter.</p>
+          <p class="more"><a href="./wiki/start/quickstart.html">Run the demo with a hub</a></p>
+        </article>
+        <article class="shape">
+          <ul class="chain" aria-label="assistant, broker, driver and app in one tab">
+            <li>assistant</li><li class="link" aria-hidden="true">⇄</li><li>broker</li><li class="link" aria-hidden="true">⇄</li><li>driver</li><li class="link" aria-hidden="true">⇄</li><li>your app</li>
+          </ul>
+          <h3>In the tab</h3>
+          <p>The assistant runs in the page itself: no process and no network, the same protocol over in-memory links. The same grants, policy and consent prompts apply. The playground on this site is exactly this shape.</p>
+          <p class="more"><a href="./playground.html">Open the playground</a> · <a href="./wiki/start/in-tab.html">How the in-tab shape works</a></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── the properties that matter ─────────────── -->
+  <section class="section" aria-labelledby="props-title">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow">What it gives you</p>
+        <h2 id="props-title">Live, cheap in tokens, guarded, kiosk ready</h2>
+      </header>
+      <ul class="props">
+        <li class="prop">
+          <p class="prop-metric"><b>1</b><span>message<br>per cursor move</span></p>
+          <h3>Live</h3>
+          <p>One message moves the cursor smoothly at display rate. A binary pointer stream with credit-based flow control carries live trajectories.</p>
+        </li>
+        <li class="prop">
+          <p class="prop-metric"><b>≈1,000</b><span>characters<br>to learn an app</span></p>
+          <h3>Cheap in tokens</h3>
+          <p>A model learns an app from a prompt card of about a thousand characters, reads the screen as a tree of similar size, and afterwards gets deltas of a few hundred. Bulk data goes to the screen without passing through the model.</p>
+        </li>
+        <li class="prop">
+          <p class="prop-metric"><b>3</b><span>answers: allow,<br>confirm, deny</span></p>
+          <h3>Guarded</h3>
+          <p>Actions carry a risk tier. Sensitive actions need the person's approval on screen, private fields are never read, and nothing in the protocol evaluates agent-supplied code. Authenticated sessions are sealed frame by frame.</p>
+        </li>
+        <li class="prop">
+          <p class="prop-metric"><b>0</b><span>synthetic input,<br>no navigation</span></p>
+          <h3>Kiosk ready</h3>
+          <p>A profile for unattended stations: allowlisted actions, annotated elements only, no synthetic input, no navigation, hash-chained audit log.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ─────────────── what the person holds: the panel, the chat; and beyond the tab ─────────────── -->
+  <section class="section" aria-labelledby="hands-title">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow">In the person's hands</p>
+        <h2 id="hands-title">The indicator is a button, and only you can press it</h2>
+        <p>While an agent is attached, a pill in the corner of the page says so, with Pause and Stop. Its text opens a panel. No agent and no message can open it, close it or press anything in it. Script that runs in the page itself is outside that promise: keep it out with a strict Content Security Policy.</p>
+      </header>
+      <div class="hands">
+        <article class="hand hand-levels">
+          <h3>How much it asks is yours to set</h3>
+          <p>For each attached agent you choose a level, from asking every time to never. A grant starts at <code>ask</code>, unless you set that agent to Strict before.</p>
+          <div class="table-wrap"><table>
+<thead>
+<tr>
+<th>level</th>
+<th>what an <code>act</code> request does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>strict</code></td>
+<td>asks every time, also for an action the policy allows</td>
+</tr>
+<tr>
+<td><code>ask</code></td>
+<td>asks when the policy says <code>confirm</code> or the hub sent <code>c:1</code></td>
+</tr>
+<tr>
+<td><code>auto</code></td>
+<td>runs without asking, unless the action's risk is <code>dangerous</code></td>
+</tr>
+<tr>
+<td><code>bypass</code></td>
+<td>runs without asking</td>
+</tr>
+</tbody>
+</table></div>
+
+          <p>You can also say Allow, Ask or Block for a single action, switch single scopes of the grant off, and see what the agent did. Whatever lets an agent do more takes a second step that names what stops asking, and the pill then shows the level. A <code>deny</code> of the app or the hub stays a <code>deny</code> at every level. What loosens ends with the grant; what you tightened stays with that agent for as long as the page is open.</p>
+          <p class="more"><a href="./wiki/concepts/permission-levels.html">Permission levels</a></p>
+        </article>
+        <article class="hand">
+          <h3>Talk to the agent that is driving</h3>
+          <p>The same panel has a Chat tab. You type to the agent that is driving the page, and it answers there while it works. What you type is a request, never an approval: an action that needs your approval still asks on its own prompt, and while that prompt waits the chat is hidden. Agents hear each other only once you say so.</p>
+          <p>The chat is drawn in the app's page, so the app can read it, as it can any of its own fields.</p>
+          <p class="more"><a href="./wiki/concepts/chat.html">Chat</a> · <a href="./wiki/guides/chat-serve.html">Serving it, and what that hands out</a></p>
+        </article>
+        <article class="hand">
+          <h3>Beyond the tab: Electron, and a second agent</h3>
+          <p>An Electron window is a page too. An app you write gets its link from its own main process, with no socket on the page side. An app you did not write can be adopted through its debugging connection, which gives an attached agent the whole window: read what that means first.</p>
+          <p>Two walk-throughs put two agents to work, Claude Code driving Hermes Desktop and both on one page, with every step marked as run or not run. Nothing was run with a model.</p>
+          <p class="more"><a href="./wiki/guides/electron.html">Build it in</a> · <a href="./wiki/guides/adopting-an-electron-app.html">Adopt an app</a> · <a href="./wiki/guides/claude-and-hermes.html">Claude and Hermes</a></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── install and first run ─────────────── -->
+  <section class="section" aria-labelledby="start-title">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow">Install and first run</p>
+        <h2 id="start-title">From an install to an agent on the page</h2>
+        <p>Reins ships as one package, <code>@offensiveadhd/reins</code>. It needs Node 22 or newer to build and to run the hub; the browser parts need no Node at all.</p>
+      </header>
+      <ol class="steps">
+        <li class="step">
+          <h3>Install the package</h3>
+          <p>From Git, in a project that has a bundler: the package builds itself on install. It is not on the npm registry. A static page with no build step copies one file, <code>dist/bundle/reins.js</code> (446 KiB, unminified), and imports it.</p>
+          <div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npm i github:offensiveadhd/reins</code></pre></div>
+
+          <p class="more"><a href="./wiki/start/make-an-app-drivable.html#install">Every way to install it</a></p>
+        </li>
+        <li class="step">
+          <h3>Make your app drivable</h3>
+          <p>Declare the app's actions with a risk tier, the views it can show and the state an agent may read. The driver does the rest: the UI tree, the cursor, the consent prompt and the indicator.</p>
+          <div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-k">import</span> { createDriver } <span class="t-k">from</span> <span class="t-s">'@offensiveadhd/reins'</span>;
+
+<span class="t-k">const</span> driver = createDriver({
+  app: { id: <span class="t-s">'brew-kiosk'</span>, name: <span class="t-s">'Brew Kiosk'</span>, version: <span class="t-s">'1.0.0'</span> },
+  hub: <span class="t-s">'ws://127.0.0.1:7346'</span>,
+  policy: <span class="t-s">'guarded'</span>, <span class="t-c">// or 'open', 'kiosk', or a profile with overrides</span>
+});
+
+driver
+  .action(
+    {
+      name: <span class="t-s">'cart.add'</span>,
+      description: <span class="t-s">'Add a drink to the order.'</span>,
+      risk: <span class="t-s">'safe'</span>,
+      params: {
+        <span class="t-k">type</span>: <span class="t-s">'object'</span>,
+        properties: { sku: { <span class="t-k">type</span>: <span class="t-s">'string'</span>, enum: [<span class="t-s">'latte'</span>, <span class="t-s">'mocha'</span>] }, qty: { <span class="t-k">type</span>: <span class="t-s">'integer'</span>, minimum: <span class="t-n">1</span>, maximum: <span class="t-n">9</span> } },
+        required: [<span class="t-s">'sku'</span>],
+      },
+    },
+    ({ sku, qty = <span class="t-n">1</span> }) =&gt; cart.add(sku, qty),
+  )
+  .action({ name: <span class="t-s">'order.submit'</span>, description: <span class="t-s">'Place the order.'</span>, risk: <span class="t-s">'sensitive'</span> }, () =&gt; cart.submit())
+  .view({ name: <span class="t-s">'chart'</span>, description: <span class="t-s">'Bar chart panel.'</span> }, (data) =&gt; renderChart(data))
+  .state(<span class="t-s">'cart'</span>, () =&gt; cart.summary());
+
+<span class="t-k">await</span> driver.connect();</code></pre></div>
+
+          <p class="more"><a href="./wiki/start/make-an-app-drivable.html">Make an app drivable</a> · <a href="./wiki/guides/actions-and-risk.html">Writing good actions</a></p>
+        </li>
+        <li class="step">
+          <h3>Start a hub and drive the page</h3>
+          <p>Start a hub in the project that installed the package, then connect from Node. The hub writes its token to a file and prints the path; the SDK finds it.</p>
+          <div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npx <span class="t-f">--no</span> -- reins-hub <span class="t-f">--profile</span> guarded <span class="t-f">--allow-origin</span> http://localhost:5173</code></pre></div>
+
+          <div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-k">import</span> { connect } <span class="t-k">from</span> <span class="t-s">'@offensiveadhd/reins/agent'</span>;
+
+<span class="t-k">const</span> client = <span class="t-k">await</span> connect({ name: <span class="t-s">'Barista AI'</span> });
+<span class="t-k">const</span> [surface] = <span class="t-k">await</span> client.surfaces();
+<span class="t-k">const</span> kiosk = <span class="t-k">await</span> client.attach(surface.s, { scopes: [<span class="t-s">'observe'</span>, <span class="t-s">'act'</span>, <span class="t-s">'cursor'</span>, <span class="t-s">'show'</span>] });
+
+console.log(kiosk.card());              <span class="t-c">// the prompt card for a model</span>
+console.log(<span class="t-k">await</span> kiosk.observeText()); <span class="t-c">// the screen, compact</span>
+<span class="t-k">await</span> kiosk.cursor.move(<span class="t-s">'#menu.latte'</span>);
+<span class="t-k">await</span> kiosk.act(<span class="t-s">'cart.add'</span>, { sku: <span class="t-s">'latte'</span>, qty: <span class="t-n">2</span> });
+console.log(<span class="t-k">await</span> kiosk.observeText()); <span class="t-c">// only what changed</span></code></pre></div>
+
+          <p class="more"><a href="./wiki/start/drive-from-node.html">Drive it from Node</a> · <a href="./wiki/start/shell-tools.html">From a shell, with nothing registered</a></p>
+        </li>
+        <li class="step">
+          <h3>Or hand it to an MCP harness</h3>
+          <p>The adapter is a stdio MCP server with eight tools. With Claude Code, once a hub has run on the machine, register the launcher, then start a new agent session.</p>
+          <div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>claude mcp add <span class="t-f">--scope</span> user reins node <span class="t-s">&quot;$HOME/.reins/reins.mjs&quot;</span> mcp</code></pre></div>
+
+          <p class="more"><a href="./wiki/start/mcp.html">Use it from Claude Code and other MCP harnesses</a></p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ─────────────── policy profiles ─────────────── -->
+  <section class="section profiles" aria-labelledby="profiles-title">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow">Policy</p>
+        <h2 id="profiles-title">Three profiles, from a laptop to a kiosk</h2>
+        <p>The app picks a profile, or a profile with overrides. The hub has a policy of its own, and a request has to pass both.</p>
+      </header>
+      <div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>open</code></th>
+<th><code>guarded</code></th>
+<th><code>kiosk</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>intended for</td>
+<td>local development</td>
+<td>a person's own browser</td>
+<td>unattended stations</td>
+</tr>
+<tr>
+<td>attach</td>
+<td>allowed</td>
+<td>the person approves</td>
+<td>allowed for a provisioned agent</td>
+</tr>
+<tr>
+<td>safe / sensitive / dangerous actions</td>
+<td>allow / confirm / confirm</td>
+<td>allow / confirm / deny</td>
+<td>allow / deny / deny</td>
+</tr>
+<tr>
+<td>scopes</td>
+<td>all</td>
+<td>all</td>
+<td>observe, act, cursor, show</td>
+</tr>
+<tr>
+<td>what the tree exposes</td>
+<td>interactive elements</td>
+<td>interactive elements</td>
+<td>annotated elements only</td>
+</tr>
+<tr>
+<td>navigation</td>
+<td>same origin</td>
+<td>same origin</td>
+<td>off</td>
+</tr>
+<tr>
+<td>a page inside a frame</td>
+<td>refused, unless <code>framed</code></td>
+<td>refused, unless <code>framed</code></td>
+<td>refused, unless <code>framed</code></td>
+</tr>
+<tr>
+<td>person's controls</td>
+<td>pause, stop</td>
+<td>pause, stop</td>
+<td>pause</td>
+</tr>
+<tr>
+<td>levels the person may set</td>
+<td>strict, ask, auto, bypass</td>
+<td>strict, ask, auto, bypass</td>
+<td>strict, ask</td>
+</tr>
+<tr>
+<td>panel on the indicator</td>
+<td>yes</td>
+<td>yes</td>
+<td>no</td>
+</tr>
+<tr>
+<td>chat with the person</td>
+<td>yes; agents hear each other</td>
+<td>yes; agents hear each other once the person switches it on</td>
+<td>no</td>
+</tr>
+</tbody>
+</table></div>
+
+      <p class="note"><a href="./wiki/concepts/policy-profiles.html">What every row means</a> · <a href="./wiki/guides/kiosk-deployment.html">Deploying a kiosk</a></p>
+    </div>
+  </section>
+
+  <!-- ─────────────── specified, checked, reviewed ─────────────── -->
+  <section class="section" aria-labelledby="checked-title">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow">Open, and built to be checked</p>
+        <h2 id="checked-title">A protocol you can implement and verify</h2>
+      </header>
+      <div class="trio">
+        <article>
+          <p class="big">0.1<small>protocol</small></p>
+          <h3>Specified</h3>
+          <p>The wire types are one file and the behaviour behind them is one document, in which the words MUST, SHOULD and MAY are normative. The same frames run over a loopback WebSocket and over an in-page message port.</p>
+          <p class="more"><a href="./wiki/reference/specification.html">Read the specification</a></p>
+        </article>
+        <article>
+          <p class="big">205<small>requirements</small></p>
+          <h3>Traceable</h3>
+          <p>Each conformance test names the requirement and the section it checks, and a meta-test fails when a normative sentence in the spec has no test. 14 files of language-neutral test vectors, computed independently of this implementation, are there for anyone writing another one.</p>
+          <p class="more"><a href="./wiki/implementers/requirements.html">Requirements index</a> · <a href="./wiki/implementers/test-vectors.html">Test vectors</a></p>
+        </article>
+        <article>
+          <p class="big">75<small>threats, each with what stops it</small></p>
+          <h3>Attacked, and honest about it</h3>
+          <p>Reviewers that did not write the code attacked it while it ran. The security model records what each review found, what was changed and what is left as a stated limit, and says that the fixes after the latest reviews have not been reviewed again. It also lists what Reins does not protect against. Read that list before deploying.</p>
+          <p class="more"><a href="./wiki/reference/security-model.html#what-reins-does-not-protect-against">What Reins does not protect against</a> · <a href="./wiki/reference/security-model.html#review">Review history</a></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── what has been tested ─────────────── -->
+  <section class="section" aria-labelledby="support-title">
+    <div class="wrap">
+      <div class="support">
+        <div>
+          <p class="eyebrow">Browsers, Electron, models</p>
+          <h2 id="support-title">What has been tested, and what has not</h2>
+        </div>
+        <ul>
+          <li><span class="tag tag-ok">tested</span><p>The demo has been run end to end in Chromium, with the page served from loopback.</p></li>
+          <li><span class="tag tag-warn">not tested</span><p>Firefox, Safari and pages served from a public <code>https:</code> origin have not been tested. See the <a href="./wiki/reference/security-model.html#browser-access-to-loopback">browser notes in the security model</a>.</p></li>
+          <li><span class="tag tag-accent">no network</span><p>The in-tab shape needs no network access and so is not affected by loopback restrictions.</p></li>
+          <li><span class="tag tag-ok">tested</span><p>Electron on Windows, with a real Electron and a person played by real mouse and keyboard input. <a href="./wiki/reference/electron-guide.html#10-what-was-tested">What was tested</a> names each scenario.</p></li>
+          <li><span class="tag tag-warn">not tested</span><p>Electron on macOS and Linux, and a packaged app. Nothing was run with a model, inside a real Claude Code session, or against a live Hermes Desktop.</p></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── where to go next ─────────────── -->
+  <section class="section" aria-labelledby="map-title">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow">Where next</p>
+        <h2 id="map-title">The wiki, the documents, the code</h2>
+      </header>
+      <ul class="map">
+        <li><a href="./wiki/index.html#start"><strong>Start</strong><span>Run the demo, make an app drivable, drive it from Node, a shell or an MCP harness.</span></a></li>
+        <li><a href="./wiki/index.html#concepts"><strong>Concepts</strong><span>Roles, the handshake, sealed sessions, grants, policy, consent, permission levels, chat, observation, the cursor.</span></a></li>
+        <li><a href="./wiki/index.html#guides"><strong>Guides</strong><span>Kiosk deployment, surface keys, serving the chat, Electron, Claude and Hermes, troubleshooting.</span></a></li>
+        <li><a href="./wiki/index.html#reference"><strong>Reference</strong><span>Methods, events, error codes, policy fields, limits, the commands and the SDK.</span></a></li>
+        <li><a href="./wiki/reference/specification.html"><strong>Specification</strong><span>Reins Protocol 0.1 in full, rendered from the repository's own file.</span></a></li>
+        <li><a href="./wiki/reference/security-model.html"><strong>Security model</strong><span>Who can attack this, what stops them, and what Reins does not protect against.</span></a></li>
+        <li><a href="./wiki/index.html#implementers"><strong>Implementers</strong><span>Writing another implementation, the conformance suite, test vectors, requirements.</span></a></li>
+        <li><a href="./wiki/index.html#community"><strong>Community</strong><span>Contributing, proposing a protocol change, reporting a vulnerability, the FAQ.</span></a></li>
+        <li><a href="https://github.com/offensiveadhd/reins"><strong>GitHub</strong><span>The protocol, the reference implementation, the conformance suite and this site.</span></a></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="./index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="./wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="./wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="./wiki/reference/specification.html">Specification</a></li>
+        <li><a href="./wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="./playground.html">Playground</a></li>
+        <li><a href="./wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="./wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="./wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="./wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="./wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="./llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

@@ -1,0 +1,1626 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Reins protocol conformance suite · Reins</title>
+<meta name="description" content="What the conformance suite checks, how to run it and what it does not cover. Rendered from conformance/README.md.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/implementers/conformance-suite.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Reins protocol conformance suite">
+<meta property="og:description" content="What the conformance suite checks, how to run it and what it does not cover. Rendered from conformance/README.md.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/implementers/conformance-suite.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="./writing-an-implementation.html">Writing another implementation</a></li><li><a href="./conformance-suite.html" aria-current="page">The conformance suite</a></li><li><a href="./test-vectors.html">Test vectors</a></li><li><a href="./requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#implementers">Implementers</a></li><li aria-current="page">The conformance suite</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Reins protocol conformance suite</h1>
+        <p class="lede">What the conformance suite checks, how to run it and what it does not cover. Rendered from conformance/README.md.</p>
+        <p class="source-note">This page is <code>conformance/README.md</code>, rendered from the repository at build time. It is the text the project maintains, not a copy.</p>
+      </header>
+      <p>This folder checks an implementation of Reins against <code>docs/SPEC.md</code> (protocol 0.1).
+The existing tests under <code>packages/*/test</code> exercise the reference implementation's own
+code paths; the tests here are written from the specification instead. Each test name
+starts with the id of the requirement it checks, and <code>requirements.json</code> maps every
+requirement to its spec section and its tests.</p>
+<h2 id="what-is-here">What is here <a class="anchor" href="#what-is-here" aria-label="Link to the section What is here">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>path</th>
+<th>contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vectors/*.json</code></td>
+<td>Language-neutral test vectors: fixed inputs and expected outputs.</td>
+</tr>
+<tr>
+<td><code>tools/make-vectors.mjs</code></td>
+<td>Generates the vectors from the formulas in SPEC.md with <code>node:crypto</code> only. It imports nothing from <code>@reins/*</code>.</td>
+</tr>
+<tr>
+<td><code>vectors.test.ts</code></td>
+<td>Checks that <code>@reins/core</code> (and <code>verifyAuditChain</code> in <code>@reins/hub</code>) reproduce the vectors.</td>
+</tr>
+<tr>
+<td><code>hub-transport.test.ts</code>, <code>hub-handshake.test.ts</code>, <code>hub-session.test.ts</code>, <code>levels-hub.test.ts</code>, <code>chat-hub.test.ts</code></td>
+<td>Black-box hub tests. A hub is started in-process on port 0; agents and surfaces are raw <code>ws</code> sockets that build every frame, proof and seal MAC by hand (<code>lib/wire.ts</code>). <code>chat-hub.test.ts</code> covers the relay of a room's messages, their rate and their audit records (<code>CH-</code>).</td>
+</tr>
+<tr>
+<td><code>surface.test.ts</code>, <code>levels-surface.test.ts</code>, <code>timers-surface.test.ts</code>, <code>chat-surface.test.ts</code></td>
+<td>The reference driver in happy-dom, driven by a hub played with hand-built frames over an in-memory link (<code>lib/surface-hub.ts</code>). <code>levels-surface.test.ts</code> covers levels, rules, scope switches, the panel, and what a page's styles and scripts can and cannot do to the overlay (<code>LV-</code>); it reaches the panel through <code>shadowOf</code>, and plays the person with events it marks trusted. <code>timers-surface.test.ts</code> (<code>LV-34</code>) wraps the timer functions before the driver loads, clears every timer the surface set, and shows that nothing gets looser. <code>chat-surface.test.ts</code> covers the chat methods, the room and the Chat tab (<code>CH-</code>) the same way: what the person types is a value and an input event the test marks trusted.</td>
+</tr>
+<tr>
+<td><code>security-hub.test.ts</code>, <code>security-surface.test.ts</code></td>
+<td>One or more tests per rule of SPEC section 14, named <code>S14.N ...</code>. Rule 14 also has a test in <code>mcp.test.ts</code>; rule 15 has its tests in <code>levels-surface.test.ts</code> and <code>levels-hub.test.ts</code>, rule 16 in <code>chat-surface.test.ts</code> and <code>chat-hub.test.ts</code>.</td>
+</tr>
+<tr>
+<td><code>mcp.test.ts</code></td>
+<td>The MCP adapter, spoken to with raw JSON-RPC over the SDK's in-memory transport, <code>reins_read</code> (<code>MCP-6</code>) and <code>reins_chat</code> included (<code>CH-15</code>), the one rule for text a page supplied (<code>MCP-7</code>, <code>MCP-8</code>), the hand-over of chat messages over the shell session (<code>CH-28</code>), and the <code>chat-serve</code> runner with a command that echoes what it is given (<code>CH-16</code>) and with one that leaves a process running (<code>CH-29</code>).</td>
+</tr>
+<tr>
+<td><code>hub-transport.test.ts</code>, <code>hub-handshake.test.ts</code>, <code>hub-session.test.ts</code></td>
+<td>Black-box hub tests. A hub is started in-process on port 0; agents and surfaces are raw <code>ws</code> sockets that build every frame, proof and seal MAC by hand (<code>lib/wire.ts</code>).</td>
+</tr>
+<tr>
+<td><code>surface.test.ts</code></td>
+<td>The reference driver in happy-dom, driven by a hub played with hand-built frames over an in-memory link (<code>lib/surface-hub.ts</code>).</td>
+</tr>
+<tr>
+<td><code>security-hub.test.ts</code>, <code>security-surface.test.ts</code></td>
+<td>One or more tests per rule of SPEC section 14, named <code>S14.N ...</code>. Rule 14 also has a test in <code>mcp.test.ts</code>.</td>
+</tr>
+<tr>
+<td><code>mcp.test.ts</code></td>
+<td>The MCP adapter, spoken to with raw JSON-RPC over the SDK's in-memory transport.</td>
+</tr>
+<tr>
+<td><code>origins.test.ts</code></td>
+<td>Section 5, &quot;Origins&quot;: the origin vectors against <code>@reins/core</code>, and surfaces and agents from <code>file://</code>, app origins and <code>null</code> on raw sockets.</td>
+</tr>
+<tr>
+<td><code>electron.test.ts</code></td>
+<td>The Electron port of section 3 and <code>reins-electron</code> of section 15. Electron is played by the stand-ins in <code>lib/electron.ts</code>: no Electron is installed or started.</td>
+</tr>
+<tr>
+<td><code>electron-page.test.ts</code></td>
+<td>How long the driver of an adopted page lives: the real page glue and driver in happy-dom, against the real injector and broker, with the browser between them played by <code>lib/electron.ts</code>.</td>
+</tr>
+<tr>
+<td><code>requirements.json</code></td>
+<td><code>{ id, section, text, quotes?, tests }</code> per requirement. <code>quotes</code> are exact substrings of the MUST / MUST NOT / SHALL sentences an entry covers.</td>
+</tr>
+<tr>
+<td><code>requirements.test.ts</code></td>
+<td>Fails if a normative sentence or a section 14 rule has no entry, if a quote no longer occurs in the spec, or if an entry names a test that does not exist.</td>
+</tr>
+<tr>
+<td><code>lib/</code></td>
+<td>Helpers: the raw wire client, hub and surface harnesses, an independent canonical-JSON function, and the spec and test-name extractors used by the meta-test.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="running">Running <a class="anchor" href="#running" aria-label="Link to the section Running">#</a></h2>
+<div class="code"><div class="code-bar"><span class="code-lang"></span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npm run test:conformance</code></pre></div>
+<p>This runs <code>vitest run conformance</code>. No build step is needed: <code>vitest.config.ts</code> maps the
+<code>@reins/*</code> imports to the package sources. Every hub listens on port 0 and every temporary
+file goes under the OS temp directory, so the suite can run next to a hub on port 7346.
+A full run takes about half a minute; three tests wait out the hub's 5 s timers on purpose
+(HS-9, HS-17) or create 64 connections (CAP-2).</p>
+<p>To regenerate the vectors after a spec change:</p>
+<div class="code"><div class="code-bar"><span class="code-lang"></span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>node conformance/tools/make-vectors.mjs          # write vectors/*.json
+node conformance/tools/make-vectors.mjs --check  # exit 1 if a file would change</code></pre></div>
+<p><code>node conformance/lib/spec-text.mjs</code> prints the normative sentences and section 14 rules
+the meta-test reads from SPEC.md; <code>node conformance/lib/test-names.mjs</code> prints the test
+titles it knows.</p>
+<h2 id="using-the-vectors-from-another-implementation">Using the vectors from another implementation <a class="anchor" href="#using-the-vectors-from-another-implementation" aria-label="Link to the section Using the vectors from another implementation">#</a></h2>
+<p>Each file in <code>vectors/</code> is self-describing: <code>spec</code> names the section, <code>formula</code> or
+<code>layout</code> restates the rule, and <code>note</code> explains the cases. Every detail the vectors depend
+on is now written in SPEC.md; no vector relies on the reference implementation for a rule
+the spec leaves open. Byte strings are hex, base64url values are unpadded (RFC 4648
+section 5).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>file</th>
+<th>how to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auth.json</code></td>
+<td>For each case compute <code>HMAC-SHA256(key, peerInput)</code> and <code>HMAC-SHA256(key, hubInput)</code> over UTF-8 bytes, base64url; compare with <code>peerProof</code> and <code>hubProof</code>. The third case has a non-ASCII kid.</td>
+</tr>
+<tr>
+<td><code>seal.json</code></td>
+<td>Derive <code>th</code>, <code>kPeer</code> and <code>kHub</code> from <code>key</code>, <code>nonce</code>, <code>cnonce</code>, <code>challengeText</code>, <code>helloText</code>, <code>welcomeText</code>; seal the <code>peerToHub</code> messages in order from sequence 0 and compare with <code>wire</code> / <code>wireHex</code>; do the same with <code>hubToPeer</code>; open the wire messages and expect the payloads. <code>macOnly</code> gives MACs at large sequence numbers. <code>illFormed</code> must never be sealed or opened.</td>
+</tr>
+<tr>
+<td><code>pointer.json</code></td>
+<td>Encode <code>frame</code> and compare with <code>hex</code>; decode <code>hex</code> and compare with <code>frame</code>; <code>clamp</code> and <code>rounding</code> cases check the encoding of fractions and <code>dt</code>; <code>invalid</code> must be refused.</td>
+</tr>
+<tr>
+<td><code>merge-patch.json</code></td>
+<td><code>apply</code>: RFC 7396 appendix A. <code>diff</code>: any patch P with apply(from, P) == to passes. <code>equal</code>: no patch at all; some cases differ only in null properties, which read as absent.</td>
+</tr>
+<tr>
+<td><code>ui-delta.json</code></td>
+<td><code>apply</code>: apply <code>ops</code> to <code>nodes</code>, expect <code>expect</code>. <code>diff</code>: your diff, applied to <code>prev</code>, must give <code>next</code>, with every <code>del</code> first. <code>render</code>: the compact tree text and single node lines. <code>renderDelta</code>: delta text rendered against <code>prev</code>.</td>
+</tr>
+<tr>
+<td><code>methods.json</code></td>
+<td>Method to scope table, <code>HUB_METHODS</code>, <code>READ_ONLY_METHODS</code>, <code>CHAT_SPEAK_METHODS</code>, scope intersection.</td>
+</tr>
+<tr>
+<td><code>policy.json</code></td>
+<td>Profile table with its defaults (levels, panel and <code>chatRelay</code> included), override precedence, strictness order.</td>
+</tr>
+<tr>
+<td><code>levels.json</code></td>
+<td><code>rows</code>: split each row on spaces into <code>columns</code>; from the policy decision, the action's risk, the level, the rule (<code>-</code> for none) and the levels on offer (joined by <code>+</code>), your decision for an <code>act</code> request must give <code>outcome</code>, and <code>by</code> and <code>remember</code> where they are not <code>-</code>. <code>c1</code>: a request with c:1 counts as the decision in <code>counts</code>. <code>offered</code>: the levels on offer from the two <code>human.levels</code> lists (<code>strict</code> and <code>ask</code> always). <code>hub</code>: the hub's decision for an action as a surface reads it from <code>decisions</code> in attach; anything missing or malformed is <code>confirm</code>. <code>allowRule</code>: where the rule allow may be set.</td>
+</tr>
+<tr>
+<td><code>chat.json</code></td>
+<td><code>text.cases</code>: trim the text (<code>unit</code> and <code>times</code> stand for a repeated unit between <code>before</code> and <code>after</code>); with <code>ok</code> it is kept and has <code>length</code>, otherwise <code>chat.say</code> answers <code>E_BAD_ARGS</code>. <code>statusNote.cases</code>: the note as it is kept, or refused. <code>message</code>: take the <code>valid</code> messages, keeping only <code>fields</code>, and drop the <code>invalid</code> ones. <code>audience.rows</code>: split each row on spaces into <code>columns</code>; from the agents in the room, the agents among them that hear each other, who speaks and whom they address (<code>person</code> for the person alone), your decision must give <code>outcome</code> and <code>result</code>. <code>relay</code>: the three values of <code>chatRelay</code>, and for every pair the stricter one. <code>auditDigest</code>: the canonical JSON and the unkeyed digest a chat text is recorded with, whatever else was sent with it. <code>lines</code>: a chat text as the `</td>
+</tr>
+<tr>
+<td><code>manifest.json</code></td>
+<td>Canonical JSON (with <code>canonicalCases</code> for key order and numbers) and digest of a manifest, and the prompt card of SPEC section 7.</td>
+</tr>
+<tr>
+<td><code>audit.json</code></td>
+<td>An unkeyed and a keyed audit chain to verify; <code>args</code> is SHA-256, or HMAC under the key, of <code>argsCanonical</code>.</td>
+</tr>
+<tr>
+<td><code>errors.json</code>, <code>limits.json</code></td>
+<td>The complete error code list of SPEC section 6, and numeric limits the spec states.</td>
+</tr>
+<tr>
+<td><code>origins.json</code></td>
+<td><code>urlOrigin</code>: the origin of each <code>url</code> (JSON null: not a URL; the string <code>&quot;null&quot;</code>: opaque). <code>allowed</code>: whether <code>entries</code> admit <code>origin</code>. <code>surfaceUrl</code>: whether <code>url</code> may be <code>hello.surface.url</code> on a connection from <code>origin</code>.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The hub tests in <code>hub-*.test.ts</code> are black-box at the wire level: to run them against
+another hub, replace <code>startTestHub</code> in <code>lib/hub.ts</code> with code that starts that hub on a
+free port with the same configuration (credentials, allowed origins, policy, limits) and
+exposes its audit records. Tests that configure the hub through <code>BrokerConfig</code> options or
+read <code>memoryAudit</code> records depend on the reference configuration shape.</p>
+<h2 id="coverage-limits">Coverage limits <a class="anchor" href="#coverage-limits" aria-label="Link to the section Coverage limits">#</a></h2>
+<p>These requirements are not checked, or only partly:</p>
+<ul>
+<li>TR-2 (refuse a non-loopback remote address): needs a second network interface; the test
+only shows loopback clients are served.</li>
+<li>S14.3, owner-only files: checked by POSIX mode only; on Windows the ACL is not inspected
+(the test is skipped there). The token file written by the CLI is not covered.</li>
+<li>Section 5: the inbound bound before authentication (16 messages, 64 KiB) and dropping
+what a peer sends after a failed proof race the hub's asynchronous proof check, so
+they are not tested at the wire; the link bound (4096 messages, 16 MiB) is not covered.</li>
+<li>Section 11 drop policy (droppable frames above 256 KiB of surface backlog, stall at
+1 MiB), receiver playback, coalescing on the sender, and Pause and Stop discarding
+queued points: need control of socket buffers or animation frames; only
+<code>playbackRate</code> and the credit batching are checked.</li>
+<li>Section 9 ordering, command batching per animation frame (6 ms), cursor glide timing,
+and &quot;checks hold across waits&quot;: timing-dependent, not covered.</li>
+<li>Section 12: the 500 ms arming of Allow, Allow waiting for a tall card to be scrolled,
+the escaping of invisible code points on the card, the &quot;Request withdrawn&quot; notice, the
+indicator above the prompt's backdrop or inside a modal dialog or fullscreen element,
+and <code>human.yieldMs</code> after real input (happy-dom input is never trusted): not covered
+beyond what S14.10 and S14.11 check.</li>
+<li>Section 12, the panel: happy-dom has no layout and no trusted input. The <code>LV-</code> surface
+tests mark their own events as trusted to play the person, so they show that unmarked
+events do nothing, not that a browser marks events correctly. Where the panel sits (beside
+a consent card on a wide viewport, under its backdrop on a narrow one, inside a modal
+dialog or a fullscreen element), the &quot;Always allow&quot; step on a card and the colours of the
+indicator are not covered here; the driver's own tests
+(<code>packages/driver/test/levels.test.ts</code>) cover their logic.</li>
+<li>Section 12, the overlay and the page: happy-dom has no top layer, no painting, no native
+<code>isTrusted</code> and no IntersectionObserver. <code>LV-24</code> to <code>LV-26</code> check the stylesheet's text,
+the effects a style engine reports on an ancestor of the host, and that a late hook is
+handed no listener. <code>LV-29</code> plays keys as events it marks trusted and moves the focus
+itself, since happy-dom does not move it on Tab; <code>LV-32</code> reads <code>zoom</code> from a computed
+style it sets, and <code>LV-35</code> uses a stand-in for the Popover API. That page CSS leaves every pixel of the overlay as it was, that the
+host is last in the top layer (also above a page's own popover and inside a modal dialog),
+that a forged or borrowed event moves nothing where the browser's own getter is read,
+where a real key or click lands (Tab and Enter typed for the page, a word and Enter,
+Tab, Enter, Tab, Enter), that <code>::before</code>, <code>::after</code>, <code>::marker</code> and <code>::first-letter</code>
+rules of the page add no box to the host, and that <code>zoom</code> and <code>display: none</code> on <code>html</code>
+stop commands, is checked in a real Chromium by
+<code>node scripts/browser-check.mjs</code> (<code>npm run test:browser</code>; it skips when no Chromium is
+found unless <code>--require</code> is given). The driver's <code>packages/driver/test/hardening.test.ts</code>
+covers the logic of the top layer and of the visibility observer with stand-ins.</li>
+<li>Section 12, chat: happy-dom has no layout and no trusted input. The <code>CH-</code> surface tests
+set the composer's value and mark their own input, key and click events as trusted to
+play the person, so they show that unmarked events and a value set by script send
+nothing, not that a browser marks events correctly or that an input method behaves.
+How the tab looks (light and dark, a narrow viewport), the scroll position of the
+transcript, the lapse of a status after 2 minutes, what a screen reader says, and the
+focus that returns to the composer after a command are not covered here; the driver's
+own tests (<code>packages/driver/test/chat.test.ts</code>) cover the logic of the last two. That a
+page's own script can read the composer and the transcript and alter what is sent
+(<code>docs/SECURITY.md</code>, &quot;What Reins does not protect against&quot;) is stated, not tested: the
+tests show what an agent cannot do, and that ordinary bubbling listeners see nothing.
+That the composer takes no input while an app action runs is tested with an action
+that writes into the field, not with a browser's <code>execCommand</code>.</li>
+<li>Section 13: fail-closed on more than 1000 queued records, <code>lost</code> summaries, a peer
+closed for not reading, refusing to continue a log whose chain or head does not
+verify (<code>fileAudit</code>), and the 32-agent cap.</li>
+<li>Sections 3 and 15, Electron: nothing here starts Electron. What Chromium sends as
+<code>Origin</code>, the port crossing <code>contextIsolation</code>, the debugging pipe, the driver in a world
+of its own under a page's Content Security Policy, and consent, the panel, a level and
+the chat in a real window with real input are checked by <code>npm run test:electron</code>, which
+is not part of this suite (see <code>docs/ELECTRON.md</code>).</li>
+<li>Section 15: CLI behaviour (token files, secret-file checks, flags, escaping of page
+text), the <code>[unverified hub data]</code> marking of the MCP adapter, and the agent SDK beyond
+its pointer credit are not covered. Of <code>reins_chat</code>, the 150 s cap of a wait is checked
+as a constant and with a mock clock in <code>packages/mcp/test/chat.test.ts</code>, not by waiting.
+The read of the room every 45 s while a wait is in flight is tested there too, and
+against a real hub whose clock is moved in <code>examples/kiosk/test/chat.test.ts</code>.
+Of <code>chat-serve</code>, the command line, the timeout and the failure notices are covered in
+<code>packages/mcp/test/chat-serve.test.ts</code>, not here. <code>CH-29</code> shows here, on the machine the
+tests run on, that a process a command left running when it exited is ended. What a
+Windows job object holds beyond that (a process whose parent has exited, a tree that
+goes on growing, one started by cmd.exe, PowerShell or Python, a request to leave the
+job refused) and that nothing is run where no job object can be made, is covered by the
+tests named <code>review round 2, F3</code> in that file, on Windows only; the process-group path
+is covered by the tests there that are not Windows-only, on the machine they run on.
+That <code>down</code> and <code>up</code> leave the process of a stale announcement alone, that <code>up</code> prints
+the hub's origin warnings, and that an option a running session cannot take is refused,
+are covered in <code>packages/mcp/test/shell.test.ts</code>; what a system reports as a process's
+creation time is asked for real only on the machine the tests run on. No test runs a model, and none runs a
+harness: the Claude Code subagent in <code>integrations/</code> was not run under Claude Code.</li>
+</ul>
+<p>Tests marked <code>it.fails</code> are places where the implementation does not do what the spec
+says; each carries a <code>// SPEC MISMATCH:</code> comment.</p>
+<h2 id="requirements">Requirements <a class="anchor" href="#requirements" aria-label="Link to the section Requirements">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>id</th>
+<th>section</th>
+<th>what is checked</th>
+<th>tests</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TR-1</td>
+<td>3</td>
+<td>The hub binds loopback addresses only and refuses any other bind address.</td>
+<td>TR-1</td>
+</tr>
+<tr>
+<td>TR-2</td>
+<td>3</td>
+<td>The hub rejects a socket whose remote address is not loopback.</td>
+<td>TR-2</td>
+</tr>
+<tr>
+<td>TR-3</td>
+<td>3</td>
+<td>The hub rejects a Host header other than 127.0.0.1, localhost or [::1] with its port.</td>
+<td>S14.1</td>
+</tr>
+<tr>
+<td>TR-4</td>
+<td>3</td>
+<td>The hub requires the reins.v1 subprotocol.</td>
+<td>TR-4</td>
+</tr>
+<tr>
+<td>TR-5</td>
+<td>3</td>
+<td>The hub disables per-message compression.</td>
+<td>TR-5</td>
+</tr>
+<tr>
+<td>TR-6</td>
+<td>3</td>
+<td>The hub answers plain HTTP with a bare status and no body.</td>
+<td>TR-6</td>
+</tr>
+<tr>
+<td>FR-1</td>
+<td>4</td>
+<td>A receiver closes with E_TOO_LARGE on an oversize frame and with E_BAD_FRAME on invalid JSON, an unknown t or a missing field; closing with a code is bye {code} then close, and a message the transport cannot take is closed with WebSocket code 1009.</td>
+<td>FR-1, FR-2, FR-3, FR-4, FR-5, FR-6, HS-8</td>
+</tr>
+<tr>
+<td>FR-2</td>
+<td>4</td>
+<td>The hub announces its limits in welcome; defaults are 256 KiB text, 16 KiB binary, heartbeatMs 15000, reqTimeoutMs 15000, consentTimeoutMs 60000.</td>
+<td>FR-4, VEC-LIMITS</td>
+</tr>
+<tr>
+<td>HS-1</td>
+<td>5</td>
+<td>The hub sends challenge {v, nonce, hub} first; nonces are 32 fresh random bytes, base64url.</td>
+<td>HS-1</td>
+</tr>
+<tr>
+<td>HS-2</td>
+<td>5</td>
+<td>Proofs are base64url HMAC-SHA256 over the UTF-8 bytes of the context, role, kid, nonce and cnonce joined by line feeds, keyed by the UTF-8 bytes of the secret, with the contexts reins.v1.auth and reins.v1.hub.</td>
+<td>HS-2, VEC-AUTH</td>
+</tr>
+<tr>
+<td>HS-3</td>
+<td>5</td>
+<td>A failed hello is answered with bye E_AUTH and closed.</td>
+<td>HS-3</td>
+</tr>
+<tr>
+<td>HS-4</td>
+<td>5</td>
+<td>Agents must authenticate.</td>
+<td>HS-4, S14.2</td>
+</tr>
+<tr>
+<td>HS-5</td>
+<td>5</td>
+<td>A failed proof is answered after 200 ms, doubling per failure in the last minute, up to 3 s; a correct proof is never refused because others failed.</td>
+<td>HS-5, HS-6</td>
+</tr>
+<tr>
+<td>HS-6</td>
+<td>5</td>
+<td>At most 16 handshakes are pending; further connections get E_BUSY.</td>
+<td>HS-7</td>
+</tr>
+<tr>
+<td>HS-7</td>
+<td>5</td>
+<td>A peer that sends anything but hello first, or takes longer than 5 s, is closed.</td>
+<td>HS-8, HS-9</td>
+</tr>
+<tr>
+<td>HS-8</td>
+<td>5</td>
+<td>Keys shorter than 32 characters are rejected.</td>
+<td>HS-10</td>
+</tr>
+<tr>
+<td>HS-9</td>
+<td>5</td>
+<td>A peer that holds a key verifies welcome.proof and closes on mismatch.</td>
+<td>HS-11</td>
+</tr>
+<tr>
+<td>HS-10</td>
+<td>5</td>
+<td>Every message after welcome of a keyed session is sealed with directional keys bound to the challenge, hello and welcome texts.</td>
+<td>HS-12, VEC-SEAL, S14.2</td>
+</tr>
+<tr>
+<td>HS-11</td>
+<td>5</td>
+<td>A sealed message that does not verify (altered, replayed, reordered, clear text) closes the connection and is not delivered.</td>
+<td>HS-13, HS-14, HS-15, VEC-SEAL</td>
+</tr>
+<tr>
+<td>HS-12</td>
+<td>5</td>
+<td>Key confirmation: sealed ping, sealed pong; the hub registers the peer only after it; 5 s limit.</td>
+<td>HS-12, HS-16, HS-17</td>
+</tr>
+<tr>
+<td>HS-13</td>
+<td>5</td>
+<td>An agent connecting with an Origin header is admitted only if the credential lists that origin, else E_ORIGIN.</td>
+<td>HS-18</td>
+</tr>
+<tr>
+<td>HS-14</td>
+<td>5</td>
+<td>The display name is the credential name, else the declared name without control characters, cut to 64.</td>
+<td>HS-19</td>
+</tr>
+<tr>
+<td>HS-15</td>
+<td>5</td>
+<td>A surface origin must be in the allowlist (exact, scheme://host:*, or *), else E_ORIGIN.</td>
+<td>HS-20</td>
+</tr>
+<tr>
+<td>HS-16</td>
+<td>5</td>
+<td>hello.surface.url has the connection origin.</td>
+<td>HS-21</td>
+</tr>
+<tr>
+<td>HS-17</td>
+<td>5</td>
+<td>requireKey refuses every surface without a key; a hub may pin an app id to a manifest digest (E_DENIED).</td>
+<td>HS-22, HS-23</td>
+</tr>
+<tr>
+<td>HS-18</td>
+<td>5</td>
+<td>A kiosk surface holds a key.</td>
+<td>SF-ATT-5</td>
+</tr>
+<tr>
+<td>HS-19</td>
+<td>5</td>
+<td>A surface without a key treats the hub as unverified and never attaches silently.</td>
+<td>SF-ATT-3</td>
+</tr>
+<tr>
+<td>HS-20</td>
+<td>5</td>
+<td>Session ids are labels; nothing is authorised by knowing one.</td>
+<td>GR-14</td>
+</tr>
+<tr>
+<td>HS-21</td>
+<td>5</td>
+<td>Either side sends bye before closing on purpose.</td>
+<td>HS-25, RQ-10, SH-1</td>
+</tr>
+<tr>
+<td>HS-22</td>
+<td>5</td>
+<td>Seal keys: th = b64url(SHA-256(L(c) || c || L(h) || h || L(w) || w)) over the UTF-8 challenge, hello and welcome texts with u32 BE byte lengths; k = raw HMAC-SHA256(key, context + &quot;\n&quot; + nonce + &quot;\n&quot; + cnonce + &quot;\n&quot; + th); text payloads MACed as UTF-8.</td>
+<td>VEC-SEAL, HS-12</td>
+</tr>
+<tr>
+<td>HS-23</td>
+<td>5</td>
+<td>Text that is not well-formed Unicode is never sealed or opened; such a transcript text fails with E_AUTH.</td>
+<td>VEC-SEAL</td>
+</tr>
+<tr>
+<td>HS-24</td>
+<td>5</td>
+<td>A surface claiming an app id the hub holds a key for must prove it, with or without requireKey (E_AUTH); SurfaceInfo.verified is true only for a surface that proved a key.</td>
+<td>HS-26</td>
+</tr>
+<tr>
+<td>RQ-1</td>
+<td>6</td>
+<td>A forwarded request reaches the surface without s, with ag, and c:1 when the hub policy demands confirmation; the answer is relayed unchanged.</td>
+<td>RQ-3, RQ-4, RQ-5</td>
+</tr>
+<tr>
+<td>RQ-2</td>
+<td>6</td>
+<td>Timeouts give E_TIMEOUT (act also waits consentTimeoutMs); a surface disconnect fails pending requests with E_GONE.</td>
+<td>RQ-6, RQ-7</td>
+</tr>
+<tr>
+<td>RQ-3</td>
+<td>6</td>
+<td>Events: ag targets one agent, otherwise every attached agent; the hub adds s; grant and surface events need no subscription.</td>
+<td>RQ-8, RQ-9</td>
+</tr>
+<tr>
+<td>RQ-4</td>
+<td>6</td>
+<td>ping {ts} is answered with pong {ts}; a peer silent for 2.5 x heartbeatMs is dropped.</td>
+<td>RQ-1, RQ-2</td>
+</tr>
+<tr>
+<td>RQ-5</td>
+<td>6</td>
+<td>The hub relays ui, state and nav events only to live grants with observe, user events to every live grant; grant events from a surface are acted on by kind and never relayed as they came, and surface events from a surface are dropped.</td>
+<td>RQ-11</td>
+</tr>
+<tr>
+<td>RQ-6</td>
+<td>6</td>
+<td>An unknown method is E_UNKNOWN_METHOD before any parameter check; a hidden surface answers exactly like a missing one (E_NO_SURFACE); params that cannot be canonicalised are E_BAD_ARGS and not forwarded.</td>
+<td>VER-4, GR-18, RQ-12</td>
+</tr>
+<tr>
+<td>MAN-1</td>
+<td>7</td>
+<td>A surface describes itself in hello.surface.manifest; the hub computes digest = b64url SHA-256 of canonical JSON (keys sorted by UTF-16 code units, no whitespace, ECMAScript number and string forms).</td>
+<td>SF-MAN-1, HS-24, VEC-CARD</td>
+</tr>
+<tr>
+<td>MAN-2</td>
+<td>7</td>
+<td>A manifest is at most 64 KiB, 256 actions, 64 views; names match NAME_PATTERN.</td>
+<td>VEC-CARD</td>
+</tr>
+<tr>
+<td>MAN-3</td>
+<td>7</td>
+<td>The prompt card is rendered by the section 7 rules and is the same wherever it is produced.</td>
+<td>VEC-CARD</td>
+</tr>
+<tr>
+<td>GR-1</td>
+<td>8</td>
+<td>Attach scopes are intersected with the credential cap and the hub policy; empty is E_SCOPE; hub attach deny is E_DENIED.</td>
+<td>GR-1, GR-2, VEC-SCOPE</td>
+</tr>
+<tr>
+<td>GR-2</td>
+<td>8</td>
+<td>The surface decides attach by its policy and answers {scopes, ttlMs}; a refusal is E_CONSENT or E_DENIED.</td>
+<td>GR-3, SF-ATT-1, SF-ATT-2</td>
+</tr>
+<tr>
+<td>GR-3</td>
+<td>8</td>
+<td>The grant expires at min(hub ttl, surface ttl) and the result is {grant, surface, manifest}.</td>
+<td>GR-4</td>
+</tr>
+<tr>
+<td>GR-4</td>
+<td>8</td>
+<td>One attach in flight per credential and surface across its sessions (E_BUSY); a burst of 3 attaches then one every 2 s (E_RATE); a disconnect withdraws a pending attach with detach {why:&quot;agent&quot;}.</td>
+<td>GR-7, GR-8, GR-17</td>
+</tr>
+<tr>
+<td>GR-5</td>
+<td>8</td>
+<td>The surface asks even under allow if the hub is unverified or after Stop.</td>
+<td>SF-ATT-3, SF-ATT-4</td>
+</tr>
+<tr>
+<td>GR-6</td>
+<td>8</td>
+<td>One grant per agent and surface; attaching again replaces it.</td>
+<td>GR-9</td>
+</tr>
+<tr>
+<td>GR-7</td>
+<td>8</td>
+<td>A grant ends on detach, disconnect, expiry, idleMs or revocation, and each side is told as the section 8 table says.</td>
+<td>GR-5, GR-6, GR-10, GR-11, GR-12, SF-CTL-2</td>
+</tr>
+<tr>
+<td>GR-8</td>
+<td>8</td>
+<td>Without a live grant: E_NOT_ATTACHED; outside the grant scopes: E_SCOPE.</td>
+<td>GR-13, SF-SCOPE-1</td>
+</tr>
+<tr>
+<td>M-1</td>
+<td>9</td>
+<td>Each method needs the scope in the section 9 table.</td>
+<td>VEC-SCOPE</td>
+</tr>
+<tr>
+<td>M-2</td>
+<td>9</td>
+<td>act: unknown action and schema failures are E_BAD_ARGS; a request without args is validated as {}; deny is E_DENIED; confirm or c:1 prompts, a refusal is E_CONSENT.</td>
+<td>SF-ACT-1, SF-ACT-2, SF-ACT-3, SF-ACT-9</td>
+</tr>
+<tr>
+<td>M-3</td>
+<td>9</td>
+<td>An act result is JSON of at most 32 KiB, else E_TOO_LARGE; a value JSON cannot hold is E_INTERNAL; a throwing handler yields a generic E_INTERNAL unless it throws a ReinsError.</td>
+<td>SF-ACT-4, SF-ACT-5, SF-ACT-7</td>
+</tr>
+<tr>
+<td>M-4</td>
+<td>9</td>
+<td>ui.click, ui.type, ui.select and ui.key behave as described; disabled, unknown, unexposed or read-only targets are E_NO_TARGET; Tab never focuses a private field; ui.* never takes coordinates.</td>
+<td>SF-UI-1, SF-UI-2, SF-UI-3, SF-UI-4, SF-UI-5, SF-UI-6</td>
+</tr>
+<tr>
+<td>M-5</td>
+<td>9</td>
+<td>cursor.set label at most 40 characters, colour matches COLOR_PATTERN; raw coordinates and stream.open need policy.coordinates.</td>
+<td>SF-CUR-1, SF-CUR-2, ST-6</td>
+</tr>
+<tr>
+<td>M-6</td>
+<td>9</td>
+<td>show.view validates data against the view schema before rendering; a request without data is validated as {} when the schema is an object.</td>
+<td>SF-SHOW-1, SF-SHOW-2</td>
+</tr>
+<tr>
+<td>M-7</td>
+<td>9</td>
+<td>nav.go is same-origin http(s) under a policy.nav prefix, else E_DENIED.</td>
+<td>SF-NAV-1, VEC-POLICY</td>
+</tr>
+<tr>
+<td>M-8</td>
+<td>9</td>
+<td>read returns visible text, at most max characters (default 2000, cap 8000), without private or ignored subtrees.</td>
+<td>SF-OBS-10, SF-OBS-11</td>
+</tr>
+<tr>
+<td>M-9</td>
+<td>9</td>
+<td>While paused every method outside READ_ONLY_METHODS fails with E_PAUSED, except chat.say and chat.status.</td>
+<td>SF-CTL-1, VEC-SCOPE, CH-10</td>
+</tr>
+<tr>
+<td>M-10</td>
+<td>9</td>
+<td>Input-synthesising commands on a private target, or that would change a private control they do not target, fail with E_DENIED unless policy.privateInput.</td>
+<td>S14.9</td>
+</tr>
+<tr>
+<td>M-11</td>
+<td>9</td>
+<td>While a consent prompt is showing or queued, every method outside READ_ONLY_METHODS from every agent fails with E_BUSY, chat.say and chat.status among them; read-only methods and detach still work.</td>
+<td>SF-CON-5, CH-10</td>
+</tr>
+<tr>
+<td>OBS-1</td>
+<td>10</td>
+<td>observe returns a full snapshot, or {base, ops} when since is the agent's last revision; handles are e + base36 and stable.</td>
+<td>SF-OBS-1, SF-OBS-2, SF-OBS-3</td>
+</tr>
+<tr>
+<td>OBS-2</td>
+<td>10</td>
+<td>Exposure under auto, annotated and none; hidden and ignored subtrees are never exposed.</td>
+<td>SF-OBS-4, SF-OBS-5, SF-OBS-6</td>
+</tr>
+<tr>
+<td>OBS-3</td>
+<td>10</td>
+<td>Private fields: state private, no val, only disabled/focused besides; privacy is sticky, also across a node swap; private text never names another node.</td>
+<td>SF-OBS-7, SF-OBS-8, S14.9</td>
+</tr>
+<tr>
+<td>OBS-4</td>
+<td>10</td>
+<td>Names follow the simplified accessible-name order; names cut to 120, values to 200.</td>
+<td>SF-OBS-9</td>
+</tr>
+<tr>
+<td>OBS-5</td>
+<td>10</td>
+<td>Deltas apply in order with the set/del placement rule (del of an absent handle does nothing); a sender emits only set and del, deletes first; diffNodes and applyOps implement it.</td>
+<td>VEC-DELTA</td>
+</tr>
+<tr>
+<td>OBS-6</td>
+<td>10</td>
+<td>Compact text rendering: node lines as section 10 gives them, children indented; + ~ - for deltas, a move as one ~ line.</td>
+<td>VEC-DELTA</td>
+</tr>
+<tr>
+<td>OBS-7</td>
+<td>10</td>
+<td>Subscribed agents get evt ui {rev}; state events carry an RFC 7396 merge patch; a null property reads as absent, so a state that changed only in null properties produces no event.</td>
+<td>SF-OBS-12, SF-OBS-13, SF-OBS-14, VEC-MERGE</td>
+</tr>
+<tr>
+<td>PTR-1</td>
+<td>11</td>
+<td>Binary pointer frame layout of the section 11 table; fractions sent as round(f x 65535), halves up.</td>
+<td>VEC-PTR</td>
+</tr>
+<tr>
+<td>PTR-2</td>
+<td>11</td>
+<td>stream.open answers with initial credit; a sender never has more points outstanding than its credit; flow returns credit.</td>
+<td>ST-1, ST-2, ST-7, VEC-LIMITS</td>
+</tr>
+<tr>
+<td>PTR-3</td>
+<td>11</td>
+<td>The hub closes a stream that overruns its credit or the pointer rate, which is one budget per credential and surface across its sessions; the agent learns it from stream.close (E_RATE); empty frames without END are dropped.</td>
+<td>ST-3, ST-4, ST-5, ST-8</td>
+</tr>
+<tr>
+<td>PTR-5</td>
+<td>11</td>
+<td>An agent that gives up on a pointer stream still sends stream.close for it.</td>
+<td>ST-9</td>
+</tr>
+<tr>
+<td>PTR-4</td>
+<td>11</td>
+<td>Playback speeds up with lag up to 4x.</td>
+<td>VEC-LIMITS</td>
+</tr>
+<tr>
+<td>POL-1</td>
+<td>12</td>
+<td>The three profiles match the section 12 table, defaults included.</td>
+<td>VEC-POLICY</td>
+</tr>
+<tr>
+<td>POL-2</td>
+<td>12</td>
+<td>decideAction: exact override, then longest prefix, then risk tier; the stricter decision wins.</td>
+<td>VEC-POLICY, S14.6</td>
+</tr>
+<tr>
+<td>POL-3</td>
+<td>12</td>
+<td>Consent prompts: one per agent, four in total (E_BUSY); unanswered is a refusal; arguments over 40 entries, depth 4 or 2000 code points are E_TOO_LARGE; remember: session covers the action name with any arguments.</td>
+<td>SF-CON-1, SF-CON-2, SF-CON-3, SF-CON-4, SF-ACT-6, SF-CON-7, SF-ACT-8</td>
+</tr>
+<tr>
+<td>POL-4</td>
+<td>12</td>
+<td>Human control: indicator, Pause, Stop revokes the grant with evt grant revoked.</td>
+<td>SF-CTL-1, SF-CTL-2, S14.11</td>
+</tr>
+<tr>
+<td>POL-5</td>
+<td>12</td>
+<td>Cool-off: after a refusal or timeout the same agent is refused with E_RATE, 2 s doubling to 60 s; three refusals in a row revoke the grant; later attaches need approval.</td>
+<td>SF-CON-6</td>
+</tr>
+<tr>
+<td>POL-6</td>
+<td>12</td>
+<td>A driver in a page inside a frame does not connect to a hub: connect() fails with E_DENIED before anything is sent or shown, unless policy.framed; no profile sets it.</td>
+<td>SF-FRAME-1, SF-FRAME-2, VEC-POLICY</td>
+</tr>
+<tr>
+<td>LV-1</td>
+<td>12</td>
+<td>A grant has a level, one of strict, ask, auto and bypass, and a grant starts at ask, or at strict where the person's strict for that agent was kept (LV-27).</td>
+<td>LV-1, VEC-LEVELS</td>
+</tr>
+<tr>
+<td>LV-2</td>
+<td>12</td>
+<td>strict and ask are on offer for every grant; auto and bypass where the surface policy and the hub policy both list them; without a list from the hub only strict and ask; no level that is not on offer; the hub takes strict and ask whatever its policy lists.</td>
+<td>LV-2, VEC-LEVELS</td>
+</tr>
+<tr>
+<td>LV-3</td>
+<td>12</td>
+<td>An act request is decided by the six steps of section 12 (decideAct): deny is final, strict asks every time, auto waives a prompt unless the action is dangerous, bypass waives every prompt, c:1 counts as a policy confirm.</td>
+<td>VEC-LEVELS, LV-3</td>
+</tr>
+<tr>
+<td>LV-4</td>
+<td>12</td>
+<td>The person's rule for one action: deny is E_CONSENT without a prompt or cool-off; a rule beats the level; allow can be set only where a level on offer would waive the same prompt, and where it cannot the panel shows Allow switched off and says why.</td>
+<td>LV-4, VEC-LEVELS</td>
+</tr>
+<tr>
+<td>LV-5</td>
+<td>12</td>
+<td>A waived prompt is not an approval: the action does not run while a consent prompt is up (E_BUSY) and is not remembered.</td>
+<td>LV-5</td>
+</tr>
+<tr>
+<td>LV-6</td>
+<td>8, 12</td>
+<td>What lets an agent do more ends with the grant: auto and bypass, a rule allow, a remembered approval. A new grant, also a replacing one, has none of them, and at the hub every granted scope is on again unless the surface says otherwise (LV-27).</td>
+<td>LV-6</td>
+</tr>
+<tr>
+<td>LV-7</td>
+<td>12</td>
+<td>The panel opens and closes on trusted input alone; no protocol message reaches it; a level, a rule or a scope switch changes only on trusted input; without human.panel there is no panel.</td>
+<td>LV-7</td>
+</tr>
+<tr>
+<td>LV-8</td>
+<td>12</td>
+<td>Whatever lets an action run without asking takes a confirm step naming the agent and what stops asking, armed after 500 ms: auto or bypass above the current level, any level under which an action stops asking, the rule allow always, Reset where the action would then run unasked. What asks more applies at once; the indicator shows a level that is not ask.</td>
+<td>LV-8</td>
+</tr>
+<tr>
+<td>LV-9</td>
+<td>8</td>
+<td>Scope switches: a switched-off scope is E_SCOPE; the hub lets the grant carry only reported scopes that were granted at attach, closes pointer streams when cursor goes, and tells the agent.</td>
+<td>LV-9</td>
+</tr>
+<tr>
+<td>LV-10</td>
+<td>8, 13</td>
+<td>The hub sends its human.levels and, as decisions, what its policy decides for each action in attach, and ends a grant whose surface reports auto or bypass beyond what its policy offers: detach {why:&quot;hub&quot;}, evt grant revoked, both recorded.</td>
+<td>LV-10</td>
+</tr>
+<tr>
+<td>LV-11</td>
+<td>6, 13</td>
+<td>Level and rule reports are checked, recorded as person records and told to the named agent alone; malformed reports and grant events of an unknown kind are dropped; a rule allow the hub's policy would not let waive anything is recorded as refused, neither kept nor told, and the grant goes on.</td>
+<td>LV-11</td>
+</tr>
+<tr>
+<td>LV-12</td>
+<td>12</td>
+<td>The activity list holds times, agent names (in quotation marks, with the session id), method or declared action names and outcomes, never arguments, results or page text.</td>
+<td>LV-12</td>
+</tr>
+<tr>
+<td>LV-13</td>
+<td>12</td>
+<td>The surface reports each change with ag: evt user {kind:&quot;level&quot;}, evt user {kind:&quot;rule&quot;}, evt grant {kind:&quot;scopes&quot;}.</td>
+<td>LV-13</td>
+</tr>
+<tr>
+<td>LV-14</td>
+<td>15</td>
+<td>The MCP adapter tells what the person set as notices: lines starting &quot;[reins] &quot; at the start of the next tool result, before any page-data marker. The name of an action never appears in a notice: which actions the rules are for is listed last, as page data.</td>
+<td>LV-14</td>
+</tr>
+<tr>
+<td>LV-15</td>
+<td>8, 12</td>
+<td>The hub says in attach what its policy decides for each action (decisions); the surface reasons from the stricter of its own decision and the hub's, takes a missing or malformed decision as confirm, and holds the hub to what it said.</td>
+<td>LV-15, VEC-LEVELS</td>
+</tr>
+<tr>
+<td>LV-16</td>
+<td>12</td>
+<td>A remembered approval is shown in the panel as allowed, because the person approved it earlier; Reset takes the rule and the approval away, Ask forgets the approval, and Reset takes the confirm step where the action would then run unasked.</td>
+<td>LV-16</td>
+</tr>
+<tr>
+<td>LV-17</td>
+<td>12</td>
+<td>When what is under the pointer changes other than by the person's click (the list changed, a consent card went away, a confirm step opened or was answered), controls that let an agent do more ignore activation for 500 ms.</td>
+<td>LV-17</td>
+</tr>
+<tr>
+<td>LV-18</td>
+<td>12</td>
+<td>While the overlay cannot be relied on, no click is taken on Allow or Always allow nor on a control that lets an agent do more; the person is told once it can be, and every arming delay starts over.</td>
+<td>LV-18</td>
+</tr>
+<tr>
+<td>LV-19</td>
+<td>12</td>
+<td>While a rule allow of the person waives a prompt, the indicator shows it: a chip that counts those rules, and the dot of the level that would waive the same.</td>
+<td>LV-19</td>
+</tr>
+<tr>
+<td>LV-20</td>
+<td>12</td>
+<td>Wherever the overlay names an agent in words of its own (a prompt, a confirm step, a heading, the indicator, the activity list), the name is in quotation marks, quotation marks in it escaped, followed by its session id.</td>
+<td>LV-20, LV-12</td>
+</tr>
+<tr>
+<td>LV-21</td>
+<td>8</td>
+<td>A surface holds at most 32 grants: an attach from a further agent is E_BUSY before anybody is asked; an agent that holds a grant can attach again.</td>
+<td>LV-21</td>
+</tr>
+<tr>
+<td>LV-22</td>
+<td>13</td>
+<td>A change of what the person set is always recorded; reports that change nothing are recorded at most 20 a second per surface and never told to the agent; a grant with more than 20 changes within one second is ended.</td>
+<td>LV-22</td>
+</tr>
+<tr>
+<td>LV-23</td>
+<td>12</td>
+<td>A consent prompt takes the focus onto itself, the dialog, where no key presses anything, and gives it back to where the person was; a pointer click on Deny is taken at once, a key only as LV-29 says.</td>
+<td>LV-23</td>
+</tr>
+<tr>
+<td>LV-24</td>
+<td>12</td>
+<td>The overlay's stylesheet reads no custom property and names only generic font families; the host resets every property and pins direction and unicode-bidi.</td>
+<td>LV-24</td>
+</tr>
+<tr>
+<td>LV-25</td>
+<td>12</td>
+<td>The overlay counts as not shown while its host, or outside the top layer an ancestor, has a filter, opacity, visibility, clip path, mask, transform, blend mode or content-visibility: hidden, while a zoom reaches it or nothing is rendered, while it is not last in the top layer, or while the indicator, the open panel or the prompt is covered: commands that change the page and attach fail with E_PAUSED.</td>
+<td>LV-25, LV-32</td>
+</tr>
+<tr>
+<td>LV-26</td>
+<td>12, 14</td>
+<td>The overlay acts on an event only when the browser made it for the person's input and delivers it to the control the listener was registered on; a script that replaces addEventListener after the driver loaded is handed no listener of the overlay.</td>
+<td>LV-26, LV-7</td>
+</tr>
+<tr>
+<td>LV-27</td>
+<td>8, 13</td>
+<td>What the person tightened stays with the agent for as long as the page lives: Strict, the rules confirm and deny and the scopes switched off are on every new grant of the same agent (the credential id the hub sends in attach), whatever its session id or name. The surface says so in its attach answer (kept); the hub starts the grant with it, records it, tells the agent, and reads nothing from it that lets an agent do more.</td>
+<td>LV-27 (surface), LV-27 (hub)</td>
+</tr>
+<tr>
+<td>LV-28</td>
+<td>8</td>
+<td>Where the surface cannot tell which agent an attach is from (no credential id, or a hub it did not verify), an attach that would start with kept settings asks even where the policy allows attach, and the prompt says what was set and that it stays.</td>
+<td>LV-28</td>
+</tr>
+<tr>
+<td>LV-29</td>
+<td>12</td>
+<td>Keys that could be typing meant for the page answer no prompt: a key answers only as Enter or Space on a focused button of the prompt, or Escape, when it is no repeat, 500 ms after the prompt appeared, after the focus landed on the button and after any other key, and 3 s after the last key that types; Tab does nothing in the first 500 ms; the prompt says when the keyboard is locked out.</td>
+<td>LV-29</td>
+</tr>
+<tr>
+<td>LV-30</td>
+<td>12</td>
+<td>Nothing an agent drew stays on screen with a consent prompt: toasts and highlights are taken down, the cursor's label is hidden, and none can be put up while the prompt shows.</td>
+<td>LV-30</td>
+</tr>
+<tr>
+<td>LV-31</td>
+<td>12</td>
+<td>A string an agent or the hub wrote shows at most two combining marks in a row; the rest are escapes, which count toward what fits on a card, and each line of the argument listing is clipped to its own box.</td>
+<td>LV-31</td>
+</tr>
+<tr>
+<td>LV-32</td>
+<td>12</td>
+<td>The overlay's stylesheet takes the host's ::before, ::after and ::marker away and keeps its ::backdrop from showing; a zoom on the host or an ancestor, or a page that renders nothing, fails the check.</td>
+<td>LV-32</td>
+</tr>
+<tr>
+<td>LV-33</td>
+<td>13</td>
+<td>Fail closed: while the audit log cannot be written, a reported change that lets an agent do or hear more ends the grant, a change that only tightens is taken, and no chat message is relayed.</td>
+<td>LV-33</td>
+</tr>
+<tr>
+<td>LV-34</td>
+<td>12</td>
+<td>No timer has to fire: with every timer of the surface cleared, a prompt past its deadline is a refusal when the person clicks it and when the next request asks, arming delays and the cool-off hold by the clock.</td>
+<td>LV-34</td>
+</tr>
+<tr>
+<td>LV-35</td>
+<td>12</td>
+<td>A check that had to put the overlay back (show it again in the top layer, or move it) does not take the click that caused it as one that lets an agent do more; a later, separate click counts.</td>
+<td>LV-35</td>
+</tr>
+<tr>
+<td>LV-36</td>
+<td>12</td>
+<td>Letting agents hear each other is not taken while the overlay cannot be relied on, switch or confirm step; a hub that sends another chatRelay with a later attach does not clear the person's switch silently: the surface reports relay off for each agent and the Chat tab says so.</td>
+<td>LV-36</td>
+</tr>
+<tr>
+<td>LV-37</td>
+<td>12</td>
+<td>While the app's own code runs because an agent asked for it (an action's handler, a view's renderer, a state getter, the handlers of synthesised input), the chat composer takes no input.</td>
+<td>LV-37</td>
+</tr>
+<tr>
+<td>CH-1</td>
+<td>8, 12</td>
+<td>The chat scope: open and guarded grant it, kiosk does not; a surface without the panel grants none; without it every chat method is E_SCOPE.</td>
+<td>CH-1, VEC-SCOPE, VEC-POLICY</td>
+</tr>
+<tr>
+<td>CH-2</td>
+<td>9</td>
+<td>chat.say: a text of 1 to 4000 characters after trimming, well-formed, else E_BAD_ARGS; answers the id the message has for the agent that said it; to names another agent of the room, or person.</td>
+<td>CH-2, VEC-CHAT</td>
+</tr>
+<tr>
+<td>CH-3</td>
+<td>9</td>
+<td>chat.read: what the agent may read, oldest first, the latest max (20, at most 50) or what came after since; next to read on; at most 128 KiB, the latest being the newest that fit.</td>
+<td>CH-3, CH-22, VEC-CHAT</td>
+</tr>
+<tr>
+<td>CH-4</td>
+<td>9</td>
+<td>chat.status: idle, thinking or working with a note of at most 80 characters; shown after the agent's name, the note quoted as its words, told to no other agent.</td>
+<td>CH-4, VEC-CHAT</td>
+</tr>
+<tr>
+<td>CH-5</td>
+<td>6, 12</td>
+<td>Who is sent a message follows the four rules of section 12 (chatAudience); each is sent as evt chat with ag, never to its speaker.</td>
+<td>CH-5, VEC-CHAT</td>
+</tr>
+<tr>
+<td>CH-6</td>
+<td>12</td>
+<td>An agent is given only what was posted while its grant was live and its chat scope on, and only what was sent to it.</td>
+<td>CH-6</td>
+</tr>
+<tr>
+<td>CH-7</td>
+<td>12, 15</td>
+<td>Only trusted input in the composer of the Chat tab makes a message of the person; the driver's API posts none and gives the app no text.</td>
+<td>CH-7</td>
+</tr>
+<tr>
+<td>CH-8</td>
+<td>12</td>
+<td>Agent text is inserted as text, escaped, under the name from the grant; no markup, no link.</td>
+<td>CH-8</td>
+</tr>
+<tr>
+<td>CH-9</td>
+<td>12</td>
+<td>A chat message grants nothing: no level, rule or scope changes, and no consent prompt is answered or waived.</td>
+<td>CH-9</td>
+</tr>
+<tr>
+<td>CH-10</td>
+<td>9, 12</td>
+<td>chat.say and chat.status are served while paused; while a consent prompt is up they are E_BUSY and nothing can be typed or sent.</td>
+<td>CH-10, VEC-SCOPE</td>
+</tr>
+<tr>
+<td>CH-11</td>
+<td>12</td>
+<td>Unread messages are counted on the tab and in the indicator; the panel never opens by itself; an arriving message redraws nothing outside the Chat tab and moves no focus.</td>
+<td>CH-11</td>
+</tr>
+<tr>
+<td>CH-12</td>
+<td>6, 13</td>
+<td>The hub relays a chat event only to the grant its ag names, live and holding chat, built from the checked fields; an agent's message only where the hub's policy lets that agent hear its sender, under the hub's name for its sender; an agent cannot send one.</td>
+<td>CH-12</td>
+</tr>
+<tr>
+<td>CH-13</td>
+<td>12, 13</td>
+<td>rates.chat per credential and surface; chat.say checked at the hub; a relay budget for each sender and each listener, so that an agent's flood uses none of the person's.</td>
+<td>CH-13, VEC-POLICY</td>
+</tr>
+<tr>
+<td>CH-14</td>
+<td>13</td>
+<td>chat.say is audited with the digest of {text} as said (with to) and its length, whatever else the agent sent; a relayed message of the person is a person record of the same shape; the text is never written.</td>
+<td>CH-14, VEC-CHAT</td>
+</tr>
+<tr>
+<td>CH-15</td>
+<td>15</td>
+<td>reins_chat: say, status, read, wait (90 s by default, 150 s at most, early when the grant ends); who spoke on a line of the adapter, the text behind &quot;| &quot;, under a first line naming the page, the surface and whether it is verified; unread chat as a notice with a count.</td>
+<td>CH-15</td>
+</tr>
+<tr>
+<td>CH-16</td>
+<td>15</td>
+<td>chat-serve: one run of the command for each message of the person, the message on standard input only, under a line of the runner's with its text behind &quot;| &quot;, the argument array started without a shell.</td>
+<td>CH-16</td>
+</tr>
+<tr>
+<td>CH-17</td>
+<td>12</td>
+<td>Under chatRelay person no agent hears another until the person switches it on: trusted input, a confirm step that names the agents, armed after 500 ms; a later agent is not included; off applies at once; each change is reported with ag.</td>
+<td>CH-17</td>
+</tr>
+<tr>
+<td>CH-18</td>
+<td>12</td>
+<td>The Chat tab always says which agents hear the person only and which hear each other, by name.</td>
+<td>CH-18</td>
+</tr>
+<tr>
+<td>CH-19</td>
+<td>12</td>
+<td>While a consent prompt is showing or queued the Chat tab shows nothing an agent wrote, and status notes are dropped.</td>
+<td>CH-19, CH-10</td>
+</tr>
+<tr>
+<td>CH-20</td>
+<td>12, 13</td>
+<td>chatRelay is off, person or on at the surface and at the hub; the stricter applies; the hub sends its value with attach and enforces it; none sent is off.</td>
+<td>CH-20, VEC-CHAT, VEC-POLICY</td>
+</tr>
+<tr>
+<td>CH-21</td>
+<td>9, 12, 13</td>
+<td>to: &quot;person&quot; is for the person alone: always taken, sent and relayed to no agent, read back by its sender only.</td>
+<td>CH-21, VEC-CHAT</td>
+</tr>
+<tr>
+<td>CH-22</td>
+<td>9, 12</td>
+<td>Message ids count each agent's own messages from 1; an event carries the id for the agent it goes to; the count goes on when a grant is replaced.</td>
+<td>CH-22</td>
+</tr>
+<tr>
+<td>CH-23</td>
+<td>12, 13</td>
+<td>An addressed message stays addressed when its agent leaves; Send waits 500 ms after the room changed; a message of the person the hub does not relay is recorded, told to the surface (chat.undelivered) and marked.</td>
+<td>CH-23</td>
+</tr>
+<tr>
+<td>CH-24</td>
+<td>13</td>
+<td>The person's switch for one agent (evt user relay with ag) is recorded as a person record and told to that agent alone; refused under a hub policy of off.</td>
+<td>CH-24</td>
+</tr>
+<tr>
+<td>CH-25</td>
+<td>15</td>
+<td>reins_chat: read removes only what it showed; a cancelled wait takes no message; a private question is answered to the person alone; no control character of a text reaches the model raw.</td>
+<td>CH-25, VEC-CHAT</td>
+</tr>
+<tr>
+<td>CH-26</td>
+<td>15</td>
+<td>chat-serve refuses a page the hub did not verify unless --allow-unverified, serves one page and names it in every call, and answers the person alone what was asked of the agent alone.</td>
+<td>CH-26, CH-16</td>
+</tr>
+<tr>
+<td>CH-27</td>
+<td>12</td>
+<td>An agent is named as an agent, with its name in quotation marks and its session id, wherever the tab names it; a status note is quoted as its words.</td>
+<td>CH-27</td>
+</tr>
+<tr>
+<td>CH-28</td>
+<td>15</td>
+<td>Over the shell session a chat wait takes a message only for a caller that has the answer; wait hands over at most max; an answer stays for the person alone after a read that shows an older message.</td>
+<td>CH-28</td>
+</tr>
+<tr>
+<td>CH-29</td>
+<td>15</td>
+<td>chat-serve settles which file it runs before it takes a message, never from the working directory for a bare name, and says so; takes one message at a time; ends what a command left running before the run is over.</td>
+<td>CH-29</td>
+</tr>
+<tr>
+<td>HUB-1</td>
+<td>13</td>
+<td>One token bucket per credential, surface and scope, shared by its sessions; hub.info and surfaces.list share a bucket per credential (10/s, burst 20); over a limit E_RATE.</td>
+<td>RL-1, RL-2, RL-3</td>
+</tr>
+<tr>
+<td>HUB-2</td>
+<td>13</td>
+<td>Capacity: 64 surfaces, 32 agents, 4 sessions per credential, 8 streams per agent; beyond that E_BUSY.</td>
+<td>CAP-1, CAP-2, CAP-3</td>
+</tr>
+<tr>
+<td>HUB-3</td>
+<td>13</td>
+<td>Without a live observe grant the SurfaceInfo is reduced; changed events go only to grant holders; hub.info counts only what the agent may see.</td>
+<td>GR-15, GR-16, GR-19</td>
+</tr>
+<tr>
+<td>HUB-4</td>
+<td>13</td>
+<td>Audit: records for connections, attach, detach, grant end, refusals and audited requests (act, ui.<em>, nav.</em>, show.view, show.toast, show.highlight, stream.open, surface.attach); accepted before forwarding; args as a digest, an HMAC under the audit key.</td>
+<td>AU-1, AU-2, AU-3, AU-6</td>
+</tr>
+<tr>
+<td>HUB-5</td>
+<td>13</td>
+<td>Audit chain: hash over prev and canonical record, HMAC when keyed; verification fails on edits and truncation.</td>
+<td>AU-4, VEC-AUDIT</td>
+</tr>
+<tr>
+<td>HUB-6</td>
+<td>13</td>
+<td>Audit refusals are bounded to 20 per second per connection, the excess summarised.</td>
+<td>AU-5</td>
+</tr>
+<tr>
+<td>HUB-7</td>
+<td>13</td>
+<td>On shutdown the hub sends bye OK to every peer.</td>
+<td>SH-1</td>
+</tr>
+<tr>
+<td>HUB-8</td>
+<td>13</td>
+<td>Admission: surfaces per origin and overall, agents per credential (E_RATE); a full hub answers E_BUSY first.</td>
+<td>CAP-4</td>
+</tr>
+<tr>
+<td>HUB-9</td>
+<td>13</td>
+<td>Malformed configuration is refused; a present but mistyped restriction never means any.</td>
+<td>CFG-1</td>
+</tr>
+<tr>
+<td>MCP-1</td>
+<td>15</td>
+<td>The MCP server negotiates a protocol version in initialize.</td>
+<td>MCP-1, MCP-2</td>
+</tr>
+<tr>
+<td>MCP-2</td>
+<td>15</td>
+<td>Ten tools with valid input schemas and annotations.</td>
+<td>MCP-3</td>
+</tr>
+<tr>
+<td>MCP-3</td>
+<td>15</td>
+<td>The scopes the server was started with are a ceiling.</td>
+<td>MCP-4</td>
+</tr>
+<tr>
+<td>MCP-4</td>
+<td>15</td>
+<td>Only reins_attach attaches; every other tool answers E_NOT_ATTACHED on a surface that is not attached.</td>
+<td>MCP-5</td>
+</tr>
+<tr>
+<td>MCP-5</td>
+<td>15</td>
+<td>In reins_batch page text sits on lines behind &quot;| &quot;, apart from the step results.</td>
+<td>MCP-6</td>
+</tr>
+<tr>
+<td>MCP-6</td>
+<td>15</td>
+<td>reins_read returns the text of an element or of the page, or app state, as page data behind &quot;| &quot;; a line the adapter adds comes after it.</td>
+<td>MCP-7</td>
+</tr>
+<tr>
+<td>MCP-7</td>
+<td>15</td>
+<td>A surface listing gives what the hub knows first (id, verified or unverified, origin, attached) and what the page says of itself last, the name quoted; reins_attach says in a line of its own which surface it is, whether the hub verified it and the scopes of the grant.</td>
+<td>MCP-8</td>
+</tr>
+<tr>
+<td>MCP-8</td>
+<td>15</td>
+<td>Text a page supplied reaches the model by one rule in every tool, alone and in a batch: behind &quot;| &quot;, cut at every line break and separator, no control character raw; reins_read cuts at the length asked for and says so.</td>
+<td>MCP-9</td>
+</tr>
+<tr>
+<td>VER-1</td>
+<td>16</td>
+<td>No common version is E_VERSION.</td>
+<td>VER-1</td>
+</tr>
+<tr>
+<td>VER-2</td>
+<td>16</td>
+<td>Receivers ignore unknown fields and unknown event topics.</td>
+<td>VER-2, VER-5</td>
+</tr>
+<tr>
+<td>VER-3</td>
+<td>16</td>
+<td>Unknown methods are refused with E_UNKNOWN_METHOD.</td>
+<td>VER-3, VER-4, SF-SCOPE-1</td>
+</tr>
+<tr>
+<td>ERR-1</td>
+<td>4-16</td>
+<td>The error codes are exactly those of the section 6 table.</td>
+<td>VEC-ERR</td>
+</tr>
+<tr>
+<td>S14-1</td>
+<td>14</td>
+<td>The hub listens on loopback only and validates Host, Origin and the remote address on every upgrade.</td>
+<td>S14.1</td>
+</tr>
+<tr>
+<td>S14-2</td>
+<td>14</td>
+<td>Agents authenticate with a 256-bit secret by HMAC challenge-response; the hub proves the secret; every message is sealed with a MAC bound to the handshake.</td>
+<td>S14.2</td>
+</tr>
+<tr>
+<td>S14-3</td>
+<td>14</td>
+<td>Secrets are never in URLs or logs and are stored in owner-only files.</td>
+<td>S14.3</td>
+</tr>
+<tr>
+<td>S14-4</td>
+<td>14</td>
+<td>Surfaces are admitted by origin allowlist, and by key where the deployment requires it or holds a key for the app id they claim.</td>
+<td>S14.4, HS-26</td>
+</tr>
+<tr>
+<td>S14-5</td>
+<td>14</td>
+<td>Every forwarded request is checked against a live grant, its scope and its rate.</td>
+<td>S14.5</td>
+</tr>
+<tr>
+<td>S14-6</td>
+<td>14</td>
+<td>The surface re-checks every request against the app policy.</td>
+<td>S14.6</td>
+</tr>
+<tr>
+<td>S14-7</td>
+<td>14</td>
+<td>Arguments are validated against a schema before any handler runs; undeclared properties are rejected.</td>
+<td>S14.7</td>
+</tr>
+<tr>
+<td>S14-8</td>
+<td>14</td>
+<td>No frame, argument or result can cause code, markup or style to be evaluated.</td>
+<td>S14.8</td>
+</tr>
+<tr>
+<td>S14-9</td>
+<td>14</td>
+<td>Private fields are never read and, by default, never written.</td>
+<td>S14.9</td>
+</tr>
+<tr>
+<td>S14-10</td>
+<td>14</td>
+<td>Consent, the indicator and its panel are isolated from the page's styles and from what its scripts can reach, and act only on input the browser made for the person and delivered to their own controls; script that runs in the page's own JavaScript realm is outside the rule, whatever the order in which it and the driver load.</td>
+<td>S14.10, LV-7, LV-24, LV-26</td>
+</tr>
+<tr>
+<td>S14-11</td>
+<td>14</td>
+<td>A human can always see that an agent is attached; Pause and Stop work without the hub.</td>
+<td>S14.11</td>
+</tr>
+<tr>
+<td>S14-12</td>
+<td>14</td>
+<td>Errors carry no internals; observations are size-bounded.</td>
+<td>S14.12</td>
+</tr>
+<tr>
+<td>S14-13</td>
+<td>14</td>
+<td>The audit log is append-only and hash-chained, keyed where needed, and the hub refuses attach and every audited request while it cannot record.</td>
+<td>S14.13, AU-6</td>
+</tr>
+<tr>
+<td>S14-14</td>
+<td>14</td>
+<td>Everything a surface reports is untrusted input presented to a model as data.</td>
+<td>S14.14</td>
+</tr>
+<tr>
+<td>S14-15</td>
+<td>14</td>
+<td>A grant's level, rules and scope switches change only on the person's trusted input, and what lets an action run without asking only through a confirm step; nothing the person sets relaxes a deny of the surface's policy or the hub's; the hub ends a grant whose surface reports a level beyond its policy and takes no rule that policy would not honour; what lets an agent do more ends with the grant, and what the person tightened stays with the agent.</td>
+<td>S14.15, LV-6, LV-8, LV-11, LV-27</td>
+</tr>
+<tr>
+<td>S14-16</td>
+<td>14</td>
+<td>Chat is data and grants nothing: the person's words come only from trusted input in the chat tab, agent text is shown as text under the grant's name, the hub relays a message only to the grant it names and records length and digest, and no message changes a level, a rule, a scope switch or a consent answer.</td>
+<td>S14.16</td>
+</tr>
+<tr>
+<td>OR-1</td>
+<td>5</td>
+<td>The origin of a URL: web origin, file://, app origin scheme://host[:port], or null; computed, not taken from a URL library.</td>
+<td>OR-1, VEC-ORIGIN</td>
+</tr>
+<tr>
+<td>OR-2</td>
+<td>5</td>
+<td>The entry * admits web origins only, never file://, an app origin or null.</td>
+<td>OR-2, VEC-ORIGIN</td>
+</tr>
+<tr>
+<td>OR-3</td>
+<td>5</td>
+<td>file://, an app origin and null are admitted by an entry that names them, exact or scheme://host:*.</td>
+<td>OR-3, VEC-ORIGIN</td>
+</tr>
+<tr>
+<td>OR-4</td>
+<td>5</td>
+<td>hello.surface.url of a file: or app-scheme page has the connection origin; a null connection takes any URL without a web origin.</td>
+<td>OR-4, VEC-ORIGIN</td>
+</tr>
+<tr>
+<td>OR-5</td>
+<td>5</td>
+<td>Credential origins and surfaces lists match file:// and app origins by the same rules.</td>
+<td>OR-5</td>
+</tr>
+<tr>
+<td>EL-1</td>
+<td>3</td>
+<td>The origin of an Electron window's link is the one Electron reports for the frame, never one the page sent.</td>
+<td>EL-1</td>
+</tr>
+<tr>
+<td>EL-2</td>
+<td>3</td>
+<td>A port goes only to the top-level frame of a registered window; one window is one surface.</td>
+<td>EL-2</td>
+</tr>
+<tr>
+<td>EL-3</td>
+<td>3</td>
+<td>A &lt;webview&gt; guest gets a port only when registered as embedded; an offscreen or background page gets none.</td>
+<td>EL-3</td>
+</tr>
+<tr>
+<td>EL-4</td>
+<td>3</td>
+<td>With surfaceSockets false a surface on the socket is answered E_ORIGIN and one linked in-process is admitted.</td>
+<td>EL-4</td>
+</tr>
+<tr>
+<td>EL-5</td>
+<td>15</td>
+<td>reins-electron refuses a debugging port that is not on a loopback address before connecting.</td>
+<td>EL-5</td>
+</tr>
+<tr>
+<td>EL-6</td>
+<td>15</td>
+<td>An adopted app's driver and its frame channel live in a world of their own, in every new document.</td>
+<td>EL-6</td>
+</tr>
+<tr>
+<td>EL-7</td>
+<td>15</td>
+<td>electronLink takes a port only from a message its own window posted for its own request; the link ends with the document.</td>
+<td>EL-7</td>
+</tr>
+<tr>
+<td>EL-8</td>
+<td>15</td>
+<td>An adopted page runs under guarded and offers no level that loosens unless whoever adopted it listed it.</td>
+<td>EL-8</td>
+</tr>
+<tr>
+<td>OR-6</td>
+<td>5</td>
+<td>The hub judges a nav report's URL by the origin of section 5: a file:// or app-origin page can say where it went.</td>
+<td>OR-6</td>
+</tr>
+<tr>
+<td>EL-9</td>
+<td>3</td>
+<td>A window is linked only while it shows the page it was registered for; a file:// or null page needs a registered URL.</td>
+<td>EL-9</td>
+</tr>
+<tr>
+<td>EL-10</td>
+<td>3</td>
+<td>A hidden window, or a view in one, gets its link when shown, a view in no window none; a parentless frame that is not the top frame gets none; no context isolation, no bridge.</td>
+<td>EL-10</td>
+</tr>
+<tr>
+<td>EL-11</td>
+<td>15</td>
+<td>A stopped command ends every driver it loaded for good; a document that no longer hears the command stops by itself.</td>
+<td>EL-11</td>
+</tr>
+<tr>
+<td>EL-12</td>
+<td>15</td>
+<td>The injector takes calls only from worlds it made (named afresh each run), asks --match of every document, replaces a closed link, prints origins.</td>
+<td>EL-6, EL-12</td>
+</tr>
+<tr>
+<td>EL-13</td>
+<td>15</td>
+<td>reins-electron dials a hub only on a loopback address.</td>
+<td>EL-13</td>
+</tr>
+<tr>
+<td>EL-14</td>
+<td>3</td>
+<td>A surface on a link the embedding code built and vouches for is listed as verified; nothing said on a socket makes one so.</td>
+<td>EL-14</td>
+</tr>
+<tr>
+<td>EL-15</td>
+<td>15</td>
+<td>The lease of an adopted document is judged by the clock at every frame: past it the driver gets and sends none, whether or not a timer fires.</td>
+<td>EL-15</td>
+</tr>
+<tr>
+<td>EL-16</td>
+<td>3</td>
+<td>reins-electron vouches for a page only over a debugging pipe: through a port the page is unverified both ways and gets no surface key.</td>
+<td>EL-16</td>
+</tr>
+<tr>
+<td>EL-17</td>
+<td>15</td>
+<td>With --debug-port the app is the browser behind the port: the command and its watcher close it over the port, and a starter's exit ends nothing.</td>
+<td>EL-17</td>
+</tr>
+<tr>
+<td>EL-18</td>
+<td>15</td>
+<td>--match is an origin or a URL prefix, compared as URLs, never a substring.</td>
+<td>EL-18</td>
+</tr>
+</tbody>
+</table></div>
+<p>The tests column lists test-name prefixes; <code>requirements.json</code> has the full names.</p>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/conformance/README.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>conformance/README.md</code></span><a class="md-link" href="./conformance-suite.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./writing-an-implementation.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Writing another implementation</span></a>
+    <a class="pager-next" href="./test-vectors.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Test vectors</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#what-is-here">What is here</a></li><li class="toc-2"><a href="#running">Running</a></li><li class="toc-2"><a href="#using-the-vectors-from-another-implementation">Using the vectors from another implementation</a></li><li class="toc-2"><a href="#coverage-limits">Coverage limits</a></li><li class="toc-2"><a href="#requirements">Requirements</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

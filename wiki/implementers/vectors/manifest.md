@@ -1,0 +1,204 @@
+# Manifest digest and prompt card
+
+> Test vectors: Manifest digest and prompt card. Shown here as it is in conformance/vectors/manifest.json.
+
+Protocol `0.1`. Covers: SPEC.md section 7.
+
+[Download manifest.json](./manifest.json): the file itself, as the conformance suite reads it.
+
+## How to use it
+
+Canonical JSON (with `canonicalCases` for key order and numbers) and digest of a manifest, and the prompt card of SPEC section 7.
+
+## Notes
+
+digest = b64url(SHA-256(canonical JSON)); canonical JSON and the card rendering rules are in SPEC 7. This manifest is the one behind the example card printed in section 7 (its descriptions end with the period the card shows). `canonicalCases` check key order by UTF-16 code units and ECMAScript number formatting.
+
+## Fixed values
+
+| key | value |
+|---|---|
+| `canonical` | `{"actions":[{"description":"Add an item.","name":"cart.add","params":{"properties":{"qty":{"maximum":9,"minimum":1,"type":"integer"},"sku":{"enum":["latte","mocha","tea"],"type":"string"}},"required":["sku"],"type":"object"},"returns":"cart totals","risk":"safe"},{"description":"Place the order.","name":"order.submit","risk":"sensitive"},{"description":"Refund an order.","name":"admin.refund","params":{"properties":{"order":{"type":"string"}},"required":["order"],"type":"object"},"risk":"dangerous"}],"app":{"description":"Self-service coffee ordering.","id":"brew-kiosk","name":"Brew Kiosk","version":"1.0.0"},"exposure":"auto","profile":"guarded","reins":"0.1","state":[{"description":"items and totals","name":"cart"}],"views":[{"description":"Bar chart panel.","name":"chart","params":{"properties":{"series":{"items":{"properties":{"label":{"type":"string"},"value":{"type":"number"}},"required":["label","value"],"type":"object"},"type":"array"},"title":{"type":"string"}},"required":["title","series"],"type":"object"}}]}` |
+| `digest` | `boP0RMPLYrZbQezLoBJ65kg3qerpiSMt8PO5Bd2gI4A` |
+
+## manifest
+
+```json
+{
+  "reins": "0.1",
+  "app": {
+    "id": "brew-kiosk",
+    "name": "Brew Kiosk",
+    "version": "1.0.0",
+    "description": "Self-service coffee ordering."
+  },
+  "actions": [
+    {
+      "name": "cart.add",
+      "description": "Add an item.",
+      "risk": "safe",
+      "returns": "cart totals",
+      "params": {
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string",
+            "enum": [
+              "latte",
+              "mocha",
+              "tea"
+            ]
+          },
+          "qty": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9
+          }
+        },
+        "required": [
+          "sku"
+        ]
+      }
+    },
+    {
+      "name": "order.submit",
+      "description": "Place the order.",
+      "risk": "sensitive"
+    },
+    {
+      "name": "admin.refund",
+      "description": "Refund an order.",
+      "risk": "dangerous",
+      "params": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "order"
+        ]
+      }
+    }
+  ],
+  "views": [
+    {
+      "name": "chart",
+      "description": "Bar chart panel.",
+      "params": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "series": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "label",
+                "value"
+              ]
+            }
+          }
+        },
+        "required": [
+          "title",
+          "series"
+        ]
+      }
+    }
+  ],
+  "state": [
+    {
+      "name": "cart",
+      "description": "items and totals"
+    }
+  ],
+  "exposure": "auto",
+  "profile": "guarded"
+}
+```
+
+## canonicalCases
+
+3 cases.
+
+```json
+[
+  {
+    "value": {
+      "b": 1,
+      "a": 2,
+      "B": 3,
+      "_": 4,
+      "é": 5,
+      "😀": 6,
+      "ｚ": 7
+    },
+    "canonical": "{\"B\":3,\"_\":4,\"a\":2,\"b\":1,\"é\":5,\"😀\":6,\"ｚ\":7}"
+  },
+  {
+    "value": {
+      "n": [
+        0,
+        1.5,
+        0.1,
+        1e+21,
+        1e-7,
+        123456789012345680000,
+        -2.5e-8,
+        100
+      ]
+    },
+    "canonical": "{\"n\":[0,1.5,0.1,1e+21,1e-7,123456789012345680000,-2.5e-8,100]}"
+  },
+  {
+    "value": {
+      "s": "tab\there \"q\" \\ \u0001 é"
+    },
+    "canonical": "{\"s\":\"tab\\there \\\"q\\\" \\\\ \\u0001 é\"}"
+  }
+]
+```
+
+## card
+
+```json
+{
+  "surface": {
+    "s": "s1",
+    "origin": "http://localhost:5173",
+    "url": "http://localhost:5173/",
+    "title": "Brew Kiosk",
+    "app": {
+      "id": "brew-kiosk",
+      "name": "Brew Kiosk",
+      "version": "1.0.0",
+      "description": "Self-service coffee ordering."
+    },
+    "profile": "guarded",
+    "digest": "",
+    "attached": true
+  },
+  "scopes": [
+    "observe",
+    "act",
+    "cursor",
+    "show"
+  ],
+  "profile": "guarded",
+  "text": "# Reins surface s1: Brew Kiosk 1.0.0 (brew-kiosk)\nSelf-service coffee ordering.\norigin http://localhost:5173 | profile guarded | scopes observe act cursor show\nPrefer actions over ui ops. [confirm] asks the user on screen. [deny] is blocked.\n\n## actions\ncart.add(sku: \"latte\"|\"mocha\"|\"tea\", qty?: int 1..9) -> cart totals. Add an item.\norder.submit() [confirm]. Place the order.\nadmin.refund(order: str) [deny]. Refund an order.\n\n## views\nchart(title: str, series: [{label: str, value: num}]). Bar chart panel.\n\n## state\ncart: items and totals"
+}
+```
+
+Generated by `conformance/tools/make-vectors.mjs` from the formulas in the specification, with `node:crypto` only.

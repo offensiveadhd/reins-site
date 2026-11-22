@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Reins for Hermes Desktop · Reins</title>
+<meta name="description" content="A Hermes Desktop plugin that makes the Hermes window a surface with three named actions. Built and statically checked, not run in Hermes. Rendered from integrations/hermes-desktop/README.md.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/guides/hermes-desktop-plugin.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Reins for Hermes Desktop">
+<meta property="og:description" content="A Hermes Desktop plugin that makes the Hermes window a surface with three named actions. Built and statically checked, not run in Hermes. Rendered from integrations/hermes-desktop/README.md.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/guides/hermes-desktop-plugin.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="./kiosk-deployment.html">Kiosk deployment</a></li><li><a href="./surface-keys.html">Surface keys</a></li><li><a href="./actions-and-risk.html">Actions and risk tiers</a></li><li><a href="./chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="./chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="./privacy-annotations.html">Privacy annotations</a></li><li><a href="./strict-csp.html">Running under a strict CSP</a></li><li><a href="./troubleshooting.html">Troubleshooting</a></li><li><a href="./electron.html">Electron: build it in</a></li><li><a href="./adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="./claude-and-hermes.html">Claude and Hermes</a></li><li><a href="./hermes-desktop-plugin.html" aria-current="page">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#guides">Guides</a></li><li aria-current="page">The Hermes Desktop plugin</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Reins for Hermes Desktop</h1>
+        <p class="lede">A Hermes Desktop plugin that makes the Hermes window a surface with three named actions. Built and statically checked, not run in Hermes. Rendered from integrations/hermes-desktop/README.md.</p>
+        <p class="source-note">This page is <code>integrations/hermes-desktop/README.md</code>, rendered from the repository at build time. It is the text the project maintains, not a copy.</p>
+      </header>
+      <p>A desktop plugin for Hermes Agent (Nous Research) that makes the Hermes Desktop window a
+Reins surface with declared actions. An agent outside Hermes, Claude Code for one, can
+then send Hermes a prompt and read the reply, with the Reins consent prompt, indicator,
+panel, Pause and Stop in the Hermes window.</p>
+<p><strong>Status: built and statically checked, not run in Hermes.</strong> The plugin builds, and its
+own source runs in the repository's tests against a stand-in for Hermes's SDK
+(<code>packages/electron/test/hermes-plugin.test.ts</code>). The built file passed the import
+scanner of Hermes's own plugin loader (<code>apps/desktop/src/contrib/runtime-loader.ts</code>)
+when that was run over it by hand, outside Hermes. It has not been installed, loaded or
+used in a live Hermes Desktop. It was written from the Desktop plugin SDK documentation
+in the Hermes repository (<code>website/docs/developer-guide/desktop-plugin-sdk.md</code>) at the
+version installed in November 2026 (Electron 44.10.2).</p>
+<p>The other way to reach Hermes Desktop, with nothing installed into it, is to adopt it
+with <code>reins-electron</code>: see <a href="../reference/electron-guide.html#6-claude-controls-hermes">docs/ELECTRON.md, section 6</a>.
+That way gives an agent the whole Hermes window, every button in it. This plugin gives it
+three named actions and nothing else, and is the one to use when the point is to let an
+agent talk to Hermes.</p>
+<h2 id="what-an-agent-gets-and-what-it-does-not">What an agent gets, and what it does not <a class="anchor" href="#what-an-agent-gets-and-what-it-does-not" aria-label="Link to the section What an agent gets, and what it does not">#</a></h2>
+<p>Hermes is an agent that holds tools: your files, your shell, your accounts. So the
+question for this plugin is what one approved attach is worth, and the answer is kept
+small on purpose.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Risk</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>action <code>prompt.send {text}</code></td>
+<td>dangerous</td>
+<td>Sends <code>text</code> in Hermes's conversation in front, through <code>host.composer.submit(null, text)</code>: the same as typing and pressing Enter. You are asked each time and shown the whole prompt. Refused with <code>E_BUSY</code> while Hermes is in the middle of a turn there, with <code>E_NO_TARGET</code> when Hermes does not say which conversation is in front, and with <code>E_INTERNAL</code> when this Hermes gives no sign of whether a turn is under way.</td>
+</tr>
+<tr>
+<td>action <code>prompt.draft {text}</code></td>
+<td>dangerous</td>
+<td>Puts <code>text</code> in Hermes's message box and sends nothing (<code>host.composer.setDraft</code>). You are asked each time as well: the words are then one Enter away from Hermes, in your name.</td>
+</tr>
+<tr>
+<td>action <code>reply.read</code></td>
+<td>safe</td>
+<td>Hermes's reply to the caller's own last <code>prompt.send</code>: <code>{ session, text, complete, truncated, at }</code>. An agent that did not send the prompt gets an empty reply.</td>
+</tr>
+<tr>
+<td>state <code>conversation</code></td>
+<td></td>
+<td><code>{ session, busy, awaitingResponse, model }</code> of Hermes's conversation in front.</td>
+</tr>
+</tbody>
+</table></div>
+<p>What it does not get:</p>
+<ul>
+<li><strong>No clicks and no typing.</strong> The plugin's policy grants no <code>ui</code> scope, whatever an
+agent asks for at attach. It cannot press Send, and it cannot press the button with
+which you approve a tool call of Hermes.</li>
+<li><strong>No view of the page.</strong> Nothing of Hermes's interface is exposed (<code>exposure: 'none'</code>):
+<code>reins_observe</code> returns an empty tree and <code>reins_read</code> no text. What an agent learns of
+Hermes is what <code>reply.read</code> gives it and what the state <code>conversation</code> says.</li>
+<li><strong>No reply that is another agent's.</strong> The reply is held to the agent whose prompt it
+answers: <code>reply.read</code> gives it to that agent and an empty one to any other, and it is
+not a state, because a state is the same for every agent that was allowed to look. It
+is forgotten when that agent's grant ends.</li>
+<li><strong>No reply from another conversation.</strong> The reply is collected from the gateway events
+<code>message.start</code>, <code>message.delta</code>, <code>message.complete</code> and <code>message.error</code>, at most
+16 000 characters, and only from events that name the session the prompt went to. An
+event without a session id, or from a conversation in the background, is not taken for
+the answer. And because the reply is whatever Hermes says next in that conversation,
+<code>prompt.send</code> is refused while Hermes is in the middle of a turn there
+(<code>host.state.busyBySession</code>, <code>host.state.busy</code>, <code>host.state.awaitingResponse</code>), and
+also when this Hermes offers none of those signs: otherwise the end of an answer to
+your own message could be read as the answer to the agent's prompt.</li>
+<li><strong>No prompt you could not read.</strong> A prompt is approved on a card that shows all of it,
+or it is not sent. See below for the limit.</li>
+<li><strong>No way to act without you, unless you say so.</strong> See the next section.</li>
+</ul>
+<p>The scopes an agent can hold are <code>observe</code>, <code>act</code>, <code>show</code> and <code>chat</code>.</p>
+<h2 id="the-levels-and-letting-prompts-through-without-the-question">The levels, and letting prompts through without the question <a class="anchor" href="#the-levels-and-letting-prompts-through-without-the-question" aria-label="Link to the section The levels, and letting prompts through without the question">#</a></h2>
+<p>Both writing actions are declared <code>dangerous</code>. In Reins that word has one exact
+consequence: the level Auto stops asking about sensitive actions and never about
+dangerous ones. So this is what each level in the panel of the Hermes window (&quot;AI
+connected&quot;, Permissions) means for this plugin:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Level</th>
+<th><code>prompt.send</code> and <code>prompt.draft</code></th>
+<th><code>reply.read</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Strict</td>
+<td>ask you, every time</td>
+<td>asks you too</td>
+</tr>
+<tr>
+<td>Ask, where every agent starts</td>
+<td>ask you, every time</td>
+<td>runs</td>
+</tr>
+<tr>
+<td>Auto</td>
+<td>ask you, every time. For this plugin Auto is the same as Ask</td>
+<td>runs</td>
+</tr>
+<tr>
+<td>Bypass</td>
+<td>run without asking, unseen, at any length up to 8000 characters</td>
+<td>runs</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Bypass is the only level under which a prompt reaches Hermes without you.</strong> The rule
+Allow for <code>prompt.send</code> or <code>prompt.draft</code> does the same for that one action; it can be
+set for the same reason Bypass can, and only because Bypass is on offer. Either takes
+two steps: you choose it, and then confirm on a step that names the agent and the
+actions that will stop asking. While it holds, the indicator in the Hermes window shows
+it in red. It lasts until that agent disconnects or you set it back.</p>
+<p>Know what it means before you do it. From then on every prompt that agent writes goes to
+Hermes without you seeing it first, and Hermes acts on a prompt with its own tools, under
+whatever Hermes's own approvals are set to. A web page, a document or another agent that
+manages to steer the outer agent can then reach those tools through it. Leave the level
+at Ask unless you are watching, or unless Hermes itself asks you before it acts.</p>
+<p><strong>A prompt too long to show cannot be approved.</strong> A consent card shows the whole prompt
+or the request is refused before you are asked: nobody should approve words they cannot
+read. A card holds 2000 characters in all, of which the argument's name and its
+quotation marks take 16, and a line break or a quotation mark inside the prompt counts
+as two. That leaves about 1,900 characters for a prompt in plain text. A longer one
+answers <code>E_TOO_LARGE</code> under Strict, Ask and Auto, and nothing is sent. What to do: send
+a shorter prompt, or several, one after the other. Under Bypass there is no card, so the
+limit there is the action's own, 8000 characters, none of which you see.</p>
+<h2 id="two-conversations-in-one-window">Two conversations in one window <a class="anchor" href="#two-conversations-in-one-window" aria-label="Link to the section Two conversations in one window">#</a></h2>
+<p>With the plugin on, the Hermes window holds two conversations. They are not the same and
+do not mix:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>who talks</th>
+<th>where it is</th>
+<th>how an agent uses it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hermes's own conversation</td>
+<td>you and Hermes</td>
+<td>the Hermes interface: its message box and transcript</td>
+<td><code>prompt.send</code>, <code>prompt.draft</code>, <code>reply.read</code>, the state <code>conversation</code></td>
+</tr>
+<tr>
+<td>the Reins chat room</td>
+<td>you and the agent that drives Hermes (Claude, say)</td>
+<td>the Chat tab of the panel that opens from &quot;AI connected&quot;</td>
+<td><code>reins_chat</code> (scope <code>chat</code>)</td>
+</tr>
+</tbody>
+</table></div>
+<p>An agent that calls <code>prompt.send</code> puts words into Hermes's message box, and Hermes
+answers them. An agent that calls <code>reins_chat say</code> talks to you in the panel, and Hermes
+never sees it. What you type in the Chat tab goes to the attached agent, not to Hermes;
+what you type in Hermes's message box goes to Hermes, and the attached agent does not see
+it, since the page is not exposed. The Reins transcript is in a closed shadow root and is
+not part of what the plugin exposes either. A message in the Reins chat approves nothing:
+&quot;yes, send it&quot; there does not answer the prompt for <code>prompt.send</code>.</p>
+<h2 id="build">Build <a class="anchor" href="#build" aria-label="Link to the section Build">#</a></h2>
+<p>The plugin is built with the package: after <code>npm install</code> in a checkout of the Reins
+repository,</p>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npm run build</code></pre></div>
+<p>writes <code>dist/hermes-desktop/reins/plugin.js</code>, about 350 kB: the plugin with the Reins
+driver bundled in. Hermes loads a desktop plugin as one module and refuses every import
+but <code>@hermes/plugin-sdk</code> and React, which is why the driver cannot be loaded from a file
+next to it. The build fails if the result imports anything else. The npm package ships
+the built file at <code>node_modules/@offensiveadhd/reins/dist/hermes-desktop/reins/plugin.js</code>;
+the source is <code>integrations/hermes-desktop/src/plugin.js</code> in the repository.</p>
+<h2 id="install-not-run">Install (not run) <a class="anchor" href="#install-not-run" aria-label="Link to the section Install (not run)">#</a></h2>
+<p>A desktop plugin is a folder named after its id, holding <code>plugin.js</code>, in Hermes's
+<code>desktop-plugins</code> folder. Hermes watches that folder.</p>
+<div class="code" data-lang="powershell"><div class="code-bar"><span class="code-lang">PowerShell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-c"># Windows</span>
+Copy-Item <span class="t-f">-Recurse</span> dist\hermes-desktop\reins <span class="t-s">&quot;$env:LOCALAPPDATA\hermes\desktop-plugins\reins&quot;</span></code></pre></div>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-c"># macOS, Linux: $HERMES_HOME is ~/.hermes unless you moved it</span>
+cp <span class="t-f">-r</span> dist/hermes-desktop/reins <span class="t-s">&quot;${HERMES_HOME:-$HOME/.hermes}/desktop-plugins/reins&quot;</span></code></pre></div>
+<p>Then, in Hermes Desktop, enable &quot;Reins&quot; under Capabilities, Plugins. The plugin declares
+<code>defaultEnabled: false</code>, so it does nothing until you do.</p>
+<p>Start a hub that admits the Hermes window and asks about the two writing actions. The
+window is a page loaded from a file, so its origin is <code>file://</code>. And a hub under the
+plain guarded profile refuses a dangerous action outright (<code>prompt.send</code> would answer
+<code>E_DENIED</code>, &quot;action denied by hub policy&quot;), so the hub needs to be told to ask instead.
+<a href="https://github.com/offensiveadhd/reins/blob/main/integrations/hermes-desktop/hub.json" class="ext"><code>hub.json</code></a>, next to this file and in the npm package, says both:</p>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npx <span class="t-f">--no</span> -- reins-hub <span class="t-f">--config</span> node_modules/@offensiveadhd/reins/integrations/hermes-desktop/hub.json</code></pre></div>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;policy&quot;</span>: { <span class="t-p">&quot;profile&quot;</span>: <span class="t-s">&quot;guarded&quot;</span>, <span class="t-p">&quot;actions&quot;</span>: { <span class="t-p">&quot;prompt.send&quot;</span>: <span class="t-s">&quot;confirm&quot;</span>, <span class="t-p">&quot;prompt.draft&quot;</span>: <span class="t-s">&quot;confirm&quot;</span> } },
+  <span class="t-p">&quot;surfaces&quot;</span>: { <span class="t-p">&quot;origins&quot;</span>: [<span class="t-s">&quot;file://&quot;</span>] }
+}</code></pre></div>
+<p>The hub prints a warning about <code>file://</code>: it is true, see the first limit below. (What
+this configuration decides for the plugin's actions is checked in
+<code>packages/electron/test/hermes-plugin.test.ts</code>; the hub was not run with Hermes
+connected.)</p>
+<h2 id="use-not-run">Use (not run) <a class="anchor" href="#use-not-run" aria-label="Link to the section Use (not run)">#</a></h2>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>node <span class="t-s">&quot;$HOME/.reins/reins.mjs&quot;</span> reins_attach <span class="t-s">'{&quot;reason&quot;:&quot;ask Hermes a question&quot;}'</span>    <span class="t-c"># Hermes asks you: allow</span>
+node <span class="t-s">&quot;$HOME/.reins/reins.mjs&quot;</span> reins_act <span class="t-s">'{&quot;action&quot;:&quot;prompt.send&quot;,&quot;args&quot;:{&quot;text&quot;:&quot;Summarise the open pull requests&quot;}}'</span>    <span class="t-c"># asks again</span>
+node <span class="t-s">&quot;$HOME/.reins/reins.mjs&quot;</span> reins_act <span class="t-s">'{&quot;action&quot;:&quot;reply.read&quot;}'</span>    <span class="t-c"># repeat until &quot;complete&quot;:true</span></code></pre></div>
+<p>With the MCP adapter registered, the same are the tools <code>reins_attach</code> and <code>reins_act</code>.
+<code>reply.read</code> answers the session that sent the prompt: read with the same agent.</p>
+<h2 id="limits-and-what-is-not-known">Limits, and what is not known <a class="anchor" href="#limits-and-what-is-not-known" aria-label="Link to the section Limits, and what is not known">#</a></h2>
+<ul>
+<li><strong><code>file://</code> on a socket.</strong> A hub that admits <code>file://</code> admits every local HTML file
+opened in a Chromium browser, not only Hermes (docs/SECURITY.md, T57). Run that hub only
+while you use it. Adopting Hermes with <code>reins-electron</code> does not have this limit, and
+gives the agent every button in the window in exchange.</li>
+<li><strong>The hub is unverified to the page.</strong> The plugin holds no surface key, so the prompt,
+the indicator, the panel's confirm step and the Chat tab say &quot;Unverified hub&quot;, and
+every attach asks. A key in a plugin would be readable by every other plugin in the
+same page, so none is offered.</li>
+<li><strong>A plugin is not a boundary.</strong> It runs in Hermes's own page with the app's authority,
+next to every other plugin. Reins protects the person from the agent; it does not
+protect Hermes from its plugins.</li>
+<li><strong>Not verified in a live Hermes</strong>: that <code>host.composer.submit(null, text)</code> returns
+<code>true</code> when a conversation is in front; that <code>host.state.focusedSessionId</code> names it at
+that moment (without it <code>prompt.send</code> refuses); the exact fields of the <code>message.*</code>
+events (the plugin reads <code>payload.text</code>, as the app's own handler does, and looks for
+the session id under <code>session_id</code>, <code>sessionId</code> and <code>payload.session_id</code>; an event that
+carries none is ignored); that the driver's indicator and panel sit well over Hermes's
+interface; that hot reload disposes the driver (<code>ctx.onDispose</code>).</li>
+<li><strong>The hub address is fixed</strong> at <code>ws://127.0.0.1:7346</code> in <code>src/plugin.js</code>.</li>
+</ul>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/integrations/hermes-desktop/README.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>integrations/hermes-desktop/README.md</code></span><a class="md-link" href="./hermes-desktop-plugin.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./claude-and-hermes.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Claude and Hermes</span></a>
+    <a class="pager-next" href="../reference/methods.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Methods</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#what-an-agent-gets-and-what-it-does-not">What an agent gets, and what it does not</a></li><li class="toc-2"><a href="#the-levels-and-letting-prompts-through-without-the-question">The levels, and letting prompts through without the question</a></li><li class="toc-2"><a href="#two-conversations-in-one-window">Two conversations in one window</a></li><li class="toc-2"><a href="#build">Build</a></li><li class="toc-2"><a href="#install-not-run">Install (not run)</a></li><li class="toc-2"><a href="#use-not-run">Use (not run)</a></li><li class="toc-2"><a href="#limits-and-what-is-not-known">Limits, and what is not known</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

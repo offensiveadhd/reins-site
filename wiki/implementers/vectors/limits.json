@@ -1,0 +1,190 @@
+{
+  "reins": "0.1",
+  "generator": "conformance/tools/make-vectors.mjs",
+  "title": "Default limits and fixed numbers",
+  "spec": "SPEC.md sections 3 to 13",
+  "note": "Only numbers the spec states. Lengths in characters are UTF-16 code units unless the key says code points.",
+  "defaultLimits": {
+    "maxText": 262144,
+    "maxBinary": 16384,
+    "heartbeatMs": 15000,
+    "reqTimeoutMs": 15000,
+    "consentTimeoutMs": 60000
+  },
+  "pointerInitialCredit": 512,
+  "pointerMaxPoints": 2729,
+  "linkQueue": {
+    "maxMessages": 4096,
+    "maxBytes": 16777216
+  },
+  "preAuthQueue": {
+    "maxMessages": 16,
+    "maxBytes": 65536
+  },
+  "hubMethodBucket": {
+    "rate": 10,
+    "burst": 20
+  },
+  "peerSendBufferBytes": "max(8 MiB, 4 x maxText)",
+  "admission": {
+    "surfaceRate": 2,
+    "surfaceBurst": "2 x maxSurfaces",
+    "allOriginsFactor": {
+      "rate": 5,
+      "burst": 2
+    },
+    "agentRate": 2,
+    "agentBurst": 20
+  },
+  "canonicalMaxDepth": 100,
+  "agentNameMaxCodePoints": 64,
+  "coolOff": {
+    "firstMs": 2000,
+    "maxMs": 60000,
+    "revokeAfterRefusals": 3
+  },
+  "withdrawnNoticeMs": 1500,
+  "humanGiveUpMs": 5000,
+  "stickyPrivacy": {
+    "remembered": 32,
+    "sameParentMs": 1000
+  },
+  "defaultPort": 7346,
+  "subprotocol": "reins.v1",
+  "versions": [
+    "0.1"
+  ],
+  "manifest": {
+    "maxBytes": 65536,
+    "maxActions": 256,
+    "maxViews": 64
+  },
+  "maxResultBytes": 32768,
+  "maxNameChars": 120,
+  "maxValueChars": 200,
+  "handshake": {
+    "nonceBytes": 32,
+    "secretBytes": 32,
+    "minKeyChars": 32,
+    "helloTimeoutMs": 5000,
+    "failDelayMs": 200,
+    "failDelayMaxMs": 3000,
+    "failWindowMs": 60000,
+    "maxPending": 16,
+    "confirmTimeoutMs": 5000
+  },
+  "sealMacTextChars": 43,
+  "sealMacBytes": 32,
+  "sealKind": {
+    "text": 116,
+    "binary": 98
+  },
+  "defaultSessionsPerCredential": 4,
+  "attach": {
+    "burst": 3,
+    "refillEveryMs": 2000
+  },
+  "capacity": {
+    "surfaces": 64,
+    "agents": 32,
+    "sessionsPerCredential": 4,
+    "streamsPerAgent": 8
+  },
+  "read": {
+    "defaultMax": 2000,
+    "capMax": 8000
+  },
+  "cursorLabelMaxChars": 40,
+  "uiEventMinIntervalMs": 100,
+  "heartbeatDropFactor": 2.5,
+  "consent": {
+    "maxEntries": 40,
+    "maxDepth": 4,
+    "maxCodePoints": 2000,
+    "perAgent": 1,
+    "total": 4,
+    "armMs": 500
+  },
+  "panel": {
+    "confirmArmMs": 500,
+    "settleMs": 500,
+    "activityEntries": 50,
+    "maxSessions": 32
+  },
+  "chat": {
+    "maxTextChars": 4000,
+    "maxNoteChars": 80,
+    "transcriptMessages": 200,
+    "readDefault": 20,
+    "readMax": 50,
+    "readBytes": 131072,
+    "statusTtlMs": 120000,
+    "personPerSecondPerAgent": 5,
+    "personBurstPerAgent": 10,
+    "undeliveredNoticesPerSecond": 20,
+    "mcpWaitDefaultMs": 90000,
+    "mcpWaitMaxMs": 150000,
+    "mcpKeepaliveMs": 45000
+  },
+  "pointer": {
+    "dropBufferBytes": 262144,
+    "stallBufferBytes": 1048576,
+    "creditBatchFraction": 0.25
+  },
+  "playback": [
+    {
+      "queuedMs": 0,
+      "rate": 1
+    },
+    {
+      "queuedMs": 120,
+      "rate": 1
+    },
+    {
+      "queuedMs": 360,
+      "rate": 2.5
+    },
+    {
+      "queuedMs": 600,
+      "rate": 4
+    },
+    {
+      "queuedMs": 5000,
+      "rate": 4
+    }
+  ],
+  "playbackNote": "section 11 says \"in proportion to the lag and up to 4x\"; section 15 fixes the curve: 1 up to 120 ms, linear to 4 at 600 ms",
+  "glide": {
+    "formula": "clamp(120 + 110 * log2(1 + d / 40), 120, 900)",
+    "cases": [
+      {
+        "d": 0,
+        "ms": 120
+      },
+      {
+        "d": 40,
+        "ms": 230
+      },
+      {
+        "d": 120,
+        "ms": 340
+      },
+      {
+        "d": 600,
+        "ms": 560
+      },
+      {
+        "d": 1000000,
+        "ms": 900
+      }
+    ]
+  },
+  "commandFrameBudgetMs": 6,
+  "audit": {
+    "maxBacklog": 1000,
+    "refusalsPerSecond": 20,
+    "personRecordsPerSecond": 20,
+    "personChangesPerSecond": 20,
+    "droppedRelayRecordsPerSecond": 20
+  }
+}

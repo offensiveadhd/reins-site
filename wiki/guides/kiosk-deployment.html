@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Kiosk deployment · Reins</title>
+<meta name="description" content="How to run Reins on an unattended station. The kiosk profile, the surface key, the service account, the audit log, and the checklist from the security model.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/guides/kiosk-deployment.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Kiosk deployment">
+<meta property="og:description" content="How to run Reins on an unattended station. The kiosk profile, the surface key, the service account, the audit log, and the checklist from the security model.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/guides/kiosk-deployment.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="./kiosk-deployment.html" aria-current="page">Kiosk deployment</a></li><li><a href="./surface-keys.html">Surface keys</a></li><li><a href="./actions-and-risk.html">Actions and risk tiers</a></li><li><a href="./chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="./chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="./privacy-annotations.html">Privacy annotations</a></li><li><a href="./strict-csp.html">Running under a strict CSP</a></li><li><a href="./troubleshooting.html">Troubleshooting</a></li><li><a href="./electron.html">Electron: build it in</a></li><li><a href="./adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="./claude-and-hermes.html">Claude and Hermes</a></li><li><a href="./hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#guides">Guides</a></li><li aria-current="page">Kiosk deployment</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Kiosk deployment</h1>
+        <p class="lede">How to run Reins on an unattended station. The kiosk profile, the surface key, the service account, the audit log, and the checklist from the security model.</p>
+        
+      </header>
+      <h2 id="what-the-kiosk-profile-is-for">What the kiosk profile is for <a class="anchor" href="#what-the-kiosk-profile-is-for" aria-label="Link to the section What the kiosk profile is for">#</a></h2>
+<p>A kiosk is an unattended station: a self-service terminal with an assistant that helps whoever walks up. Nobody is there to approve a prompt, so the <code>kiosk</code> profile does not ask. It runs a fixed policy instead:</p>
+<ul>
+<li><strong>Allowlisted actions.</strong> Safe actions are allowed. Sensitive and dangerous actions are denied, not asked.</li>
+<li><strong>Annotated elements only.</strong> The tree shows only elements carrying <code>data-reins-id</code> or <code>data-reins=&quot;expose&quot;</code>.</li>
+<li><strong>No synthetic input.</strong> The scopes are <code>observe</code>, <code>act</code>, <code>cursor</code> and <code>show</code>. There is no <code>ui</code> scope.</li>
+<li><strong>No navigation</strong>, no raw coordinates and no pointer stream.</li>
+<li><strong>Pause, no Stop.</strong> A visitor can pause the assistant but cannot revoke it.</li>
+<li><strong>No panel, no levels, no chat.</strong> A kiosk visitor is not the owner: the profile offers no level beyond <code>strict</code> and <code>ask</code>, the indicator opens no panel to set one in, and no <code>chat</code> scope is granted.</li>
+<li><strong>A tamper-evident audit log</strong>, when you turn it on.</li>
+</ul>
+<p>Compare the profiles in <a href="../concepts/policy-profiles.html">Policy profiles</a>, and run the same script under <code>kiosk</code> in the <a href="../../playground.html?profile=kiosk">playground</a>.</p>
+<h2 id="the-checklist">The checklist <a class="anchor" href="#the-checklist" aria-label="Link to the section The checklist">#</a></h2>
+<p>This is the checklist of the <a href="../reference/security-model.html#kiosk-deployment-checklist">security model</a>, with the commands and options each step means.</p>
+<h3 id="1-the-kiosk-profile-on-both-sides">1. The kiosk profile on both sides <a class="anchor" href="#1-the-kiosk-profile-on-both-sides" aria-label="Link to the section 1. The kiosk profile on both sides">#</a></h3>
+<p>Run the hub with <code>--profile kiosk</code>, and create the driver with <code>policy: 'kiosk'</code>. A request has to pass both policies.</p>
+<p>The profile offers no permission level but <code>ask</code> and has no panel: a visitor cannot make the assistant ask less. Leave <code>human.levels</code> and <code>human.panel</code> as they are.</p>
+<h3 id="2-a-surface-key-required">2. A surface key, required <a class="anchor" href="#2-a-surface-key-required" aria-label="Link to the section 2. A surface key, required">#</a></h3>
+<p>Give the app a surface key; the hub then demands it from any surface claiming that app id. Start the hub with <code>--require-key</code> as well, so that every surface without a key is refused.</p>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npx <span class="t-f">--no</span> -- reins-hub <span class="t-f">--profile</span> kiosk <span class="t-f">--allow-origin</span> https://kiosk.example \
+  <span class="t-f">--surface-key</span> brew-kiosk=/srv/reins/surface-key <span class="t-f">--require-key</span> <span class="t-f">--no-announce</span> \
+  <span class="t-f">--audit</span> /srv/reins/audit.jsonl <span class="t-f">--audit-key-file</span> /srv/reins/audit-key</code></pre></div>
+<p>Ship the key inside the packaged app, not from a URL other processes can fetch. Check that the app is listed as <code>verified</code>.</p>
+<p><code>createDriver</code> throws when the profile is <code>kiosk</code> and the driver would dial a hub without a <code>key</code>: nobody is there to confirm an unverified hub, so a kiosk must authenticate it. See <a href="./surface-keys.html">Surface keys</a>.</p>
+<h3 id="3-exactly-one-origin">3. Exactly one origin <a class="anchor" href="#3-exactly-one-origin" aria-label="Link to the section 3. Exactly one origin">#</a></h3>
+<p>Allow exactly one origin, the kiosk app's.</p>
+<h3 id="4-a-narrow-agent-credential">4. A narrow agent credential <a class="anchor" href="#4-a-narrow-agent-credential" aria-label="Link to the section 4. A narrow agent credential">#</a></h3>
+<p>Give the agent credential a name, only the scopes it needs, and the surface origins it may attach to. Credentials with caps go in a configuration file given with <code>--config</code>:</p>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;agents&quot;</span>: [
+    {
+      <span class="t-p">&quot;kid&quot;</span>: <span class="t-s">&quot;kiosk-assistant&quot;</span>,
+      <span class="t-p">&quot;key&quot;</span>: <span class="t-s">&quot;&lt;the agent's secret: 32 random bytes, base64url&gt;&quot;</span>,
+      <span class="t-p">&quot;name&quot;</span>: <span class="t-s">&quot;Kiosk assistant&quot;</span>,
+      <span class="t-p">&quot;scopes&quot;</span>: [<span class="t-s">&quot;observe&quot;</span>, <span class="t-s">&quot;act&quot;</span>, <span class="t-s">&quot;cursor&quot;</span>, <span class="t-s">&quot;show&quot;</span>],
+      <span class="t-p">&quot;surfaces&quot;</span>: [<span class="t-s">&quot;https://kiosk.example&quot;</span>]
+    }
+  ],
+  <span class="t-p">&quot;surfaces&quot;</span>: { <span class="t-p">&quot;origins&quot;</span>: [<span class="t-s">&quot;https://kiosk.example&quot;</span>], <span class="t-p">&quot;requireKey&quot;</span>: <span class="t-k">true</span> },
+  <span class="t-p">&quot;policy&quot;</span>: <span class="t-s">&quot;kiosk&quot;</span>
+}</code></pre></div>
+<p>The <code>name</code> is what the indicator shows, and it overrides the name the agent declares. A hub refuses malformed configuration at start, and a key shorter than 32 characters is refused.</p>
+<p>The surface key still comes from <code>--surface-key</code> on the command line: with <code>requireKey</code> and no key for any app, the hub says at start that every surface will be refused. With agents in the configuration file, the hub does not create the default credential or its token file.</p>
+<h3 id="5-annotate-only-what-the-assistant-should-see">5. Annotate only what the assistant should see <a class="anchor" href="#5-annotate-only-what-the-assistant-should-see" aria-label="Link to the section 5. Annotate only what the assistant should see">#</a></h3>
+<p>Annotate only the elements the assistant should see with <code>data-reins-id</code>. Everything else does not exist for it. See <a href="./privacy-annotations.html">Privacy annotations</a>.</p>
+<h3 id="6-the-right-risk-on-every-action">6. The right risk on every action <a class="anchor" href="#6-the-right-risk-on-every-action" aria-label="Link to the section 6. The right risk on every action">#</a></h3>
+<p>Mark every action with the right risk. Add <code>actions</code> overrides for anything that must stay off whatever its risk tier says:</p>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>createDriver({
+  app,
+  key,
+  policy: { profile: <span class="t-s">'kiosk'</span>, actions: { <span class="t-s">'admin.*'</span>: <span class="t-s">'deny'</span> } },
+});</code></pre></div>
+<p>Under <code>kiosk</code> only <code>safe</code> actions run. If the assistant must be able to place an order, the action that does it has to be <code>safe</code>, or be allowed by an <code>actions</code> override in the page's policy and in the hub's, because the hub decides by the action's risk under its own policy too. Whether that is right for your station is your decision. See <a href="./actions-and-risk.html">Writing good actions and risk tiers</a>.</p>
+<h3 id="7-a-service-account-of-its-own">7. A service account of its own <a class="anchor" href="#7-a-service-account-of-its-own" aria-label="Link to the section 7. A service account of its own">#</a></h3>
+<p>Run the hub under its own OS account, from a working directory and under parent directories that only that account controls. The hub restricts the token, key and audit files, and the directories it creates, to that account, and stops if it cannot. It refuses an existing secret file or audit log that others can use (POSIX) or restricts it again (Windows).</p>
+<p>A process running as the same OS user can read the token file and the browser's memory. That is why the hub gets an account of its own. Start it with <code>--no-announce</code>: nobody on a kiosk needs the launcher, and it then leaves nothing in the Reins folder.</p>
+<h3 id="8-pre-approve-loopback-access">8. Pre-approve loopback access <a class="anchor" href="#8-pre-approve-loopback-access" aria-label="Link to the section 8. Pre-approve loopback access">#</a></h3>
+<p>A browser may put a page's access to <code>127.0.0.1</code> behind a permission prompt. Pre-approve loopback access for the kiosk origin by browser policy. Edge documents the policies <code>LoopbackNetworkAllowedForUrls</code> and <code>LoopbackNetworkBlockedForUrls</code>; Chrome is reported to use the same names. See <a href="../reference/security-model.html#browser-access-to-loopback">Browser access to loopback</a>, and test your target browser: the notes there were checked in November 2026 and browser behaviour is still changing.</p>
+<p>The in-tab shape needs no loopback access at all.</p>
+<h3 id="9-key-the-audit-log-and-ship-it-off-the-machine">9. Key the audit log and ship it off the machine <a class="anchor" href="#9-key-the-audit-log-and-ship-it-off-the-machine" aria-label="Link to the section 9. Key the audit log and ship it off the machine">#</a></h3>
+<p>Key the audit log (<code>--audit-key-file</code>), ship the log and its head off the machine, and verify the chain against the head on arrival. See <a href="../concepts/audit-log.html">The audit log</a>.</p>
+<h3 id="10-reset-between-visitors">10. Reset between visitors <a class="anchor" href="#10-reset-between-visitors" aria-label="Link to the section 10. Reset between visitors">#</a></h3>
+<p>Reset the app session whenever the assistant detaches:</p>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>driver.on(<span class="t-s">'detach'</span>, () =&gt; app.resetSession());</code></pre></div>
+<p>The demo does this: under the kiosk profile, Brew Kiosk starts the next visitor from a clean slate whenever the assistant lets go.</p>
+<h3 id="11-an-electron-kiosk-links-its-window-in-process">11. An Electron kiosk links its window in-process <a class="anchor" href="#11-an-electron-kiosk-links-its-window-in-process" aria-label="Link to the section 11. An Electron kiosk links its window in-process">#</a></h3>
+<p>A kiosk built with Electron links its window in-process (<code>reinsMain</code>) and starts its hub with <code>surfaceSockets: false</code>. Its allowlist then names the origin of its own window, an app scheme rather than <code>file://</code>, and nothing can pose as that window over the socket. Never ship it with a debugging port. See <a href="./electron.html">Electron: build Reins into your app</a>.</p>
+<h2 id="also-set">Also set <a class="anchor" href="#also-set" aria-label="Link to the section Also set">#</a></h2>
+<ul>
+<li>A strict Content Security Policy, with <code>frame-ancestors 'none'</code> for a page that is never meant to be framed. See <a href="./strict-csp.html">Running under a strict CSP</a>.</li>
+<li>An attendant flow of your own, if staff need to approve something: an app may supply its own consent handler, for example an attendant PIN.</li>
+</ul>
+<h2 id="read-before-deploying">Read before deploying <a class="anchor" href="#read-before-deploying" aria-label="Link to the section Read before deploying">#</a></h2>
+<p><a href="../reference/security-model.html#what-reins-does-not-protect-against">What Reins does not protect against</a>. In particular: a surface key that the attacker can read protects nothing, a process running as the hub's OS user can read its secrets, and hostile script inside the app's own origin has the app's authority.</p>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/guides/kiosk-deployment.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/guides/kiosk-deployment.md</code></span><a class="md-link" href="./kiosk-deployment.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="../concepts/chat.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Chat</span></a>
+    <a class="pager-next" href="./surface-keys.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Surface keys</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#what-the-kiosk-profile-is-for">What the kiosk profile is for</a></li><li class="toc-2"><a href="#the-checklist">The checklist</a></li><li class="toc-3"><a href="#1-the-kiosk-profile-on-both-sides">1. The kiosk profile on both sides</a></li><li class="toc-3"><a href="#2-a-surface-key-required">2. A surface key, required</a></li><li class="toc-3"><a href="#3-exactly-one-origin">3. Exactly one origin</a></li><li class="toc-3"><a href="#4-a-narrow-agent-credential">4. A narrow agent credential</a></li><li class="toc-3"><a href="#5-annotate-only-what-the-assistant-should-see">5. Annotate only what the assistant should see</a></li><li class="toc-3"><a href="#6-the-right-risk-on-every-action">6. The right risk on every action</a></li><li class="toc-3"><a href="#7-a-service-account-of-its-own">7. A service account of its own</a></li><li class="toc-3"><a href="#8-pre-approve-loopback-access">8. Pre-approve loopback access</a></li><li class="toc-3"><a href="#9-key-the-audit-log-and-ship-it-off-the-machine">9. Key the audit log and ship it off the machine</a></li><li class="toc-3"><a href="#10-reset-between-visitors">10. Reset between visitors</a></li><li class="toc-3"><a href="#11-an-electron-kiosk-links-its-window-in-process">11. An Electron kiosk links its window in-process</a></li><li class="toc-2"><a href="#also-set">Also set</a></li><li class="toc-2"><a href="#read-before-deploying">Read before deploying</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

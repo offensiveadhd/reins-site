@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Make an app drivable · Reins</title>
+<meta name="description" content="Install the package, create a driver, declare actions, views and state, and mark the elements an agent should see.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/start/make-an-app-drivable.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Make an app drivable">
+<meta property="og:description" content="Install the package, create a driver, declare actions, views and state, and mark the elements an agent should see.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/start/make-an-app-drivable.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="./what-is-reins.html">What is Reins</a></li><li><a href="./quickstart.html">Quickstart</a></li><li><a href="./make-an-app-drivable.html" aria-current="page">Make an app drivable</a></li><li><a href="./drive-from-node.html">Drive it from Node</a></li><li><a href="./mcp.html">Claude Code and MCP</a></li><li><a href="./shell-tools.html">Shell tools</a></li><li><a href="./in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#start">Start</a></li><li aria-current="page">Make an app drivable</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Make an app drivable</h1>
+        <p class="lede">Install the package, create a driver, declare actions, views and state, and mark the elements an agent should see.</p>
+        
+      </header>
+      <h2 id="install">Install <a class="anchor" href="#install" aria-label="Link to the section Install">#</a></h2>
+<p>Reins ships as one package, <code>@offensiveadhd/reins</code>. It requires Node 22 or newer to build and to run the hub; the browser parts need no Node at all. The package is not on the npm registry.</p>
+<p>From Git, in a project that has a bundler (the package builds itself on install):</p>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npm i github:offensiveadhd/reins</code></pre></div>
+<p>From a tarball, built once in a checkout of the repository with <code>npm pack</code>:</p>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npm i ../reins/offensiveadhd-reins-0.1.0.tgz</code></pre></div>
+<p>For a static page with no build step, copy one file out of the package and import it:</p>
+<div class="code" data-lang="html"><div class="code-bar"><span class="code-lang">HTML</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-k">&lt;script</span> <span class="t-p">type</span>=<span class="t-s">&quot;module&quot;</span><span class="t-k">&gt;</span>
+  import { createDriver, connect, Broker, linkPair } from <span class="t-s">'./reins.js'</span>;
+<span class="t-k">&lt;/script</span><span class="t-k">&gt;</span></code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File in <code>dist/bundle/</code></th>
+<th>What it is</th>
+<th>Size in this build</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>reins.js</code></td>
+<td>The kit: driver, agent SDK, in-tab broker</td>
+<td>446 KiB</td>
+</tr>
+<tr>
+<td><code>reins-driver.js</code></td>
+<td>The driver only (ES module)</td>
+<td>341 KiB</td>
+</tr>
+<tr>
+<td><code>reins-driver.iife.js</code></td>
+<td>The driver as a global, <code>Reins.createDriver(...)</code></td>
+<td>359 KiB</td>
+</tr>
+<tr>
+<td><code>reins-agent.js</code></td>
+<td>The agent SDK only</td>
+<td>69 KiB</td>
+</tr>
+<tr>
+<td><code>reins-broker.js</code></td>
+<td>The in-tab broker only</td>
+<td>122 KiB</td>
+</tr>
+<tr>
+<td><code>reins-electron.js</code></td>
+<td><code>electronLink()</code>, for a page in an Electron window</td>
+<td>11 KiB</td>
+</tr>
+<tr>
+<td><code>reins-adopt.iife.js</code></td>
+<td>The driver for an app adopted by <code>reins-electron</code></td>
+<td>370 KiB</td>
+</tr>
+</tbody>
+</table></div>
+<p>Sizes are unminified and uncompressed, measured when this site was built. The bundles have no dependencies and no <code>node:</code> imports, and they run under a strict Content Security Policy (<code>script-src 'self'</code>, no inline script, no <code>eval</code>). See <a href="../guides/strict-csp.html">Running under a strict CSP</a>.</p>
+<h2 id="create-the-driver">Create the driver <a class="anchor" href="#create-the-driver" aria-label="Link to the section Create the driver">#</a></h2>
+<p>The driver is the in-page runtime: it builds the UI tree, runs commands, draws the cursor, the consent prompt and the indicator.</p>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-k">import</span> { createDriver } <span class="t-k">from</span> <span class="t-s">'@offensiveadhd/reins'</span>;
+
+<span class="t-k">const</span> driver = createDriver({
+  app: { id: <span class="t-s">'brew-kiosk'</span>, name: <span class="t-s">'Brew Kiosk'</span>, version: <span class="t-s">'1.0.0'</span> },
+  hub: <span class="t-s">'ws://127.0.0.1:7346'</span>,
+  policy: <span class="t-s">'guarded'</span>, <span class="t-c">// or 'open', 'kiosk', or a profile with overrides</span>
+});
+
+driver
+  .action(
+    {
+      name: <span class="t-s">'cart.add'</span>,
+      description: <span class="t-s">'Add a drink to the order.'</span>,
+      risk: <span class="t-s">'safe'</span>,
+      params: {
+        <span class="t-k">type</span>: <span class="t-s">'object'</span>,
+        properties: { sku: { <span class="t-k">type</span>: <span class="t-s">'string'</span>, enum: [<span class="t-s">'latte'</span>, <span class="t-s">'mocha'</span>] }, qty: { <span class="t-k">type</span>: <span class="t-s">'integer'</span>, minimum: <span class="t-n">1</span>, maximum: <span class="t-n">9</span> } },
+        required: [<span class="t-s">'sku'</span>],
+      },
+    },
+    ({ sku, qty = <span class="t-n">1</span> }) =&gt; cart.add(sku, qty),
+  )
+  .action({ name: <span class="t-s">'order.submit'</span>, description: <span class="t-s">'Place the order.'</span>, risk: <span class="t-s">'sensitive'</span> }, () =&gt; cart.submit())
+  .view({ name: <span class="t-s">'chart'</span>, description: <span class="t-s">'Bar chart panel.'</span> }, (data) =&gt; renderChart(data))
+  .state(<span class="t-s">'cart'</span>, () =&gt; cart.summary());
+
+<span class="t-k">await</span> driver.connect();</code></pre></div>
+<p>Actions, views and state are registered before <code>connect()</code>. <code>connect()</code> resolves once the hub has welcomed the surface.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Option</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>app</code></td>
+<td>The app's id, name, version and description. The id is stable and is also the key id for a surface key.</td>
+</tr>
+<tr>
+<td><code>hub</code></td>
+<td>The hub's WebSocket URL. Default <code>ws://127.0.0.1:7346</code>.</td>
+</tr>
+<tr>
+<td><code>link</code></td>
+<td>A link to use instead of a WebSocket. This is how <a href="./in-tab.html">the in-tab shape</a> works.</td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td>The surface key, when the hub has one for the app.</td>
+</tr>
+<tr>
+<td><code>policy</code></td>
+<td>A profile name, or a profile with overrides. Default <code>'guarded'</code>.</td>
+</tr>
+<tr>
+<td><code>consent</code></td>
+<td>Your own consent handler, in place of the built-in prompt.</td>
+</tr>
+<tr>
+<td><code>indicator</code></td>
+<td>Show the control indicator while an agent is attached. Default <code>true</code>.</td>
+</tr>
+<tr>
+<td><code>reconnect</code></td>
+<td>Reconnect after an unexpected close, with backoff from 0.5 s to 10 s. Default <code>true</code>.</td>
+</tr>
+<tr>
+<td><code>root</code></td>
+<td>The subtree to expose. Default <code>document.body</code>.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="actions-views-and-state">Actions, views and state <a class="anchor" href="#actions-views-and-state" aria-label="Link to the section Actions, views and state">#</a></h2>
+<ul>
+<li>An <strong>action</strong> is something the app can do: a name, a description, a schema for its arguments, a risk tier, and a handler. Policy decides by the risk tier whether a call is allowed, needs the person's confirmation, or is denied. <a href="../guides/actions-and-risk.html">Writing good actions and risk tiers</a> goes into detail.</li>
+<li>A <strong>view</strong> is a named renderer the app offers for showing data, such as a chart panel. An agent sends data to it with <code>show.view</code>; the driver validates the data against the view's schema and calls your renderer.</li>
+<li><strong>State</strong> is a named piece of app state an agent may read, with a getter. Call <code>driver.notify()</code> when it changed, and subscribed agents get a patch.</li>
+</ul>
+<p>The driver turns these into a manifest, and the manifest into the <a href="../concepts/manifest-and-prompt-card.html">prompt card</a> a model reads.</p>
+<h2 id="the-surface-key">The surface key <a class="anchor" href="#the-surface-key" aria-label="Link to the section The surface key">#</a></h2>
+<p>Pass <code>key</code> when the hub has a surface key for the app. With a key the page and the hub prove themselves to each other and the session is sealed. Without one the driver treats the hub as unverified: it always asks the person before an agent attaches, and the kiosk profile refuses to start. See <a href="../guides/surface-keys.html">Surface keys</a>.</p>
+<h2 id="frames">Frames <a class="anchor" href="#frames" aria-label="Link to the section Frames">#</a></h2>
+<p>The driver connects only in a page that is the top-level document of its tab. Inside a frame, the page around it could cover the consent prompt and the indicator, so <code>connect()</code> fails there with <code>E_DENIED</code>. A page that is embedded on purpose, by pages you control, opts in with <code>policy: { profile: 'guarded', framed: true }</code>.</p>
+<h2 id="mark-the-elements-an-agent-should-see">Mark the elements an agent should see <a class="anchor" href="#mark-the-elements-an-agent-should-see" aria-label="Link to the section Mark the elements an agent should see">#</a></h2>
+<p>Mark the elements an agent should see by name with <code>data-reins-id=&quot;cart.checkout&quot;</code>. An agent then addresses the element as <code>#cart.checkout</code>. Use <code>data-reins=&quot;ignore&quot;</code> to hide a subtree and <code>data-reins=&quot;private&quot;</code> for anything an agent must never read. Password, card and one-time-code fields are private automatically.</p>
+<p>Under the <code>guarded</code> and <code>open</code> profiles, interactive elements are exposed without annotation. Under <code>kiosk</code>, only annotated elements are. See <a href="../guides/privacy-annotations.html">Privacy annotations</a>.</p>
+<h2 id="watch-what-the-driver-does">Watch what the driver does <a class="anchor" href="#watch-what-the-driver-does" aria-label="Link to the section Watch what the driver does">#</a></h2>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>driver.on(<span class="t-s">'status'</span>, () =&gt; console.log(driver.status));
+driver.on(<span class="t-s">'attach'</span>, ({ agent, scopes }) =&gt; console.log(agent.name, <span class="t-s">'attached with'</span>, scopes));
+driver.on(<span class="t-s">'detach'</span>, ({ agent, why }) =&gt; console.log(agent.name, <span class="t-s">'left:'</span>, why));
+driver.on(<span class="t-s">'command'</span>, ({ agent, m, ok, code }) =&gt; console.log(agent.name, m, ok ? <span class="t-s">'ok'</span> : code));</code></pre></div>
+<p>Four more events say what the person did in the panel and that something was said in the chat. The API only reads them:</p>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>driver.on(<span class="t-s">'level'</span>, ({ agent, level }) =&gt; {});          <span class="t-c">// the person set this agent to strict, ask, auto or bypass</span>
+driver.on(<span class="t-s">'rule'</span>, ({ agent, action, rule }) =&gt; {});    <span class="t-c">// allow, confirm or deny for one action; null when removed</span>
+driver.on(<span class="t-s">'scopes'</span>, ({ agent, scopes }) =&gt; {});        <span class="t-c">// the scopes now in force for this agent</span>
+driver.on(<span class="t-s">'chat'</span>, ({ id, <span class="t-k">from</span>, chars, to }) =&gt; {});    <span class="t-c">// who said something and how long it is, never the text</span>
+driver.agents();                                       <span class="t-c">// each attached agent with its level, scopes and rules</span></code></pre></div>
+<p>Nothing in the API sets a level, a rule or a scope switch, opens the panel, posts a chat message or reads the transcript.</p>
+<p><code>driver.status</code> is one of <code>idle</code>, <code>connecting</code>, <code>ready</code>, <code>controlled</code>, <code>paused</code> and <code>offline</code>. <code>driver.hubVerified</code> is true while the driver is connected to a hub it verified: it holds a key and the hub proved the same key, or the app supplied the link. <code>driver.pause()</code>, <code>driver.resume()</code> and <code>driver.stop()</code> do what the indicator's buttons do.</p>
+<p>The driver reports a blocked or refused connection as <code>offline</code> and keeps retrying with backoff. It never treats a failed connection as permission to skip policy.</p>
+<h2 id="the-panel-levels-and-chat-come-with-the-driver">The panel, levels and chat come with the driver <a class="anchor" href="#the-panel-levels-and-chat-come-with-the-driver" aria-label="Link to the section The panel, levels and chat come with the driver">#</a></h2>
+<p>While an agent is attached, the text of the indicator is a button. It opens a panel with three tabs: Permissions, Activity and Chat. There the person sets how much each agent asks, switches single scopes off, sees what the agent did and talks to it. You add nothing for this. What you decide is how much of it is on offer, in the policy:</p>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>createDriver({
+  app,
+  policy: {
+    profile: <span class="t-s">'guarded'</span>,
+    human: { levels: [<span class="t-s">'auto'</span>] },     <span class="t-c">// offer Auto besides Strict and Ask, and no Bypass</span>
+    chatRelay: <span class="t-s">'off'</span>,                <span class="t-c">// agents never hear each other in the chat</span>
+  },
+});</code></pre></div>
+<ul>
+<li><code>human.levels</code> lists the levels the person may set beyond <code>strict</code> and <code>ask</code>, which are always on offer because neither lets an agent do more. The hub's policy caps yours.</li>
+<li><code>human.panel: false</code> leaves the indicator without a panel, and with it the chat.</li>
+<li>A policy whose <code>scopes</code> leave out <code>chat</code> has no chat. The <code>open</code> and <code>guarded</code> profiles grant it; <code>kiosk</code> does not.</li>
+</ul>
+<p>Nothing the person sets makes an action run that your policy denies. See <a href="../concepts/permission-levels.html">Permission levels</a> and <a href="../concepts/chat.html">Chat</a>.</p>
+<div class="callout callout-warning" role="note"><p class="callout-title">Warning</p>
+<p>The chat is drawn in your page. Script in your page can read what the person types there and change what is sent, as it can with any of your own fields. Load no script into the page that you would not show the chat to.</p>
+</div>
+<h2 id="in-an-electron-app">In an Electron app <a class="anchor" href="#in-an-electron-app" aria-label="Link to the section In an Electron app">#</a></h2>
+<p>An Electron window gets its link from the main process and not from a socket: see <a href="../guides/electron.html">Electron: build Reins into your app</a>.</p>
+<h2 id="your-own-consent-prompt">Your own consent prompt <a class="anchor" href="#your-own-consent-prompt" aria-label="Link to the section Your own consent prompt">#</a></h2>
+<p>An app may supply its own consent handler, for example an attendant PIN on a kiosk:</p>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>createDriver({
+  app,
+  policy: <span class="t-s">'guarded'</span>,
+  consent: <span class="t-k">async</span> (request) =&gt; {
+    <span class="t-c">// request.kind is 'attach' or 'action'; request.agent, request.scopes,</span>
+    <span class="t-c">// request.action, request.args and request.reason say what is asked.</span>
+    <span class="t-k">return</span> <span class="t-k">await</span> askThePerson(request);
+  },
+});</code></pre></div>
+<p>The handler gets the request as data and answers <code>true</code> or <code>false</code>. The rules about what a prompt has to show are those of the driver's own prompt: see <a href="../concepts/consent.html">Consent</a>.</p>
+<h2 id="next">Next <a class="anchor" href="#next" aria-label="Link to the section Next">#</a></h2>
+<ul>
+<li><a href="./drive-from-node.html">Drive it from Node</a></li>
+<li><a href="../concepts/policy-profiles.html">Policy profiles</a></li>
+<li><a href="../reference/sdk.html">The SDK reference</a></li>
+</ul>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/start/make-an-app-drivable.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/start/make-an-app-drivable.md</code></span><a class="md-link" href="./make-an-app-drivable.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./quickstart.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Quickstart</span></a>
+    <a class="pager-next" href="./drive-from-node.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Drive it from Node</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#install">Install</a></li><li class="toc-2"><a href="#create-the-driver">Create the driver</a></li><li class="toc-2"><a href="#actions-views-and-state">Actions, views and state</a></li><li class="toc-2"><a href="#the-surface-key">The surface key</a></li><li class="toc-2"><a href="#frames">Frames</a></li><li class="toc-2"><a href="#mark-the-elements-an-agent-should-see">Mark the elements an agent should see</a></li><li class="toc-2"><a href="#watch-what-the-driver-does">Watch what the driver does</a></li><li class="toc-2"><a href="#the-panel-levels-and-chat-come-with-the-driver">The panel, levels and chat come with the driver</a></li><li class="toc-2"><a href="#in-an-electron-app">In an Electron app</a></li><li class="toc-2"><a href="#your-own-consent-prompt">Your own consent prompt</a></li><li class="toc-2"><a href="#next">Next</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

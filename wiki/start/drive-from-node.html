@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Drive it from Node · Reins</title>
+<meta name="description" content="Start a hub, connect with the agent SDK, attach to a page and drive it. Where the SDK finds its key, what the surface handle offers, and how refusals arrive.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/start/drive-from-node.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Drive it from Node">
+<meta property="og:description" content="Start a hub, connect with the agent SDK, attach to a page and drive it. Where the SDK finds its key, what the surface handle offers, and how refusals arrive.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/start/drive-from-node.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="./what-is-reins.html">What is Reins</a></li><li><a href="./quickstart.html">Quickstart</a></li><li><a href="./make-an-app-drivable.html">Make an app drivable</a></li><li><a href="./drive-from-node.html" aria-current="page">Drive it from Node</a></li><li><a href="./mcp.html">Claude Code and MCP</a></li><li><a href="./shell-tools.html">Shell tools</a></li><li><a href="./in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#start">Start</a></li><li aria-current="page">Drive it from Node</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Drive it from Node</h1>
+        <p class="lede">Start a hub, connect with the agent SDK, attach to a page and drive it. Where the SDK finds its key, what the surface handle offers, and how refusals arrive.</p>
+        
+      </header>
+      <h2 id="start-a-hub">Start a hub <a class="anchor" href="#start-a-hub" aria-label="Link to the section Start a hub">#</a></h2>
+<p>Start a hub in the project that installed the package:</p>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npx <span class="t-f">--no</span> -- reins-hub <span class="t-f">--profile</span> guarded <span class="t-f">--allow-origin</span> http://localhost:5173</code></pre></div>
+<p><code>--allow-origin</code> names the origin of the page that may connect as a surface. The <code>guarded</code> and <code>kiosk</code> profiles need at least one; the <code>open</code> profile, meant for local development, admits <code>http://localhost:*</code> and <code>http://127.0.0.1:*</code> when none is given.</p>
+<p>The hub prints where it listens, its profile, the origins it admits and the path of the token file. It prints file paths, never secrets. With no agent configured it creates one credential, <code>kid</code> <code>default</code>, and writes the secret to the token file, <code>.reins/token</code> in the folder it was started in.</p>
+<p>Run the commands as <code>npx --no -- &lt;command&gt;</code> in the project that installed the package. The package is not on the npm registry, and <code>reins-mcp</code> there is the name of an unrelated package: with <code>--no</code>, npx runs what is installed or stops. The <code>--</code> has to follow it, or npx keeps the options written after the command name for itself.</p>
+<h2 id="where-the-sdk-finds-the-key">Where the SDK finds the key <a class="anchor" href="#where-the-sdk-finds-the-key" aria-label="Link to the section Where the SDK finds the key">#</a></h2>
+<p>An agent must authenticate. The hub also announces itself in your Reins folder (<code>~/.reins</code>), so the SDK finds the token from any folder. <code>connect</code> looks, in this order, in:</p>
+<ol>
+<li><code>options.key</code></li>
+<li>the environment variable <code>REINS_TOKEN</code></li>
+<li>the file named by <code>REINS_TOKEN_FILE</code></li>
+<li>the token file that the running hub at the URL announced in the Reins folder</li>
+<li><code>.reins/token</code> in the working directory</li>
+</ol>
+<p>The announcement comes before the working directory because it names the hub that is listening now. A <code>.reins/token</code> in whatever folder the agent happens to run in may be another hub's, or an old one.</p>
+<h2 id="connect-attach-drive">Connect, attach, drive <a class="anchor" href="#connect-attach-drive" aria-label="Link to the section Connect, attach, drive">#</a></h2>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-k">import</span> { connect } <span class="t-k">from</span> <span class="t-s">'@offensiveadhd/reins/agent'</span>;
+
+<span class="t-k">const</span> client = <span class="t-k">await</span> connect({ name: <span class="t-s">'Barista AI'</span> });
+<span class="t-k">const</span> [surface] = <span class="t-k">await</span> client.surfaces();
+<span class="t-k">const</span> kiosk = <span class="t-k">await</span> client.attach(surface.s, { scopes: [<span class="t-s">'observe'</span>, <span class="t-s">'act'</span>, <span class="t-s">'cursor'</span>, <span class="t-s">'show'</span>] });
+
+console.log(kiosk.card());              <span class="t-c">// the prompt card for a model</span>
+console.log(<span class="t-k">await</span> kiosk.observeText()); <span class="t-c">// the screen, compact</span>
+<span class="t-k">await</span> kiosk.cursor.move(<span class="t-s">'#menu.latte'</span>);
+<span class="t-k">await</span> kiosk.act(<span class="t-s">'cart.add'</span>, { sku: <span class="t-s">'latte'</span>, qty: <span class="t-n">2</span> });
+console.log(<span class="t-k">await</span> kiosk.observeText()); <span class="t-c">// only what changed</span></code></pre></div>
+<p><code>attach</code> asks the page. Under the <code>guarded</code> profile the person approves on screen, so the call may take as long as they take; if they refuse, or the prompt times out, it rejects with <code>E_CONSENT</code>. The grant carries the scopes that were granted, which may be fewer than you asked for: read <code>kiosk.grant.scopes</code>. Without <code>scopes</code>, <code>attach</code> asks for <code>observe</code>, <code>act</code>, <code>cursor</code> and <code>show</code>: an agent that wants to be in the chat room names <code>chat</code>.</p>
+<p><code>card()</code> returns the <a href="../concepts/manifest-and-prompt-card.html">prompt card</a>: the text a model is given so it can drive the app. <code>observeText()</code> returns the screen as a compact tree the first time, and afterwards only what changed. The handle tracks the revision itself.</p>
+<h2 id="the-surface-handle">The surface handle <a class="anchor" href="#the-surface-handle" aria-label="Link to the section The surface handle">#</a></h2>
+<div class="code" data-lang="ts"><div class="code-bar"><span class="code-lang">TypeScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>connect(options: { url?: string; link?: Link; kid?: string; key?: string; name?: string }): Promise&lt;ReinsClient&gt;
+isHandshakeError(e: unknown): boolean            <span class="t-c">// connect threw e during the handshake: its message came from an unverified peer</span>
+
+<span class="t-k">interface</span> ReinsClient {
+  <span class="t-k">readonly</span> session: string
+  info(): Promise&lt;HubInfo&gt;
+  surfaces(): Promise&lt;SurfaceInfo[]&gt;
+  attach(s: string, opts?: { scopes?: Scope[]; reason?: string }): Promise&lt;SurfaceHandle&gt;
+  ping(): Promise&lt;number&gt;
+  on(event: <span class="t-s">'surface'</span> | <span class="t-s">'close'</span>, fn: (e: any) =&gt; <span class="t-k">void</span>): () =&gt; <span class="t-k">void</span>
+  close(): <span class="t-k">void</span>
+}
+<span class="t-k">interface</span> SurfaceHandle {
+  <span class="t-k">readonly</span> info: SurfaceInfo; <span class="t-k">readonly</span> manifest: Manifest; <span class="t-k">readonly</span> grant: Grant
+  <span class="t-k">readonly</span> level: Level                            <span class="t-c">// the level the person last set for this grant; `ask` until told, `strict` from the start when that was kept (section 8)</span>
+  <span class="t-k">readonly</span> rules: Record&lt;string, Decision&gt;         <span class="t-c">// the person's rules for single actions, by name</span>
+  <span class="t-k">readonly</span> chatRelay: boolean                      <span class="t-c">// the person switched &quot;Agents can hear each other&quot; on for this agent</span>
+  card(): string                                   <span class="t-c">// the prompt card</span>
+  observe(opts?: { full?: boolean; boxes?: boolean }): Promise&lt;Observation&gt;   <span class="t-c">// tracks `since` itself</span>
+  observeText(opts?: { full?: boolean }): Promise&lt;string&gt;
+  read(h?: Target, max?: number): Promise&lt;string&gt;
+  readText(h?: Target, max?: number): Promise&lt;{ text: string; truncated: boolean }&gt;   <span class="t-c">// read, with whether it was cut at max</span>
+  state(name?: string): Promise&lt;Record&lt;string, unknown&gt;&gt;
+  act&lt;R = unknown&gt;(action: string, args?: object): Promise&lt;R&gt;
+  click(h: Target): Promise&lt;<span class="t-k">void</span>&gt;
+  <span class="t-k">type</span>(h: Target, text: string, opts?: { clear?: boolean; enter?: boolean }): Promise&lt;<span class="t-k">void</span>&gt;
+  select(h: Target, value: string): Promise&lt;<span class="t-k">void</span>&gt;
+  scroll(opts: { h?: Target; dx?: number; dy?: number; to?: <span class="t-s">'top'</span> | <span class="t-s">'bottom'</span> | <span class="t-s">'view'</span> }): Promise&lt;<span class="t-k">void</span>&gt;
+  key(key: UiKey, h?: Target): Promise&lt;<span class="t-k">void</span>&gt;
+  cursor: { move(to: Target | Point, opts?: { ms?: number; wait?: boolean }): Promise&lt;Point&gt;; show(label?: string, color?: string): Promise&lt;<span class="t-k">void</span>&gt;; hide(): Promise&lt;<span class="t-k">void</span>&gt; }
+  show: { toast(text: string, kind?: ToastKind, ms?: number): Promise&lt;<span class="t-k">void</span>&gt;; highlight(h: Target, label?: string, ms?: number): Promise&lt;<span class="t-k">void</span>&gt;; view(view: string, data?: unknown): Promise&lt;unknown&gt;; clear(): Promise&lt;<span class="t-k">void</span>&gt; }
+  go(url: string): Promise&lt;<span class="t-k">void</span>&gt;
+  pointer(): Promise&lt;PointerStream&gt;
+  chat: { say(text: string, opts?: { to?: string }): Promise&lt;{ id: number }&gt;; read(opts?: { since?: number; max?: number }): Promise&lt;{ messages: ChatMessage[]; next: number }&gt;; status(state: <span class="t-s">'idle'</span> | <span class="t-s">'thinking'</span> | <span class="t-s">'working'</span>, note?: string): Promise&lt;<span class="t-k">void</span>&gt; }
+  subscribe(topics: Topic[]): Promise&lt;<span class="t-k">void</span>&gt;
+  on(event: Topic, fn: (d: any) =&gt; <span class="t-k">void</span>): () =&gt; <span class="t-k">void</span>
+  detach(): Promise&lt;<span class="t-k">void</span>&gt;
+}
+<span class="t-k">interface</span> PointerStream { push(x: number, y: number, dt?: number): <span class="t-k">void</span>; end(): Promise&lt;<span class="t-k">void</span>&gt;; <span class="t-k">readonly</span> stats: { sent: number; dropped: number } }</code></pre></div>
+<p>A target is a handle from the tree (<code>e12</code>) or a semantic id (<code>#cart.checkout</code>), never a selector. <code>ui.*</code> never takes coordinates.</p>
+<h2 id="what-the-person-sets-reaches-you">What the person sets reaches you <a class="anchor" href="#what-the-person-sets-reaches-you" aria-label="Link to the section What the person sets reaches you">#</a></h2>
+<p>The person can change how much you are asked about, block single actions and switch scopes off, in the page's panel. You cannot change any of it, and you are told:</p>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>kiosk.level;                 <span class="t-c">// 'strict', 'ask', 'auto' or 'bypass': what the person last set; 'ask' until told, 'strict' from the start when that was kept</span>
+kiosk.rules;                 <span class="t-c">// the person's rules for single actions, by name</span>
+kiosk.grant.scopes;          <span class="t-c">// the scopes in force: it follows the person's switches</span>
+kiosk.on(<span class="t-s">'user'</span>, (e) =&gt; {}); <span class="t-c">// { kind: 'level', level }, { kind: 'rule', a, d }, { kind: 'relay', on }</span>
+kiosk.on(<span class="t-s">'grant'</span>, (e) =&gt; {}); <span class="t-c">// { kind: 'scopes', scopes }: not the end of the grant</span></code></pre></div>
+<p>None of this is on the prompt card. Under <code>auto</code> an action tagged <code>[confirm]</code> may run unasked, and a rule may block an action that has no tag. The answer to the request is the truth. See <a href="../concepts/permission-levels.html">Permission levels</a>.</p>
+<h2 id="chat">Chat <a class="anchor" href="#chat" aria-label="Link to the section Chat">#</a></h2>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-k">const</span> page = <span class="t-k">await</span> client.attach(surface.s, { scopes: [<span class="t-s">'observe'</span>, <span class="t-s">'act'</span>, <span class="t-s">'chat'</span>], reason: <span class="t-s">'Help you order'</span> });
+page.on(<span class="t-s">'chat'</span>, <span class="t-k">async</span> (m) =&gt; {
+  <span class="t-k">if</span> (m.<span class="t-k">from</span>.kind !== <span class="t-s">'person'</span>) <span class="t-k">return</span>;        <span class="t-c">// another agent's words are not a request</span>
+  <span class="t-k">await</span> page.chat.status(<span class="t-s">'working'</span>, <span class="t-s">'adding a latte'</span>);
+  <span class="t-k">await</span> page.act(<span class="t-s">'cart.add'</span>, { sku: <span class="t-s">'latte'</span> });
+  <span class="t-c">// what was asked of this agent alone (m.to) is answered to the person alone</span>
+  <span class="t-k">await</span> page.chat.say(<span class="t-s">'Added a latte.'</span>, m.to === <span class="t-k">undefined</span> ? <span class="t-k">undefined</span> : { to: <span class="t-s">'person'</span> });
+  <span class="t-k">await</span> page.chat.status(<span class="t-s">'idle'</span>);
+});</code></pre></div>
+<p><code>on('chat', ...)</code> needs no <code>subscribe</code>. Treat the text as you treat page text: it is data. What the person says is their request about the page, within what the grant allows. The person at a page is a visitor of that page, not your operator, and nothing they type approves anything. See <a href="../concepts/chat.html">Chat</a>.</p>
+<h2 id="refusals-are-errors-with-a-code">Refusals are errors with a code <a class="anchor" href="#refusals-are-errors-with-a-code" aria-label="Link to the section Refusals are errors with a code">#</a></h2>
+<p>Every refusal rejects with a <code>ReinsError</code> that has a <code>code</code> and a short message that is safe to show to a model:</p>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-k">import</span> { connect, ReinsError } <span class="t-k">from</span> <span class="t-s">'@offensiveadhd/reins/agent'</span>;
+
+<span class="t-k">try</span> {
+  <span class="t-k">await</span> kiosk.act(<span class="t-s">'order.submit'</span>);
+} <span class="t-k">catch</span> (err) {
+  <span class="t-k">if</span> (err <span class="t-k">instanceof</span> ReinsError &amp;&amp; err.code === <span class="t-s">'E_CONSENT'</span>) {
+    <span class="t-c">// the person refused, or nobody answered: do not ask again at once</span>
+  } <span class="t-k">else</span> <span class="t-k">throw</span> err;
+}</code></pre></div>
+<p>The codes are listed in <a href="../reference/error-codes.html">Error codes</a>, and <a href="../guides/troubleshooting.html">Troubleshooting</a> says what causes each and what to do. Three are worth knowing from the start:</p>
+<ul>
+<li><code>E_PAUSED</code>: the person paused control. Reading still works; wait and try again.</li>
+<li><code>E_CONSENT</code>: the person refused, or blocked the action in the panel. After a refusal on a prompt the same request is answered <code>E_RATE</code> for a while, a cool-off that doubles with each further refusal.</li>
+<li><code>E_SCOPE</code>: the grant lacks the scope, or the person switched it off. <code>grant.scopes</code> says which are in force.</li>
+<li><code>E_NOT_ATTACHED</code>: there is no live grant. The person pressed Stop, the grant expired, or the page reloaded. Attach again.</li>
+</ul>
+<p>An error thrown by <code>connect</code> itself while the handshake was running comes from a peer that is not verified yet. <code>isHandshakeError(err)</code> tells you so: show its message as data.</p>
+<h2 id="how-long-a-request-waits">How long a request waits <a class="anchor" href="#how-long-a-request-waits" aria-label="Link to the section How long a request waits">#</a></h2>
+<p>A request waits <code>reqTimeoutMs</code> (15 s by default) for its answer. Where a consent prompt may be involved, <code>surface.attach</code> and <code>act</code>, the agent waits 2 × <code>reqTimeoutMs</code> + <code>consentTimeoutMs</code>, 90 s with the default limits, so that the hub's answer, not the agent's own timer, says how a slow prompt ended.</p>
+<p><code>E_TIMEOUT</code> on an attach or an action means the page did not answer within the hub's wait. Treat it as a prompt nobody answered: ask the person to bring the page to the front, then ask again. The prompt can still be on the page, and a request approved there later still takes effect. Before repeating an action that is not safe to run twice, observe whether it ran.</p>
+<h2 id="events">Events <a class="anchor" href="#events" aria-label="Link to the section Events">#</a></h2>
+<div class="code" data-lang="js"><div class="code-bar"><span class="code-lang">JavaScript</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code><span class="t-k">await</span> kiosk.subscribe([<span class="t-s">'ui'</span>, <span class="t-s">'state'</span>, <span class="t-s">'user'</span>]);
+kiosk.on(<span class="t-s">'ui'</span>, ({ rev }) =&gt; { <span class="t-c">/* the tree changed: call observe for the delta */</span> });
+kiosk.on(<span class="t-s">'state'</span>, ({ name, patch }) =&gt; { <span class="t-c">/* a merge patch against the value you last received */</span> });
+kiosk.on(<span class="t-s">'grant'</span>, ({ kind }) =&gt; { <span class="t-c">/* 'revoked' or 'expired': the grant is over */</span> });</code></pre></div>
+<p><code>grant</code> and <code>surface</code> events need no subscription. See <a href="../reference/events.html">Events</a>.</p>
+<h2 id="the-same-from-a-shell">The same from a shell <a class="anchor" href="#the-same-from-a-shell" aria-label="Link to the section The same from a shell">#</a></h2>
+<p>In the folder of the project that has the package:</p>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npx <span class="t-f">--no</span> -- reins surfaces
+npx <span class="t-f">--no</span> -- reins card
+npx <span class="t-f">--no</span> -- reins observe
+npx <span class="t-f">--no</span> -- reins act cart.add <span class="t-s">'{&quot;sku&quot;:&quot;latte&quot;}'</span></code></pre></div>
+<div class="code" data-lang="text"><div class="code-bar"><span class="code-lang">Text</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>usage: reins &lt;command&gt; [options]
+
+commands:
+  surfaces                    list connected surfaces (JSON)
+  card                        print the prompt card
+  observe                     print the UI tree
+  act &lt;name&gt; [json-args]      call an app action
+  click &lt;target&gt;              click an element
+  type &lt;target&gt; &lt;text&gt;        type into an element
+  move &lt;target&gt;               move the cursor to an element (or x,y)
+  toast &lt;text&gt;                show a toast
+
+options:
+  --url &lt;ws url&gt;        hub URL (default ws://127.0.0.1:7346)
+  --surface &lt;id&gt;        surface id (default: the only surface)
+  --token-file &lt;path&gt;   file holding the key (default: the one the running hub announced)
+  --name &lt;agent name&gt;   name shown to the user
+  --kid &lt;id&gt;            the credential to authenticate as (default &quot;default&quot;); its key
+                        is the one in --token-file</code></pre></div>
+<p>Each <code>reins</code> command connects, attaches with the one scope it needs, does its work and detaches, so every command that needs a grant asks the page again under a profile that confirms attaches. <code>--kid</code> names the credential to authenticate as, with its key in <code>--token-file</code>, where a hub gave each agent its own (<code>reins-hub --agent &lt;kid&gt;=&lt;file&gt;</code>). For an agent that issues many commands, use <a href="./shell-tools.html">the shell tools</a>, which keep one session, or <a href="./mcp.html">the MCP adapter</a>.</p>
+<h2 id="next">Next <a class="anchor" href="#next" aria-label="Link to the section Next">#</a></h2>
+<ul>
+<li><a href="./mcp.html">Use it from Claude Code and other MCP harnesses</a></li>
+<li><a href="../reference/methods.html">Methods</a></li>
+<li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li>
+</ul>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/start/drive-from-node.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/start/drive-from-node.md</code></span><a class="md-link" href="./drive-from-node.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./make-an-app-drivable.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Make an app drivable</span></a>
+    <a class="pager-next" href="./mcp.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Claude Code and MCP</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#start-a-hub">Start a hub</a></li><li class="toc-2"><a href="#where-the-sdk-finds-the-key">Where the SDK finds the key</a></li><li class="toc-2"><a href="#connect-attach-drive">Connect, attach, drive</a></li><li class="toc-2"><a href="#the-surface-handle">The surface handle</a></li><li class="toc-2"><a href="#what-the-person-sets-reaches-you">What the person sets reaches you</a></li><li class="toc-2"><a href="#chat">Chat</a></li><li class="toc-2"><a href="#refusals-are-errors-with-a-code">Refusals are errors with a code</a></li><li class="toc-2"><a href="#how-long-a-request-waits">How long a request waits</a></li><li class="toc-2"><a href="#events">Events</a></li><li class="toc-2"><a href="#the-same-from-a-shell">The same from a shell</a></li><li class="toc-2"><a href="#next">Next</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

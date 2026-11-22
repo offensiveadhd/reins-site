@@ -1,0 +1,1037 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Requirements index · Reins</title>
+<meta name="description" content="Every requirement the conformance suite checks, grouped by section of the specification, with the normative sentences it covers and the tests that check it. Generated from conformance/requirements.json.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/implementers/requirements.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Requirements index">
+<meta property="og:description" content="Every requirement the conformance suite checks, grouped by section of the specification, with the normative sentences it covers and the tests that check it. Generated from conformance/requirements.json.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/implementers/requirements.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="./writing-an-implementation.html">Writing another implementation</a></li><li><a href="./conformance-suite.html">The conformance suite</a></li><li><a href="./test-vectors.html">Test vectors</a></li><li><a href="./requirements.html" aria-current="page">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#implementers">Implementers</a></li><li aria-current="page">Requirements index</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Requirements index</h1>
+        <p class="lede">Every requirement the conformance suite checks, grouped by section of the specification, with the normative sentences it covers and the tests that check it. Generated from conformance/requirements.json.</p>
+        
+      </header>
+      <h2 id="how-to-read-this">How to read this <a class="anchor" href="#how-to-read-this" aria-label="Link to the section How to read this">#</a></h2>
+<p>The conformance suite is traceable to the specification. <code>conformance/requirements.json</code> maps every requirement to its section and its tests, and each test name starts with the id of the requirement it checks.</p>
+<p>A meta-test keeps the map honest. It fails if a normative sentence (MUST, MUST NOT, SHALL) or a rule of section 14 has no entry, if a quote no longer occurs in the specification, or if an entry names a test that does not exist. So the specification cannot gain a requirement without gaining a test.</p>
+<p>Ids are grouped by prefix: <code>TR</code> transports, <code>FR</code> framing, <code>HS</code> handshake, <code>RQ</code> requests and events, <code>MAN</code> manifest, <code>GR</code> grants, <code>M</code> methods, <code>OBS</code> observation, <code>PTR</code> the pointer stream, <code>POL</code> policy, <code>HUB</code> hub behaviour, <code>LV</code> levels, rules and the panel, <code>CH</code> chat, <code>OR</code> origins, <code>EL</code> Electron, <code>MCP</code> the adapter, <code>VER</code> versioning, <code>ERR</code> error codes, and <code>S14</code> the security requirements. Test names that start with <code>VEC</code> check the <a href="./test-vectors.html">test vectors</a>.</p>
+<p>What the suite does not check, or only partly, is listed under &quot;Coverage limits&quot; in <a href="./conformance-suite.html#coverage-limits">The conformance suite</a>.</p>
+<p>205 requirements, checked by 426 test references. Each entry gives the requirement, the sentences of the specification it covers, word for word, and the tests that check it. The section headings link to the specification.</p>
+<h2 id="section-3-transports">Section 3: Transports <a class="anchor" href="#section-3-transports" aria-label="Link to the section Section 3: Transports">#</a></h2>
+<p><a href="../reference/specification.html#3-transports">Read section 3 of the specification</a>.</p>
+<h4 id="tr-1">TR-1 <a class="anchor" href="#tr-1" aria-label="Link to the section TR-1">#</a></h4>
+<p>The hub binds loopback addresses only and refuses any other bind address.</p>
+<blockquote>
+<p>The hub MUST:</p>
+<p>bind loopback addresses only and refuse any other bind address;</p>
+</blockquote>
+<p>Tests: <code>TR-1 the hub refuses to bind a non-loopback address</code>, <code>TR-1 the hub binds 127.0.0.1 by default and listens on the port it reports</code></p>
+<h4 id="tr-2">TR-2 <a class="anchor" href="#tr-2" aria-label="Link to the section TR-2">#</a></h4>
+<p>The hub rejects a socket whose remote address is not loopback.</p>
+<blockquote>
+<p>reject a socket whose remote address is not loopback;</p>
+</blockquote>
+<p>Tests: <code>TR-2 the hub serves loopback clients (the non-loopback refusal itself needs a second interface; see README)</code></p>
+<h4 id="tr-3">TR-3 <a class="anchor" href="#tr-3" aria-label="Link to the section TR-3">#</a></h4>
+<p>The hub rejects a Host header other than 127.0.0.1, localhost or [::1] with its port.</p>
+<blockquote>
+<p>reject a request whose <code>Host</code> header is not</p>
+</blockquote>
+<p>Tests: <code>S14.1 an upgrade with a Host header other than loopback with the hub port is refused (DNS rebinding)</code></p>
+<h4 id="tr-4">TR-4 <a class="anchor" href="#tr-4" aria-label="Link to the section TR-4">#</a></h4>
+<p>The hub requires the reins.v1 subprotocol.</p>
+<blockquote>
+<p>require the <code>reins.v1</code> subprotocol;</p>
+</blockquote>
+<p>Tests: <code>TR-4 the hub requires the reins.v1 subprotocol</code></p>
+<h4 id="tr-5">TR-5 <a class="anchor" href="#tr-5" aria-label="Link to the section TR-5">#</a></h4>
+<p>The hub disables per-message compression.</p>
+<blockquote>
+<p>disable per-message compression;</p>
+</blockquote>
+<p>Tests: <code>TR-5 the hub disables per-message compression</code></p>
+<h4 id="tr-6">TR-6 <a class="anchor" href="#tr-6" aria-label="Link to the section TR-6">#</a></h4>
+<p>The hub answers plain HTTP with a bare status and no body.</p>
+<blockquote>
+<p>answer plain HTTP requests with a bare status and no body.</p>
+</blockquote>
+<p>Tests: <code>TR-6 a plain HTTP request gets a bare status and no body</code></p>
+<h4 id="el-1">EL-1 <a class="anchor" href="#el-1" aria-label="Link to the section EL-1">#</a></h4>
+<p>In an Electron app the origin of a window's link is the one Electron reports for the frame the port went to, never one the page sent.</p>
+<blockquote>
+<p>it MUST take the link's origin from the frame the port went to</p>
+</blockquote>
+<p>Tests: <code>EL-1 the link's origin is the one Electron reports for the frame, whatever the page sends</code></p>
+<h4 id="el-2">EL-2 <a class="anchor" href="#el-2" aria-label="Link to the section EL-2">#</a></h4>
+<p>The main process gives a port only to the top-level frame of a window the app registered; a second request from a window closes the link it had.</p>
+<blockquote>
+<p>It MUST give a port only to the top-level frame of a window the app registered</p>
+</blockquote>
+<p>Tests: <code>EL-2 a port goes only to the top-level frame of a window the app registered</code></p>
+<h4 id="el-3">EL-3 <a class="anchor" href="#el-3" aria-label="Link to the section EL-3">#</a></h4>
+<p>A &lt;webview&gt; guest gets a port only when the app registered it as embedded; an offscreen or background page gets none.</p>
+<blockquote>
+<p>MUST NOT give one to a <code>&lt;webview&gt;</code> guest unless the app said that guest may be driven while embedded</p>
+</blockquote>
+<p>Tests: <code>EL-3 a &lt;webview&gt; guest gets a port only when the app registered it as embedded, and a page nobody sees gets none</code></p>
+<h4 id="el-4">EL-4 <a class="anchor" href="#el-4" aria-label="Link to the section EL-4">#</a></h4>
+<p>A hub with surfaceSockets false answers a hello with role surface on its socket with bye E_ORIGIN, and still admits surfaces linked in-process.</p>
+<blockquote>
+<p>a <code>hello</code> with role <code>surface</code> MUST be answered <code>bye {code:&quot;E_ORIGIN&quot;}</code></p>
+</blockquote>
+<p>Tests: <code>EL-4 with surfaceSockets false a surface is refused on the socket with E_ORIGIN and admitted in-process</code></p>
+<h4 id="el-9">EL-9 <a class="anchor" href="#el-9" aria-label="Link to the section EL-9">#</a></h4>
+<p>A window is linked only while it shows the page it was registered for, by the URL Electron reports for the frame; a window that shows a page of origin file:// or null is not linked without one.</p>
+<blockquote>
+<p>MUST compare it with the URL Electron reports for the frame at the time the page asks</p>
+<p>MUST NOT link a window that shows a page of origin <code>file://</code> or <code>null</code> unless it was registered with one</p>
+</blockquote>
+<p>Tests: <code>EL-9 a window is linked only while it shows the page it was registered for, and a window that shows a file has to be registered with its URL</code></p>
+<h4 id="el-10">EL-10 <a class="anchor" href="#el-10" aria-label="Link to the section EL-10">#</a></h4>
+<p>A window that is not shown gets its link when it is shown, and so does a view registered by its contents, which gets none while it is in no window; a frame without a parent that is not the page's top frame gets none; in a window without context isolation the preload offers no way to ask and the page is told why.</p>
+<blockquote>
+<p>in a window without context isolation it MUST NOT offer the page a way to ask</p>
+</blockquote>
+<p>Tests: <code>EL-10 a window that is not shown gets its link when it is shown; a frame without a parent that is not the page's top frame gets none; without context isolation the preload refuses and the page is told why</code></p>
+<h4 id="el-14">EL-14 <a class="anchor" href="#el-14" aria-label="Link to the section EL-14">#</a></h4>
+<p>A surface whose link the embedding code built and vouches for is listed as verified; nothing a surface says on a socket makes it so.</p>
+<p>Tests: <code>EL-14 a surface whose link the embedding code built and vouches for is listed as verified; one linked without that, or over a socket, is not</code>, <code>EL-14 nothing a surface writes on a socket makes it verified: only a key does</code></p>
+<h4 id="el-16">EL-16 <a class="anchor" href="#el-16" aria-label="Link to the section EL-16">#</a></h4>
+<p>reins-electron vouches for a page only when it holds the debugging connection alone (a pipe): a page adopted through a debugging port is not listed as verified, treats its hub as unverified, and is given no surface key.</p>
+<blockquote>
+<p>MUST NOT vouch for a page it adopted through a debugging port</p>
+</blockquote>
+<p>Tests: <code>EL-16 over a debugging pipe the hub lists an adopted page as verified, and the page takes its hub as verified</code>, <code>EL-16 through a debugging port neither does: the hub lists the page as unverified, and its prompt says &quot;Unverified hub&quot;</code>, <code>EL-16 a page adopted through a debugging port gets no surface key, and its configuration says that its hub is not to be taken as verified</code></p>
+<h2 id="section-4-framing">Section 4: Framing <a class="anchor" href="#section-4-framing" aria-label="Link to the section Section 4: Framing">#</a></h2>
+<p><a href="../reference/specification.html#4-framing">Read section 4 of the specification</a>.</p>
+<h4 id="fr-1">FR-1 <a class="anchor" href="#fr-1" aria-label="Link to the section FR-1">#</a></h4>
+<p>A receiver closes with E_TOO_LARGE on an oversize frame and with E_BAD_FRAME on invalid JSON, an unknown t or a missing field; closing with a code is bye {code} then close, and a message the transport cannot take is closed with WebSocket code 1009.</p>
+<blockquote>
+<p>A receiver MUST close with <code>E_TOO_LARGE</code></p>
+</blockquote>
+<p>Tests: <code>FR-1 an unknown frame type closes the connection with E_BAD_FRAME</code>, <code>FR-2 a frame that is not valid JSON closes the connection with E_BAD_FRAME</code>, <code>FR-3 a frame that lacks a required field closes the connection with E_BAD_FRAME</code>, <code>FR-4 the hub announces its limits in welcome and closes an oversize text frame with E_TOO_LARGE</code>, <code>FR-5 an oversize binary frame closes the connection with E_TOO_LARGE</code>, <code>FR-6 a sealed text frame far over the limit closes the connection (bye E_TOO_LARGE or WebSocket close 1009)</code>, <code>HS-8 a peer that sends anything but hello first is closed</code></p>
+<h4 id="fr-2">FR-2 <a class="anchor" href="#fr-2" aria-label="Link to the section FR-2">#</a></h4>
+<p>The hub announces its limits in welcome; defaults are 256 KiB text, 16 KiB binary, heartbeatMs 15000, reqTimeoutMs 15000, consentTimeoutMs 60000.</p>
+<p>Tests: <code>FR-4 the hub announces its limits in welcome and closes an oversize text frame with E_TOO_LARGE</code>, <code>VEC-LIMITS the default limits and fixed sizes match the spec</code>, <code>VEC-LIMITS heartbeatMs, reqTimeoutMs, consentTimeoutMs and the initial pointer credit have the stated defaults</code></p>
+<h2 id="section-5-handshake-and-authentication">Section 5: Handshake and authentication <a class="anchor" href="#section-5-handshake-and-authentication" aria-label="Link to the section Section 5: Handshake and authentication">#</a></h2>
+<p><a href="../reference/specification.html#5-handshake-and-authentication">Read section 5 of the specification</a>.</p>
+<h4 id="hs-1">HS-1 <a class="anchor" href="#hs-1" aria-label="Link to the section HS-1">#</a></h4>
+<p>The hub sends challenge {v, nonce, hub} first; nonces are 32 fresh random bytes, base64url.</p>
+<p>Tests: <code>HS-1 the hub speaks first with challenge {v, nonce, hub}; the nonce is 32 fresh bytes</code></p>
+<h4 id="hs-2">HS-2 <a class="anchor" href="#hs-2" aria-label="Link to the section HS-2">#</a></h4>
+<p>Proofs are base64url HMAC-SHA256 over the UTF-8 bytes of the context, role, kid, nonce and cnonce joined by line feeds, keyed by the UTF-8 bytes of the secret, with the contexts reins.v1.auth and reins.v1.hub.</p>
+<p>Tests: <code>HS-2 a correct agent proof is answered with welcome {v, session, role, limits, proof} and the hub proof verifies</code>, <code>VEC-AUTH peerProof reproduces every hello.auth.proof vector</code>, <code>VEC-AUTH hubProof reproduces every welcome.proof vector</code></p>
+<h4 id="hs-3">HS-3 <a class="anchor" href="#hs-3" aria-label="Link to the section HS-3">#</a></h4>
+<p>A failed hello is answered with bye E_AUTH and closed.</p>
+<p>Tests: <code>HS-3 a wrong proof is answered with bye E_AUTH and the connection is closed</code>, <code>HS-3 an unknown kid is answered with bye E_AUTH</code></p>
+<h4 id="hs-4">HS-4 <a class="anchor" href="#hs-4" aria-label="Link to the section HS-4">#</a></h4>
+<p>Agents must authenticate.</p>
+<blockquote>
+<p><strong>Agents</strong> MUST authenticate.</p>
+</blockquote>
+<p>Tests: <code>HS-4 agents must authenticate: an agent hello without auth is refused with E_AUTH</code>, <code>S14.2 agents prove a 256-bit secret by HMAC and the hub proves it back; a wrong secret is refused</code></p>
+<h4 id="hs-5">HS-5 <a class="anchor" href="#hs-5" aria-label="Link to the section HS-5">#</a></h4>
+<p>A failed proof is answered after 200 ms, doubling per failure in the last minute, up to 3 s; a correct proof is never refused because others failed.</p>
+<p>Tests: <code>HS-5 a failed proof is answered after a delay of at least 200 ms that doubles with each failure</code>, <code>HS-6 a correct proof is not refused because other proofs failed</code></p>
+<h4 id="hs-6">HS-6 <a class="anchor" href="#hs-6" aria-label="Link to the section HS-6">#</a></h4>
+<p>At most 16 handshakes are pending; further connections get E_BUSY.</p>
+<p>Tests: <code>HS-7 more than 16 pending handshakes: further connections are closed with E_BUSY</code></p>
+<h4 id="hs-7">HS-7 <a class="anchor" href="#hs-7" aria-label="Link to the section HS-7">#</a></h4>
+<p>A peer that sends anything but hello first, or takes longer than 5 s, is closed.</p>
+<p>Tests: <code>HS-8 a peer that sends anything but hello first is closed</code>, <code>HS-9 a peer that sends no hello within 5 s is closed</code></p>
+<h4 id="hs-8">HS-8 <a class="anchor" href="#hs-8" aria-label="Link to the section HS-8">#</a></h4>
+<p>Keys shorter than 32 characters are rejected.</p>
+<p>Tests: <code>HS-10 keys shorter than 32 characters are rejected when the hub is configured</code></p>
+<h4 id="hs-9">HS-9 <a class="anchor" href="#hs-9" aria-label="Link to the section HS-9">#</a></h4>
+<p>A peer that holds a key verifies welcome.proof and closes on mismatch.</p>
+<blockquote>
+<p>A peer that holds a key MUST verify it and close on mismatch.</p>
+</blockquote>
+<p>Tests: <code>HS-11 a peer holding a key verifies welcome.proof and closes on mismatch</code></p>
+<h4 id="hs-10">HS-10 <a class="anchor" href="#hs-10" aria-label="Link to the section HS-10">#</a></h4>
+<p>Every message after welcome of a keyed session is sealed with directional keys bound to the challenge, hello and welcome texts.</p>
+<p>Tests: <code>HS-12 after welcome the hub answers the sealed ping with a sealed pong, and every later hub message is sealed</code>, <code>VEC-SEAL a peer-side sealed link emits exactly the vector wire messages, counting from 0</code>, <code>VEC-SEAL a hub-side sealed link emits exactly the vector wire messages</code>, <code>VEC-SEAL the hub side opens the vector messages and delivers the payloads in order</code>, <code>VEC-SEAL keys depend on every byte of hello and welcome</code>, <code>S14.2 seal MACs are bound to the handshake: a message sealed for another session is rejected</code>, <code>VEC-SEAL keys depend on every byte of the challenge and on where each transcript text ends</code></p>
+<h4 id="hs-11">HS-11 <a class="anchor" href="#hs-11" aria-label="Link to the section HS-11">#</a></h4>
+<p>A sealed message that does not verify (altered, replayed, reordered, clear text) closes the connection and is not delivered.</p>
+<p>Tests: <code>HS-13 a sealed message that does not verify closes the connection and is not delivered</code>, <code>HS-14 a replayed sealed message closes the connection</code>, <code>HS-15 a clear-text frame inside a sealed session closes the connection</code>, <code>VEC-SEAL a message replayed, reordered or altered closes the link and is not delivered</code></p>
+<h4 id="hs-12">HS-12 <a class="anchor" href="#hs-12" aria-label="Link to the section HS-12">#</a></h4>
+<p>Key confirmation: sealed ping, sealed pong; the hub registers the peer only after it; 5 s limit.</p>
+<p>Tests: <code>HS-12 after welcome the hub answers the sealed ping with a sealed pong, and every later hub message is sealed</code>, <code>HS-16 the hub registers a keyed peer only after key confirmation</code>, <code>HS-17 a keyed peer that never confirms is closed after about 5 s</code></p>
+<h4 id="hs-13">HS-13 <a class="anchor" href="#hs-13" aria-label="Link to the section HS-13">#</a></h4>
+<p>An agent connecting with an Origin header is admitted only if the credential lists that origin, else E_ORIGIN.</p>
+<blockquote>
+<p>that origin MUST be listed on the credential</p>
+</blockquote>
+<p>Tests: <code>HS-18 an agent connecting with an Origin header is admitted only if the credential lists that origin</code></p>
+<h4 id="hs-14">HS-14 <a class="anchor" href="#hs-14" aria-label="Link to the section HS-14">#</a></h4>
+<p>The display name is the credential name, else the declared name without control characters, cut to 64.</p>
+<p>Tests: <code>HS-19 the name shown to users is the credential name, else the declared name without control characters, cut to 64</code></p>
+<h4 id="hs-15">HS-15 <a class="anchor" href="#hs-15" aria-label="Link to the section HS-15">#</a></h4>
+<p>A surface origin must be in the allowlist (exact, scheme://host:*, or *), else E_ORIGIN.</p>
+<blockquote>
+<p>MUST find it in the configured allowlist</p>
+</blockquote>
+<p>Tests: <code>HS-20 a surface is admitted only from an allowlisted origin, exact or scheme://host:*</code></p>
+<h4 id="hs-16">HS-16 <a class="anchor" href="#hs-16" aria-label="Link to the section HS-16">#</a></h4>
+<p>hello.surface.url has the connection origin.</p>
+<blockquote>
+<p><code>hello.surface.url</code> MUST have that origin.</p>
+</blockquote>
+<p>Tests: <code>HS-21 hello.surface.url must have the connection origin</code></p>
+<h4 id="hs-17">HS-17 <a class="anchor" href="#hs-17" aria-label="Link to the section HS-17">#</a></h4>
+<p>requireKey refuses every surface without a key; a hub may pin an app id to a manifest digest (E_DENIED).</p>
+<p>Tests: <code>HS-22 with requireKey a surface without a key is refused with E_AUTH and one with the key is sealed</code>, <code>HS-23 a hub that pins an app id to a manifest digest refuses a different manifest</code></p>
+<h4 id="hs-18">HS-18 <a class="anchor" href="#hs-18" aria-label="Link to the section HS-18">#</a></h4>
+<p>A kiosk surface holds a key.</p>
+<blockquote>
+<p>a kiosk surface MUST hold a key.</p>
+</blockquote>
+<p>Tests: <code>SF-ATT-5 a kiosk driver refuses to dial a hub without a surface key</code></p>
+<h4 id="hs-19">HS-19 <a class="anchor" href="#hs-19" aria-label="Link to the section HS-19">#</a></h4>
+<p>A surface without a key treats the hub as unverified and never attaches silently.</p>
+<p>Tests: <code>SF-ATT-3 against an unverified hub the surface never attaches silently and says so in the consent request</code></p>
+<h4 id="hs-20">HS-20 <a class="anchor" href="#hs-20" aria-label="Link to the section HS-20">#</a></h4>
+<p>Session ids are labels; nothing is authorised by knowing one.</p>
+<p>Tests: <code>GR-14 session ids are labels: another agent cannot use a grant by naming its session</code></p>
+<h4 id="hs-21">HS-21 <a class="anchor" href="#hs-21" aria-label="Link to the section HS-21">#</a></h4>
+<p>Either side sends bye before closing on purpose.</p>
+<p>Tests: <code>HS-25 a hub refusal sends bye before closing</code>, <code>RQ-10 a peer that sends bye is closed; the hub tells agents the surface is gone</code>, <code>SH-1 on shutdown the hub sends bye {code:&quot;OK&quot;} to every peer</code></p>
+<h4 id="hs-22">HS-22 <a class="anchor" href="#hs-22" aria-label="Link to the section HS-22">#</a></h4>
+<p>Seal keys: th = b64url(SHA-256(L(c) || c || L(h) || h || L(w) || w)) over the UTF-8 challenge, hello and welcome texts with u32 BE byte lengths; k = raw HMAC-SHA256(key, context + &quot;\n&quot; + nonce + &quot;\n&quot; + cnonce + &quot;\n&quot; + th); text payloads MACed as UTF-8.</p>
+<blockquote>
+<p>Both ends MUST derive the keys exactly this way</p>
+</blockquote>
+<p>Tests: <code>VEC-SEAL a peer-side sealed link emits exactly the vector wire messages, counting from 0</code>, <code>VEC-SEAL a hub-side sealed link emits exactly the vector wire messages</code>, <code>VEC-SEAL keys depend on every byte of the challenge and on where each transcript text ends</code>, <code>HS-12 after welcome the hub answers the sealed ping with a sealed pong, and every later hub message is sealed</code></p>
+<h4 id="hs-23">HS-23 <a class="anchor" href="#hs-23" aria-label="Link to the section HS-23">#</a></h4>
+<p>Text that is not well-formed Unicode is never sealed or opened; such a transcript text fails with E_AUTH.</p>
+<blockquote>
+<p>Text that is not well-formed Unicode (it holds a lone surrogate) MUST NOT be sealed or opened</p>
+</blockquote>
+<p>Tests: <code>VEC-SEAL text that is not well-formed Unicode is never sealed or opened, and such a transcript fails with E_AUTH</code></p>
+<h4 id="hs-24">HS-24 <a class="anchor" href="#hs-24" aria-label="Link to the section HS-24">#</a></h4>
+<p>A surface claiming an app id the hub holds a key for must prove it, with or without requireKey (E_AUTH); SurfaceInfo.verified is true only for a surface that proved a key.</p>
+<blockquote>
+<p>A surface whose manifest claims an app id the hub holds a key for MUST prove that key</p>
+</blockquote>
+<p>Tests: <code>HS-26 a surface claiming an app id the hub holds a key for must prove it, even without requireKey; SurfaceInfo.verified tells them apart</code></p>
+<h4 id="or-1">OR-1 <a class="anchor" href="#or-1" aria-label="Link to the section OR-1">#</a></h4>
+<p>The origin of a URL is the web origin for http, https, ws, wss and ftp, file:// for every file: URL, the app origin scheme://host[:port] for a URL of another scheme that has a host, and null otherwise; it is computed, not taken from a URL library.</p>
+<blockquote>
+<p>An implementation MUST compute it this way (<code>urlOrigin</code>)</p>
+</blockquote>
+<p>Tests: <code>OR-1 the origin of a file: or app-scheme URL is computed, not taken from the URL parser of the engine</code>, <code>VEC-ORIGIN urlOrigin gives every URL the origin section 5 defines</code></p>
+<h4 id="or-2">OR-2 <a class="anchor" href="#or-2" aria-label="Link to the section OR-2">#</a></h4>
+<p>The entry * admits web origins only: file://, an app origin and null are not admitted by it.</p>
+<blockquote>
+<p><code>*</code> matches every web origin and MUST NOT match <code>file://</code>, an app origin or <code>null</code></p>
+</blockquote>
+<p>Tests: <code>OR-2 the entry * admits web origins only: file://, an app origin and null are refused under it</code>, <code>VEC-ORIGIN originAllowed admits an origin by the entries of section 5</code></p>
+<h4 id="or-3">OR-3 <a class="anchor" href="#or-3" aria-label="Link to the section OR-3">#</a></h4>
+<p>file://, an app origin and null are admitted by an entry that names them; scheme://host:* admits an app origin of that scheme and host with any port or none.</p>
+<p>Tests: <code>OR-3 file://, an app origin and null are admitted by an entry that names them, exact or scheme://host:*</code>, <code>VEC-ORIGIN originAllowed admits an origin by the entries of section 5</code></p>
+<h4 id="or-4">OR-4 <a class="anchor" href="#or-4" aria-label="Link to the section OR-4">#</a></h4>
+<p>hello.surface.url has the connection origin when the origin of the URL equals it; a connection whose origin is null takes any URL that has no web origin.</p>
+<p>Tests: <code>OR-4 hello.surface.url of a file: or app-scheme page must have the connection origin</code>, <code>VEC-ORIGIN urlHasOrigin says whether hello.surface.url has the connection origin</code></p>
+<h4 id="or-5">OR-5 <a class="anchor" href="#or-5" aria-label="Link to the section OR-5">#</a></h4>
+<p>A credential's origins and surfaces lists match file:// and app origins by the same rules, and * on them is web origins only.</p>
+<p>Tests: <code>OR-5 a credential names file:// and app origins like any other: where an agent page may connect from, and which surfaces it may see</code></p>
+<h4 id="or-6">OR-6 <a class="anchor" href="#or-6" aria-label="Link to the section OR-6">#</a></h4>
+<p>The hub judges the URL of a surface's nav report by the origin section 5 gives it: a report of a file:// or app-origin page reaches the agents, one of another origin is dropped.</p>
+<blockquote>
+<p>the hub MUST judge it by the origin this section gives it</p>
+</blockquote>
+<p>Tests: <code>OR-6 a nav report of a page on file:// or an app origin reaches the agents and the listing, as one of a web page does; one of another origin is dropped</code></p>
+<h2 id="section-6-requests-responses-events">Section 6: Requests, responses, events <a class="anchor" href="#section-6-requests-responses-events" aria-label="Link to the section Section 6: Requests, responses, events">#</a></h2>
+<p><a href="../reference/specification.html#6-requests-responses-events">Read section 6 of the specification</a>.</p>
+<h4 id="rq-1">RQ-1 <a class="anchor" href="#rq-1" aria-label="Link to the section RQ-1">#</a></h4>
+<p>A forwarded request reaches the surface without s, with ag, and c:1 when the hub policy demands confirmation; the answer is relayed unchanged.</p>
+<p>Tests: <code>RQ-3 a forwarded request reaches the surface without s, with ag set to the agent session, ids counting from 1</code>, <code>RQ-4 the surface's answer is relayed back unchanged, errors included</code>, <code>RQ-5 the hub sets c:1 when its policy demands a human confirmation</code></p>
+<h4 id="rq-2">RQ-2 <a class="anchor" href="#rq-2" aria-label="Link to the section RQ-2">#</a></h4>
+<p>Timeouts give E_TIMEOUT (act also waits consentTimeoutMs); a surface disconnect fails pending requests with E_GONE.</p>
+<p>Tests: <code>RQ-6 a request the surface never answers fails with E_TIMEOUT; act waits reqTimeoutMs plus consentTimeoutMs</code>, <code>RQ-7 when a surface disconnects, its pending requests fail with E_GONE</code></p>
+<h4 id="rq-3">RQ-3 <a class="anchor" href="#rq-3" aria-label="Link to the section RQ-3">#</a></h4>
+<p>Events: ag targets one agent, otherwise every attached agent; the hub adds s; grant and surface events need no subscription.</p>
+<p>Tests: <code>RQ-8 a surface event without ag reaches every attached agent with s added; with ag only that agent</code>, <code>RQ-9 grant and surface events need no subscription</code></p>
+<h4 id="rq-4">RQ-4 <a class="anchor" href="#rq-4" aria-label="Link to the section RQ-4">#</a></h4>
+<p>ping {ts} is answered with pong {ts}; a peer silent for 2.5 x heartbeatMs is dropped.</p>
+<p>Tests: <code>RQ-1 ping {ts} is answered with pong carrying the same ts</code>, <code>RQ-2 the hub pings after heartbeatMs of silence and drops a peer silent for 2.5 x heartbeatMs</code></p>
+<h4 id="rq-5">RQ-5 <a class="anchor" href="#rq-5" aria-label="Link to the section RQ-5">#</a></h4>
+<p>The hub relays ui, state and nav events only to live grants with observe, user events to every live grant; grant events from a surface are acted on by kind and never relayed as they came, and surface events from a surface are dropped.</p>
+<p>Tests: <code>RQ-11 events reach only grants with the scope their topic needs; grant and surface events from a surface are not relayed</code></p>
+<h4 id="rq-6">RQ-6 <a class="anchor" href="#rq-6" aria-label="Link to the section RQ-6">#</a></h4>
+<p>An unknown method is E_UNKNOWN_METHOD before any parameter check; a hidden surface answers exactly like a missing one (E_NO_SURFACE); params that cannot be canonicalised are E_BAD_ARGS and not forwarded.</p>
+<p>Tests: <code>VER-4 an unknown method without a surface id is refused with E_UNKNOWN_METHOD</code>, <code>GR-18 a surface the credential may not attach to answers exactly like a missing one: E_NO_SURFACE on every method that takes s</code>, <code>RQ-12 params nested too deeply to canonicalise are refused with E_BAD_ARGS and not forwarded; an unknown method is still E_UNKNOWN_METHOD</code></p>
+<h2 id="section-7-manifest-and-prompt-card">Section 7: Manifest and prompt card <a class="anchor" href="#section-7-manifest-and-prompt-card" aria-label="Link to the section Section 7: Manifest and prompt card">#</a></h2>
+<p><a href="../reference/specification.html#7-manifest-and-prompt-card">Read section 7 of the specification</a>.</p>
+<h4 id="man-1">MAN-1 <a class="anchor" href="#man-1" aria-label="Link to the section MAN-1">#</a></h4>
+<p>A surface describes itself in hello.surface.manifest; the hub computes digest = b64url SHA-256 of canonical JSON (keys sorted by UTF-16 code units, no whitespace, ECMAScript number and string forms).</p>
+<p>Tests: <code>SF-MAN-1 hello carries the manifest: reins, app, actions, views, state, exposure, profile</code>, <code>HS-24 the hub computes the manifest digest as base64url SHA-256 of the canonical JSON</code>, <code>VEC-CARD canonicalJson sorts keys and drops whitespace</code>, <code>VEC-CARD manifestDigest is the base64url SHA-256 of the canonical JSON</code>, <code>VEC-CARD canonicalJson sorts keys by UTF-16 code units and writes strings and numbers as ECMAScript does</code></p>
+<h4 id="man-2">MAN-2 <a class="anchor" href="#man-2" aria-label="Link to the section MAN-2">#</a></h4>
+<p>A manifest is at most 64 KiB, 256 actions, 64 views; names match NAME_PATTERN.</p>
+<p>Tests: <code>VEC-CARD validateManifest enforces 64 KiB, 256 actions and 64 views</code></p>
+<h4 id="man-3">MAN-3 <a class="anchor" href="#man-3" aria-label="Link to the section MAN-3">#</a></h4>
+<p>The prompt card is rendered by the section 7 rules and is the same wherever it is produced.</p>
+<p>Tests: <code>VEC-CARD renderCard reproduces the section 7 prompt card</code></p>
+<h2 id="section-8-grants-and-scopes">Section 8: Grants and scopes <a class="anchor" href="#section-8-grants-and-scopes" aria-label="Link to the section Section 8: Grants and scopes">#</a></h2>
+<p><a href="../reference/specification.html#8-grants-and-scopes">Read section 8 of the specification</a>.</p>
+<h4 id="gr-1">GR-1 <a class="anchor" href="#gr-1" aria-label="Link to the section GR-1">#</a></h4>
+<p>Attach scopes are intersected with the credential cap and the hub policy; empty is E_SCOPE; hub attach deny is E_DENIED.</p>
+<p>Tests: <code>GR-1 the hub intersects requested scopes with the credential cap and the hub policy</code>, <code>GR-2 hub policy attach: deny refuses with E_DENIED</code>, <code>VEC-SCOPE capScopes intersects in canonical order</code></p>
+<h4 id="gr-2">GR-2 <a class="anchor" href="#gr-2" aria-label="Link to the section GR-2">#</a></h4>
+<p>The surface decides attach by its policy and answers {scopes, ttlMs}; a refusal is E_CONSENT or E_DENIED.</p>
+<p>Tests: <code>GR-3 a surface refusal (E_CONSENT, E_DENIED) reaches the agent</code>, <code>SF-ATT-1 attach is decided by the surface policy: open allows, guarded asks, and the surface caps scopes by its own policy</code>, <code>SF-ATT-2 a refused attach is E_CONSENT; policy attach: deny is E_DENIED</code></p>
+<h4 id="gr-3">GR-3 <a class="anchor" href="#gr-3" aria-label="Link to the section GR-3">#</a></h4>
+<p>The grant expires at min(hub ttl, surface ttl) and the result is {grant, surface, manifest}.</p>
+<p>Tests: <code>GR-4 the attach result is {grant, surface, manifest} and the grant expires at min(hub ttl, surface ttl)</code></p>
+<h4 id="gr-4">GR-4 <a class="anchor" href="#gr-4" aria-label="Link to the section GR-4">#</a></h4>
+<p>One attach in flight per credential and surface across its sessions (E_BUSY); a burst of 3 attaches then one every 2 s (E_RATE); a disconnect withdraws a pending attach with detach {why:&quot;agent&quot;}.</p>
+<p>Tests: <code>GR-7 one attach at a time per agent and surface: a second concurrent attach is E_BUSY</code>, <code>GR-8 attach is rate limited per credential and surface: a burst of 3, then E_RATE</code>, <code>GR-17 one attach in flight per credential and surface across its sessions; a disconnect withdraws a pending attach with detach {why:&quot;agent&quot;}</code></p>
+<h4 id="gr-5">GR-5 <a class="anchor" href="#gr-5" aria-label="Link to the section GR-5">#</a></h4>
+<p>The surface asks even under allow if the hub is unverified or after Stop.</p>
+<p>Tests: <code>SF-ATT-3 against an unverified hub the surface never attaches silently and says so in the consent request</code>, <code>SF-ATT-4 after Stop every later attach on the page needs approval</code></p>
+<h4 id="gr-6">GR-6 <a class="anchor" href="#gr-6" aria-label="Link to the section GR-6">#</a></h4>
+<p>One grant per agent and surface; attaching again replaces it.</p>
+<p>Tests: <code>GR-9 attaching again replaces the grant: one grant per agent and surface</code></p>
+<h4 id="gr-7">GR-7 <a class="anchor" href="#gr-7" aria-label="Link to the section GR-7">#</a></h4>
+<p>A grant ends on detach, disconnect, expiry, idleMs or revocation, and each side is told as the section 8 table says.</p>
+<p>Tests: <code>GR-5 at expiry the grant ends: the surface gets detach, the agent a grant event, requests fail E_NOT_ATTACHED</code>, <code>GR-6 a grant without a request for idleMs ends</code>, <code>GR-10 detach ends the grant and tells the surface; later requests are E_NOT_ATTACHED</code>, <code>GR-11 when the agent disconnects the surface is told with detach</code>, <code>GR-12 Stop on the surface (evt grant revoked) ends the grant and the agent gets a grant event</code>, <code>SF-CTL-2 Stop revokes the grant: the surface sends evt grant {kind:&quot;revoked&quot;} and later requests are E_NOT_ATTACHED</code></p>
+<h4 id="gr-8">GR-8 <a class="anchor" href="#gr-8" aria-label="Link to the section GR-8">#</a></h4>
+<p>Without a live grant: E_NOT_ATTACHED; outside the grant scopes: E_SCOPE.</p>
+<p>Tests: <code>GR-13 a request without a grant is E_NOT_ATTACHED and one outside the grant scopes is E_SCOPE; neither reaches the surface</code>, <code>SF-SCOPE-1 the surface checks the grant and its scopes itself: E_NOT_ATTACHED, E_SCOPE, E_UNKNOWN_METHOD</code></p>
+<h4 id="lv-9">LV-9 <a class="anchor" href="#lv-9" aria-label="Link to the section LV-9">#</a></h4>
+<p>Scope switches: the surface refuses a switched-off scope with E_SCOPE; the hub lets the grant carry only the reported scopes that were granted at attach, closes pointer streams when cursor goes, and tells the agent.</p>
+<blockquote>
+<p>The hub MUST then let the grant carry only those of the reported scopes that were granted at attach</p>
+</blockquote>
+<p>Tests: <code>LV-9 a scope the person switched off is refused with E_SCOPE; it comes back when switched on, never beyond the grant</code>, <code>LV-9 the hub lets a grant carry only the reported scopes that were granted at attach, and refuses the rest with E_SCOPE</code>, <code>LV-9 when cursor is switched off the hub closes that agent's pointer streams on the surface</code></p>
+<h4 id="lv-21">LV-21 <a class="anchor" href="#lv-21" aria-label="Link to the section LV-21">#</a></h4>
+<p>A surface holds at most 32 grants (MAX_SURFACE_SESSIONS): an attach from a further agent is E_BUSY before anybody is asked, and an agent that holds a grant can still attach again.</p>
+<blockquote>
+<p>A surface MUST refuse an attach from a further agent with <code>E_BUSY</code></p>
+</blockquote>
+<p>Tests: <code>LV-21 a surface holds at most 32 grants: a further attach is E_BUSY before anybody is asked</code></p>
+<h4 id="lv-28">LV-28 <a class="anchor" href="#lv-28" aria-label="Link to the section LV-28">#</a></h4>
+<p>Where the surface cannot tell which agent an attach is from (no credential id, or a hub it did not verify), every agent is the same agent to it: an attach that would start with kept settings asks even where the policy allows attach, and the prompt says what was set and that it stays.</p>
+<blockquote>
+<p>surface MUST ask the person about an attach that would start with kept settings</p>
+</blockquote>
+<p>Tests: <code>LV-28 where the hub does not say which credential an agent holds, an attach that follows a tightening asks even where the policy allows attach, the prompt says what stays, and it stays</code></p>
+<h2 id="section-9-methods">Section 9: Methods <a class="anchor" href="#section-9-methods" aria-label="Link to the section Section 9: Methods">#</a></h2>
+<p><a href="../reference/specification.html#9-methods">Read section 9 of the specification</a>.</p>
+<h4 id="m-1">M-1 <a class="anchor" href="#m-1" aria-label="Link to the section M-1">#</a></h4>
+<p>Each method needs the scope in the section 9 table.</p>
+<p>Tests: <code>VEC-SCOPE every method maps to the scope in the section 9 table</code>, <code>VEC-SCOPE scopes are in canonical order</code>, <code>VEC-SCOPE the hub answers hub.info, surfaces.list, attach, detach and the stream methods itself</code></p>
+<h4 id="m-2">M-2 <a class="anchor" href="#m-2" aria-label="Link to the section M-2">#</a></h4>
+<p>act: unknown action and schema failures are E_BAD_ARGS; a request without args is validated as {}; deny is E_DENIED; confirm or c:1 prompts, a refusal is E_CONSENT.</p>
+<p>Tests: <code>SF-ACT-1 an unknown action, args failing the schema and undeclared properties are E_BAD_ARGS; the handler does not run</code>, <code>SF-ACT-2 decisions follow the risk tier of each profile: allow runs, confirm asks, deny is E_DENIED</code>, <code>SF-ACT-3 a request carrying c:1 shows a consent prompt even for an allowed action; a refusal is E_CONSENT</code>, <code>SF-ACT-9 act without args is validated as {}: an action that requires nothing runs with {}, a missing required property is E_BAD_ARGS with its path</code></p>
+<h4 id="m-3">M-3 <a class="anchor" href="#m-3" aria-label="Link to the section M-3">#</a></h4>
+<p>An act result is JSON of at most 32 KiB, else E_TOO_LARGE; a value JSON cannot hold is E_INTERNAL; a throwing handler yields a generic E_INTERNAL unless it throws a ReinsError.</p>
+<blockquote>
+<p>Its result MUST be JSON and at most 32 KiB</p>
+</blockquote>
+<p>Tests: <code>SF-ACT-4 a result over 32 KiB is E_TOO_LARGE</code>, <code>SF-ACT-5 a handler that throws yields E_INTERNAL with a generic message, unless it throws a ReinsError</code>, <code>SF-ACT-7 a result JSON cannot hold is E_INTERNAL (&quot;result is not JSON&quot;)</code></p>
+<h4 id="m-4">M-4 <a class="anchor" href="#m-4" aria-label="Link to the section M-4">#</a></h4>
+<p>ui.click, ui.type, ui.select and ui.key behave as described; disabled, unknown, unexposed or read-only targets are E_NO_TARGET; Tab never focuses a private field; ui.* never takes coordinates.</p>
+<p>Tests: <code>SF-UI-1 disabled, unknown and unexposed targets are E_NO_TARGET; ui.* never accepts coordinates</code>, <code>SF-UI-2 ui.click dispatches pointer, mouse and click events</code>, <code>SF-UI-3 ui.type sets the value and dispatches input and change</code>, <code>SF-UI-4 ui.select chooses an option by value or by label</code>, <code>SF-UI-5 ui.key accepts only keys from UI_KEYS</code>, <code>SF-UI-6 Backspace, Delete and Space on a read-only or disabled target fail as ui.type does; Tab never moves focus to a private field</code></p>
+<h4 id="m-5">M-5 <a class="anchor" href="#m-5" aria-label="Link to the section M-5">#</a></h4>
+<p>cursor.set label at most 40 characters, colour matches COLOR_PATTERN; raw coordinates and stream.open need policy.coordinates.</p>
+<p>Tests: <code>SF-CUR-1 cursor.set takes a label of at most 40 characters and a colour matching COLOR_PATTERN</code>, <code>SF-CUR-2 cursor.move to raw coordinates and stream.open fail with E_DENIED when policy.coordinates is off</code>, <code>ST-6 stream.open fails with E_DENIED at the hub when its policy turns raw coordinates off</code></p>
+<h4 id="m-6">M-6 <a class="anchor" href="#m-6" aria-label="Link to the section M-6">#</a></h4>
+<p>show.view validates data against the view schema before rendering; a request without data is validated as {} when the schema is an object.</p>
+<p>Tests: <code>SF-SHOW-1 show.view validates data against the view schema before calling the renderer</code>, <code>SF-SHOW-2 show.view without data is validated as {} when the view schema is an object, and the renderer gets {}</code></p>
+<h4 id="m-7">M-7 <a class="anchor" href="#m-7" aria-label="Link to the section M-7">#</a></h4>
+<p>nav.go is same-origin http(s) under a policy.nav prefix, else E_DENIED.</p>
+<blockquote>
+<p>It MUST be same-origin, <code>http:</code> or <code>https:</code></p>
+</blockquote>
+<p>Tests: <code>SF-NAV-1 nav.go must be same-origin http(s) under a policy.nav prefix, else E_DENIED</code>, <code>VEC-POLICY each profile matches the section 12 table</code></p>
+<h4 id="m-8">M-8 <a class="anchor" href="#m-8" aria-label="Link to the section M-8">#</a></h4>
+<p>read returns visible text, at most max characters (default 2000, cap 8000), without private or ignored subtrees.</p>
+<p>Tests: <code>SF-OBS-10 read returns visible text, at most max characters (default 2000, cap 8000)</code>, <code>SF-OBS-11 read leaves out private, ignored and visibility:hidden text but keeps visible descendants</code></p>
+<h4 id="m-9">M-9 <a class="anchor" href="#m-9" aria-label="Link to the section M-9">#</a></h4>
+<p>While paused every method outside READ_ONLY_METHODS fails with E_PAUSED, except chat.say and chat.status.</p>
+<p>Tests: <code>SF-CTL-1 while paused every method outside the read-only set fails with E_PAUSED</code>, <code>VEC-SCOPE the read-only methods, and the chat methods served while paused, are those of section 9</code>, <code>CH-10 chat.say and chat.status work while control is paused; while a consent prompt is up they are E_BUSY, nothing can be typed or sent and chat.read still answers</code></p>
+<h4 id="m-10">M-10 <a class="anchor" href="#m-10" aria-label="Link to the section M-10">#</a></h4>
+<p>Input-synthesising commands on a private target, or that would change a private control they do not target, fail with E_DENIED unless policy.privateInput.</p>
+<p>Tests: <code>S14.9 private fields are never read and, by default, never written</code>, <code>S14.9 commands that would change a private control they do not target are refused: clear on an editable holding one, a radio of its group, a form reset</code></p>
+<h4 id="m-11">M-11 <a class="anchor" href="#m-11" aria-label="Link to the section M-11">#</a></h4>
+<p>While a consent prompt is showing or queued, every method outside READ_ONLY_METHODS from every agent fails with E_BUSY, chat.say and chat.status among them; read-only methods and detach still work.</p>
+<p>Tests: <code>SF-CON-5 while a consent prompt is up, every method outside READ_ONLY_METHODS from every agent fails with E_BUSY; read-only methods and detach still work</code>, <code>CH-10 chat.say and chat.status work while control is paused; while a consent prompt is up they are E_BUSY, nothing can be typed or sent and chat.read still answers</code></p>
+<h4 id="ch-2">CH-2 <a class="anchor" href="#ch-2" aria-label="Link to the section CH-2">#</a></h4>
+<p>chat.say: the text is trimmed and is then 1 to 4000 characters of well-formed Unicode, otherwise E_BAD_ARGS; the answer is the id the message has for the agent that said it; to names another agent of the room, or person for the person alone.</p>
+<p>Tests: <code>CH-2 chat.say takes a text of 1 to 4000 characters after trimming and answers its id; anything else is E_BAD_ARGS, and to names another agent of the room</code>, <code>VEC-CHAT a chat text is trimmed, 1 to 4000 characters and well-formed, or it is refused</code></p>
+<h4 id="ch-3">CH-3 <a class="anchor" href="#ch-3" aria-label="Link to the section CH-3">#</a></h4>
+<p>chat.read returns what the agent may read, oldest first: the latest max (20 by default, 50 at most), or with since what came after it, and next to read on from; an answer holds at most 128 KiB, and the latest are then the newest that fit.</p>
+<p>Tests: <code>CH-3 chat.read returns what the agent may read, oldest first: the latest max, or with since what came after, and next to go on from</code>, <code>VEC-CHAT the limits and the states are those the spec states</code>, <code>CH-22 message ids count each agent's own messages from 1, an event carries the id the message has for the agent it goes to, and the count goes on when a grant is replaced</code></p>
+<h4 id="ch-4">CH-4 <a class="anchor" href="#ch-4" aria-label="Link to the section CH-4">#</a></h4>
+<p>chat.status: idle, thinking or working, with a note of at most 80 characters on one line; shown after the agent's name, the note quoted as that agent's words, and told to no other agent.</p>
+<p>Tests: <code>CH-4 chat.status shows idle, thinking or working with a note of at most 80 characters next to the agent's name, and tells no other agent</code>, <code>VEC-CHAT a status note is one line of at most 80 characters, or it is refused</code></p>
+<h2 id="section-10-observation">Section 10: Observation <a class="anchor" href="#section-10-observation" aria-label="Link to the section Section 10: Observation">#</a></h2>
+<p><a href="../reference/specification.html#10-observation">Read section 10 of the specification</a>.</p>
+<h4 id="obs-1">OBS-1 <a class="anchor" href="#obs-1" aria-label="Link to the section OBS-1">#</a></h4>
+<p>observe returns a full snapshot, or {base, ops} when since is the agent's last revision; handles are e + base36 and stable.</p>
+<p>Tests: <code>SF-OBS-1 observe without since returns a full snapshot {rev, nodes, url, title, vp} with e+base36 handles</code>, <code>SF-OBS-2 observe {since} at the last revision returns {base, ops} that bring the previous tree to the new one; other since values get a snapshot</code>, <code>SF-OBS-3 handles stay the same for the lifetime of an element</code></p>
+<h4 id="obs-2">OBS-2 <a class="anchor" href="#obs-2" aria-label="Link to the section OBS-2">#</a></h4>
+<p>Exposure under auto, annotated and none; hidden and ignored subtrees are never exposed.</p>
+<p>Tests: <code>SF-OBS-4 auto exposure: interactive elements, headings, images with alt, live regions, named landmarks and forms</code>, <code>SF-OBS-5 annotated exposure exposes only data-reins-id and data-reins=&quot;expose&quot; elements; none exposes nothing</code>, <code>SF-OBS-6 hidden, inert, aria-hidden, display:none, visibility:hidden and data-reins=&quot;ignore&quot; subtrees are never exposed</code></p>
+<h4 id="obs-3">OBS-3 <a class="anchor" href="#obs-3" aria-label="Link to the section OBS-3">#</a></h4>
+<p>Private fields: state private, no val, only disabled/focused besides; privacy is sticky, also across a node swap; private text never names another node.</p>
+<p>Tests: <code>SF-OBS-7 private fields appear with state private, no val, and only disabled/focused besides</code>, <code>SF-OBS-8 privacy is sticky: a password field switched to type=text stays private</code>, <code>S14.9 a text field swapped in for a private one stays private</code>, <code>S14.9 private text never names another node, and a node in a private subtree is named only by data-reins-label</code></p>
+<h4 id="obs-4">OBS-4 <a class="anchor" href="#obs-4" aria-label="Link to the section OBS-4">#</a></h4>
+<p>Names follow the simplified accessible-name order; names cut to 120, values to 200.</p>
+<p>Tests: <code>SF-OBS-9 names follow data-reins-label, aria-label, label, placeholder, alt, title, text; names cut to 120 and values to 200</code></p>
+<h4 id="obs-5">OBS-5 <a class="anchor" href="#obs-5" aria-label="Link to the section OBS-5">#</a></h4>
+<p>Deltas apply in order with the set/del placement rule (del of an absent handle does nothing); a sender emits only set and del, deletes first; diffNodes and applyOps implement it.</p>
+<blockquote>
+<p>every implementation MUST use them, or match them exactly.</p>
+</blockquote>
+<p>Tests: <code>VEC-DELTA applyOps follows the ordering rule</code>, <code>VEC-DELTA applyOps(prev, diffNodes(prev, next)) equals next</code>, <code>VEC-DELTA diffNodes uses only set and del ops and nothing when the trees are equal</code>, <code>VEC-DELTA diffNodes emits every del before the first set</code></p>
+<h4 id="obs-6">OBS-6 <a class="anchor" href="#obs-6" aria-label="Link to the section OBS-6">#</a></h4>
+<p>Compact text rendering: node lines as section 10 gives them, children indented; + ~ - for deltas, a move as one ~ line.</p>
+<p>Tests: <code>VEC-DELTA renderTree prints the section 10 example exactly</code>, <code>VEC-DELTA renderOps marks new nodes +, replaced nodes ~ and removed handles -</code>, <code>VEC-DELTA node lines and delta lines have the exact section 10 text form</code></p>
+<h4 id="obs-7">OBS-7 <a class="anchor" href="#obs-7" aria-label="Link to the section OBS-7">#</a></h4>
+<p>Subscribed agents get evt ui {rev}; state events carry an RFC 7396 merge patch; a null property reads as absent, so a state that changed only in null properties produces no event.</p>
+<p>Tests: <code>SF-OBS-12 a subscribed agent gets evt ui {rev} when the tree changes</code>, <code>SF-OBS-13 state.get returns values and a subscribed agent gets evt state with an RFC 7396 patch</code>, <code>SF-OBS-14 a state that differs from the last one sent only in null properties, or not at all, produces no state event</code>, <code>VEC-MERGE mergeApply reproduces the RFC 7396 examples</code>, <code>VEC-MERGE mergeDiff yields a patch that turns from into to</code>, <code>VEC-MERGE mergeDiff of equal values is undefined</code></p>
+<h2 id="section-11-cursor-and-the-pointer-stream">Section 11: Cursor and the pointer stream <a class="anchor" href="#section-11-cursor-and-the-pointer-stream" aria-label="Link to the section Section 11: Cursor and the pointer stream">#</a></h2>
+<p><a href="../reference/specification.html#11-cursor-and-the-pointer-stream">Read section 11 of the specification</a>.</p>
+<h4 id="ptr-1">PTR-1 <a class="anchor" href="#ptr-1" aria-label="Link to the section PTR-1">#</a></h4>
+<p>Binary pointer frame layout of the section 11 table; fractions sent as round(f x 65535), halves up.</p>
+<p>Tests: <code>VEC-PTR encodePointer produces the vector bytes</code>, <code>VEC-PTR decodePointer reads the vector bytes back</code>, <code>VEC-PTR encodePointer clamps x, y to 0..1 and dt to 0..65535</code>, <code>VEC-PTR decodePointer refuses malformed frames with E_BAD_FRAME</code>, <code>VEC-PTR a fraction is sent as round(f x 65535), halves up, and dt is rounded</code></p>
+<h4 id="ptr-2">PTR-2 <a class="anchor" href="#ptr-2" aria-label="Link to the section PTR-2">#</a></h4>
+<p>stream.open answers with initial credit; a sender never has more points outstanding than its credit; flow returns credit.</p>
+<blockquote>
+<p>A sender MUST NOT have more unacknowledged points outstanding than its credit.</p>
+</blockquote>
+<p>Tests: <code>ST-1 stream.open needs the cursor scope and answers {ch, credit} with the credit the surface offered</code>, <code>ST-2 pointer frames within credit reach the surface byte for byte; flow is relayed to the agent</code>, <code>ST-7 a sender (the agent SDK) never has more points outstanding than its credit</code>, <code>VEC-LIMITS credit is returned in batches of at least a quarter of the window</code></p>
+<h4 id="ptr-3">PTR-3 <a class="anchor" href="#ptr-3" aria-label="Link to the section PTR-3">#</a></h4>
+<p>The hub closes a stream that overruns its credit or the pointer rate, which is one budget per credential and surface across its sessions; the agent learns it from stream.close (E_RATE); empty frames without END are dropped.</p>
+<p>Tests: <code>ST-3 a frame that overruns the credit is not forwarded and the hub closes the stream</code>, <code>ST-4 the hub caps points per second at policy.pointerRate and closes the stream with E_RATE</code>, <code>ST-5 a frame with no points is dropped unless it carries PTR_FLAG_END</code>, <code>ST-8 the pointer rate is one budget for all streams of a credential on a surface, across its sessions</code></p>
+<h4 id="ptr-5">PTR-5 <a class="anchor" href="#ptr-5" aria-label="Link to the section PTR-5">#</a></h4>
+<p>An agent that gives up on a pointer stream, for example because no credit arrived in time, still sends stream.close for it.</p>
+<blockquote>
+<p>MUST still send <code>stream.close</code> for it</p>
+</blockquote>
+<p>Tests: <code>ST-9 a sender (the agent SDK) that gives up on a stream for lack of credit still sends stream.close</code></p>
+<h4 id="ptr-4">PTR-4 <a class="anchor" href="#ptr-4" aria-label="Link to the section PTR-4">#</a></h4>
+<p>Playback speeds up with lag up to 4x.</p>
+<p>Tests: <code>VEC-LIMITS playbackRate follows the catch-up curve</code></p>
+<h2 id="section-12-policy">Section 12: Policy <a class="anchor" href="#section-12-policy" aria-label="Link to the section Section 12: Policy">#</a></h2>
+<p><a href="../reference/specification.html#12-policy">Read section 12 of the specification</a>.</p>
+<h4 id="pol-1">POL-1 <a class="anchor" href="#pol-1" aria-label="Link to the section POL-1">#</a></h4>
+<p>The three profiles match the section 12 table, defaults included.</p>
+<p>Tests: <code>VEC-POLICY each profile matches the section 12 table</code>, <code>VEC-POLICY decideAction uses the risk tier of each profile</code>, <code>VEC-POLICY each profile has the remembered approvals, timeouts, rates and pointer rate of the section 12 table</code>, <code>VEC-POLICY each profile offers the levels and the panel of the section 12 table</code></p>
+<h4 id="pol-2">POL-2 <a class="anchor" href="#pol-2" aria-label="Link to the section POL-2">#</a></h4>
+<p>decideAction: exact override, then longest prefix, then risk tier; the stricter decision wins.</p>
+<p>Tests: <code>VEC-POLICY overrides: exact name, then longest prefix, then risk</code>, <code>VEC-POLICY stricter orders allow &lt; confirm &lt; deny</code>, <code>S14.6 the surface applies its own policy even when the hub forwards without c:1</code></p>
+<h4 id="pol-3">POL-3 <a class="anchor" href="#pol-3" aria-label="Link to the section POL-3">#</a></h4>
+<p>Consent prompts: one per agent, four in total (E_BUSY); unanswered is a refusal; arguments over 40 entries, depth 4 or 2000 code points are E_TOO_LARGE; remember: session covers the action name with any arguments.</p>
+<p>Tests: <code>SF-CON-1 one pending prompt per agent: a second prompt for the same agent is E_BUSY</code>, <code>SF-CON-2 at most four prompts in total: a fifth agent is E_BUSY</code>, <code>SF-CON-3 an unanswered prompt is a refusal after consent.timeoutMs</code>, <code>SF-CON-4 arguments that cannot be shown in full (more than 40 entries) are not put to the person: E_TOO_LARGE</code>, <code>SF-ACT-6 with remember: session an approved action is not asked again under the same grant, unless c:1</code>, <code>SF-CON-7 the prompt shows arguments in full: a listing over 2000 code points or nesting deeper than 4 is E_TOO_LARGE</code>, <code>SF-ACT-8 with remember: session one approval covers the action name with any arguments</code></p>
+<h4 id="pol-4">POL-4 <a class="anchor" href="#pol-4" aria-label="Link to the section POL-4">#</a></h4>
+<p>Human control: indicator, Pause, Stop revokes the grant with evt grant revoked.</p>
+<p>Tests: <code>SF-CTL-1 while paused every method outside the read-only set fails with E_PAUSED</code>, <code>SF-CTL-2 Stop revokes the grant: the surface sends evt grant {kind:&quot;revoked&quot;} and later requests are E_NOT_ATTACHED</code>, <code>S14.11 while an agent is attached an indicator names it, and Stop works without the hub</code></p>
+<h4 id="pol-5">POL-5 <a class="anchor" href="#pol-5" aria-label="Link to the section POL-5">#</a></h4>
+<p>Cool-off: after a refusal or timeout the same agent is refused with E_RATE, 2 s doubling to 60 s; three refusals in a row revoke the grant; later attaches need approval.</p>
+<p>Tests: <code>SF-CON-6 after a refusal the same agent is refused with E_RATE for a cool-off; three refusals in a row revoke its grant, and later attaches need approval</code></p>
+<h4 id="pol-6">POL-6 <a class="anchor" href="#pol-6" aria-label="Link to the section POL-6">#</a></h4>
+<p>A driver in a page inside a frame does not connect to a hub: connect() fails with E_DENIED before anything is sent or shown, unless policy.framed; no profile sets it.</p>
+<blockquote>
+<p>MUST NOT connect to a hub unless the app's policy sets <code>framed: true</code></p>
+</blockquote>
+<p>Tests: <code>SF-FRAME-1 a driver inside a frame does not connect: connect() is E_DENIED, no hello is sent and nothing is added to the page</code>, <code>SF-FRAME-2 with policy.framed a driver inside a frame connects and serves an agent</code>, <code>VEC-POLICY each profile matches the section 12 table</code></p>
+<h4 id="lv-1">LV-1 <a class="anchor" href="#lv-1" aria-label="Link to the section LV-1">#</a></h4>
+<p>A grant has a level, one of strict, ask, auto and bypass, and a grant starts at ask, or at strict where the person's strict for that agent was kept (LV-27).</p>
+<p>Tests: <code>LV-1 a grant starts at the level ask: a sensitive action asks, a safe one runs, and the indicator shows no level</code>, <code>VEC-LEVELS the levels are strict, ask, auto and bypass, least permissive first, and a grant starts at ask</code></p>
+<h4 id="lv-2">LV-2 <a class="anchor" href="#lv-2" aria-label="Link to the section LV-2">#</a></h4>
+<p>strict and ask are on offer for every grant; auto and bypass where the surface policy and the hub policy both list them. A surface that got no list offers strict and ask alone, never puts a grant at a level that is not on offer, and the hub takes strict and ask whatever its policy lists.</p>
+<blockquote>
+<p>A surface MUST NOT put a grant at a level that is not on offer for it.</p>
+</blockquote>
+<p>Tests: <code>LV-2 strict and ask are always on offer; auto and bypass only where the policy and the hub's attach list both name them</code>, <code>LV-2 the hub takes strict and ask whatever its policy lists: neither lets an agent do more</code>, <code>VEC-LEVELS the levels on offer are strict and ask, and auto and bypass where both lists name them</code></p>
+<h4 id="lv-3">LV-3 <a class="anchor" href="#lv-3" aria-label="Link to the section LV-3">#</a></h4>
+<p>An act request is decided by the six steps of section 12 (decideAct): deny is final, strict asks every time, auto waives a prompt unless the action is dangerous, bypass waives every prompt, and c:1 counts as a policy confirm.</p>
+<blockquote>
+<p>surface MUST use it or match it exactly</p>
+</blockquote>
+<p>Tests: <code>VEC-LEVELS decideAct reproduces every row of the decision table</code>, <code>VEC-LEVELS c:1 makes the policy decision confirm at least, and deny stays deny</code>, <code>LV-3 the level decides an act request: strict asks every time, auto asks only for a dangerous action, bypass never asks, and deny stays E_DENIED</code>, <code>LV-3 a request carrying c:1 asks under strict and ask, and auto and bypass waive it as they waive a policy confirm</code></p>
+<h4 id="lv-4">LV-4 <a class="anchor" href="#lv-4" aria-label="Link to the section LV-4">#</a></h4>
+<p>The person's rule for one action: deny is E_CONSENT without a prompt or cool-off, a rule beats the level, and allow for an action the policy asks about can be set only where a level on offer would waive the same prompt; where it cannot, the panel shows Allow switched off and says why.</p>
+<p>Tests: <code>LV-4 the person's rules: deny is E_CONSENT without a prompt, confirm asks under bypass, allow runs under strict, and allow cannot be set where no level on offer would waive the prompt</code>, <code>VEC-LEVELS the rule allow may waive a policy prompt only where a level on offer would</code></p>
+<h4 id="lv-5">LV-5 <a class="anchor" href="#lv-5" aria-label="Link to the section LV-5">#</a></h4>
+<p>A waived prompt is not an approval: the action does not run while a consent prompt is showing or queued (E_BUSY) and is not remembered.</p>
+<blockquote>
+<p>MUST NOT run while a consent prompt is showing or queued</p>
+</blockquote>
+<p>Tests: <code>LV-5 an action a level let through does not run while a consent prompt is showing or queued (E_BUSY), and is not remembered as approved</code></p>
+<h4 id="lv-7">LV-7 <a class="anchor" href="#lv-7" aria-label="Link to the section LV-7">#</a></h4>
+<p>The panel opens and closes on trusted input alone; no protocol message reaches it, and a level, a rule or a scope switch changes only on trusted input from the person. Without human.panel there is no panel.</p>
+<blockquote>
+<p>A surface MUST NOT change a grant's level, a rule or a scope switch except on trusted input from the person on its own controls.</p>
+</blockquote>
+<p>Tests: <code>LV-7 no method, event or untrusted input opens the panel or changes a level, a rule or a scope switch</code>, <code>LV-7 a policy without human.panel has no panel: the indicator holds no opening button</code></p>
+<h4 id="lv-8">LV-8 <a class="anchor" href="#lv-8" aria-label="Link to the section LV-8">#</a></h4>
+<p>Whatever lets an action run without asking takes a confirm step that names the agent and what stops asking, armed after 500 ms: auto or bypass above the current level, any level under which an action stops asking, the rule allow always, and Reset where the action would then run unasked. What asks more applies at once; the indicator shows a level that is not ask.</p>
+<blockquote>
+<p>the indicator MUST show that level</p>
+<p>A surface MUST show a confirm step, and apply the change only when the person confirms it there</p>
+</blockquote>
+<p>Tests: <code>LV-8 whatever lets an action run without asking takes a confirm step that names the agent and what stops asking, armed after 500 ms; what asks more applies at once</code>, <code>LV-8 the indicator shows a level that is not ask: a chip with its name and the dot class for auto and bypass</code></p>
+<h4 id="lv-12">LV-12 <a class="anchor" href="#lv-12" aria-label="Link to the section LV-12">#</a></h4>
+<p>The activity list holds times, agent names, method or declared action names and outcomes, never arguments, results or page text.</p>
+<blockquote>
+<p>The activity list MUST NOT hold arguments, results or page text.</p>
+</blockquote>
+<p>Tests: <code>LV-12 the activity list holds method and action names and outcomes, never arguments, results or page text</code></p>
+<h4 id="lv-13">LV-13 <a class="anchor" href="#lv-13" aria-label="Link to the section LV-13">#</a></h4>
+<p>The surface reports each change to the hub with ag: evt user {kind:&quot;level&quot;}, evt user {kind:&quot;rule&quot;} and evt grant {kind:&quot;scopes&quot;}.</p>
+<p>Tests: <code>LV-13 the surface reports each change with ag: evt user {kind:&quot;level&quot;}, evt user {kind:&quot;rule&quot;} and evt grant {kind:&quot;scopes&quot;}</code></p>
+<h4 id="lv-16">LV-16 <a class="anchor" href="#lv-16" aria-label="Link to the section LV-16">#</a></h4>
+<p>A remembered approval is shown in the panel as what it is: the action is allowed, because the person approved it earlier. Reset takes the person's rule and the approval away, choosing Ask forgets the approval, and Reset takes the confirm step where the action would then run without asking.</p>
+<blockquote>
+<p>The panel MUST NOT show an action as asking while an approval the surface remembers would let it run</p>
+</blockquote>
+<p>Tests: <code>LV-16 Reset takes away the person's rule and a remembered approval, and takes the confirm step where the action would then run without asking</code></p>
+<h4 id="lv-17">LV-17 <a class="anchor" href="#lv-17" aria-label="Link to the section LV-17">#</a></h4>
+<p>When what is under the pointer changes other than by the click the person is making (the list changed, a consent card or its backdrop went away, a confirm step opened or was answered), controls that let an agent do more ignore activation for 500 ms.</p>
+<p>Tests: <code>LV-17 when a consent card goes away or a confirm step is answered, controls that let an agent do more take no click for 500 ms</code></p>
+<h4 id="lv-18">LV-18 <a class="anchor" href="#lv-18" aria-label="Link to the section LV-18">#</a></h4>
+<p>While the overlay cannot be relied on, no click is taken on Allow or Always allow of a prompt nor on a control of the panel that lets an agent do more; the person is told once it can be relied on again, and every arming delay starts over.</p>
+<blockquote>
+<p>a surface MUST NOT take a click on Allow or &quot;Always allow&quot; of a prompt</p>
+</blockquote>
+<p>Tests: <code>LV-18 while the overlay cannot be relied on nothing that lets an agent do more takes a click and no prompt is answered with Allow; the person is told once it can</code></p>
+<h4 id="lv-19">LV-19 <a class="anchor" href="#lv-19" aria-label="Link to the section LV-19">#</a></h4>
+<p>While a rule allow of the person waives a prompt, the indicator shows it: a chip that counts those rules and the dot of the level that would waive the same.</p>
+<blockquote>
+<p>the indicator MUST show that too</p>
+</blockquote>
+<p>Tests: <code>LV-19 the indicator shows the person's Allow rules that waive a prompt like the level that would do the same</code></p>
+<h4 id="lv-20">LV-20 <a class="anchor" href="#lv-20" aria-label="Link to the section LV-20">#</a></h4>
+<p>Wherever the overlay names an agent in words of its own (a prompt, a confirm step, a heading, the indicator, the activity list), the name is shown inside quotation marks, with quotation marks in the name escaped, followed by its session id.</p>
+<blockquote>
+<p>agent's name MUST be shown inside quotation marks</p>
+</blockquote>
+<p>Tests: <code>LV-20 an agent is named in quotation marks with its session id wherever a decision is asked</code>, <code>LV-12 the activity list holds method and action names and outcomes, never arguments, results or page text</code></p>
+<h4 id="lv-23">LV-23 <a class="anchor" href="#lv-23" aria-label="Link to the section LV-23">#</a></h4>
+<p>A consent prompt takes the focus onto itself, the dialog, where no key presses anything, and gives it back to where the person was, in the page or in the overlay; a pointer click on Deny is taken at once.</p>
+<p>Tests: <code>LV-23 a consent prompt takes the focus onto the card itself and gives it back to where the person was; a pointer click on Deny is taken at once, a key only as LV-29 says</code></p>
+<h4 id="lv-24">LV-24 <a class="anchor" href="#lv-24" aria-label="Link to the section LV-24">#</a></h4>
+<p>The overlay's stylesheet reads no custom property and names only generic font families; the host resets every property and pins direction and unicode-bidi.</p>
+<blockquote>
+<p>The overlay's stylesheet MUST NOT read a custom property</p>
+</blockquote>
+<p>Tests: <code>LV-24 the overlay's stylesheet reads no custom property and names only generic font families, and the host pins what 'all' leaves alone</code></p>
+<h4 id="lv-25">LV-25 <a class="anchor" href="#lv-25" aria-label="Link to the section LV-25">#</a></h4>
+<p>The overlay counts as not shown where the person can see and use it while its host, or outside the top layer an ancestor, has a filter, an opacity, a visibility, a clip path, a mask, a transform, a blend mode or content-visibility: hidden, while a zoom reaches it or nothing is rendered at all, while it is not last in the top layer, or while the indicator, the open panel or the prompt is covered; commands that change the page and attach then fail with E_PAUSED.</p>
+<blockquote>
+<p>A surface MUST treat the overlay as one that cannot be shown where the person can see and use it</p>
+</blockquote>
+<p>Tests: <code>LV-25 while the page puts a filter, an opacity, a transform, a clip path, a blend mode, visibility or content-visibility on the overlay, every command that changes the page fails with E_PAUSED</code>, <code>LV-32 the host has no generated boxes and no zoom: the stylesheet takes ::before, ::after and ::marker away, and a zoom on the host or an ancestor, or a page that renders nothing, fails the check</code></p>
+<h4 id="lv-29">LV-29 <a class="anchor" href="#lv-29" aria-label="Link to the section LV-29">#</a></h4>
+<p>Keys that could be typing meant for the page never answer a prompt. A key answers only as Enter or Space on a focused button of the prompt, or Escape, and only when it is no repeat, 500 ms have passed since the prompt appeared, since the focus landed on the button and since any other key, and 3 s since the last key that types. The prompt takes the focus itself, Tab does nothing in its first 500 ms, and while the keyboard is locked out the prompt says so.</p>
+<blockquote>
+<p>A surface MUST NOT take a key as the answer to a prompt unless it is Enter or Space on a button of the prompt that has the focus</p>
+</blockquote>
+<p>Tests: <code>LV-29 keys that could be typing meant for the page never answer a prompt: Tab does nothing on a card that has only just appeared, a button answers a key only once the focus has rested on it for 500 ms with no other key, and a key that types locks the keyboard out for 3 s and the card says so</code></p>
+<h4 id="lv-30">LV-30 <a class="anchor" href="#lv-30" aria-label="Link to the section LV-30">#</a></h4>
+<p>Nothing an agent drew stays on screen with a consent prompt: toasts and highlights are taken down, the cursor's label is hidden, and none can be put up while the prompt shows.</p>
+<blockquote>
+<p>a surface MUST take down every toast and highlight and hide the cursor's label</p>
+</blockquote>
+<p>Tests: <code>LV-30 nothing an agent drew stays on screen with a consent card: toasts and highlights are taken down, the cursor label is hidden, and none can be put up while the card is there</code></p>
+<h4 id="lv-31">LV-31 <a class="anchor" href="#lv-31" aria-label="Link to the section LV-31">#</a></h4>
+<p>A string an agent or the hub wrote shows at most two combining marks in a row; the rest are escapes, which count toward what fits on a card, and each line of the argument listing is clipped to its own box.</p>
+<blockquote>
+<p>a surface MUST show every combining mark</p>
+</blockquote>
+<p>Tests: <code>LV-31 a string an agent wrote shows at most two combining marks in a row: the rest are escapes, so no argument paints over another, and each line of the listing is clipped to its own box</code></p>
+<h4 id="lv-32">LV-32 <a class="anchor" href="#lv-32" aria-label="Link to the section LV-32">#</a></h4>
+<p>The overlay's stylesheet takes the host's ::before, ::after and ::marker away and keeps its ::backdrop from showing, so that the page can put no box of its own on the host.</p>
+<blockquote>
+<p>The overlay's stylesheet MUST take the host's <code>::before</code>, <code>::after</code> and <code>::marker</code> away</p>
+</blockquote>
+<p>Tests: <code>LV-32 the host has no generated boxes and no zoom: the stylesheet takes ::before, ::after and ::marker away, and a zoom on the host or an ancestor, or a page that renders nothing, fails the check</code></p>
+<h4 id="lv-34">LV-34 <a class="anchor" href="#lv-34" aria-label="Link to the section LV-34">#</a></h4>
+<p>No timer has to fire: every wait of the surface is a time, checked by the clock when something looks. A prompt past its deadline is a refusal whether or not its timer fired, arming delays and the cool-off hold by the clock, and a timer that never fires leaves at most something on screen.</p>
+<blockquote>
+<p>A surface MUST NOT rely on a timer callback for any of them</p>
+</blockquote>
+<p>Tests: <code>LV-34 with every timer of the surface cleared, a prompt past its deadline is a refusal when the person clicks it and when the next request asks, Allow and a confirm step arm by the clock and no earlier, and the cool-off still holds</code></p>
+<h4 id="lv-35">LV-35 <a class="anchor" href="#lv-35" aria-label="Link to the section LV-35">#</a></h4>
+<p>A check that had to put the overlay back (show it again in the top layer, or move it) found it covered or out of place: the click that caused it is not taken as one that lets an agent do more; a later, separate click counts.</p>
+<blockquote>
+<p>A surface MUST NOT take that click as one that lets an agent do more</p>
+</blockquote>
+<p>Tests: <code>LV-35 the click that finds the overlay under a top-layer element of the page is not taken, on a prompt or in the panel: the overlay goes back on top, says so, arms again, and a later click counts</code></p>
+<h4 id="lv-36">LV-36 <a class="anchor" href="#lv-36" aria-label="Link to the section LV-36">#</a></h4>
+<p>Letting agents hear each other is a change that lets agents do more: neither the switch nor its confirm step is taken while the overlay cannot be relied on. A hub that sends another chatRelay with a later attach does not clear the person's switch silently: the surface reports relay off for each agent and the Chat tab says so.</p>
+<p>Tests: <code>LV-36 letting agents hear each other is not taken while the overlay cannot be relied on, and a hub that sends another chatRelay does not clear the person's switch silently</code></p>
+<h4 id="lv-37">LV-37 <a class="anchor" href="#lv-37" aria-label="Link to the section LV-37">#</a></h4>
+<p>While the app's own code runs because an agent asked for it (an action's handler, a view's renderer, a state getter, the handlers of synthesised input), the chat composer takes no input.</p>
+<p>Tests: <code>LV-37 while the app's own code runs because an agent asked for it, the chat composer takes no input: a view, a state getter and the handlers of synthesised input, as an action</code></p>
+<h4 id="ch-6">CH-6 <a class="anchor" href="#ch-6" aria-label="Link to the section CH-6">#</a></h4>
+<p>An agent is given only messages posted while its grant was live and its chat scope on, and only those sent to it; a grant that replaces another reads nothing of the earlier one.</p>
+<blockquote>
+<p>A surface MUST NOT give an agent, in <code>evt chat</code> or in <code>chat.read</code>, a message that was posted before its grant began</p>
+</blockquote>
+<p>Tests: <code>CH-6 an agent is given only what was posted while its grant was live and its chat scope on, and only what was sent to it; a grant that replaces another reads nothing of the old one</code></p>
+<h4 id="ch-8">CH-8 <a class="anchor" href="#ch-8" aria-label="Link to the section CH-8">#</a></h4>
+<p>Agent text is data: inserted as text, escaped like agent-written strings on the consent prompt, captioned with the name from the grant, never made into markup or a link.</p>
+<blockquote>
+<p>A surface MUST insert what an agent wrote as text, never as markup</p>
+</blockquote>
+<p>Tests: <code>CH-8 what an agent wrote is inserted as text under the name from its grant: no markup, no link, and what does not show is escaped</code></p>
+<h4 id="ch-9">CH-9 <a class="anchor" href="#ch-9" aria-label="Link to the section CH-9">#</a></h4>
+<p>A chat message grants nothing: it changes no level, rule or scope switch and answers no consent prompt; an action that needs approval still asks after the person typed yes.</p>
+<blockquote>
+<p>A chat message MUST NOT change a grant's level, a rule or a scope switch, and MUST NOT answer, waive or withdraw a consent prompt</p>
+</blockquote>
+<p>Tests: <code>CH-9 a chat message grants nothing: after the person typed &quot;yes, go ahead&quot; an action that needs approval still asks, and level, rules and scopes are what they were</code></p>
+<h4 id="ch-11">CH-11 <a class="anchor" href="#ch-11" aria-label="Link to the section CH-11">#</a></h4>
+<p>Unread messages of agents are counted on the Chat tab and in the indicator; the panel never opens by itself; a message that arrives redraws nothing outside the Chat tab, arms no control again and moves no focus.</p>
+<p>Tests: <code>CH-11 unread messages are counted on the Chat tab and in the indicator; the panel never opens by itself, and a message that arrives redraws nothing in the Permissions tab and moves no focus</code></p>
+<h4 id="ch-17">CH-17 <a class="anchor" href="#ch-17" aria-label="Link to the section CH-17">#</a></h4>
+<p>Under chatRelay person no agent hears another until the person switches &quot;Agents can hear each other&quot; on in the Chat tab: on trusted input, through a confirm step that names the agents and is armed after 500 ms. An agent that joins later is not included until the person adds it, switching off applies at once, and the surface reports each change with ag as evt user {kind:&quot;relay&quot;, on}.</p>
+<blockquote>
+<p>A surface MUST NOT let one agent hear another under <code>person</code> except on that input from the person</p>
+</blockquote>
+<p>Tests: <code>CH-17 under chatRelay person no agent hears another until the person switches it on: by trusted input, through a confirm step that names the agents and is armed after 500 ms; one that joins later is not included, and switching off applies at once</code></p>
+<h4 id="ch-18">CH-18 <a class="anchor" href="#ch-18" aria-label="Link to the section CH-18">#</a></h4>
+<p>The Chat tab always says who hears what: which agents hear the person only and which hear each other, each by name, and under on that the app is set up that way.</p>
+<blockquote>
+<p>the Chat tab MUST say which agents hear the person only and which hear each other</p>
+</blockquote>
+<p>Tests: <code>CH-18 the Chat tab says which agents hear the person only and which hear each other, naming each, and under on that the app is set up that way</code></p>
+<h4 id="ch-19">CH-19 <a class="anchor" href="#ch-19" aria-label="Link to the section CH-19">#</a></h4>
+<p>While a consent prompt is showing or queued the Chat tab shows nothing an agent wrote: no transcript, no status, no agent's name, only a line of the surface's own; what the agents said they were doing is dropped.</p>
+<blockquote>
+<p>a surface MUST NOT show in its Chat tab anything an agent wrote</p>
+</blockquote>
+<p>Tests: <code>CH-19 while a consent prompt is showing or queued the Chat tab shows nothing an agent wrote: no transcript, no status, no name; what the agents said they were doing does not come back</code>, <code>CH-10 chat.say and chat.status work while control is paused; while a consent prompt is up they are E_BUSY, nothing can be typed or sent and chat.read still answers</code></p>
+<h4 id="ch-27">CH-27 <a class="anchor" href="#ch-27" aria-label="Link to the section CH-27">#</a></h4>
+<p>Wherever the Chat tab names an agent it names it as what it is, with its name in quotation marks and its session id, so that no name reads as the person or as the tab's own words and two agents with one name differ; what an agent says it is doing is quoted as that agent's words.</p>
+<p>Tests: <code>CH-27 an agent is named as what it is, with its name in quotation marks and its session id, wherever the tab names it; what it says it is doing is quoted as its words</code></p>
+<h2 id="sections-8-12">Sections 8, 12 <a class="anchor" href="#sections-8-12" aria-label="Link to the section Sections 8, 12">#</a></h2>
+<p>This requirement spans several sections of <a href="../reference/specification.html">the specification</a>.</p>
+<h4 id="lv-6">LV-6 <a class="anchor" href="#lv-6" aria-label="Link to the section LV-6">#</a></h4>
+<p>What lets an agent do more ends with the grant: the levels auto and bypass, a rule allow and a remembered approval. A new grant, also one that replaces another, has none of them. (What the person tightened stays: LV-27.)</p>
+<blockquote>
+<p>A surface MUST NOT carry the level <code>auto</code> or <code>bypass</code>, a rule <code>allow</code> or a remembered approval from one grant over to another.</p>
+</blockquote>
+<p>Tests: <code>LV-6 what lets an agent do more ends with the grant: after a replacing attach, a detach and Stop the level is ask again, no rule allows and no approval is remembered</code>, <code>LV-6 a grant that replaces another starts clean at the hub: every granted scope is on again</code></p>
+<h4 id="lv-15">LV-15 <a class="anchor" href="#lv-15" aria-label="Link to the section LV-15">#</a></h4>
+<p>The hub says in attach what its policy decides for each action (decisions). The surface reasons from the stricter of its own decision and the hub's, takes a missing or malformed decision as confirm, and holds the hub to what it said.</p>
+<blockquote>
+<p>a surface MUST take the stricter of its own policy's decision and the hub's</p>
+</blockquote>
+<p>Tests: <code>LV-15 the surface reasons from the stricter of its own decision and the hub's, sent in attach as decisions; a hub that sends none may confirm anything</code>, <code>VEC-LEVELS the hub's decision for an action is read from 'decisions'; anything missing or malformed is confirm</code></p>
+<h4 id="ch-1">CH-1 <a class="anchor" href="#ch-1" aria-label="Link to the section CH-1">#</a></h4>
+<p>The chat scope: open and guarded grant it, kiosk does not; a surface without the panel grants none; without the scope every chat method is E_SCOPE, at the surface and at the hub.</p>
+<p>Tests: <code>CH-1 a grant holds chat only where the policy grants it and the page has a panel: open and guarded do, kiosk and a surface without the panel do not, and without the scope every chat method is E_SCOPE</code>, <code>CH-1 the hub grants the chat scope under open and guarded and not under kiosk; without it the chat methods are E_SCOPE and nothing is forwarded</code>, <code>VEC-SCOPE scopes are in canonical order</code>, <code>VEC-SCOPE every method maps to the scope in the section 9 table</code>, <code>VEC-POLICY each profile matches the section 12 table</code></p>
+<h2 id="sections-8-13">Sections 8, 13 <a class="anchor" href="#sections-8-13" aria-label="Link to the section Sections 8, 13">#</a></h2>
+<p>This requirement spans several sections of <a href="../reference/specification.html">the specification</a>.</p>
+<h4 id="lv-10">LV-10 <a class="anchor" href="#lv-10" aria-label="Link to the section LV-10">#</a></h4>
+<p>The hub sends its policy's human.levels and, as decisions, what its policy decides for each action of the surface in attach, and ends a grant whose surface reports auto or bypass beyond what that policy offers: detach {why:&quot;hub&quot;}, evt grant revoked, both recorded.</p>
+<blockquote>
+<p>The hub MUST end the grant when the surface reports the level <code>auto</code> or <code>bypass</code></p>
+</blockquote>
+<p>Tests: <code>LV-10 the hub sends its policy's human.levels to the surface in attach</code>, <code>LV-10 the hub sends what its policy decides for each action of the surface in attach, and acts as it said</code>, <code>LV-10 the hub ends the grant when the surface reports auto or bypass that its policy does not offer: detach {why:&quot;hub&quot;}, evt grant revoked, both recorded</code></p>
+<h4 id="lv-27">LV-27 <a class="anchor" href="#lv-27" aria-label="Link to the section LV-27">#</a></h4>
+<p>What the person tightened stays with the agent for as long as the page lives: the level strict, the rules confirm and deny, the scopes switched off are put on every new grant of the same agent (the same credential id), whatever its session id or name, and no call of the agent takes them away. The surface says so in its attach answer (kept), and the hub starts the grant with it and reads nothing from it that lets an agent do more.</p>
+<blockquote>
+<p>A surface MUST keep them for as long as the page lives</p>
+<p>The hub MUST NOT read anything else from it</p>
+</blockquote>
+<p>Tests: <code>LV-27 what the person tightened stays for the next grant of the same agent, under whatever session id and name: Strict, the rules confirm and deny, the scopes switched off; the attach answer says so; what they lift themselves does not stay</code>, <code>LV-27 the hub sends the id of the agent's credential in attach, and starts a grant with what the surface answers as kept: Strict, the rules confirm and deny, scopes switched off; never with anything that lets the agent do more</code></p>
+<h2 id="sections-6-13">Sections 6, 13 <a class="anchor" href="#sections-6-13" aria-label="Link to the section Sections 6, 13">#</a></h2>
+<p>This requirement spans several sections of <a href="../reference/specification.html">the specification</a>.</p>
+<h4 id="lv-11">LV-11 <a class="anchor" href="#lv-11" aria-label="Link to the section LV-11">#</a></h4>
+<p>Level and rule reports are checked, recorded as person records and told to the named agent alone, built from the checked values; malformed reports and grant events of an unknown kind are dropped. A rule allow that the hub's policy would not let waive anything is recorded as refused and neither kept nor told to the agent, and the grant goes on.</p>
+<blockquote>
+<p>The hub MUST NOT keep such a rule or tell the agent of it.</p>
+</blockquote>
+<p>Tests: <code>LV-11 a rule allow the hub's policy would not let waive anything is recorded as refused and neither kept nor relayed; the grant goes on</code>, <code>LV-11 level and rule reports reach the named agent alone, built from the checked values, and are recorded</code>, <code>LV-11 malformed reports, reports without ag and grant events of an unknown kind are dropped and not relayed</code></p>
+<h4 id="ch-12">CH-12 <a class="anchor" href="#ch-12" aria-label="Link to the section CH-12">#</a></h4>
+<p>The hub relays a chat event only to the grant its ag names, while that grant is live and holds chat, built from the checked fields; an agent's message only where the hub's policy lets that agent hear its sender, under the name the hub gave its sender, never back to it; an agent cannot send one.</p>
+<blockquote>
+<p>The hub MUST relay a <code>chat</code> event only to the grant its <code>ag</code> names</p>
+</blockquote>
+<p>Tests: <code>CH-12 the hub relays a chat event only to the grant its ag names, with s, built from the checked fields; without ag, or naming a grant the surface does not hold, it is dropped</code>, <code>CH-12 a chat event reaches only a live grant that holds chat: not one attached without the scope, with the scope switched off, or ended</code>, <code>CH-12 an agent's message is relayed with the name the hub gave its sender, never back to the sender, and not at all when the hub policy's chatRelay is off</code>, <code>CH-12 an agent cannot send a chat event, and a malformed message or one addressed to another agent is dropped</code></p>
+<h2 id="section-15-reference-implementation">Section 15: Reference implementation <a class="anchor" href="#section-15-reference-implementation" aria-label="Link to the section Section 15: Reference implementation">#</a></h2>
+<p><a href="../reference/specification.html#15-reference-implementation">Read section 15 of the specification</a>.</p>
+<h4 id="lv-14">LV-14 <a class="anchor" href="#lv-14" aria-label="Link to the section LV-14">#</a></h4>
+<p>The MCP adapter tells what the person set as notices: lines starting &quot;[reins] &quot; at the start of the next tool result, before any page-data marker, in the adapter's own words. The name of an action is a word the page chose and never appears in a notice: which actions the rules are for is listed last, as page data.</p>
+<p>Tests: <code>LV-14 what the person set reaches the model as a notice at the start of the next tool result, before the page-data marker</code>, <code>LV-14 the name of an action never appears in a notice: which action a rule is for comes last, as page data</code></p>
+<h4 id="ch-15">CH-15 <a class="anchor" href="#ch-15" aria-label="Link to the section CH-15">#</a></h4>
+<p>The MCP adapter's reins_chat: say, status, read and wait (90 s by default, 150 s at most, early when the grant ends); each message under a line of the adapter that says who spoke, its text behind &quot;| &quot;, under a first line that names the page, the surface and whether the hub verified the page; unread chat announced as a notice with a count and no text.</p>
+<p>Tests: <code>CH-15 reins_chat is the ninth tool: say, status and read reach the page, and wait hands over what is unread, each message under a line that says who spoke with its text behind &quot;| &quot;</code>, <code>CH-15 reins_chat wait answers &quot;no new messages&quot; after its timeout, 90 s by default and 150 s at most, returns as soon as a message comes, and returns early when the grant ends</code>, <code>CH-15 unread chat is announced as a notice ahead of the page data: a count in the adapter's words, never the text</code></p>
+<h4 id="ch-16">CH-16 <a class="anchor" href="#ch-16" aria-label="Link to the section CH-16">#</a></h4>
+<p>reins-tools chat-serve runs a command once for each message of the person: the message on standard input and nowhere else, under a line of the runner's with its text behind &quot;| &quot;, the argument array started without a shell, the output posted as the reply.</p>
+<p>Tests: <code>CH-16 chat-serve gives each message of the person to the command on standard input, started from its argument array without a shell, and posts what it prints</code></p>
+<h4 id="ch-25">CH-25 <a class="anchor" href="#ch-25" aria-label="Link to the section CH-25">#</a></h4>
+<p>reins_chat loses nothing and leaks nothing: read takes off the waiting list only what it showed, a wait whose request was cancelled takes no message, an answer to a message that was for this agent alone goes to the person alone unless the model names someone, and a chat text reaches the model on &quot;| &quot; lines cut at every line break and separator with no control character left raw.</p>
+<p>Tests: <code>CH-25 reins_chat read takes off the waiting list only what it showed, a wait whose request was cancelled takes no message, what was asked in private is answered to the person alone, and no control character of a text reaches the model raw</code>, <code>VEC-CHAT chat text handed to a model is cut into &quot;| &quot; lines at every line break and separator, with no control character left raw</code></p>
+<h4 id="ch-26">CH-26 <a class="anchor" href="#ch-26" aria-label="Link to the section CH-26">#</a></h4>
+<p>reins-tools chat-serve refuses to serve a page that proved no key to the hub unless --allow-unverified is given, serves the one page its first answer is about and names that surface in every call, and answers the person alone what was asked of the agent alone.</p>
+<p>Tests: <code>CH-26 chat-serve refuses a page the hub did not verify unless told otherwise, serves the one page its first answer is about and names it in every call, and answers the person alone what was asked of it alone</code>, <code>CH-16 chat-serve gives each message of the person to the command on standard input, started from its argument array without a shell, and posts what it prints</code></p>
+<h4 id="ch-28">CH-28 <a class="anchor" href="#ch-28" aria-label="Link to the section CH-28">#</a></h4>
+<p>Over the shell session a chat wait takes a message only for a caller that has the answer: what a caller that went away was shown is still there for the next. A wait hands over at most max messages, none for 0. An answer stays for the person alone when a read shows an older message after the person asked in private.</p>
+<p>Tests: <code>CH-28 over the shell session a chat wait takes a message only for a caller that has the answer; wait hands over as many as were asked for; and a read that shows an older message leaves a private question private</code></p>
+<h4 id="ch-29">CH-29 <a class="anchor" href="#ch-29" aria-label="Link to the section CH-29">#</a></h4>
+<p>chat-serve settles which file it runs before it takes a message, looks for a bare name in the folders of PATH and never in the working directory, and says which file it is; it takes one message at a time; a run is over only when what the command started has gone, also when the command exited by itself.</p>
+<p>Tests: <code>CH-29 chat-serve settles which file it runs before it takes a message and says so, takes one message at a time, and a run is over only when what the command started has gone</code></p>
+<h4 id="mcp-1">MCP-1 <a class="anchor" href="#mcp-1" aria-label="Link to the section MCP-1">#</a></h4>
+<p>The MCP server negotiates a protocol version in initialize.</p>
+<p>Tests: <code>MCP-1 initialize answers with the protocol version the client asked for when it supports it</code>, <code>MCP-2 initialize with an unknown protocol version answers with a version the server speaks</code></p>
+<h4 id="mcp-2">MCP-2 <a class="anchor" href="#mcp-2" aria-label="Link to the section MCP-2">#</a></h4>
+<p>Ten tools with valid input schemas and annotations.</p>
+<p>Tests: <code>MCP-3 tools/list returns exactly the ten tools with object input schemas and annotations</code></p>
+<h4 id="mcp-3">MCP-3 <a class="anchor" href="#mcp-3" aria-label="Link to the section MCP-3">#</a></h4>
+<p>The scopes the server was started with are a ceiling.</p>
+<p>Tests: <code>MCP-4 the scopes the server was started with are a ceiling for reins_attach</code></p>
+<h4 id="mcp-4">MCP-4 <a class="anchor" href="#mcp-4" aria-label="Link to the section MCP-4">#</a></h4>
+<p>Only reins_attach attaches; every other tool answers E_NOT_ATTACHED on a surface that is not attached.</p>
+<p>Tests: <code>MCP-5 only reins_attach attaches: other tools answer E_NOT_ATTACHED on a surface that is not attached</code></p>
+<h4 id="mcp-5">MCP-5 <a class="anchor" href="#mcp-5" aria-label="Link to the section MCP-5">#</a></h4>
+<p>In reins_batch page text sits on lines behind &quot;| &quot;, apart from the step results.</p>
+<p>Tests: <code>MCP-6 in reins_batch page text sits on lines behind &quot;| &quot;, apart from the step results; the listing marks verified surfaces</code></p>
+<h4 id="mcp-6">MCP-6 <a class="anchor" href="#mcp-6" aria-label="Link to the section MCP-6">#</a></h4>
+<p>reins_read returns the text of an element or of the page, or app state, as page data: every line of it behind &quot;| &quot;, and a line the adapter adds (the text was cut) after them.</p>
+<p>Tests: <code>MCP-7 reins_read returns the text of an element or of the page, and app state, as page data on lines behind &quot;| &quot;; a line the adapter adds comes after them</code></p>
+<h4 id="mcp-7">MCP-7 <a class="anchor" href="#mcp-7" aria-label="Link to the section MCP-7">#</a></h4>
+<p>A line of the surface listing gives what the hub knows first, in a fixed order (the surface id, verified or unverified, the origin, attached), and what the page says of itself last, with the app's name in quotes; reins_attach says in a line of its own, before the page-data marker, which surface it is, whether the hub verified the page and which scopes the grant has.</p>
+<p>Tests: <code>MCP-8 a surface listing gives what the hub knows first and says unverified where that is so, and what the page says of itself last with its name in quotes; reins_attach says in a line of its own which surface it is</code></p>
+<h4 id="mcp-8">MCP-8 <a class="anchor" href="#mcp-8" aria-label="Link to the section MCP-8">#</a></h4>
+<p>Text a page supplied reaches the model by one rule in every tool, alone and in a batch: on lines behind &quot;| &quot;, a new line at every line break and at U+001C to U+001E, every other control character but tab written as an escape; reins_read cuts at the length that was asked for, whatever the surface sent, and says so.</p>
+<p>Tests: <code>MCP-9 every text a page supplied reaches the model by one rule: on lines behind &quot;| &quot; cut at every line break and separator, with no control character left raw, in every tool alone and in a batch, and cut by the adapter at the length that was asked for</code></p>
+<h4 id="el-5">EL-5 <a class="anchor" href="#el-5" aria-label="Link to the section EL-5">#</a></h4>
+<p>reins-electron refuses a debugging port that is not on a loopback address, before it connects.</p>
+<blockquote>
+<p><code>reins-electron</code> MUST refuse a debugging port that is not on a loopback address</p>
+</blockquote>
+<p>Tests: <code>EL-5 a debugging port that is not on a loopback address is refused before any connection</code></p>
+<h4 id="el-6">EL-6 <a class="anchor" href="#el-6" aria-label="Link to the section EL-6">#</a></h4>
+<p>An adopted app's driver runs in a world of its own in every new document, and the function that carries its frames is added to that world only.</p>
+<blockquote>
+<p>MUST be added to that world only</p>
+</blockquote>
+<p>Tests: <code>EL-6 the driver's script and the function that carries its frames are put in a world of their own, in every new document</code></p>
+<h4 id="el-7">EL-7 <a class="anchor" href="#el-7" aria-label="Link to the section EL-7">#</a></h4>
+<p>electronLink takes a port only from a message its own window posted for its own request; frames cross the port unchanged and the link ends with the document.</p>
+<p>Tests: <code>EL-7 the page takes a port only from a message its own window posted for its own request, and the link ends with the document</code></p>
+<h4 id="el-8">EL-8 <a class="anchor" href="#el-8" aria-label="Link to the section EL-8">#</a></h4>
+<p>An adopted page runs under the guarded profile and offers the person no level that loosens (auto, bypass) unless whoever adopted it listed it, and then only where the hub offers it too.</p>
+<p>Tests: <code>EL-8 an adopted page runs under the guarded profile and offers the person no level that loosens, unless whoever adopted it listed levels</code></p>
+<h4 id="el-11">EL-11 <a class="anchor" href="#el-11" aria-label="Link to the section EL-11">#</a></h4>
+<p>When the command stops, every driver it loaded is told to disconnect for good, whatever carries its frames; a document that no longer hears the command stops its driver by itself.</p>
+<blockquote>
+<p>it MUST tell every driver it loaded to disconnect for good</p>
+<p>MUST stop its driver by itself</p>
+</blockquote>
+<p>Tests: <code>EL-11 when the command stops, every driver it loaded is told to stop for good, also one that has a socket of its own; the script is taken out of documents to come</code>, <code>EL-11 a document that is told to stop ends its driver for good and connects no more</code>, <code>EL-11 a document that no longer hears the command asks once, and then stops by itself</code></p>
+<h4 id="el-12">EL-12 <a class="anchor" href="#el-12" aria-label="Link to the section EL-12">#</a></h4>
+<p>The injector takes calls only from the worlds it made, which are named afresh for each run; it asks --match of every document, gives a document another link after the broker closed one, and prints origins, not URLs.</p>
+<blockquote>
+<p>the command MUST ignore a call of that function from any context it did not see created as that world</p>
+</blockquote>
+<p>Tests: <code>EL-6 the driver's script and the function that carries its frames are put in a world of their own, in every new document</code>, <code>EL-12 the injector goes by the document, not the tab: --match is asked for every document, a closed link is replaced, and what it logs is an origin</code></p>
+<h4 id="el-13">EL-13 <a class="anchor" href="#el-13" aria-label="Link to the section EL-13">#</a></h4>
+<p>reins-electron dials a hub only on a loopback address.</p>
+<blockquote>
+<p>MUST NOT dial a hub that is not on a loopback address</p>
+</blockquote>
+<p>Tests: <code>EL-13 a hub the pages are to join is on a loopback address, or it is not dialled</code></p>
+<h4 id="el-15">EL-15 <a class="anchor" href="#el-15" aria-label="Link to the section EL-15">#</a></h4>
+<p>The lease of an adopted document is judged by the clock when a frame arrives or is to leave: while the command has not been heard for 10 s the driver gets no frame and sends none, whether or not any timer of the document fires.</p>
+<blockquote>
+<p>it MUST NOT hand its driver a frame or send one of the driver's</p>
+</blockquote>
+<p>Tests: <code>EL-15 no timer has to fire: with every timer of the lease dead, a frame that arrives after the lease ran out is not handed to the driver, and the next one after the command stayed silent stops the driver for good</code>, <code>EL-15 a command that answers in time loses nothing: frames that waited while it was asked are handed on, in order</code></p>
+<h4 id="el-17">EL-17 <a class="anchor" href="#el-17" aria-label="Link to the section EL-17">#</a></h4>
+<p>With --debug-port the app is the browser behind the port: the end of the process the command started is not the end of the app, and the command, or its watcher when it was killed, closes that browser over the port and asks the port again.</p>
+<blockquote>
+<p>MUST NOT take the end of the process it started for the end of the app</p>
+</blockquote>
+<p>Tests: <code>EL-17 with --debug-port the app is the browser behind the port: a starter that leaves does not end the command, and the command closes that browser over the port when it stops</code>, <code>EL-17 an app that does not close when asked over its port is said to be still there, and the command ends with 1; a port that already answers is refused, and the browser behind it is left alone</code>, <code>EL-17 the watcher learns that the command is gone from its input, not from a process id: it then closes the browser behind the port, and an instance of the same app that comes up after it, and leaves another browser alone</code>, <code>EL-17 a watcher whose app does not close says so, and a watcher that was never told which browser it is closes the one on the port it was given</code></p>
+<h4 id="el-18">EL-18 <a class="anchor" href="#el-18" aria-label="Link to the section EL-18">#</a></h4>
+<p>--match names an origin, or a URL and what lies under it, compared as URLs: a document does not match because its URL contains the text.</p>
+<blockquote>
+<p>a document MUST NOT match because its URL contains the text of the pattern</p>
+</blockquote>
+<p>Tests: <code>EL-18 --match names an origin, or a URL and what lies under it: a document does not match because its URL contains the text</code></p>
+<h2 id="section-13-hub-behaviour">Section 13: Hub behaviour <a class="anchor" href="#section-13-hub-behaviour" aria-label="Link to the section Section 13: Hub behaviour">#</a></h2>
+<p><a href="../reference/specification.html#13-hub-behaviour">Read section 13 of the specification</a>.</p>
+<h4 id="lv-22">LV-22 <a class="anchor" href="#lv-22" aria-label="Link to the section LV-22">#</a></h4>
+<p>A change of what the person set is always recorded. Reports that change nothing are recorded at most 20 a second per surface and never told to the agent, and a grant whose surface reports more than 20 changes within one second is ended.</p>
+<blockquote>
+<p>The hub MUST record every change, whatever else the surface sent in the same second.</p>
+</blockquote>
+<p>Tests: <code>LV-22 a change of what the person set is always recorded; repeats are recorded at most 20 a second per surface and never relayed; a grant that reports more than 20 changes in a second is ended</code></p>
+<h4 id="lv-33">LV-33 <a class="anchor" href="#lv-33" aria-label="Link to the section LV-33">#</a></h4>
+<p>Fail closed: while the audit log cannot be written, a reported change that lets an agent do or hear more ends the grant, a change that only tightens is taken, and no chat message is relayed.</p>
+<blockquote>
+<p>The hub MUST end the grant when it cannot record such a change</p>
+</blockquote>
+<p>Tests: <code>LV-33 while the audit log cannot be written, a report that lets an agent do more ends the grant, and one that only tightens is taken</code></p>
+<h4 id="ch-14">CH-14 <a class="anchor" href="#ch-14" aria-label="Link to the section CH-14">#</a></h4>
+<p>Chat in the audit log: chat.say is an audited request recorded with the digest of {text} as the room keeps it (with to when it has one) and its length, whatever else the agent sent; a message of the person is a person record for each agent it is relayed to, with a digest of the same shape; the text is never written.</p>
+<blockquote>
+<p>The text of a chat message MUST NOT be written to the audit log</p>
+</blockquote>
+<p>Tests: <code>CH-14 chat.say is audited with a digest and the length, accepted before it is forwarded; a relayed message of the person is a person record; the text is never in the log</code>, <code>VEC-CHAT the audit digest of a chat text covers the canonical JSON of {text}, with to when it has one, and nothing else an agent sent</code></p>
+<h4 id="ch-24">CH-24 <a class="anchor" href="#ch-24" aria-label="Link to the section CH-24">#</a></h4>
+<p>What the person switched for one agent in the chat reaches the hub as evt user {kind:&quot;relay&quot;, on} with ag: recorded as a person record (method relay, value on or off) and told to that agent alone; a malformed or repeated report changes nothing, and under a hub policy of off a report of on is recorded as refused and nothing is relayed.</p>
+<p>Tests: <code>CH-24 what the person switched for one agent is recorded as a person record and told to that agent alone; a malformed or repeated report changes nothing, and under off a report of on is recorded as refused</code></p>
+<h4 id="hub-1">HUB-1 <a class="anchor" href="#hub-1" aria-label="Link to the section HUB-1">#</a></h4>
+<p>One token bucket per credential, surface and scope, shared by its sessions; hub.info and surfaces.list share a bucket per credential (10/s, burst 20); over a limit E_RATE.</p>
+<p>Tests: <code>RL-1 requests over policy.rates for a scope fail with E_RATE and do not reach the surface</code>, <code>RL-2 the rate bucket is shared by all of a credential's sessions</code>, <code>RL-3 hub.info and surfaces.list share one bucket per credential: 10 a second, burst 20</code></p>
+<h4 id="hub-2">HUB-2 <a class="anchor" href="#hub-2" aria-label="Link to the section HUB-2">#</a></h4>
+<p>Capacity: 64 surfaces, 32 agents, 4 sessions per credential, 8 streams per agent; beyond that E_BUSY.</p>
+<p>Tests: <code>CAP-1 a credential holds at most 4 sessions by default; the fifth is refused with E_BUSY</code>, <code>CAP-2 the hub holds at most 64 surfaces by default; the next is refused with E_BUSY</code>, <code>CAP-3 an agent may hold 8 open streams; the next is E_BUSY</code></p>
+<h4 id="hub-3">HUB-3 <a class="anchor" href="#hub-3" aria-label="Link to the section HUB-3">#</a></h4>
+<p>Without a live observe grant the SurfaceInfo is reduced; changed events go only to grant holders; hub.info counts only what the agent may see.</p>
+<p>Tests: <code>GR-15 without a live observe grant an agent sees the origin as url and the app name as title</code>, <code>GR-16 evt surface changed goes only to agents holding a grant on that surface</code>, <code>GR-19 hub.info counts only the surfaces an agent may attach to and only its own credential's sessions</code></p>
+<h4 id="hub-4">HUB-4 <a class="anchor" href="#hub-4" aria-label="Link to the section HUB-4">#</a></h4>
+<p>Audit: records for connections, attach, detach, grant end, refusals and audited requests (act, ui.<em>, nav.</em>, show.view, show.toast, show.highlight, stream.open, surface.attach); accepted before forwarding; args as a digest, an HMAC under the audit key.</p>
+<p>Tests: <code>AU-1 an audited request is recorded as accepted before it is forwarded, and its outcome refers to that record</code>, <code>AU-2 arguments are logged as the SHA-256 of their canonical JSON, never in clear</code>, <code>AU-3 the audit records connections, attach, detach, grant end and refused requests</code>, <code>AU-6 with an audit key args is HMAC-SHA256(auditKey, canonical JSON); show.toast, show.highlight and stream.open are audited, cursor.* and show.clear are not</code></p>
+<h4 id="hub-5">HUB-5 <a class="anchor" href="#hub-5" aria-label="Link to the section HUB-5">#</a></h4>
+<p>Audit chain: hash over prev and canonical record, HMAC when keyed; verification fails on edits and truncation.</p>
+<p>Tests: <code>AU-4 the chain verifies independently: hash = HMAC-SHA256(auditKey, prev + &quot;\n&quot; + canonical record without hash)</code>, <code>VEC-AUDIT verifyAuditChain accepts the unkeyed and the keyed vector chains</code>, <code>VEC-AUDIT an edited record, a wrong key or a truncated log fails verification</code></p>
+<h4 id="hub-6">HUB-6 <a class="anchor" href="#hub-6" aria-label="Link to the section HUB-6">#</a></h4>
+<p>Audit refusals are bounded to 20 per second per connection, the excess summarised.</p>
+<p>Tests: <code>AU-5 refusal records are bounded to 20 per second per connection; the excess becomes one suppressed record</code></p>
+<h4 id="hub-7">HUB-7 <a class="anchor" href="#hub-7" aria-label="Link to the section HUB-7">#</a></h4>
+<p>On shutdown the hub sends bye OK to every peer.</p>
+<p>Tests: <code>SH-1 on shutdown the hub sends bye {code:&quot;OK&quot;} to every peer</code></p>
+<h4 id="hub-8">HUB-8 <a class="anchor" href="#hub-8" aria-label="Link to the section HUB-8">#</a></h4>
+<p>Admission: surfaces per origin and overall, agents per credential (E_RATE); a full hub answers E_BUSY first.</p>
+<p>Tests: <code>CAP-4 admissions are rate limited: surfaces per origin, agents per credential (E_RATE); a full hub answers E_BUSY first</code></p>
+<h4 id="hub-9">HUB-9 <a class="anchor" href="#hub-9" aria-label="Link to the section HUB-9">#</a></h4>
+<p>Malformed configuration is refused; a present but mistyped restriction never means any.</p>
+<p>Tests: <code>CFG-1 malformed configuration is refused; a mistyped restriction never means &quot;any&quot;</code></p>
+<h2 id="sections-12-14">Sections 12, 14 <a class="anchor" href="#sections-12-14" aria-label="Link to the section Sections 12, 14">#</a></h2>
+<p>This requirement spans several sections of <a href="../reference/specification.html">the specification</a>.</p>
+<h4 id="lv-26">LV-26 <a class="anchor" href="#lv-26" aria-label="Link to the section LV-26">#</a></h4>
+<p>The overlay acts on an event only when the browser made it for input of the person and is delivering it to the control the listener was registered on; a script that replaces addEventListener after the driver loaded is handed no listener of the overlay.</p>
+<blockquote>
+<p>A surface MUST NOT act on an event unless the browser made it for input of the person</p>
+</blockquote>
+<p>Tests: <code>LV-26 a script that replaces addEventListener after the driver loaded finds no listener of the overlay or of the watch for the person's input: it has nothing to call, and what it dispatches moves nothing</code>, <code>LV-7 no method, event or untrusted input opens the panel or changes a level, a rule or a scope switch</code></p>
+<h2 id="sections-6-12">Sections 6, 12 <a class="anchor" href="#sections-6-12" aria-label="Link to the section Sections 6, 12">#</a></h2>
+<p>This requirement spans several sections of <a href="../reference/specification.html">the specification</a>.</p>
+<h4 id="ch-5">CH-5 <a class="anchor" href="#ch-5" aria-label="Link to the section CH-5">#</a></h4>
+<p>Who is sent a message is decided by the four rules of section 12 (chatAudience): the person to all or to one; an agent to the person alone with to person, else to the other agents that hear it; never to the speaker; each is sent as evt chat with ag.</p>
+<blockquote>
+<p><code>chatAudience</code> implements it, and every surface MUST use it or match it exactly</p>
+</blockquote>
+<p>Tests: <code>CH-5 a message is sent as evt chat with ag to each agent that is to hear it, never to its speaker: the person to all or to one, an agent to the others where the room relays and to nobody where it does not</code>, <code>VEC-CHAT chatAudience reproduces every row of who hears a message</code>, <code>VEC-CHAT a message off the wire is rebuilt from its checked fields, or dropped</code></p>
+<h2 id="sections-12-15">Sections 12, 15 <a class="anchor" href="#sections-12-15" aria-label="Link to the section Sections 12, 15">#</a></h2>
+<p>This requirement spans several sections of <a href="../reference/specification.html">the specification</a>.</p>
+<h4 id="ch-7">CH-7 <a class="anchor" href="#ch-7" aria-label="Link to the section CH-7">#</a></h4>
+<p>Only the person speaks as the person: a message of the person comes from trusted input events in the composer of the Chat tab alone. No method, parameter or event posts as the person; the driver's API posts nothing and gives the app no text.</p>
+<blockquote>
+<p>A surface MUST NOT produce a message from the person except from trusted input events in the composer of its own Chat tab</p>
+</blockquote>
+<p>Tests: <code>CH-7 only trusted input in the composer of the Chat tab makes a message of the person: no method, parameter, event or untrusted input does</code>, <code>CH-7 the driver's API tells the app that a message was posted and how long it is, never its text, and posts none; no observation returns the transcript</code></p>
+<h2 id="sections-9-12">Sections 9, 12 <a class="anchor" href="#sections-9-12" aria-label="Link to the section Sections 9, 12">#</a></h2>
+<p>This requirement spans several sections of <a href="../reference/specification.html">the specification</a>.</p>
+<h4 id="ch-10">CH-10 <a class="anchor" href="#ch-10" aria-label="Link to the section CH-10">#</a></h4>
+<p>chat.say and chat.status are served while control is paused; while a consent prompt is showing or queued they fail with E_BUSY, nothing can be typed or sent in the Chat tab, and chat.read still answers.</p>
+<p>Tests: <code>CH-10 chat.say and chat.status work while control is paused; while a consent prompt is up they are E_BUSY, nothing can be typed or sent and chat.read still answers</code>, <code>VEC-SCOPE the read-only methods, and the chat methods served while paused, are those of section 9</code></p>
+<h4 id="ch-22">CH-22 <a class="anchor" href="#ch-22" aria-label="Link to the section CH-22">#</a></h4>
+<p>A message id counts, for each agent, the messages that agent may read, from 1 on each page load: an agent's ids say nothing about what was said to others, an event carries the id the message has for the agent it goes to, and the count goes on when the agent's grant is replaced.</p>
+<p>Tests: <code>CH-22 message ids count each agent's own messages from 1, an event carries the id the message has for the agent it goes to, and the count goes on when a grant is replaced</code></p>
+<h2 id="sections-12-13">Sections 12, 13 <a class="anchor" href="#sections-12-13" aria-label="Link to the section Sections 12, 13">#</a></h2>
+<p>This requirement spans several sections of <a href="../reference/specification.html">the specification</a>.</p>
+<h4 id="ch-13">CH-13 <a class="anchor" href="#ch-13" aria-label="Link to the section CH-13">#</a></h4>
+<p>Chat is bounded: rates.chat per credential and surface (10, 5 and 0 a second), chat.say checked at the hub, and at the hub a relay budget for each sender and each agent that listens, so that an agent's flood uses none of the person's; a dropped relay of an agent's words is a record of kind chat.</p>
+<p>Tests: <code>CH-13 chat.say draws on rates.chat per credential and surface (E_RATE) and is checked at the hub; each sender has a relay budget of its own for each agent, so an agent's flood uses none of the person's</code>, <code>VEC-POLICY each profile has the remembered approvals, timeouts, rates and pointer rate of the section 12 table</code></p>
+<h4 id="ch-20">CH-20 <a class="anchor" href="#ch-20" aria-label="Link to the section CH-20">#</a></h4>
+<p>chatRelay is off, person or on, in the surface's policy and in the hub's, and the stricter of the two applies: the hub sends its value with every attach and enforces it itself, a surface that is sent none takes it as off, and true and false read as on and off.</p>
+<p>Tests: <code>CH-20 the stricter of the surface's chatRelay and the hub's applies, a surface that is sent none takes it as off, and true and false read as on and off</code>, <code>CH-20 the hub sends its chatRelay with every attach and enforces it itself: under on every agent hears the others, under off none, under person only agents the surface reported as switched on by the person</code>, <code>VEC-CHAT chatRelay has three values, the stricter of two applies, and the two old values read as on and off</code>, <code>VEC-POLICY each profile matches the section 12 table</code></p>
+<h4 id="ch-23">CH-23 <a class="anchor" href="#ch-23" aria-label="Link to the section CH-23">#</a></h4>
+<p>An addressed message stays addressed: when the agent it is for leaves before it is sent, nothing is sent until the person has chosen again, and for 500 ms after the room changed Send and Enter are ignored. A message of the person the hub does not relay (beyond 5 a second after a burst of 10 for one agent, or while the audit log cannot record it) is recorded, told to the surface as chat.undelivered, and marked in the tab.</p>
+<p>Tests: <code>CH-23 an addressed message stays addressed: when the agent it is for leaves before it is sent, nothing is sent until the person has chosen again; and a message the hub says it did not deliver is marked</code>, <code>CH-23 a message of the person beyond its budget for one agent (5 a second after a burst of 10) is not relayed, is recorded, and the surface is told which one with chat.undelivered</code></p>
+<h2 id="sections-9-12-13">Sections 9, 12, 13 <a class="anchor" href="#sections-9-12-13" aria-label="Link to the section Sections 9, 12, 13">#</a></h2>
+<p>This requirement spans several sections of <a href="../reference/specification.html">the specification</a>.</p>
+<h4 id="ch-21">CH-21 <a class="anchor" href="#ch-21" aria-label="Link to the section CH-21">#</a></h4>
+<p>to: &quot;person&quot; on chat.say is for the person alone: always taken, at the surface and at the hub, sent and relayed to no agent whatever the room relays, and read back by its sender only.</p>
+<p>Tests: <code>CH-21 to: &quot;person&quot; is for the person alone: always taken, sent to no agent whatever the room relays, read back by its sender only</code>, <code>CH-21 to: &quot;person&quot; passes the hub under every chatRelay, with the trimmed text and to and no other param forwarded; an agent's message for the person alone is never relayed to an agent</code>, <code>VEC-CHAT chatAudience reproduces every row of who hears a message</code></p>
+<h2 id="section-16-versioning">Section 16: Versioning <a class="anchor" href="#section-16-versioning" aria-label="Link to the section Section 16: Versioning">#</a></h2>
+<p><a href="../reference/specification.html#16-versioning">Read section 16 of the specification</a>.</p>
+<h4 id="ver-1">VER-1 <a class="anchor" href="#ver-1" aria-label="Link to the section VER-1">#</a></h4>
+<p>No common version is E_VERSION.</p>
+<p>Tests: <code>VER-1 a hello with no version in common is refused with E_VERSION</code></p>
+<h4 id="ver-2">VER-2 <a class="anchor" href="#ver-2" aria-label="Link to the section VER-2">#</a></h4>
+<p>Receivers ignore unknown fields and unknown event topics.</p>
+<p>Tests: <code>VER-2 unknown fields on frames are ignored</code>, <code>VER-5 an event with an unknown topic is ignored, not fatal</code></p>
+<h4 id="ver-3">VER-3 <a class="anchor" href="#ver-3" aria-label="Link to the section VER-3">#</a></h4>
+<p>Unknown methods are refused with E_UNKNOWN_METHOD.</p>
+<p>Tests: <code>VER-3 an unknown method is refused with E_UNKNOWN_METHOD on an attached surface</code>, <code>VER-4 an unknown method without a surface id is refused with E_UNKNOWN_METHOD</code>, <code>SF-SCOPE-1 the surface checks the grant and its scopes itself: E_NOT_ATTACHED, E_SCOPE, E_UNKNOWN_METHOD</code></p>
+<h2 id="sections-4-to-16">Sections 4 to 16 <a class="anchor" href="#sections-4-to-16" aria-label="Link to the section Sections 4 to 16">#</a></h2>
+<p>This requirement spans several sections of <a href="../reference/specification.html">the specification</a>.</p>
+<h4 id="err-1">ERR-1 <a class="anchor" href="#err-1" aria-label="Link to the section ERR-1">#</a></h4>
+<p>The error codes are exactly those of the section 6 table.</p>
+<p>Tests: <code>VEC-ERR every error code the spec names exists</code>, <code>VEC-ERR the error codes are exactly those of the section 6 table</code></p>
+<h2 id="section-14-security-requirements">Section 14: Security requirements <a class="anchor" href="#section-14-security-requirements" aria-label="Link to the section Section 14: Security requirements">#</a></h2>
+<p><a href="../reference/specification.html#14-security-requirements">Read section 14 of the specification</a>.</p>
+<h4 id="s14-1">S14-1 <a class="anchor" href="#s14-1" aria-label="Link to the section S14-1">#</a></h4>
+<p>The hub listens on loopback only and validates Host, Origin and the remote address on every upgrade.</p>
+<p>Tests: <code>S14.1 an upgrade with a Host header other than loopback with the hub port is refused (DNS rebinding)</code>, <code>S14.1 an upgrade whose Origin no configured role accepts is refused</code>, <code>S14.1 every upgrade is checked: wrong Host and wrong Origin are refused before any frame</code></p>
+<h4 id="s14-2">S14-2 <a class="anchor" href="#s14-2" aria-label="Link to the section S14-2">#</a></h4>
+<p>Agents authenticate with a 256-bit secret by HMAC challenge-response; the hub proves the secret; every message is sealed with a MAC bound to the handshake.</p>
+<p>Tests: <code>S14.2 agents prove a 256-bit secret by HMAC and the hub proves it back; a wrong secret is refused</code>, <code>S14.2 seal MACs are bound to the handshake: a message sealed for another session is rejected</code></p>
+<h4 id="s14-3">S14-3 <a class="anchor" href="#s14-3" aria-label="Link to the section S14-3">#</a></h4>
+<p>Secrets are never in URLs or logs and are stored in owner-only files.</p>
+<p>Tests: <code>S14.3 secrets never appear in frames, refusals, audit records or console output</code>, <code>S14.3 the audit file the hub creates is readable by its owner only (POSIX mode)</code></p>
+<h4 id="s14-4">S14-4 <a class="anchor" href="#s14-4" aria-label="Link to the section S14-4">#</a></h4>
+<p>Surfaces are admitted by origin allowlist, and by key where the deployment requires it or holds a key for the app id they claim.</p>
+<p>Tests: <code>S14.4 surfaces are admitted by origin allowlist, and by key where required</code>, <code>HS-26 a surface claiming an app id the hub holds a key for must prove it, even without requireKey; SurfaceInfo.verified tells them apart</code></p>
+<h4 id="s14-5">S14-5 <a class="anchor" href="#s14-5" aria-label="Link to the section S14-5">#</a></h4>
+<p>Every forwarded request is checked against a live grant, its scope and its rate.</p>
+<p>Tests: <code>S14.5 every forwarded request is checked against a live grant, its scope and its rate</code></p>
+<h4 id="s14-6">S14-6 <a class="anchor" href="#s14-6" aria-label="Link to the section S14-6">#</a></h4>
+<p>The surface re-checks every request against the app policy.</p>
+<p>Tests: <code>S14.6 the surface applies its own policy even when the hub forwards without c:1</code></p>
+<h4 id="s14-7">S14-7 <a class="anchor" href="#s14-7" aria-label="Link to the section S14-7">#</a></h4>
+<p>Arguments are validated against a schema before any handler runs; undeclared properties are rejected.</p>
+<p>Tests: <code>S14.7 arguments are validated against the schema before the handler runs; undeclared properties are rejected</code></p>
+<h4 id="s14-8">S14-8 <a class="anchor" href="#s14-8" aria-label="Link to the section S14-8">#</a></h4>
+<p>No frame, argument or result can cause code, markup or style to be evaluated.</p>
+<p>Tests: <code>S14.8 agent text, toasts and colours never become markup, code or style</code></p>
+<h4 id="s14-9">S14-9 <a class="anchor" href="#s14-9" aria-label="Link to the section S14-9">#</a></h4>
+<p>Private fields are never read and, by default, never written.</p>
+<p>Tests: <code>S14.9 private fields are never read and, by default, never written</code>, <code>S14.9 commands that would change a private control they do not target are refused: clear on an editable holding one, a radio of its group, a form reset</code>, <code>S14.9 a text field swapped in for a private one stays private</code>, <code>S14.9 private text never names another node, and a node in a private subtree is named only by data-reins-label</code></p>
+<h4 id="s14-10">S14-10 <a class="anchor" href="#s14-10" aria-label="Link to the section S14-10">#</a></h4>
+<p>Consent, the indicator and its panel are isolated from the page's styles and from what its scripts can reach, and act only on input the browser made for the person and delivered to their own controls. Script that runs in the page's own JavaScript realm is outside the rule, whatever the order in which it and the driver load.</p>
+<p>Tests: <code>S14.10 the consent card sits in a closed shadow root and ignores untrusted clicks</code>, <code>LV-7 no method, event or untrusted input opens the panel or changes a level, a rule or a scope switch</code>, <code>LV-24 the overlay's stylesheet reads no custom property and names only generic font families, and the host pins what 'all' leaves alone</code>, <code>LV-26 a script that replaces addEventListener after the driver loaded finds no listener of the overlay or of the watch for the person's input: it has nothing to call, and what it dispatches moves nothing</code></p>
+<h4 id="s14-11">S14-11 <a class="anchor" href="#s14-11" aria-label="Link to the section S14-11">#</a></h4>
+<p>A human can always see that an agent is attached; Pause and Stop work without the hub.</p>
+<p>Tests: <code>S14.11 while an agent is attached an indicator names it, and Stop works without the hub</code>, <code>S14.11 Pause holds page-changing commands without the hub</code></p>
+<h4 id="s14-12">S14-12 <a class="anchor" href="#s14-12" aria-label="Link to the section S14-12">#</a></h4>
+<p>Errors carry no internals; observations are size-bounded.</p>
+<p>Tests: <code>S14.12 hub errors are short and carry no stack traces, file paths or secrets</code>, <code>S14.12 handler failures carry no internals and observations are size-bounded</code></p>
+<h4 id="s14-13">S14-13 <a class="anchor" href="#s14-13" aria-label="Link to the section S14-13">#</a></h4>
+<p>The audit log is append-only and hash-chained, keyed where needed, and the hub refuses attach and every audited request while it cannot record.</p>
+<p>Tests: <code>S14.13 when the audit log cannot be written, the hub refuses attach and audited requests with E_INTERNAL</code>, <code>S14.13 the audit chain is keyed when the hub has an audit key: the plain SHA-256 chain does not verify it</code>, <code>AU-6 with an audit key args is HMAC-SHA256(auditKey, canonical JSON); show.toast, show.highlight and stream.open are audited, cursor.* and show.clear are not</code></p>
+<h4 id="s14-14">S14-14 <a class="anchor" href="#s14-14" aria-label="Link to the section S14-14">#</a></h4>
+<p>Everything a surface reports is untrusted input presented to a model as data.</p>
+<p>Tests: <code>S14.14 text a page supplied reaches the model marked as page data</code>, <code>S14.14 page-supplied names cannot break the compact tree format a model reads</code></p>
+<h4 id="s14-15">S14-15 <a class="anchor" href="#s14-15" aria-label="Link to the section S14-15">#</a></h4>
+<p>A grant's level, rules and scope switches change only on the person's trusted input on the surface, and a change that lets an action run without asking only through a confirm step; nothing the person sets relaxes a deny of the surface's policy or the hub's; the hub ends a grant whose surface reports a level beyond the hub's policy and takes no rule that policy would not honour. What lets an agent do more ends with the grant; what the person tightened stays with the agent, whatever the agent does.</p>
+<p>Tests: <code>S14.15 only the person's trusted input changes a grant's level; nothing they set relaxes a deny; and it ends with the grant</code>, <code>S14.15 the hub ends a grant whose surface reports a level beyond the hub's policy, and never widens a grant on a surface's word</code>, <code>LV-8 whatever lets an action run without asking takes a confirm step that names the agent and what stops asking, armed after 500 ms; what asks more applies at once</code>, <code>LV-11 a rule allow the hub's policy would not let waive anything is recorded as refused and neither kept nor relayed; the grant goes on</code>, <code>LV-6 what lets an agent do more ends with the grant: after a replacing attach, a detach and Stop the level is ask again, no rule allows and no approval is remembered</code>, <code>LV-27 what the person tightened stays for the next grant of the same agent, under whatever session id and name: Strict, the rules confirm and deny, the scopes switched off; the attach answer says so; what they lift themselves does not stay</code></p>
+<h4 id="s14-16">S14-16 <a class="anchor" href="#s14-16" aria-label="Link to the section S14-16">#</a></h4>
+<p>Chat is data and grants nothing: the person's words come only from trusted input in the surface's chat tab, agent text is shown as text under the grant's name and never next to a consent prompt, agents hear each other only where the policy or the person says so, the hub relays a message only to the grant it names and records length and digest, and no message changes a level, a rule, a scope switch or a consent answer.</p>
+<p>Tests: <code>S14.16 the person's words come only from trusted input in the Chat tab, an agent's text is shown as text under its grant's name, and no message changes a level, a rule, a scope or a consent answer</code>, <code>S14.16 the hub relays a chat message only to the grant it names and records its length and digest, never its text</code></p>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/implementers/requirements.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/implementers/requirements.md</code></span><a class="md-link" href="./requirements.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./test-vectors.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Test vectors</span></a>
+    <a class="pager-next" href="../community/contributing.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Contributing</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#how-to-read-this">How to read this</a></li><li class="toc-2"><a href="#section-3-transports">Section 3: Transports</a></li><li class="toc-2"><a href="#section-4-framing">Section 4: Framing</a></li><li class="toc-2"><a href="#section-5-handshake-and-authentication">Section 5: Handshake and authentication</a></li><li class="toc-2"><a href="#section-6-requests-responses-events">Section 6: Requests, responses, events</a></li><li class="toc-2"><a href="#section-7-manifest-and-prompt-card">Section 7: Manifest and prompt card</a></li><li class="toc-2"><a href="#section-8-grants-and-scopes">Section 8: Grants and scopes</a></li><li class="toc-2"><a href="#section-9-methods">Section 9: Methods</a></li><li class="toc-2"><a href="#section-10-observation">Section 10: Observation</a></li><li class="toc-2"><a href="#section-11-cursor-and-the-pointer-stream">Section 11: Cursor and the pointer stream</a></li><li class="toc-2"><a href="#section-12-policy">Section 12: Policy</a></li><li class="toc-2"><a href="#sections-8-12">Sections 8, 12</a></li><li class="toc-2"><a href="#sections-8-13">Sections 8, 13</a></li><li class="toc-2"><a href="#sections-6-13">Sections 6, 13</a></li><li class="toc-2"><a href="#section-15-reference-implementation">Section 15: Reference implementation</a></li><li class="toc-2"><a href="#section-13-hub-behaviour">Section 13: Hub behaviour</a></li><li class="toc-2"><a href="#sections-12-14">Sections 12, 14</a></li><li class="toc-2"><a href="#sections-6-12">Sections 6, 12</a></li><li class="toc-2"><a href="#sections-12-15">Sections 12, 15</a></li><li class="toc-2"><a href="#sections-9-12">Sections 9, 12</a></li><li class="toc-2"><a href="#sections-12-13">Sections 12, 13</a></li><li class="toc-2"><a href="#sections-9-12-13">Sections 9, 12, 13</a></li><li class="toc-2"><a href="#section-16-versioning">Section 16: Versioning</a></li><li class="toc-2"><a href="#sections-4-to-16">Sections 4 to 16</a></li><li class="toc-2"><a href="#section-14-security-requirements">Section 14: Security requirements</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

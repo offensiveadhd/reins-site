@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Methods · Reins</title>
+<meta name="description" content="Every request an agent can send, with its parameters, its result and the scope it needs, and how a surface behaves for each.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/reference/methods.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Methods">
+<meta property="og:description" content="Every request an agent can send, with its parameters, its result and the scope it needs, and how a surface behaves for each.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/reference/methods.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="./methods.html" aria-current="page">Methods</a></li><li><a href="./events.html">Events</a></li><li><a href="./error-codes.html">Error codes</a></li><li><a href="./policy-fields.html">Policy fields</a></li><li><a href="./limits.html">Limits</a></li><li><a href="./cli.html">CLI</a></li><li><a href="./sdk.html">SDK API</a></li><li><a href="./specification.html">Specification</a></li><li><a href="./security-model.html">Security model</a></li><li><a href="./chat-guide.html">The chat guide</a></li><li><a href="./electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#reference">Reference</a></li><li aria-current="page">Methods</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Methods</h1>
+        <p class="lede">Every request an agent can send, with its parameters, its result and the scope it needs, and how a surface behaves for each.</p>
+        
+      </header>
+      <h2 id="the-table">The table <a class="anchor" href="#the-table" aria-label="Link to the section The table">#</a></h2>
+<p>Agent side. All but the first two and <code>stream.close</code> take <code>s</code>, the surface id.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>method</th>
+<th>params</th>
+<th>result</th>
+<th>scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hub.info</code></td>
+<td></td>
+<td><code>HubInfo</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>surfaces.list</code></td>
+<td></td>
+<td><code>{surfaces}</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>surface.attach</code></td>
+<td><code>scopes, reason?</code></td>
+<td><code>{grant, surface, manifest}</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>surface.detach</code></td>
+<td></td>
+<td><code>{}</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>observe</code></td>
+<td><code>since?, boxes?</code></td>
+<td><code>Observation</code></td>
+<td>observe</td>
+</tr>
+<tr>
+<td><code>read</code></td>
+<td><code>h?, max?</code></td>
+<td><code>{text, truncated}</code></td>
+<td>observe</td>
+</tr>
+<tr>
+<td><code>state.get</code></td>
+<td><code>name?</code></td>
+<td><code>{state}</code></td>
+<td>observe</td>
+</tr>
+<tr>
+<td><code>sub</code> / <code>unsub</code></td>
+<td><code>topics</code></td>
+<td><code>{topics}</code> now subscribed</td>
+<td>observe</td>
+</tr>
+<tr>
+<td><code>act</code></td>
+<td><code>a, args?</code></td>
+<td><code>{result?, rev}</code></td>
+<td>act</td>
+</tr>
+<tr>
+<td><code>ui.click</code></td>
+<td><code>h</code></td>
+<td><code>{rev}</code></td>
+<td>ui</td>
+</tr>
+<tr>
+<td><code>ui.type</code></td>
+<td><code>h, text, clear?, enter?</code></td>
+<td><code>{rev}</code></td>
+<td>ui</td>
+</tr>
+<tr>
+<td><code>ui.select</code></td>
+<td><code>h, value</code></td>
+<td><code>{rev}</code></td>
+<td>ui</td>
+</tr>
+<tr>
+<td><code>ui.scroll</code></td>
+<td><code>h?, dx?, dy?, to?</code></td>
+<td><code>{rev}</code></td>
+<td>ui</td>
+</tr>
+<tr>
+<td><code>ui.key</code></td>
+<td><code>key, h?</code></td>
+<td><code>{rev}</code></td>
+<td>ui</td>
+</tr>
+<tr>
+<td><code>cursor.move</code></td>
+<td><code>to, ms?, wait?</code></td>
+<td><code>{x, y}</code></td>
+<td>cursor</td>
+</tr>
+<tr>
+<td><code>cursor.set</code></td>
+<td><code>visible?, label?, color?</code></td>
+<td><code>{}</code></td>
+<td>cursor</td>
+</tr>
+<tr>
+<td><code>show.toast</code></td>
+<td><code>text, kind?, ms?</code></td>
+<td><code>{}</code></td>
+<td>show</td>
+</tr>
+<tr>
+<td><code>show.highlight</code></td>
+<td><code>h, label?, ms?</code></td>
+<td><code>{}</code></td>
+<td>show</td>
+</tr>
+<tr>
+<td><code>show.view</code></td>
+<td><code>view, data?</code></td>
+<td><code>{result?}</code></td>
+<td>show</td>
+</tr>
+<tr>
+<td><code>show.clear</code></td>
+<td></td>
+<td><code>{}</code></td>
+<td>show</td>
+</tr>
+<tr>
+<td><code>nav.go</code></td>
+<td><code>url</code></td>
+<td><code>{}</code></td>
+<td>nav</td>
+</tr>
+<tr>
+<td><code>chat.say</code></td>
+<td><code>text, to?</code></td>
+<td><code>{id}</code></td>
+<td>chat</td>
+</tr>
+<tr>
+<td><code>chat.read</code></td>
+<td><code>since?, max?</code></td>
+<td><code>{messages, next}</code></td>
+<td>chat</td>
+</tr>
+<tr>
+<td><code>chat.status</code></td>
+<td><code>state, note?</code></td>
+<td><code>{}</code></td>
+<td>chat</td>
+</tr>
+<tr>
+<td><code>stream.open</code></td>
+<td><code>kind:&quot;pointer&quot;</code></td>
+<td><code>{ch, credit}</code></td>
+<td>cursor</td>
+</tr>
+<tr>
+<td><code>stream.close</code></td>
+<td><code>ch</code></td>
+<td><code>{}</code></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p>A request is <code>req {id, m, p}</code> and is answered by exactly one <code>res</code>. There are 27 methods in protocol 0.1. An unknown method is answered <code>E_UNKNOWN_METHOD</code> before any parameter is checked.</p>
+<h2 id="who-answers">Who answers <a class="anchor" href="#who-answers" aria-label="Link to the section Who answers">#</a></h2>
+<p>The hub answers six methods itself: <code>hub.info</code>, <code>surfaces.list</code>, <code>surface.attach</code>, <code>surface.detach</code>, <code>stream.open</code> and <code>stream.close</code>.</p>
+<p>Every other method is forwarded. The hub checks the grant, the scope and the rate limit, strips <code>s</code>, and sends the request to the surface with <code>ag</code> set to the agent's session id, and <code>c:1</code> when the hub policy demands a human confirmation. The surface's answer is relayed back unchanged.</p>
+<h2 id="read-only-methods">Read-only methods <a class="anchor" href="#read-only-methods" aria-label="Link to the section Read-only methods">#</a></h2>
+<p><code>observe</code>, <code>read</code>, <code>state.get</code>, <code>sub</code>, <code>unsub</code> and <code>chat.read</code> are the read-only methods. They stay available while the person has paused control and while a consent prompt is up. Every other forwarded method fails with <code>E_PAUSED</code> in the first case and <code>E_BUSY</code> in the second, with one exception: <code>chat.say</code> and <code>chat.status</code> are served while control is paused, so that a paused agent can still answer the person. While a prompt is up they fail with <code>E_BUSY</code> like the rest.</p>
+<h2 id="targets">Targets <a class="anchor" href="#targets" aria-label="Link to the section Targets">#</a></h2>
+<p>A target is a handle from the tree (<code>e12</code>) or a semantic id (<code>#cart.checkout</code>). An unknown, detached or unexposed target is <code>E_NO_TARGET</code>. <code>ui.*</code> never accepts coordinates; <code>cursor.move</code> accepts a point <code>{x, y}</code> in viewport pixels when <code>policy.coordinates</code> is on.</p>
+<h2 id="scope-observe">Scope observe <a class="anchor" href="#scope-observe" aria-label="Link to the section Scope observe">#</a></h2>
+<p><strong><code>observe</code></strong> returns the UI tree: a full snapshot, or a delta when <code>since</code> equals the agent's last revision. <code>boxes: true</code> adds viewport boxes. See <a href="../concepts/observation.html">Observation</a>.</p>
+<p><strong><code>read</code></strong> returns the visible text of an element or of the page, at most <code>max</code> characters (default 2000, cap 8000). Private and ignored subtrees are left out. Under <code>annotated</code> exposure only annotated regions are readable.</p>
+<p><strong><code>state.get</code></strong> returns the current value of one named piece of state, or of all of them.</p>
+<p><strong><code>sub</code></strong> and <strong><code>unsub</code></strong> change which event topics the agent receives, and answer with the topics now subscribed. An agent opts into <code>ui</code>, <code>state</code>, <code>user</code> and <code>nav</code>.</p>
+<h2 id="scope-act">Scope act <a class="anchor" href="#scope-act" aria-label="Link to the section Scope act">#</a></h2>
+<p><strong><code>act</code></strong> calls an action the app declared.</p>
+<ul>
+<li>An unknown action is <code>E_BAD_ARGS</code>. Args are validated against the action's schema: <code>E_BAD_ARGS</code> with the failing path.</li>
+<li>A request without <code>args</code> is validated as <code>{}</code>, which is also what the handler is given.</li>
+<li>Policy decides by the action's risk and overrides: <code>deny</code> is <code>E_DENIED</code>; <code>confirm</code>, or a request carrying <code>c:1</code>, shows a consent prompt, and a refusal is <code>E_CONSENT</code>.</li>
+<li>The level and the rules the person set for the agent can add a prompt, waive one, or block the action (<code>E_CONSENT</code>, with no prompt). See <a href="../concepts/permission-levels.html">Permission levels</a>.</li>
+<li>Then the handler runs. Its result MUST be JSON and at most 32 KiB.</li>
+<li>The answer is <code>{result?, rev}</code>: the handler's result and the tree revision after it ran.</li>
+</ul>
+<h2 id="scope-ui">Scope ui <a class="anchor" href="#scope-ui" aria-label="Link to the section Scope ui">#</a></h2>
+<p>Synthetic input on exposed elements. Every <code>ui.*</code> command waits until the person has stopped using the page, and answers <code>{rev}</code>.</p>
+<p><strong><code>ui.click</code></strong> resolves the handle, scrolls it into view, dispatches pointer and mouse events and the click. Disabled elements fail with <code>E_NO_TARGET</code>.</p>
+<p><strong><code>ui.type</code></strong> focuses the element, optionally clears it, sets the value through the native setter and dispatches <code>input</code> and <code>change</code>. <code>enter</code> then sends Enter and submits the enclosing form. A target that takes no text is <code>E_BAD_ARGS</code>; a read-only or disabled one is <code>E_NO_TARGET</code>.</p>
+<p><strong><code>ui.select</code></strong> chooses an option of a <code>&lt;select&gt;</code> by value or label.</p>
+<p><strong><code>ui.scroll</code></strong> scrolls the element or the page by <code>dx, dy</code>, to <code>top</code> or <code>bottom</code>, or brings <code>h</code> into <code>view</code>.</p>
+<p><strong><code>ui.key</code></strong> dispatches one key on <code>h</code> or the focused element. The keys are <code>Enter</code>, <code>Escape</code>, <code>Tab</code>, <code>Backspace</code>, <code>Delete</code>, <code>Space</code>, <code>ArrowUp</code>, <code>ArrowDown</code>, <code>ArrowLeft</code>, <code>ArrowRight</code>, <code>PageUp</code>, <code>PageDown</code>, <code>Home</code> and <code>End</code>. Tab moves focus as the browser would among exposed elements, and never to a private one.</p>
+<p>Every command that synthesises input fails with <code>E_DENIED</code> on a private target unless <code>policy.privateInput</code>. See <a href="../guides/privacy-annotations.html">Privacy annotations</a>.</p>
+<h2 id="scope-cursor">Scope cursor <a class="anchor" href="#scope-cursor" aria-label="Link to the section Scope cursor">#</a></h2>
+<p>Visual only: never dispatches input.</p>
+<p><strong><code>cursor.move</code></strong> animates the virtual cursor to a target or, when <code>policy.coordinates</code>, to a point. It answers <code>{x, y}</code> when the motion ends, or at once with <code>wait: false</code>.</p>
+<p><strong><code>cursor.set</code></strong> shows or hides the cursor, and sets its label (at most 40 characters) and colour (<code>#rgb</code> or <code>#rrggbb</code>).</p>
+<p><strong><code>stream.open</code></strong> opens a pointer stream and answers <code>{ch, credit}</code>. It fails with <code>E_DENIED</code> when <code>policy.coordinates</code> is off. <strong><code>stream.close</code></strong> closes it. See <a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a>.</p>
+<h2 id="scope-show">Scope show <a class="anchor" href="#scope-show" aria-label="Link to the section Scope show">#</a></h2>
+<p><strong><code>show.toast</code></strong>, <strong><code>show.highlight</code></strong> and <strong><code>show.clear</code></strong> are overlays the driver renders. Text is always inserted as text. A toast has a <code>kind</code>: <code>info</code>, <code>ok</code> or <code>warn</code>.</p>
+<p><strong><code>show.view</code></strong> validates <code>data</code> against the view's schema and calls the app's renderer. A request without <code>data</code>, for a view whose schema is an object, is validated as <code>{}</code>. This is how data reaches the screen without passing through a model.</p>
+<h2 id="scope-nav">Scope nav <a class="anchor" href="#scope-nav" aria-label="Link to the section Scope nav">#</a></h2>
+<p><strong><code>nav.go</code></strong> resolves <code>url</code> against the page. It MUST be same-origin, <code>http:</code> or <code>https:</code>, with a path under one of <code>policy.nav</code>. Otherwise <code>E_DENIED</code>. A navigation that reloads the page ends the surface session, and the agent attaches again.</p>
+<h2 id="scope-chat">Scope chat <a class="anchor" href="#scope-chat" aria-label="Link to the section Scope chat">#</a></h2>
+<p>The room in the page's panel, between the person and the attached agents. See <a href="../concepts/chat.html">Chat</a>.</p>
+<p><strong><code>chat.say</code></strong> posts a message. <code>text</code> is trimmed and is then 1 to 4000 characters; anything else is <code>E_BAD_ARGS</code>. <code>to</code> is <code>person</code>, for the person alone, or names one other agent of the room by its session id. <code>to: &quot;person&quot;</code> is always taken. Any other <code>to</code> is <code>E_DENIED</code> when no other agent hears the speaker, and <code>E_BAD_ARGS</code> when it names no other agent that hears the speaker. The answer is the <code>id</code> the message has for the agent that said it.</p>
+<p><strong><code>chat.read</code></strong> returns the messages this agent may read, its own among them, oldest first: without <code>since</code> the latest <code>max</code> of them, with <code>since</code> the first <code>max</code> whose <code>id</code> is greater. <code>max</code> is 20 by default and 50 at most, and an answer holds at most 128 KiB. <code>next</code>, passed as <code>since</code>, reads on from there.</p>
+<p><strong><code>chat.status</code></strong> says what the agent is doing: <code>state</code> is <code>idle</code>, <code>thinking</code> or <code>working</code>, with a <code>note</code> of at most 80 characters. A state that was not renewed for 2 minutes reads <code>idle</code> again, and every state is dropped when a consent prompt comes up.</p>
+<p>Only <code>text</code> and <code>to</code> of a <code>chat.say</code> are forwarded to the surface. An agent cannot send an event: it hears the room as <code>evt chat</code>.</p>
+<h2 id="ordering">Ordering <a class="anchor" href="#ordering" aria-label="Link to the section Ordering">#</a></h2>
+<p>A surface runs commands that change the page one at a time, in arrival order. <code>observe</code>, <code>read</code>, <code>state.get</code> and the three <code>chat</code> methods are answered immediately: chat changes the Chat tab and nothing on the page.</p>
+<h2 id="on-the-other-leg">On the other leg <a class="anchor" href="#on-the-other-leg" aria-label="Link to the section On the other leg">#</a></h2>
+<p>Between the hub and a surface, forwarded methods arrive with the same name and params minus <code>s</code>. Five methods exist only on that leg:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>method</th>
+<th>params</th>
+<th>result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>attach</code></td>
+<td><code>agent, scopes, reason?, levels?, decisions?, chatRelay?, cred?</code></td>
+<td><code>{scopes, ttlMs, kept?}</code></td>
+</tr>
+<tr>
+<td><code>detach</code></td>
+<td><code>why</code>: <code>agent</code>, <code>hub</code> or <code>expired</code></td>
+<td><code>{}</code></td>
+</tr>
+<tr>
+<td><code>stream.open</code></td>
+<td><code>kind:&quot;pointer&quot;, ch</code></td>
+<td><code>{credit}</code></td>
+</tr>
+<tr>
+<td><code>stream.close</code></td>
+<td><code>ch</code></td>
+<td><code>{}</code></td>
+</tr>
+<tr>
+<td><code>chat.undelivered</code></td>
+<td><code>id</code></td>
+<td><code>{}</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>In <code>attach</code>, <code>levels</code> is the list of permission levels the hub's policy offers, <code>decisions</code> is what the hub's policy decides for each action of the surface's manifest, <code>chatRelay</code> is the hub's setting for who hears whom in the chat, and <code>cred</code> is the id of the agent's credential, by which a surface knows an agent again whatever its session id or name. In the answer, <code>kept</code> is what stays of the person's earlier settings for that agent: the level <code>strict</code>, rules <code>confirm</code> and <code>deny</code>, and scopes switched off. The hub reads nothing else from it, and <code>surface.attach</code> hands <code>kept</code> on to the agent with the grant. See <a href="../concepts/grants-and-scopes.html#what-ends-with-a-grant-and-what-stays">Grants and scopes</a>. <code>chat.undelivered</code> tells the surface that the hub did not relay a message of the person to the agent <code>ag</code> names; the surface shows it as not delivered.</p>
+<h2 id="for-implementers">For implementers <a class="anchor" href="#for-implementers" aria-label="Link to the section For implementers">#</a></h2>
+<p>The method to scope table, the hub methods, the read-only methods and scope intersection are in the test vectors: <a href="../implementers/vectors/methods.html"><code>methods.json</code></a>.</p>
+<h2 id="further-reading">Further reading <a class="anchor" href="#further-reading" aria-label="Link to the section Further reading">#</a></h2>
+<ul>
+<li><a href="./specification.html#9-methods">Specification, section 9</a>: the normative text, with every edge case.</li>
+<li><a href="./error-codes.html">Error codes</a></li>
+</ul>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/reference/methods.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/reference/methods.md</code></span><a class="md-link" href="./methods.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="../guides/hermes-desktop-plugin.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">The Hermes Desktop plugin</span></a>
+    <a class="pager-next" href="./events.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Events</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#the-table">The table</a></li><li class="toc-2"><a href="#who-answers">Who answers</a></li><li class="toc-2"><a href="#read-only-methods">Read-only methods</a></li><li class="toc-2"><a href="#targets">Targets</a></li><li class="toc-2"><a href="#scope-observe">Scope observe</a></li><li class="toc-2"><a href="#scope-act">Scope act</a></li><li class="toc-2"><a href="#scope-ui">Scope ui</a></li><li class="toc-2"><a href="#scope-cursor">Scope cursor</a></li><li class="toc-2"><a href="#scope-show">Scope show</a></li><li class="toc-2"><a href="#scope-nav">Scope nav</a></li><li class="toc-2"><a href="#scope-chat">Scope chat</a></li><li class="toc-2"><a href="#ordering">Ordering</a></li><li class="toc-2"><a href="#on-the-other-leg">On the other leg</a></li><li class="toc-2"><a href="#for-implementers">For implementers</a></li><li class="toc-2"><a href="#further-reading">Further reading</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

@@ -1,0 +1,86 @@
+{
+  "reins": "0.1",
+  "generator": "conformance/tools/make-vectors.mjs",
+  "title": "Error codes",
+  "spec": "SPEC.md section 6 (the table of codes) and sections 4 to 16",
+  "note": "`codes` is the complete list of SPEC 6, in the order of the table, with where the spec uses each.",
+  "codes": [
+    {
+      "code": "E_BAD_FRAME",
+      "where": "4: invalid JSON, unknown t, missing field"
+    },
+    {
+      "code": "E_VERSION",
+      "where": "16 no common version"
+    },
+    {
+      "code": "E_AUTH",
+      "where": "5 failed hello, surface key required, key confirmation failed, transcript not well-formed"
+    },
+    {
+      "code": "E_ORIGIN",
+      "where": "5 origin not allowed for an agent credential or on the surface allowlist; surface url of another origin; 3 a surface on a socket that takes agents only"
+    },
+    {
+      "code": "E_TOO_LARGE",
+      "where": "4 oversize frame; 9 act result over 32 KiB; 12 consent arguments too large"
+    },
+    {
+      "code": "E_UNKNOWN_METHOD",
+      "where": "6 and 16 unknown method"
+    },
+    {
+      "code": "E_BAD_ARGS",
+      "where": "6 params nested too deeply; 9 unknown action, args fail the schema, a chat text or note out of bounds; 12 a chat `to` that names no other agent that hears the speaker"
+    },
+    {
+      "code": "E_NO_SURFACE",
+      "where": "6 unknown surface id, or one the credential may not attach to"
+    },
+    {
+      "code": "E_NOT_ATTACHED",
+      "where": "8 no live grant"
+    },
+    {
+      "code": "E_SCOPE",
+      "where": "8 empty scope intersection, grant lacks scope, scope switched off by the person"
+    },
+    {
+      "code": "E_DENIED",
+      "where": "5 manifest pin; 8 attach deny; 9 act deny, private target, nav, stream.open without coordinates; 12 a chat `to` from an agent that no other agent hears"
+    },
+    {
+      "code": "E_CONSENT",
+      "where": "8 attach refused; 9 act refused; 12 third refusal revokes, the person's rule deny"
+    },
+    {
+      "code": "E_PAUSED",
+      "where": "9 pause; 12 indicator not usable, the person keeps using the page"
+    },
+    {
+      "code": "E_RATE",
+      "where": "8 attach burst; 11 pointer rate; 12 cool-off; 13 token buckets and admission"
+    },
+    {
+      "code": "E_NO_TARGET",
+      "where": "9 disabled, unknown, detached, unexposed or read-only target"
+    },
+    {
+      "code": "E_TIMEOUT",
+      "where": "6 request timeout"
+    },
+    {
+      "code": "E_GONE",
+      "where": "6 surface disconnected with requests pending"
+    },
+    {
+      "code": "E_BUSY",
+      "where": "5 more than 16 pending handshakes; 8 attach in flight, more than 32 grants on a surface; 9 prompt up (chat.say and chat.status included), a permission that changed while the request waited; 12 prompts; 13 capacity, a peer that does not read"
+    },
+    {
+      "code": "E_INTERNAL",
+      "where": "9 handler threw, result not JSON; 13 audit unavailable"
+    }
+  ],
+  "byeOk": "OK"
+}

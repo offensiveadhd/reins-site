@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Human control: the indicator, Pause and Stop · Reins</title>
+<meta name="description" content="The person can always see that an agent is attached, can pause it or stop it at any moment, and wins when both use the page at once.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/concepts/human-control.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Human control: the indicator, Pause and Stop">
+<meta property="og:description" content="The person can always see that an agent is attached, can pause it or stop it at any moment, and wins when both use the page at once.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/concepts/human-control.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="./roles-and-trust.html">Roles and trust</a></li><li><a href="./transports-and-framing.html">Transports and framing</a></li><li><a href="./handshake.html">Handshake and sealing</a></li><li><a href="./manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="./grants-and-scopes.html">Grants and scopes</a></li><li><a href="./policy-profiles.html">Policy profiles</a></li><li><a href="./consent.html">Consent</a></li><li><a href="./human-control.html" aria-current="page">Human control</a></li><li><a href="./permission-levels.html">Permission levels</a></li><li><a href="./observation.html">Observation</a></li><li><a href="./cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="./rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="./audit-log.html">The audit log</a></li><li><a href="./chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#concepts">Concepts</a></li><li aria-current="page">Human control</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Human control: the indicator, Pause and Stop</h1>
+        <p class="lede">The person can always see that an agent is attached, can pause it or stop it at any moment, and wins when both use the page at once.</p>
+        
+      </header>
+      <h2 id="the-indicator">The indicator <a class="anchor" href="#the-indicator" aria-label="Link to the section The indicator">#</a></h2>
+<p>While an agent is attached the driver shows an indicator naming it, with Pause and Stop when the policy enables them. The <code>open</code> and <code>guarded</code> profiles have both buttons. The <code>kiosk</code> profile has Pause only: a visitor cannot revoke the station's assistant.</p>
+<p>Under <code>open</code> and <code>guarded</code> the text of the indicator is a button. It opens a panel with three tabs: Permissions, where the person sets how much each agent asks, a rule for single actions and the scopes of the grant as switches; Activity, the last 50 commands; and Chat. The panel opens and closes on the person's input alone: no agent and no message can open it, close it or press anything in it. See <a href="./permission-levels.html">Permission levels</a> and <a href="./chat.html">Chat</a>.</p>
+<p>The indicator names each agent the way every part of the overlay does: the name in quotation marks, then its session id, as in <code>AI connected: “Barista AI” (a1)</code>. A name therefore cannot pass for words of the page or finish one of its sentences, and two agents with one name are told apart.</p>
+<p>What the person loosened stays in sight. While an agent's level is not <code>ask</code>, the indicator shows that level: a chip with its name, and a dot that is amber for <code>auto</code> and red for <code>bypass</code>. While a rule of the person waives a prompt, the indicator shows that too (&quot;1 rule&quot;), and an approval the page remembers is counted on the same chip (&quot;1 approved&quot;). New chat messages show as a count on the indicator; the panel never opens by itself.</p>
+<p>The indicator, like the consent prompt, lives in a closed shadow root owned by the driver and acts on trusted input only: an event the browser made for input of the person and is delivering to the control it was meant for. Neither an agent nor synthetic events can press its buttons. Pause and Stop work without the hub's cooperation: the page enforces them itself.</p>
+<p>This keeps agents out, and events that a script makes or borrows. It does not keep out script that runs in the page itself: see <a href="#what-script-in-the-page-can-do">What script in the page can do</a> below.</p>
+<p>When the hub is unverified, because the page holds no surface key, the indicator says so.</p>
+<h2 id="pause">Pause <a class="anchor" href="#pause" aria-label="Link to the section Pause">#</a></h2>
+<p>Pause holds every command that changes the page. While the person has paused control, every method outside the read-only ones fails with <code>E_PAUSED</code>. The read-only methods are <code>observe</code>, <code>read</code>, <code>state.get</code>, <code>sub</code>, <code>unsub</code> and <code>chat.read</code>: an agent can still see the page while it waits. <code>chat.say</code> and <code>chat.status</code> are served as well: a paused agent cannot act, and can still answer the person.</p>
+<p>Pause also stops the cursor where it is and discards queued pointer points.</p>
+<p>An agent that gets <code>E_PAUSED</code> should wait for the person. A subscribed agent gets <code>evt user</code> with <code>kind: &quot;pause&quot;</code> and <code>kind: &quot;resume&quot;</code>. Pause holds every attached agent.</p>
+<h2 id="stop">Stop <a class="anchor" href="#stop" aria-label="Link to the section Stop">#</a></h2>
+<p>Stop revokes the grant. The surface sends <code>evt grant {kind:&quot;revoked&quot;}</code> and the hub ends the grant: the agent's next request fails with <code>E_NOT_ATTACHED</code>.</p>
+<p>After Stop, or a revocation after three refused prompts, every later attach on that page needs the person's approval until the page is reloaded, even where the policy says <code>allow</code>.</p>
+<h2 id="checks-hold-across-waits">Checks hold across waits <a class="anchor" href="#checks-hold-across-waits" aria-label="Link to the section Checks hold across waits">#</a></h2>
+<p>A command that waited, for a cursor glide, a consent prompt, or the person to stop typing, checks again, right before it acts, that the grant is live, its scope is still on, control is not paused, no consent prompt is up (except for the action just approved) and the indicator is usable. Stop or Pause pressed during a glide means the click never happens. An action that no prompt was shown for runs only if the person's level and rules still let it run without asking, and an action the person approved does not run once they have blocked it: the later word counts.</p>
+<h2 id="real-input-wins">Real input wins <a class="anchor" href="#real-input-wins" aria-label="Link to the section Real input wins">#</a></h2>
+<p>Trusted pointer, key, wheel and touch input from the person holds input-synthesising commands. Every <code>ui.*</code> command waits until there has been no such input for <code>human.yieldMs</code> (800 ms under <code>guarded</code>), then runs, and fails with <code>E_PAUSED</code> if the person keeps using the page for 5 s. A pointer move counts only with a button down.</p>
+<p>The first such input after a quiet period emits <code>evt user {kind:&quot;override&quot;}</code>, so a subscribed agent learns that the person took over.</p>
+<p>This applies to synthetic input only. App actions (<code>act</code>), the cursor and what an agent shows are not held by the person's typing. Typing in the Chat tab counts as using the page, and while the app's own code runs because an agent asked for it (an action's handler, a view's renderer, a state getter, the handlers of synthesised input), the chat's field takes no input: what such code puts into a focused field was chosen by the agent.</p>
+<h2 id="the-indicator-has-to-stay-visible-and-usable">The indicator has to stay visible and usable <a class="anchor" href="#the-indicator-has-to-stay-visible-and-usable" aria-label="Link to the section The indicator has to stay visible and usable">#</a></h2>
+<p>A modal dialog or a fullscreen element covers the rest of the page and makes it inert, so while one is open the driver moves its overlay inside it. The indicator also stays above a consent prompt's backdrop.</p>
+<p>The overlay has a style of its own: its stylesheet reads no custom property, names no font family other than the generic ones and no system colour, and fetches nothing, so a page's stylesheet cannot recolour it, blank it or swap its letters, and both colour schemes are written out in it. The host element has no <code>::before</code>, <code>::after</code> or <code>::marker</code> box that a page rule can bring back, and its <code>::backdrop</code> does not show.</p>
+<p>Where the browser has the Popover API, the overlay lives in the top layer and is shown again whenever another element enters the top layer after it, so that it is painted last: no <code>z-index</code> of the page lies above it, and a filter, an opacity or a transform on an ancestor does not reach it.</p>
+<p>The driver checks all of this. The check fails while the host is not in the document, is inert or does not cover the viewport; while it is not last in the top layer; while a <code>zoom</code> on it or on an ancestor reaches it, top layer or not; while a style fades, filters, clips, masks, transforms or blends it; while the page renders nothing; while the indicator has no box or is not what a hit test finds at its own centre; and, where the browser can tell (Chromium), while the indicator, the open panel or the prompt that is showing is painted over.</p>
+<p>Whenever the overlay cannot be shown where the person can see and use it, every method outside the read-only ones, and attach, fails with <code>E_PAUSED</code>, and no click that lets an agent do more is taken. A click that made the check put the overlay back on top is itself not taken: it was made on what the person saw then, and only a later, separate one counts. An agent never works where the person cannot see that it does.</p>
+<div class="callout callout-note" role="note"><p class="callout-title">Note</p>
+<p>A page that puts <code>zoom</code> on <code>html</code> or <code>body</code>, for whatever reason, fails the check for as long as it does: Reins does not drive such a page at all.</p>
+</div>
+<p>No wait of the overlay relies on a timer firing. The arming delays, the lock after typing, the cool-off and the deadline of a prompt are times compared with the clock when a click, a key or a request arrives, because timer ids belong to the document and anything that shares the document can clear them. A timer that never fires may leave something on screen; it never leaves anything answerable or running that would not be so otherwise.</p>
+<p><img src="../../assets/media/5-indicator-over-modal-dialog.jpg" alt="Indicator with Pause and Stop above a modal dialog" width="800" height="500" loading="lazy" decoding="async"></p>
+<p>For the same reason the driver refuses to connect inside a frame: the page around a frame could cover the indicator. See <a href="./policy-profiles.html#frames">Policy profiles</a>.</p>
+<h2 id="what-script-in-the-page-can-do">What script in the page can do <a class="anchor" href="#what-script-in-the-page-can-do" aria-label="Link to the section What script in the page can do">#</a></h2>
+<div class="callout callout-warning" role="note"><p class="callout-title">Warning</p>
+<p><strong>Script that runs in the page's own JavaScript realm can defeat the overlay, whatever the order in which it and the driver load.</strong> An XSS payload or a hostile third-party tag is such script. Loading the driver first does not prevent it.</p>
+</div>
+<p>What is closed is one family of attacks: events that a script forges, or borrows from a real click somewhere else, and hands to the overlay's listeners. The driver keeps the functions it registers listeners with from the moment its script first runs, reads <code>isTrusted</code> through the browser's own getter, and counts an event only while the browser is delivering it to the control the listener belongs to.</p>
+<p>Nothing else about script in the page is closed. The driver is ordinary script in that realm: it keeps its prompts in an array and its sessions in a map, and sets attributes and reads properties through methods every script can replace. The second security review, from a script injected after the driver had attached, approved an attach and an action with no card on screen and no click (a replaced <code>Array.prototype.push</code>), put a session at Bypass with nothing shown and nothing told to the hub (a replaced <code>Map.prototype.get</code>), and reached the closed shadow root through <code>Element.prototype.setAttribute</code>. Such script can also draw its own copy of an indicator or a prompt, or simply call the app's functions.</p>
+<p>So wherever this site says &quot;trusted input only&quot;, &quot;only the person&quot; or &quot;no agent can press it&quot;, script in the page's own realm is outside that claim. What must not happen is hostile script in the page: keep a <a href="../guides/strict-csp.html">strict Content Security Policy</a>.</p>
+<p>There is a boundary where the driver does not share a realm with the page. In an Electron app <a href="../guides/adopting-an-electron-app.html">adopted with <code>reins-electron</code></a> the driver runs in an isolated world with built-ins of its own, and the page's script shares the document with it (elements, styles, timers) and none of its code or objects. What the page's script can still do there is what the page's stylesheet can do, plus three things: remove or move the host element, clear timers, and keep the person's clicks and keys from reaching the overlay at all, since a capturing listener on the window sees every event first. The first two stop commands or leave a prompt unanswered. The third takes Pause, Stop and Deny away from the person for as long as the script does it, while the indicator still shows. None of the three answers a prompt or raises a level.</p>
+<p>The full text is &quot;The overlay and the page&quot; in <a href="../reference/specification.html#12-policy">section 12 of the specification</a>, and &quot;Script in the page's own JavaScript realm&quot; under <a href="../reference/security-model.html#what-reins-does-not-protect-against">What Reins does not protect against</a>.</p>
+<h2 id="what-an-agent-writes-is-labelled">What an agent writes is labelled <a class="anchor" href="#what-an-agent-writes-is-labelled" aria-label="Link to the section What an agent writes is labelled">#</a></h2>
+<p>Toasts are agent-written, so each one carries a caption naming the agent that sent it. Agent text is inserted as text, with invisible and look-alike characters shown as escapes.</p>
+<h2 id="from-the-apps-own-code">From the app's own code <a class="anchor" href="#from-the-apps-own-code" aria-label="Link to the section From the app's own code">#</a></h2>
+<p>The driver exposes the same controls to the app: <code>driver.pause()</code>, <code>driver.resume()</code> and <code>driver.stop()</code>. <code>driver.status</code> is <code>controlled</code> while an agent is attached and <code>paused</code> while the person has paused it.</p>
+<h2 id="try-it">Try it <a class="anchor" href="#try-it" aria-label="Link to the section Try it">#</a></h2>
+<p>In the <a href="../../playground.html">playground</a>, press Pause while the assistant works and watch its next command come back <code>E_PAUSED</code> in the Wire tab. Press Stop and watch the <code>evt grant</code> cross.</p>
+<h2 id="further-reading">Further reading <a class="anchor" href="#further-reading" aria-label="Link to the section Further reading">#</a></h2>
+<ul>
+<li><a href="./consent.html">Consent</a></li>
+<li><a href="../reference/specification.html#14-security-requirements">Security requirements</a>: rules 10 and 11.</li>
+<li><a href="../reference/specification.html#12-policy">Specification, section 12</a></li>
+</ul>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/concepts/human-control.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/concepts/human-control.md</code></span><a class="md-link" href="./human-control.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./consent.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Consent</span></a>
+    <a class="pager-next" href="./permission-levels.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Permission levels</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#the-indicator">The indicator</a></li><li class="toc-2"><a href="#pause">Pause</a></li><li class="toc-2"><a href="#stop">Stop</a></li><li class="toc-2"><a href="#checks-hold-across-waits">Checks hold across waits</a></li><li class="toc-2"><a href="#real-input-wins">Real input wins</a></li><li class="toc-2"><a href="#the-indicator-has-to-stay-visible-and-usable">The indicator has to stay visible and usable</a></li><li class="toc-2"><a href="#what-script-in-the-page-can-do">What script in the page can do</a></li><li class="toc-2"><a href="#what-an-agent-writes-is-labelled">What an agent writes is labelled</a></li><li class="toc-2"><a href="#from-the-apps-own-code">From the app's own code</a></li><li class="toc-2"><a href="#try-it">Try it</a></li><li class="toc-2"><a href="#further-reading">Further reading</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

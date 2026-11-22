@@ -1,0 +1,11 @@
+{
+  "title": "Most ordered today",
+  "unit": "cups",
+  "series": [
+    { "label": "Latte", "value": 42 },
+    { "label": "Flat White", "value": 31 },
+    { "label": "Cappuccino", "value": 27 },
+    { "label": "Mocha", "value": 18 },
+    { "label": "Matcha Latte", "value": 12 }
+  ]
+}

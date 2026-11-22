@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Default limits and fixed numbers · Reins</title>
+<meta name="description" content="Test vectors: Default limits and fixed numbers. Shown here as it is in conformance/vectors/limits.json.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/implementers/vectors/limits.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Default limits and fixed numbers">
+<meta property="og:description" content="Test vectors: Default limits and fixed numbers. Shown here as it is in conformance/vectors/limits.json.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/implementers/vectors/limits.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../../assets/site.css">
+<script src="../../../assets/theme.js"></script>
+<script type="module" src="../../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../../playground.html">Playground</a></li>
+        <li><a href="../../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../../start/what-is-reins.html">What is Reins</a></li><li><a href="../../start/quickstart.html">Quickstart</a></li><li><a href="../../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../../start/mcp.html">Claude Code and MCP</a></li><li><a href="../../start/shell-tools.html">Shell tools</a></li><li><a href="../../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../../concepts/consent.html">Consent</a></li><li><a href="../../concepts/human-control.html">Human control</a></li><li><a href="../../concepts/permission-levels.html">Permission levels</a></li><li><a href="../../concepts/observation.html">Observation</a></li><li><a href="../../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../../concepts/audit-log.html">The audit log</a></li><li><a href="../../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../../guides/surface-keys.html">Surface keys</a></li><li><a href="../../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../../guides/electron.html">Electron: build it in</a></li><li><a href="../../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../../reference/methods.html">Methods</a></li><li><a href="../../reference/events.html">Events</a></li><li><a href="../../reference/error-codes.html">Error codes</a></li><li><a href="../../reference/policy-fields.html">Policy fields</a></li><li><a href="../../reference/limits.html">Limits</a></li><li><a href="../../reference/cli.html">CLI</a></li><li><a href="../../reference/sdk.html">SDK API</a></li><li><a href="../../reference/specification.html">Specification</a></li><li><a href="../../reference/security-model.html">Security model</a></li><li><a href="../../reference/chat-guide.html">The chat guide</a></li><li><a href="../../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../writing-an-implementation.html">Writing another implementation</a></li><li><a href="../conformance-suite.html">The conformance suite</a></li><li><a href="../test-vectors.html" aria-current="page">Test vectors</a></li><li><a href="../requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../../community/contributing.html">Contributing</a></li><li><a href="../../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../../community/faq.html">FAQ</a></li><li><a href="../../community/glossary.html">Glossary</a></li><li><a href="../../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../../index.html">Wiki</a></li><li><a href="../../index.html#implementers">Implementers</a></li><li><a href="../test-vectors.html">Test vectors</a></li><li aria-current="page">limits.json</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Default limits and fixed numbers</h1>
+        <p class="lede">Test vectors: Default limits and fixed numbers. Shown here as it is in conformance/vectors/limits.json.</p>
+        <p class="source-note">Generated at build time from <code>conformance/vectors/limits.json</code>.</p>
+      </header>
+      <p>Protocol <code>0.1</code>. Covers: SPEC.md sections 3 to 13.</p>
+<p><a href="./limits.json">Download limits.json</a>: the file itself, as the conformance suite reads it.</p>
+<h2 id="how-to-use-it">How to use it <a class="anchor" href="#how-to-use-it" aria-label="Link to the section How to use it">#</a></h2>
+<p>The complete error code list of SPEC section 6, and numeric limits the spec states.</p>
+<h2 id="notes">Notes <a class="anchor" href="#notes" aria-label="Link to the section Notes">#</a></h2>
+<p>Only numbers the spec states. Lengths in characters are UTF-16 code units unless the key says code points.</p>
+<h2 id="fixed-values">Fixed values <a class="anchor" href="#fixed-values" aria-label="Link to the section Fixed values">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>key</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pointerInitialCredit</code></td>
+<td><code>512</code></td>
+</tr>
+<tr>
+<td><code>pointerMaxPoints</code></td>
+<td><code>2729</code></td>
+</tr>
+<tr>
+<td><code>peerSendBufferBytes</code></td>
+<td><code>max(8 MiB, 4 x maxText)</code></td>
+</tr>
+<tr>
+<td><code>canonicalMaxDepth</code></td>
+<td><code>100</code></td>
+</tr>
+<tr>
+<td><code>agentNameMaxCodePoints</code></td>
+<td><code>64</code></td>
+</tr>
+<tr>
+<td><code>withdrawnNoticeMs</code></td>
+<td><code>1500</code></td>
+</tr>
+<tr>
+<td><code>humanGiveUpMs</code></td>
+<td><code>5000</code></td>
+</tr>
+<tr>
+<td><code>defaultPort</code></td>
+<td><code>7346</code></td>
+</tr>
+<tr>
+<td><code>subprotocol</code></td>
+<td><code>reins.v1</code></td>
+</tr>
+<tr>
+<td><code>maxResultBytes</code></td>
+<td><code>32768</code></td>
+</tr>
+<tr>
+<td><code>maxNameChars</code></td>
+<td><code>120</code></td>
+</tr>
+<tr>
+<td><code>maxValueChars</code></td>
+<td><code>200</code></td>
+</tr>
+<tr>
+<td><code>sealMacTextChars</code></td>
+<td><code>43</code></td>
+</tr>
+<tr>
+<td><code>sealMacBytes</code></td>
+<td><code>32</code></td>
+</tr>
+<tr>
+<td><code>defaultSessionsPerCredential</code></td>
+<td><code>4</code></td>
+</tr>
+<tr>
+<td><code>cursorLabelMaxChars</code></td>
+<td><code>40</code></td>
+</tr>
+<tr>
+<td><code>uiEventMinIntervalMs</code></td>
+<td><code>100</code></td>
+</tr>
+<tr>
+<td><code>heartbeatDropFactor</code></td>
+<td><code>2.5</code></td>
+</tr>
+<tr>
+<td><code>playbackNote</code></td>
+<td><code>section 11 says &quot;in proportion to the lag and up to 4x&quot;; section 15 fixes the curve: 1 up to 120 ms, linear to 4 at 600 ms</code></td>
+</tr>
+<tr>
+<td><code>commandFrameBudgetMs</code></td>
+<td><code>6</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="defaultlimits">defaultLimits <a class="anchor" href="#defaultlimits" aria-label="Link to the section defaultLimits">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;maxText&quot;</span>: <span class="t-n">262144</span>,
+  <span class="t-p">&quot;maxBinary&quot;</span>: <span class="t-n">16384</span>,
+  <span class="t-p">&quot;heartbeatMs&quot;</span>: <span class="t-n">15000</span>,
+  <span class="t-p">&quot;reqTimeoutMs&quot;</span>: <span class="t-n">15000</span>,
+  <span class="t-p">&quot;consentTimeoutMs&quot;</span>: <span class="t-n">60000</span>
+}</code></pre></div>
+<h2 id="linkqueue">linkQueue <a class="anchor" href="#linkqueue" aria-label="Link to the section linkQueue">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;maxMessages&quot;</span>: <span class="t-n">4096</span>,
+  <span class="t-p">&quot;maxBytes&quot;</span>: <span class="t-n">16777216</span>
+}</code></pre></div>
+<h2 id="preauthqueue">preAuthQueue <a class="anchor" href="#preauthqueue" aria-label="Link to the section preAuthQueue">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;maxMessages&quot;</span>: <span class="t-n">16</span>,
+  <span class="t-p">&quot;maxBytes&quot;</span>: <span class="t-n">65536</span>
+}</code></pre></div>
+<h2 id="hubmethodbucket">hubMethodBucket <a class="anchor" href="#hubmethodbucket" aria-label="Link to the section hubMethodBucket">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;rate&quot;</span>: <span class="t-n">10</span>,
+  <span class="t-p">&quot;burst&quot;</span>: <span class="t-n">20</span>
+}</code></pre></div>
+<h2 id="admission">admission <a class="anchor" href="#admission" aria-label="Link to the section admission">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;surfaceRate&quot;</span>: <span class="t-n">2</span>,
+  <span class="t-p">&quot;surfaceBurst&quot;</span>: <span class="t-s">&quot;2 x maxSurfaces&quot;</span>,
+  <span class="t-p">&quot;allOriginsFactor&quot;</span>: {
+    <span class="t-p">&quot;rate&quot;</span>: <span class="t-n">5</span>,
+    <span class="t-p">&quot;burst&quot;</span>: <span class="t-n">2</span>
+  },
+  <span class="t-p">&quot;agentRate&quot;</span>: <span class="t-n">2</span>,
+  <span class="t-p">&quot;agentBurst&quot;</span>: <span class="t-n">20</span>
+}</code></pre></div>
+<h2 id="cooloff">coolOff <a class="anchor" href="#cooloff" aria-label="Link to the section coolOff">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;firstMs&quot;</span>: <span class="t-n">2000</span>,
+  <span class="t-p">&quot;maxMs&quot;</span>: <span class="t-n">60000</span>,
+  <span class="t-p">&quot;revokeAfterRefusals&quot;</span>: <span class="t-n">3</span>
+}</code></pre></div>
+<h2 id="stickyprivacy">stickyPrivacy <a class="anchor" href="#stickyprivacy" aria-label="Link to the section stickyPrivacy">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;remembered&quot;</span>: <span class="t-n">32</span>,
+  <span class="t-p">&quot;sameParentMs&quot;</span>: <span class="t-n">1000</span>
+}</code></pre></div>
+<h2 id="versions">versions <a class="anchor" href="#versions" aria-label="Link to the section versions">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>[
+  <span class="t-s">&quot;0.1&quot;</span>
+]</code></pre></div>
+<h2 id="manifest">manifest <a class="anchor" href="#manifest" aria-label="Link to the section manifest">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;maxBytes&quot;</span>: <span class="t-n">65536</span>,
+  <span class="t-p">&quot;maxActions&quot;</span>: <span class="t-n">256</span>,
+  <span class="t-p">&quot;maxViews&quot;</span>: <span class="t-n">64</span>
+}</code></pre></div>
+<h2 id="handshake">handshake <a class="anchor" href="#handshake" aria-label="Link to the section handshake">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;nonceBytes&quot;</span>: <span class="t-n">32</span>,
+  <span class="t-p">&quot;secretBytes&quot;</span>: <span class="t-n">32</span>,
+  <span class="t-p">&quot;minKeyChars&quot;</span>: <span class="t-n">32</span>,
+  <span class="t-p">&quot;helloTimeoutMs&quot;</span>: <span class="t-n">5000</span>,
+  <span class="t-p">&quot;failDelayMs&quot;</span>: <span class="t-n">200</span>,
+  <span class="t-p">&quot;failDelayMaxMs&quot;</span>: <span class="t-n">3000</span>,
+  <span class="t-p">&quot;failWindowMs&quot;</span>: <span class="t-n">60000</span>,
+  <span class="t-p">&quot;maxPending&quot;</span>: <span class="t-n">16</span>,
+  <span class="t-p">&quot;confirmTimeoutMs&quot;</span>: <span class="t-n">5000</span>
+}</code></pre></div>
+<h2 id="sealkind">sealKind <a class="anchor" href="#sealkind" aria-label="Link to the section sealKind">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;text&quot;</span>: <span class="t-n">116</span>,
+  <span class="t-p">&quot;binary&quot;</span>: <span class="t-n">98</span>
+}</code></pre></div>
+<h2 id="attach">attach <a class="anchor" href="#attach" aria-label="Link to the section attach">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;burst&quot;</span>: <span class="t-n">3</span>,
+  <span class="t-p">&quot;refillEveryMs&quot;</span>: <span class="t-n">2000</span>
+}</code></pre></div>
+<h2 id="capacity">capacity <a class="anchor" href="#capacity" aria-label="Link to the section capacity">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;surfaces&quot;</span>: <span class="t-n">64</span>,
+  <span class="t-p">&quot;agents&quot;</span>: <span class="t-n">32</span>,
+  <span class="t-p">&quot;sessionsPerCredential&quot;</span>: <span class="t-n">4</span>,
+  <span class="t-p">&quot;streamsPerAgent&quot;</span>: <span class="t-n">8</span>
+}</code></pre></div>
+<h2 id="read">read <a class="anchor" href="#read" aria-label="Link to the section read">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;defaultMax&quot;</span>: <span class="t-n">2000</span>,
+  <span class="t-p">&quot;capMax&quot;</span>: <span class="t-n">8000</span>
+}</code></pre></div>
+<h2 id="consent">consent <a class="anchor" href="#consent" aria-label="Link to the section consent">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;maxEntries&quot;</span>: <span class="t-n">40</span>,
+  <span class="t-p">&quot;maxDepth&quot;</span>: <span class="t-n">4</span>,
+  <span class="t-p">&quot;maxCodePoints&quot;</span>: <span class="t-n">2000</span>,
+  <span class="t-p">&quot;perAgent&quot;</span>: <span class="t-n">1</span>,
+  <span class="t-p">&quot;total&quot;</span>: <span class="t-n">4</span>,
+  <span class="t-p">&quot;armMs&quot;</span>: <span class="t-n">500</span>
+}</code></pre></div>
+<h2 id="panel">panel <a class="anchor" href="#panel" aria-label="Link to the section panel">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;confirmArmMs&quot;</span>: <span class="t-n">500</span>,
+  <span class="t-p">&quot;settleMs&quot;</span>: <span class="t-n">500</span>,
+  <span class="t-p">&quot;activityEntries&quot;</span>: <span class="t-n">50</span>,
+  <span class="t-p">&quot;maxSessions&quot;</span>: <span class="t-n">32</span>
+}</code></pre></div>
+<h2 id="chat">chat <a class="anchor" href="#chat" aria-label="Link to the section chat">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;maxTextChars&quot;</span>: <span class="t-n">4000</span>,
+  <span class="t-p">&quot;maxNoteChars&quot;</span>: <span class="t-n">80</span>,
+  <span class="t-p">&quot;transcriptMessages&quot;</span>: <span class="t-n">200</span>,
+  <span class="t-p">&quot;readDefault&quot;</span>: <span class="t-n">20</span>,
+  <span class="t-p">&quot;readMax&quot;</span>: <span class="t-n">50</span>,
+  <span class="t-p">&quot;readBytes&quot;</span>: <span class="t-n">131072</span>,
+  <span class="t-p">&quot;statusTtlMs&quot;</span>: <span class="t-n">120000</span>,
+  <span class="t-p">&quot;personPerSecondPerAgent&quot;</span>: <span class="t-n">5</span>,
+  <span class="t-p">&quot;personBurstPerAgent&quot;</span>: <span class="t-n">10</span>,
+  <span class="t-p">&quot;undeliveredNoticesPerSecond&quot;</span>: <span class="t-n">20</span>,
+  <span class="t-p">&quot;mcpWaitDefaultMs&quot;</span>: <span class="t-n">90000</span>,
+  <span class="t-p">&quot;mcpWaitMaxMs&quot;</span>: <span class="t-n">150000</span>,
+  <span class="t-p">&quot;mcpKeepaliveMs&quot;</span>: <span class="t-n">45000</span>
+}</code></pre></div>
+<h2 id="pointer">pointer <a class="anchor" href="#pointer" aria-label="Link to the section pointer">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;dropBufferBytes&quot;</span>: <span class="t-n">262144</span>,
+  <span class="t-p">&quot;stallBufferBytes&quot;</span>: <span class="t-n">1048576</span>,
+  <span class="t-p">&quot;creditBatchFraction&quot;</span>: <span class="t-n">0.25</span>
+}</code></pre></div>
+<h2 id="playback">playback <a class="anchor" href="#playback" aria-label="Link to the section playback">#</a></h2>
+<p>5 entries.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th><code>queuedMs</code></th>
+<th><code>rate</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code></td>
+<td><code>1</code></td>
+</tr>
+<tr>
+<td><code>120</code></td>
+<td><code>1</code></td>
+</tr>
+<tr>
+<td><code>360</code></td>
+<td><code>2.5</code></td>
+</tr>
+<tr>
+<td><code>600</code></td>
+<td><code>4</code></td>
+</tr>
+<tr>
+<td><code>5000</code></td>
+<td><code>4</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="glide">glide <a class="anchor" href="#glide" aria-label="Link to the section glide">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;formula&quot;</span>: <span class="t-s">&quot;clamp(120 + 110 * log2(1 + d / 40), 120, 900)&quot;</span>,
+  <span class="t-p">&quot;cases&quot;</span>: [
+    {
+      <span class="t-p">&quot;d&quot;</span>: <span class="t-n">0</span>,
+      <span class="t-p">&quot;ms&quot;</span>: <span class="t-n">120</span>
+    },
+    {
+      <span class="t-p">&quot;d&quot;</span>: <span class="t-n">40</span>,
+      <span class="t-p">&quot;ms&quot;</span>: <span class="t-n">230</span>
+    },
+    {
+      <span class="t-p">&quot;d&quot;</span>: <span class="t-n">120</span>,
+      <span class="t-p">&quot;ms&quot;</span>: <span class="t-n">340</span>
+    },
+    {
+      <span class="t-p">&quot;d&quot;</span>: <span class="t-n">600</span>,
+      <span class="t-p">&quot;ms&quot;</span>: <span class="t-n">560</span>
+    },
+    {
+      <span class="t-p">&quot;d&quot;</span>: <span class="t-n">1000000</span>,
+      <span class="t-p">&quot;ms&quot;</span>: <span class="t-n">900</span>
+    }
+  ]
+}</code></pre></div>
+<h2 id="audit">audit <a class="anchor" href="#audit" aria-label="Link to the section audit">#</a></h2>
+<div class="code" data-lang="json"><div class="code-bar"><span class="code-lang">JSON</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>{
+  <span class="t-p">&quot;maxBacklog&quot;</span>: <span class="t-n">1000</span>,
+  <span class="t-p">&quot;refusalsPerSecond&quot;</span>: <span class="t-n">20</span>,
+  <span class="t-p">&quot;personRecordsPerSecond&quot;</span>: <span class="t-n">20</span>,
+  <span class="t-p">&quot;personChangesPerSecond&quot;</span>: <span class="t-n">20</span>,
+  <span class="t-p">&quot;droppedRelayRecordsPerSecond&quot;</span>: <span class="t-n">20</span>
+}</code></pre></div>
+<p>Generated by <code>conformance/tools/make-vectors.mjs</code> from the formulas in the specification, with <code>node:crypto</code> only.</p>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/blob/main/conformance/vectors/limits.json"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>View the source of this page on GitHub</span></a><span class="edit-path"><code>conformance/vectors/limits.json</code></span><a class="md-link" href="./limits.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./levels.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">levels.json</span></a>
+    <a class="pager-next" href="./manifest.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">manifest.json</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#how-to-use-it">How to use it</a></li><li class="toc-2"><a href="#notes">Notes</a></li><li class="toc-2"><a href="#fixed-values">Fixed values</a></li><li class="toc-2"><a href="#defaultlimits">defaultLimits</a></li><li class="toc-2"><a href="#linkqueue">linkQueue</a></li><li class="toc-2"><a href="#preauthqueue">preAuthQueue</a></li><li class="toc-2"><a href="#hubmethodbucket">hubMethodBucket</a></li><li class="toc-2"><a href="#admission">admission</a></li><li class="toc-2"><a href="#cooloff">coolOff</a></li><li class="toc-2"><a href="#stickyprivacy">stickyPrivacy</a></li><li class="toc-2"><a href="#versions">versions</a></li><li class="toc-2"><a href="#manifest">manifest</a></li><li class="toc-2"><a href="#handshake">handshake</a></li><li class="toc-2"><a href="#sealkind">sealKind</a></li><li class="toc-2"><a href="#attach">attach</a></li><li class="toc-2"><a href="#capacity">capacity</a></li><li class="toc-2"><a href="#read">read</a></li><li class="toc-2"><a href="#consent">consent</a></li><li class="toc-2"><a href="#panel">panel</a></li><li class="toc-2"><a href="#chat">chat</a></li><li class="toc-2"><a href="#pointer">pointer</a></li><li class="toc-2"><a href="#playback">playback</a></li><li class="toc-2"><a href="#glide">glide</a></li><li class="toc-2"><a href="#audit">audit</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../../playground.html">Playground</a></li>
+        <li><a href="../../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

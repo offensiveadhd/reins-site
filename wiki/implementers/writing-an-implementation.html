@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Writing another implementation · Reins</title>
+<meta name="description" content="What it takes to implement Reins in another language or runtime. What the contract is, what has to match exactly, and how the vectors and the conformance suite tell you that you got it right.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/implementers/writing-an-implementation.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Writing another implementation">
+<meta property="og:description" content="What it takes to implement Reins in another language or runtime. What the contract is, what has to match exactly, and how the vectors and the conformance suite tell you that you got it right.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/implementers/writing-an-implementation.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="./writing-an-implementation.html" aria-current="page">Writing another implementation</a></li><li><a href="./conformance-suite.html">The conformance suite</a></li><li><a href="./test-vectors.html">Test vectors</a></li><li><a href="./requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#implementers">Implementers</a></li><li aria-current="page">Writing another implementation</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Writing another implementation</h1>
+        <p class="lede">What it takes to implement Reins in another language or runtime. What the contract is, what has to match exactly, and how the vectors and the conformance suite tell you that you got it right.</p>
+        
+      </header>
+      <h2 id="the-contract">The contract <a class="anchor" href="#the-contract" aria-label="Link to the section The contract">#</a></h2>
+<p>Reins is a protocol first. The reference implementation is TypeScript, and nothing in the protocol depends on that.</p>
+<p>Two files are the contract:</p>
+<ul>
+<li><strong><a href="../reference/specification.html">The specification</a></strong> describes the behaviour. The words MUST, SHOULD and MAY are normative.</li>
+<li><strong><a href="https://github.com/offensiveadhd/reins/blob/main/packages/core/src/protocol.ts" class="ext"><code>protocol.ts</code></a></strong> holds the wire types: every frame, method, error code and data shape, as types and constants with no logic. Its header says what to do when the two disagree: fix both in one change.</li>
+</ul>
+<p>The specification is written to be sufficient. Every detail the test vectors depend on is written in it; no vector relies on the reference implementation for a rule the specification leaves open.</p>
+<h2 id="what-you-might-implement">What you might implement <a class="anchor" href="#what-you-might-implement" aria-label="Link to the section What you might implement">#</a></h2>
+<p>You do not have to implement all three roles.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Role</th>
+<th>What it is</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agent</strong></td>
+<td>A client: handshake, sealing, requests, events, optionally the pointer stream.</td>
+<td>The smallest of the three. An agent in another language talks to the reference hub and drives any page connected to it.</td>
+</tr>
+<tr>
+<td><strong>Hub</strong></td>
+<td>The broker: authentication, grants, policy, rate limits, routing, the audit log.</td>
+<td>Most of the security requirements live here. The conformance suite tests a hub from the outside.</td>
+</tr>
+<tr>
+<td><strong>Surface</strong></td>
+<td>The in-page runtime: the UI tree, command execution, consent, the indicator, the panel and the chat room.</td>
+<td>Tied to the browser: the DOM, trusted events, a closed shadow root.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="a-sensible-order">A sensible order <a class="anchor" href="#a-sensible-order" aria-label="Link to the section A sensible order">#</a></h2>
+<ol>
+<li><strong>Frames.</strong> Encode and decode the ten text frames, and close with <code>E_BAD_FRAME</code> and <code>E_TOO_LARGE</code> where the specification says. See <a href="../concepts/transports-and-framing.html">Transports and framing</a>.</li>
+<li><strong>The handshake.</strong> The proof is one HMAC. Check yours against <a href="./vectors/auth.html"><code>auth.json</code></a>.</li>
+<li><strong>Sealing.</strong> Derive the two directional keys from the transcript, MAC every message, count per direction. Check against <a href="./vectors/seal.html"><code>seal.json</code></a>, including the cases that must never be sealed or opened. Then key confirmation: a sealed <code>ping</code>, a sealed <code>pong</code>.</li>
+<li><strong>Requests and events.</strong> Ids, the one answer per request, timeouts, the heartbeat.</li>
+<li><strong>For an agent</strong>: attach, then the methods you need. Apply deltas exactly: <a href="./vectors/ui-delta.html"><code>ui-delta.json</code></a>.</li>
+<li><strong>For a hub</strong>: grants and scopes, the policy decision, rate limits and capacity, then the audit chain: <a href="./vectors/audit.html"><code>audit.json</code></a>.</li>
+</ol>
+<h2 id="what-has-to-match-exactly">What has to match exactly <a class="anchor" href="#what-has-to-match-exactly" aria-label="Link to the section What has to match exactly">#</a></h2>
+<p>Most of the protocol tolerates differences in how you build it. A few things do not, because two parties compute the same value independently:</p>
+<ul>
+<li><strong>Proofs and seal MACs.</strong> Byte for byte: the contexts, the line feeds between fields, UTF-8 for everything hashed, the 32-bit big-endian lengths in the transcript hash, the 64-bit big-endian sequence number in the MAC input.</li>
+<li><strong>Canonical JSON.</strong> Key order by UTF-16 code units, and numbers as ECMAScript writes them. The manifest digest and the audit hashes depend on it. See <a href="./vectors/manifest.html"><code>manifest.json</code></a>.</li>
+<li><strong>The pointer frame.</strong> Little-endian, with fractions rounded halves up. See <a href="./vectors/pointer.html"><code>pointer.json</code></a>.</li>
+<li><strong>Delta application.</strong> <code>diffNodes</code> and <code>applyOps</code> implement the rule of section 10, and every implementation MUST use them, or match them exactly. A different but reasonable insertion rule gives a different tree.</li>
+<li><strong>The prompt card.</strong> It is the same wherever it is produced. An agent that renders it itself has to match character for character.</li>
+<li><strong>Merge patches.</strong> RFC 7396, with the rule that a null property reads as absent. See <a href="./vectors/merge-patch.html"><code>merge-patch.json</code></a>.</li>
+<li><strong>The policy table and the decision order.</strong> See <a href="./vectors/policy.html"><code>policy.json</code></a>.</li>
+<li><strong>How an <code>act</code> request is decided under the person's level and rules.</strong> <code>decideAct</code> implements the order of section 12, and every surface MUST use it or match it exactly. See <a href="./vectors/levels.html"><code>levels.json</code></a>.</li>
+<li><strong>Who is sent a chat message.</strong> <code>chatAudience</code> implements the order of section 12, with the same obligation. See <a href="./vectors/chat.html"><code>chat.json</code></a>.</li>
+<li><strong>The origin of a URL, and what an allowlist entry matches.</strong> Computed by the rule of section 5, not taken from a URL library. See <a href="./vectors/origins.html"><code>origins.json</code></a>.</li>
+</ul>
+<h2 id="conventions-that-bite">Conventions that bite <a class="anchor" href="#conventions-that-bite" aria-label="Link to the section Conventions that bite">#</a></h2>
+<p>From the first lines of the specification:</p>
+<ul>
+<li>A size in bytes counts the UTF-8 bytes of text.</li>
+<li>A length in characters counts UTF-16 code units unless code points are named.</li>
+<li>Strings that are hashed or MACed are taken as their UTF-8 bytes.</li>
+<li>base64url is RFC 4648 section 5 without padding.</li>
+</ul>
+<p>An implementation in a language whose strings are not UTF-16 has to count characters the way JavaScript does where the specification counts characters: the cuts of names and values, the 43 characters of a text MAC.</p>
+<h2 id="the-security-requirements-are-not-optional">The security requirements are not optional <a class="anchor" href="#the-security-requirements-are-not-optional" aria-label="Link to the section The security requirements are not optional">#</a></h2>
+<p>Section 14 of the specification has 16 numbered rules an implementation MUST meet: loopback only, authenticated and sealed sessions, secrets out of URLs and logs, admission by origin and key, every forwarded request checked, the surface re-checking, schema validation before any handler, no evaluation of anything, private fields, isolated consent, human control that works without the hub, errors without internals, an audit log that fails closed, page content presented as data, levels and rules that change only on the person's input, and chat that is data and grants nothing.</p>
+<p>The <a href="../reference/security-model.html">security model</a> explains which threat each rule answers. Read its list of what Reins does not protect against as well: your implementation inherits those limits.</p>
+<h2 id="proving-it">Proving it <a class="anchor" href="#proving-it" aria-label="Link to the section Proving it">#</a></h2>
+<ul>
+<li><strong>The vectors</strong> are the first check, and need nothing but your own code: see <a href="./test-vectors.html">Test vectors</a>.</li>
+<li><strong>The hub tests</strong> are black-box at the wire level. To run them against another hub, replace <code>startTestHub</code> in <code>conformance/lib/hub.ts</code> with code that starts that hub on a free port with the same configuration (credentials, allowed origins, policy, limits) and exposes its audit records. Tests that configure the hub through <code>BrokerConfig</code> options or read <code>memoryAudit</code> records depend on the reference configuration shape.</li>
+<li><strong>The requirements index</strong> maps every normative sentence to the tests that check it: see <a href="./requirements.html">Requirements index</a>.</li>
+<li><strong>What the suite does not check</strong> is listed, with reasons, under &quot;Coverage limits&quot; in <a href="./conformance-suite.html#coverage-limits">The conformance suite</a>.</li>
+</ul>
+<h2 id="versions">Versions <a class="anchor" href="#versions" aria-label="Link to the section Versions">#</a></h2>
+<p><code>challenge.v</code> lists what the hub speaks. The peer picks one and states it in <code>hello.v</code>. No common version is <code>E_VERSION</code>. Within a version, receivers ignore unknown fields on frames and unknown event topics, and refuse unknown methods with <code>E_UNKNOWN_METHOD</code>.</p>
+<p>This is protocol 0.1, a first version: the wire format may change before 1.0. If you are building on it, it helps to say so in the repository's issues, so that a change can take you into account: see <a href="../community/protocol-changes.html">How to propose a protocol change</a>.</p>
+<h2 id="see-it-on-the-wire">See it on the wire <a class="anchor" href="#see-it-on-the-wire" aria-label="Link to the section See it on the wire">#</a></h2>
+<p>The <a href="../../playground.html">playground</a> shows every frame of a real session, on both legs: the handshake, the sealed frames with their MACs, a request as the agent sends it and as the hub forwards it, pointer frames and the credit that answers them. It is the quickest way to see what your implementation has to produce.</p>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/implementers/writing-an-implementation.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/implementers/writing-an-implementation.md</code></span><a class="md-link" href="./writing-an-implementation.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="../reference/electron-guide.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">The Electron guide</span></a>
+    <a class="pager-next" href="./conformance-suite.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">The conformance suite</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#the-contract">The contract</a></li><li class="toc-2"><a href="#what-you-might-implement">What you might implement</a></li><li class="toc-2"><a href="#a-sensible-order">A sensible order</a></li><li class="toc-2"><a href="#what-has-to-match-exactly">What has to match exactly</a></li><li class="toc-2"><a href="#conventions-that-bite">Conventions that bite</a></li><li class="toc-2"><a href="#the-security-requirements-are-not-optional">The security requirements are not optional</a></li><li class="toc-2"><a href="#proving-it">Proving it</a></li><li class="toc-2"><a href="#versions">Versions</a></li><li class="toc-2"><a href="#see-it-on-the-wire">See it on the wire</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

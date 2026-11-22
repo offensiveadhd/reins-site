@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>CLI: reins-hub, reins, reins-mcp, reins-tools, reins-electron · Reins</title>
+<meta name="description" content="The commands the package installs, with the help text each prints. The hub, the agent command, the MCP adapter, the shell tools and the command that adopts an Electron app.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/reference/cli.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="CLI: reins-hub, reins, reins-mcp, reins-tools, reins-electron">
+<meta property="og:description" content="The commands the package installs, with the help text each prints. The hub, the agent command, the MCP adapter, the shell tools and the command that adopts an Electron app.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/reference/cli.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="./methods.html">Methods</a></li><li><a href="./events.html">Events</a></li><li><a href="./error-codes.html">Error codes</a></li><li><a href="./policy-fields.html">Policy fields</a></li><li><a href="./limits.html">Limits</a></li><li><a href="./cli.html" aria-current="page">CLI</a></li><li><a href="./sdk.html">SDK API</a></li><li><a href="./specification.html">Specification</a></li><li><a href="./security-model.html">Security model</a></li><li><a href="./chat-guide.html">The chat guide</a></li><li><a href="./electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#reference">Reference</a></li><li aria-current="page">CLI</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>CLI: reins-hub, reins, reins-mcp, reins-tools, reins-electron</h1>
+        <p class="lede">The commands the package installs, with the help text each prints. The hub, the agent command, the MCP adapter, the shell tools and the command that adopts an Electron app.</p>
+        
+      </header>
+      <h2 id="running-them">Running them <a class="anchor" href="#running-them" aria-label="Link to the section Running them">#</a></h2>
+<p>The package installs 5 commands. Run them as <code>npx --no -- &lt;command&gt;</code> in the project that installed the package:</p>
+<div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npx <span class="t-f">--no</span> -- reins-hub <span class="t-f">--profile</span> guarded <span class="t-f">--allow-origin</span> http://localhost:5173</code></pre></div>
+<p>The package is not on the npm registry, and <code>reins-mcp</code> there is the name of an unrelated package: in a folder that does not have this one, a plain <code>npx reins-mcp</code> offers to install that package instead, and installs it without asking when there is no terminal. With <code>--no</code>, npx runs what is installed or stops. The <code>--</code> has to follow it: without it npx keeps the options written after the command name for itself.</p>
+<p>The help texts below are printed by the commands themselves when this site is built.</p>
+<h2 id="reins-hub">reins-hub <a class="anchor" href="#reins-hub" aria-label="Link to the section reins-hub">#</a></h2>
+<p>The loopback WebSocket hub.</p>
+<div class="code" data-lang="text"><div class="code-bar"><span class="code-lang">Text</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>usage: reins-hub [--port 7346] [--profile open|guarded|kiosk] [--allow-origin &lt;origin&gt;]...
+                 [--config hub.json] [--token-file &lt;path&gt;] [--audit &lt;path&gt;] [--audit-key-file &lt;path&gt;]
+                 [--surface-key &lt;appId&gt;=&lt;path&gt;]... [--require-key] [--no-announce]
+                 [--agent &lt;kid&gt;=&lt;path&gt;]... [--no-surface-sockets]
+
+--agent adds a credential of its own for one agent, with its key in that file (created
+when missing): the agent then starts with --kid &lt;kid&gt; --token-file &lt;path&gt;. The first
+--agent replaces the default token file; --token-file, when given too, stays the
+credential &quot;default&quot;.
+--no-surface-sockets makes the socket take agents only, for a hub whose pages are all
+linked in-process (an Electron app's main process).
+
+A running hub announces itself in the user's Reins folder (~/.reins, or REINS_HOME) and
+leaves a launcher there, so an agent on this machine can reach it from a shell:
+  node &quot;$HOME/.reins/reins.mjs&quot; reins_attach
+--no-announce writes neither.</code></pre></div>
+<ul>
+<li><strong>Profiles and origins.</strong> <code>guarded</code> and <code>kiosk</code> need at least one <code>--allow-origin</code>. <code>open</code> admits <code>http://localhost:*</code> and <code>http://127.0.0.1:*</code> when none is given. An origin entry is an exact origin, <code>scheme://host:*</code> for any port, or <code>*</code>.</li>
+<li><strong>The token.</strong> With no agent configured the hub creates one credential (<code>kid</code> <code>default</code>) and writes the secret to the token file, by default <code>.reins/token</code>. The hub prints file paths, never secrets.</li>
+<li><strong>Secret files.</strong> A secret file that does not exist is created with a random key. An existing one is refused on POSIX if group or others have any permission on it, and restricted again at start on Windows. A failure to restrict stops the hub.</li>
+<li><strong>Surface keys.</strong> <code>--surface-key &lt;appId&gt;=&lt;path&gt;</code> once per app; <code>--require-key</code> refuses every surface without one. See <a href="../guides/surface-keys.html">Surface keys</a>.</li>
+<li><strong>The audit log.</strong> <code>--audit &lt;path&gt;</code> writes one JSON record per line and keeps the chain's head in <code>&lt;path&gt;.head</code>. <code>--audit-key-file</code> keys the chain. See <a href="../concepts/audit-log.html">The audit log</a>.</li>
+<li><strong>A credential each.</strong> <code>--agent &lt;kid&gt;=&lt;path&gt;</code> adds a credential with that <code>kid</code> whose key is in that file, created like any secret file when it is missing. With it and without <code>--token-file</code> there is no credential <code>default</code>: an agent names its own with <code>--kid</code>.</li>
+<li><strong><code>--no-surface-sockets</code></strong> makes the socket take agents only, for a hub whose pages are all linked in-process, as in an Electron app's main process.</li>
+<li><strong>Origins that many pages share.</strong> The hub warns at start when its socket admits <code>file://</code> or <code>null</code> without requiring a surface key.</li>
+<li><strong><code>--config hub.json</code></strong> holds what flags cannot say: agent credentials with caps, a whole policy object, limits and capacities. A malformed configuration stops the hub with &quot;invalid configuration ...&quot;.</li>
+<li><strong>The Reins folder.</strong> Once it listens, the hub announces itself in <code>~/.reins</code> and writes the launcher there. <code>--no-announce</code> writes neither.</li>
+</ul>
+<p>It exits with code 2 on a bad command line or a configuration it refuses.</p>
+<h2 id="reins">reins <a class="anchor" href="#reins" aria-label="Link to the section reins">#</a></h2>
+<p>The agent command: one request per run.</p>
+<div class="code" data-lang="text"><div class="code-bar"><span class="code-lang">Text</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>usage: reins &lt;command&gt; [options]
+
+commands:
+  surfaces                    list connected surfaces (JSON)
+  card                        print the prompt card
+  observe                     print the UI tree
+  act &lt;name&gt; [json-args]      call an app action
+  click &lt;target&gt;              click an element
+  type &lt;target&gt; &lt;text&gt;        type into an element
+  move &lt;target&gt;               move the cursor to an element (or x,y)
+  toast &lt;text&gt;                show a toast
+
+options:
+  --url &lt;ws url&gt;        hub URL (default ws://127.0.0.1:7346)
+  --surface &lt;id&gt;        surface id (default: the only surface)
+  --token-file &lt;path&gt;   file holding the key (default: the one the running hub announced)
+  --name &lt;agent name&gt;   name shown to the user
+  --kid &lt;id&gt;            the credential to authenticate as (default &quot;default&quot;); its key
+                        is the one in --token-file</code></pre></div>
+<p>Each run connects, attaches with the one scope the command needs, does its work and detaches. <code>surfaces</code> does not attach. <code>--kid</code> names the credential to authenticate as. The command prints text from a page or the hub with every control character other than tab and line feed escaped as <code>\xNN</code>, so page content cannot drive your terminal.</p>
+<p>A target is a handle, a semantic id such as <code>#menu.latte</code>, or for <code>move</code> a point written <code>x,y</code>.</p>
+<h2 id="reins-mcp">reins-mcp <a class="anchor" href="#reins-mcp" aria-label="Link to the section reins-mcp">#</a></h2>
+<p>The stdio MCP adapter.</p>
+<div class="code" data-lang="text"><div class="code-bar"><span class="code-lang">Text</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>usage: reins-mcp [options]
+
+options:
+  --url &lt;ws url&gt;        hub URL (default ws://127.0.0.1:7346)
+  --token-file &lt;path&gt;   file holding the key (default: the one the running hub
+                        announced); give the full path, because a harness starts
+                        this command in the folder its session is in
+  --name &lt;agent name&gt;   name shown to the user (default mcp-agent)
+  --kid &lt;id&gt;            the credential to authenticate as (default &quot;default&quot;); its key
+                        is the one in --token-file
+  --scopes &lt;a,b,c&gt;      scopes to request (observe, act, ui, cursor, show, nav, chat)
+  --data-dir &lt;dir&gt;      directory reins_show may read JSON files from</code></pre></div>
+<p>It is started by an agent harness, not by hand. See <a href="../start/mcp.html">Use it from Claude Code and other MCP harnesses</a>.</p>
+<h2 id="reins-tools">reins-tools <a class="anchor" href="#reins-tools" aria-label="Link to the section reins-tools">#</a></h2>
+<p>The same 10 tools as commands, for an agent that has a shell and no MCP registration, and the commands that make a machine ready.</p>
+<div class="code" data-lang="text"><div class="code-bar"><span class="code-lang">Text</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>usage: reins-tools &lt;tool&gt; [arguments] [options]
+       reins-tools up --allow-origin &lt;origin&gt;... | status | stop | down | setup
+       reins-tools chat-serve [options] --exec &lt;command&gt; [args...]
+
+tools, the same ten the MCP adapter has (the reins_ prefix may be left out):
+  reins_surfaces   list the pages connected to the hub
+  reins_attach     call first: asks the person on the page, returns the app's prompt card
+  reins_observe    the page as a compact tree, then only what changed
+  reins_read       text the tree leaves out: of an element, a region or the page; app state
+  reins_act        call an action the app exposes
+  reins_ui         click, type, select, scroll, key
+  reins_cursor     move, show or hide the agent cursor
+  reins_show       toast, highlight, app view, clear
+  reins_chat       talk with the person in the page's Chat tab: wait, read, say, status
+  reins_batch      up to 20 steps in one call
+
+arguments: the tool's arguments as one JSON object, given as
+  '{&quot;action&quot;:&quot;cart.add&quot;}'   one argument in single quotes (bash, zsh, PowerShell 7.3+)
+  -                         read from standard input (any shell; in Windows PowerShell:
+                            '{&quot;action&quot;:&quot;cart.add&quot;}' | reins-tools reins_act -)
+  @args.json                read from a file
+
+commands:
+  up       start a hub in the background unless one is running; --allow-origin names the
+           page's origin, --profile open|guarded|kiosk (default guarded), --port
+  status   what is running: the hub, this session, the launcher
+  stop     end this session; the page shows the agent has left
+  down     stop a hub that `up` started
+  setup    write the launcher: node &quot;$HOME/.reins/reins.mjs&quot; &lt;tool&gt;
+  mcp      be the stdio MCP adapter, for a harness that wants the tools registered:
+           claude mcp add --scope user reins node &quot;$HOME/.reins/reins.mjs&quot; mcp
+  chat-serve --exec &lt;command&gt; [args...]
+           answer the person's chat messages with a program: each message goes to one
+           run of the command on standard input, behind a line that says who wrote it,
+           on lines starting &quot;| &quot;, and what the command prints is the reply. Whoever
+           types in the page's Chat tab decides what the command is given, and the
+           command runs here as you: read integrations/chat-serve/README.md first.
+           The command is run without a shell, and everything after --exec is its own.
+           A command named without a path is looked for in the folders of PATH, never
+           in the working directory, and the runner says which file it runs.
+           --timeout-ms &lt;n&gt; ends a run that takes longer, with what it started
+           (default 120000); --surface &lt;id&gt; names the page; --once stops
+           after one answer; --preface &lt;file&gt; puts that file's text in front of each
+           message; --wait-ms &lt;n&gt; is how long one wait lasts (default 60000);
+           --allow-unverified serves a page that did not prove its app key to the hub:
+           any program on this computer can be such a page and write as the person
+
+options:
+  --url &lt;ws url&gt;        hub URL (default ws://127.0.0.1:7346)
+  --session &lt;id&gt;        tell two agent sessions on one hub apart (default default)
+  --name &lt;agent name&gt;   name shown to the person; taken when the session starts
+  --token-file &lt;path&gt;   file holding the key (default: the one the running hub announced)
+  --kid &lt;id&gt;            the credential the session authenticates as (default &quot;default&quot;),
+                        with its key in --token-file; taken when the session starts
+  --scopes &lt;a,b,c&gt;      scopes the session may request (observe, act, ui, cursor, show, nav, chat)
+  --data-dir &lt;dir&gt;      directory reins_show may read JSON files from
+
+--name, --kid, --token-file, --scopes and --data-dir are taken when a session starts.
+On a session that already runs, another value is refused: stop it first.
+
+Nothing is registered and no session needs a restart: a hub that is running has
+announced itself in the user's Reins folder (~/.reins, or REINS_HOME).</code></pre></div>
+<p>The launcher in the Reins folder runs this command: <code>node &quot;$HOME/.reins/reins.mjs&quot; &lt;tool&gt;</code> is <code>reins-tools &lt;tool&gt;</code> of the installation that wrote the launcher. Exit code 0 with the tool's text on standard output; 1 with the error text on standard error; 2 for a command line that is not understood. See <a href="../start/shell-tools.html">Shell tools with nothing registered</a>.</p>
+<p><code>chat-serve</code> answers the person's chat messages with a program: one run of the command for each message, the message on standard input, no shell. Whoever types in the page's Chat tab decides what the command is given, and the command runs as you: read <a href="../guides/chat-serve.html">Serve chat from any command-line agent</a> first.</p>
+<h2 id="reins-electron">reins-electron <a class="anchor" href="#reins-electron" aria-label="Link to the section reins-electron">#</a></h2>
+<p>Loads the driver into the pages of an Electron app that was not built for Reins, through the app's debugging connection.</p>
+<div class="code" data-lang="text"><div class="code-bar"><span class="code-lang">Text</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>usage: reins-electron [options] -- &lt;electron app executable&gt; [its arguments...]
+       reins-electron [options] --attach &lt;port | host:port | ws url&gt;
+
+Loads the Reins driver into the pages of an Electron app that was not built for Reins,
+through the app's debugging connection. An agent can then attach to it under the guarded
+profile: the person is asked in the app's window first, and sees and can stop the agent.
+
+Whoever holds a debugging connection controls the app completely. Use this with apps you
+would let this program control, and read docs/ELECTRON.md before using --debug-port.
+
+launch (the default): the app is started with --remote-debugging-pipe, so no port is
+opened, nobody else can use the debugging connection, and the app ends when this
+command ends, however it ends
+  --debug-port &lt;n&gt;        start it with --remote-debugging-port=&lt;n&gt; instead: a loopback
+                          port that any program on this machine can connect to. The
+                          app is whatever browser answers on that port, also when the
+                          executable was only a starter; this command closes it over
+                          the port when it ends, and a small watcher process does when
+                          the command is killed
+
+attach
+  --attach &lt;where&gt;        an app already started with --remote-debugging-port=&lt;n&gt;;
+                          only a loopback address is accepted
+
+With a debugging port (--debug-port, --attach) other programs can use the debugging
+connection too, type and press in the app, and speak to its pages. Pages adopted that
+way are therefore never listed as verified, and their prompts say &quot;Unverified hub&quot;.
+
+the hub (by default one is hosted here; the pages reach it through the debugging
+connection, and its socket takes agents only)
+  --port &lt;n&gt;              port of the hosted hub (default 7346)
+  --token-file &lt;path&gt;     its agent token (default .reins/token)
+  --allow-origin &lt;origin&gt; page origin to adopt, repeatable (default: the origin of the
+                          first page the app shows, such as file://)
+  --no-announce           do not announce the hub or leave the launcher in ~/.reins
+  --hub &lt;ws url&gt;          use a hub that is already running instead, on a loopback
+                          address; it has to admit the app's origin. Without
+                          --surface-key-file the pages cannot tell that hub from
+                          another program, and the app's own scripts can register
+                          there under the same origin
+  --transport &lt;how&gt;       with --hub: auto (default: the page opens the socket, and the
+                          debugging connection carries the frames when it may not),
+                          ws, or bridge
+  --surface-key-file &lt;p&gt;  with --hub: the surface key that hub holds for --app-id.
+                          Not with a debugging port: the key would be readable
+                          through it
+
+what an agent may be given (the pages run under the guarded profile)
+  --levels &lt;a,b&gt;          permission levels the person may set in the panel beyond
+                          Strict and Ask, which only tighten: auto, bypass (default
+                          none; a level decides declared actions, and an adopted app
+                          declares none)
+  --scopes &lt;a,b,c&gt;        scopes an agent may be granted (default observe, act, ui, cursor, show, nav, chat)
+
+the app
+  --app-id &lt;id&gt;           id the surface gives itself (default: from the executable's name)
+  --app-name &lt;name&gt;       name shown to agents and in the prompt card
+  --match &lt;origin|url&gt;    adopt only documents of this origin (http://127.0.0.1:9120,
+                          app://notes), or whose URL is this one or lies under it
+                          (file:///C:/app/). Both sides are read as URLs; query and
+                          fragment are left out. Not a substring: a document elsewhere
+                          that repeats the text does not match
+  --bundle &lt;path&gt;         the page bundle (default: reins-adopt.iife.js of this package)</code></pre></div>
+<p>Whoever holds a debugging connection controls the app completely, and an agent that is allowed to attach to an adopted app can press anything in its window. See <a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a>.</p>
+<h2 id="environment">Environment <a class="anchor" href="#environment" aria-label="Link to the section Environment">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Used by</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>REINS_TOKEN</code></td>
+<td>the agent SDK and everything built on it</td>
+<td>The agent's key itself.</td>
+</tr>
+<tr>
+<td><code>REINS_TOKEN_FILE</code></td>
+<td>the same</td>
+<td>A file that holds the key.</td>
+</tr>
+<tr>
+<td><code>REINS_HOME</code></td>
+<td>the hub, the SDK, the shell tools</td>
+<td>The Reins folder, in place of <code>.reins</code> in the home folder.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="in-a-checkout-of-the-repository">In a checkout of the repository <a class="anchor" href="#in-a-checkout-of-the-repository" aria-label="Link to the section In a checkout of the repository">#</a></h2>
+<p>The repository's <code>package.json</code> has scripts for the demo: <code>npm run demo:hub</code> (a hub with the open profile, a surface key for the demo app and a keyed audit log under <code>.reins/</code>), <code>npm run demo</code> (the demo page) and <code>npm run demo:agent</code> (the scripted agent). See the <a href="../start/quickstart.html">Quickstart</a>.</p>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/reference/cli.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/reference/cli.md</code></span><a class="md-link" href="./cli.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./limits.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Limits</span></a>
+    <a class="pager-next" href="./sdk.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">SDK API</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#running-them">Running them</a></li><li class="toc-2"><a href="#reins-hub">reins-hub</a></li><li class="toc-2"><a href="#reins">reins</a></li><li class="toc-2"><a href="#reins-mcp">reins-mcp</a></li><li class="toc-2"><a href="#reins-tools">reins-tools</a></li><li class="toc-2"><a href="#reins-electron">reins-electron</a></li><li class="toc-2"><a href="#environment">Environment</a></li><li class="toc-2"><a href="#in-a-checkout-of-the-repository">In a checkout of the repository</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>
