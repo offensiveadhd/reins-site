@@ -1,5 +1,5 @@
 {
-  "reins": "0.1",
+  "reins": "0.2",
   "generator": "conformance/tools/make-vectors.mjs",
   "title": "UI-tree delta operations",
   "spec": "SPEC.md section 10, \"Applying a delta\" and \"Text rendering\"",

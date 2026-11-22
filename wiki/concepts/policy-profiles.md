@@ -24,6 +24,10 @@ Three profiles exist:
 | agents hear each other in the chat (`chatRelay`) | `on`: always | `person`: once the person switches it on | `off`: never |
 | remember approvals (`consent.remember`) | session | never | never |
 | `consent.timeoutMs` | 60 s | 60 s | 30 s |
+| a request nobody answered waits (`consent.waitMs`, 0.2) | 10 min | 10 min | no |
+| a rule `allow` for a time (`human.allowMs`, 0.2) | 15 min | 15 min | 15 min |
+| unasked runs of one action before it asks again (`human.burst`, 0.2) | 60 in 10 min | 20 in 10 min | no cap |
+| actions offered at attach (`human.offer`, 0.2) | none | none | none |
 | `human.yieldMs` | 600 ms | 800 ms | 400 ms |
 | grant `ttlMs` / `idleMs` | 8 h / 30 min | 2 h / 15 min | 8 h / 5 min |
 | `rates` per second: observe, act, ui, cursor, show, nav, chat | 30, 30, 60, 120, 30, 2, 10 | 20, 20, 40, 60, 20, 1, 5 | 20, 10, 0, 60, 10, 0, 0 |

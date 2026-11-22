@@ -2,7 +2,7 @@
 
 > Test vectors: Default limits and fixed numbers. Shown here as it is in conformance/vectors/limits.json.
 
-Protocol `0.1`. Covers: SPEC.md sections 3 to 13.
+Protocol `0.2`. Covers: SPEC.md sections 3 to 13.
 
 [Download limits.json](./limits.json): the file itself, as the conformance suite reads it.
 
@@ -116,6 +116,7 @@ Only numbers the spec states. Lengths in characters are UTF-16 code units unless
 
 ```json
 [
+  "0.2",
   "0.1"
 ]
 ```

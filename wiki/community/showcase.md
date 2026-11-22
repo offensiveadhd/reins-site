@@ -4,7 +4,7 @@
 
 ## Nothing here yet
 
-Reins is at version 0.1 and this list is empty: no entry has been submitted yet.
+Reins is at version 0.2 and this list is empty: no entry has been submitted yet.
 
 What exists today is in the repository:
 

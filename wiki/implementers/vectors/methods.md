@@ -2,7 +2,7 @@
 
 > Test vectors: Agent methods, their scopes, and which take a surface id. Shown here as it is in conformance/vectors/methods.json.
 
-Protocol `0.1`. Covers: SPEC.md section 9 table; section 6 (hub methods); section 8 (scope order).
+Protocol `0.2`. Covers: SPEC.md section 9 table; section 6 (hub methods); section 8 (scope order).
 
 [Download methods.json](./methods.json): the file itself, as the conformance suite reads it.
 

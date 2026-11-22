@@ -91,6 +91,7 @@ A page without a build step imports the same two things from files of the packag
 - **`surfaceSockets: false` closes the hub's socket to surfaces.** Agents still connect to it with their token. A connection to that socket cannot become a surface, whatever `Origin` it writes. Run (`builtin`). A hub started from the command line takes the same with `reins-hub --no-surface-sockets`.
 - **Agents outside the app** reach the hub on loopback like any other hub. Announce it the way `reins-hub` does and `node "$HOME/.reins/reins.mjs" reins_attach` works from any folder: the example does it in ten lines. Run (`tools-together`).
 - **An assistant inside the app** needs no hub: build a `Broker` in the main process and connect the assistant with `linkPair()`, as in [the in-tab shape](../start/in-tab.md).
+- **A request that waits while the window is not in front** (0.2). A consent card stays up for a minute and then joins the panel's waiting list; a person working in another window sees neither. `reinsMain({ ..., attention: { app } })` in the main process and `electronAttention(driver)` in the page draw their eye without taking anything from them: while a card is up or a request waits and the window is not focused, the window's taskbar button flashes (`flashFrame`) and the app's icon carries the count (`app.setBadgeCount`: the dock on macOS and launchers with a counter on Linux; Windows has no such counter). Both stop when nothing waits any more or when the person comes to the window. Nothing takes the focus, no window is raised, and what crosses from the page is two numbers, never text. Off unless you pass `attention`. Run (`waiting`), as far as it can be seen from outside: `flashFrame(true)` once while the window is out of front, `flashFrame(false)` afterwards, and the window does not get the focus.
 
 ## Register the window with its page
 
@@ -142,6 +143,8 @@ Give the scheme a host, and register it with `standard: true` before the app is 
 ## The panel, levels and chat
 
 The panel is the driver's, so you get it by using the driver; there is nothing to add to the three pieces. What it offers follows from the policy:
+
+A card nobody answered within a minute, or that the person put off with "Later", is not a refusal: the request joins the panel's "Waiting for your answer" for ten minutes, the indicator says how many wait, and the agent is told that its request waits and that nothing ran. Review opens the card again; Allow there approves that one request, which the agent then repeats and which runs once. Run (`waiting`) in the Notes example, whose connect card offers `notes.publish` under "Without asking each time". See [Requests that wait](../concepts/waiting-requests.md) and [Permission levels](../concepts/permission-levels.md#offers-on-the-attach-card).
 
 | The person can | Where | Needs |
 |---|---|---|

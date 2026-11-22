@@ -1,0 +1,823 @@
+# Consent in protocol 0.2: requests that wait, offers at attach, a rule for a time, the rate cap
+
+> Test vectors: Consent in protocol 0.2: requests that wait, offers at attach, a rule for a time, the rate cap. Shown here as it is in conformance/vectors/consent.json.
+
+Protocol `0.2`. Covers: SPEC.md section 12 ("Requests that wait", "Offers at attach", "Levels and rules": a rule for a time and the rate cap) and the section 12 table.
+
+[Download consent.json](./consent.json): the file itself, as the conformance suite reads it.
+
+## Notes
+
+Times are milliseconds. `kept.rules` lists the actions for which the person's `confirm` or `deny` rule stays for the agent. In `sameRequest` an absent `args` is written by leaving the key out.
+
+## Fixed values
+
+| key | value |
+|---|---|
+| `maxOffers` | `8` |
+
+## defaults
+
+```json
+{
+  "open": {
+    "waitMs": 600000,
+    "allowMs": 900000,
+    "burst": {
+      "max": 60,
+      "perMs": 600000
+    },
+    "offer": []
+  },
+  "guarded": {
+    "waitMs": 600000,
+    "allowMs": 900000,
+    "burst": {
+      "max": 20,
+      "perMs": 600000
+    },
+    "offer": []
+  },
+  "kiosk": {
+    "waitMs": 0,
+    "allowMs": 900000,
+    "burst": false,
+    "offer": []
+  }
+}
+```
+
+## list
+
+```json
+{
+  "perAgent": 3,
+  "total": 12
+}
+```
+
+## ticket
+
+```json
+{
+  "pattern": "^[A-Za-z0-9_-]{1,32}$",
+  "minRandomBits": 96,
+  "valid": [
+    "A",
+    "q7Zt-0_aB3xY9LmN2pQr5w",
+    "abcdefghijklmnopqrstuvwxyzABCDEF"
+  ],
+  "invalid": [
+    "",
+    "abcdefghijklmnopqrstuvwxyzABCDEFG",
+    "has space",
+    "tick/et",
+    "tick.et",
+    "ticket\n",
+    "tické"
+  ]
+}
+```
+
+## answers
+
+```json
+[
+  "allow",
+  "deny",
+  "expired"
+]
+```
+
+## sameRequest
+
+9 cases.
+
+```json
+[
+  {
+    "name": "the same arguments",
+    "x": {
+      "a": "order.submit",
+      "args": {
+        "n": 1
+      }
+    },
+    "y": {
+      "a": "order.submit",
+      "args": {
+        "n": 1
+      }
+    },
+    "same": true
+  },
+  {
+    "name": "keys in another order",
+    "x": {
+      "a": "pay.send",
+      "args": {
+        "to": "x",
+        "amount": 2
+      }
+    },
+    "y": {
+      "a": "pay.send",
+      "args": {
+        "amount": 2,
+        "to": "x"
+      }
+    },
+    "same": true
+  },
+  {
+    "name": "no args and empty args",
+    "x": {
+      "a": "order.submit"
+    },
+    "y": {
+      "a": "order.submit",
+      "args": {}
+    },
+    "same": true
+  },
+  {
+    "name": "another value",
+    "x": {
+      "a": "order.submit",
+      "args": {
+        "n": 1
+      }
+    },
+    "y": {
+      "a": "order.submit",
+      "args": {
+        "n": 2
+      }
+    },
+    "same": false
+  },
+  {
+    "name": "a number and its text",
+    "x": {
+      "a": "order.submit",
+      "args": {
+        "n": 1
+      }
+    },
+    "y": {
+      "a": "order.submit",
+      "args": {
+        "n": "1"
+      }
+    },
+    "same": false
+  },
+  {
+    "name": "one argument more",
+    "x": {
+      "a": "order.submit",
+      "args": {
+        "n": 1
+      }
+    },
+    "y": {
+      "a": "order.submit",
+      "args": {
+        "n": 1,
+        "m": null
+      }
+    },
+    "same": false
+  },
+  {
+    "name": "another action",
+    "x": {
+      "a": "order.submit",
+      "args": {}
+    },
+    "y": {
+      "a": "order.cancel",
+      "args": {}
+    },
+    "same": false
+  },
+  {
+    "name": "nested, in another order",
+    "x": {
+      "a": "x.y",
+      "args": {
+        "o": {
+          "b": [
+            1,
+            2
+          ],
+          "a": "z"
+        }
+      }
+    },
+    "y": {
+      "a": "x.y",
+      "args": {
+        "o": {
+          "a": "z",
+          "b": [
+            1,
+            2
+          ]
+        }
+      }
+    },
+    "same": true
+  },
+  {
+    "name": "array items in another order",
+    "x": {
+      "a": "x.y",
+      "args": {
+        "l": [
+          1,
+          2
+        ]
+      }
+    },
+    "y": {
+      "a": "x.y",
+      "args": {
+        "l": [
+          2,
+          1
+        ]
+      }
+    },
+    "same": false
+  }
+]
+```
+
+## burst
+
+10 cases.
+
+```json
+[
+  {
+    "name": "the first run is counted",
+    "runs": [],
+    "now": 1000,
+    "cap": {
+      "max": 3,
+      "perMs": 1000
+    },
+    "expect": {
+      "ask": false,
+      "n": 1,
+      "runs": [
+        1000
+      ]
+    }
+  },
+  {
+    "name": "below the cap",
+    "runs": [
+      0,
+      100
+    ],
+    "now": 200,
+    "cap": {
+      "max": 3,
+      "perMs": 1000
+    },
+    "expect": {
+      "ask": false,
+      "n": 3,
+      "runs": [
+        0,
+        100,
+        200
+      ]
+    }
+  },
+  {
+    "name": "at the cap the call asks, and is not counted",
+    "runs": [
+      0,
+      100,
+      200
+    ],
+    "now": 300,
+    "cap": {
+      "max": 3,
+      "perMs": 1000
+    },
+    "expect": {
+      "ask": true,
+      "n": 3,
+      "runs": [
+        0,
+        100,
+        200
+      ]
+    }
+  },
+  {
+    "name": "it asks until the window has moved on",
+    "runs": [
+      0,
+      100,
+      200
+    ],
+    "now": 999,
+    "cap": {
+      "max": 3,
+      "perMs": 1000
+    },
+    "expect": {
+      "ask": true,
+      "n": 3,
+      "runs": [
+        0,
+        100,
+        200
+      ]
+    }
+  },
+  {
+    "name": "a run leaves the window perMs after it happened",
+    "runs": [
+      0,
+      100,
+      200
+    ],
+    "now": 1000,
+    "cap": {
+      "max": 3,
+      "perMs": 1000
+    },
+    "expect": {
+      "ask": false,
+      "n": 3,
+      "runs": [
+        100,
+        200,
+        1000
+      ]
+    }
+  },
+  {
+    "name": "every run has left",
+    "runs": [
+      0,
+      100,
+      200
+    ],
+    "now": 5000,
+    "cap": {
+      "max": 3,
+      "perMs": 1000
+    },
+    "expect": {
+      "ask": false,
+      "n": 1,
+      "runs": [
+        5000
+      ]
+    }
+  },
+  {
+    "name": "after an approval the count starts from nothing",
+    "runs": [],
+    "now": 300,
+    "cap": {
+      "max": 3,
+      "perMs": 1000
+    },
+    "expect": {
+      "ask": false,
+      "n": 1,
+      "runs": [
+        300
+      ]
+    }
+  },
+  {
+    "name": "a cap of one",
+    "runs": [
+      50
+    ],
+    "now": 60,
+    "cap": {
+      "max": 1,
+      "perMs": 100
+    },
+    "expect": {
+      "ask": true,
+      "n": 1,
+      "runs": [
+        50
+      ]
+    }
+  },
+  {
+    "name": "no cap: nothing is counted",
+    "runs": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "now": 5,
+    "cap": false,
+    "expect": {
+      "ask": false,
+      "n": 0,
+      "runs": []
+    }
+  },
+  {
+    "name": "a clock that was set back keeps the runs",
+    "runs": [
+      5000,
+      5100,
+      5200
+    ],
+    "now": 10,
+    "cap": {
+      "max": 3,
+      "perMs": 1000
+    },
+    "expect": {
+      "ask": true,
+      "n": 3,
+      "runs": [
+        5000,
+        5100,
+        5200
+      ]
+    }
+  }
+]
+```
+
+## offers
+
+7 cases.
+
+```json
+[
+  {
+    "name": "every level on offer",
+    "offer": [
+      "order.submit",
+      "cart.add",
+      "staff.only",
+      "not.declared",
+      "pay.send",
+      "note.add",
+      "order.submit"
+    ],
+    "actions": [
+      {
+        "name": "cart.add",
+        "risk": "safe",
+        "base": "allow"
+      },
+      {
+        "name": "order.submit",
+        "risk": "sensitive",
+        "base": "confirm"
+      },
+      {
+        "name": "pay.send",
+        "risk": "dangerous",
+        "base": "confirm"
+      },
+      {
+        "name": "staff.only",
+        "risk": "sensitive",
+        "base": "deny"
+      },
+      {
+        "name": "note.add",
+        "risk": "safe",
+        "base": "confirm"
+      }
+    ],
+    "levels": [
+      "strict",
+      "ask",
+      "auto",
+      "bypass"
+    ],
+    "kept": {},
+    "expect": [
+      "order.submit",
+      "pay.send",
+      "note.add"
+    ]
+  },
+  {
+    "name": "auto but not bypass: nothing dangerous",
+    "offer": [
+      "order.submit",
+      "cart.add",
+      "staff.only",
+      "not.declared",
+      "pay.send",
+      "note.add",
+      "order.submit"
+    ],
+    "actions": [
+      {
+        "name": "cart.add",
+        "risk": "safe",
+        "base": "allow"
+      },
+      {
+        "name": "order.submit",
+        "risk": "sensitive",
+        "base": "confirm"
+      },
+      {
+        "name": "pay.send",
+        "risk": "dangerous",
+        "base": "confirm"
+      },
+      {
+        "name": "staff.only",
+        "risk": "sensitive",
+        "base": "deny"
+      },
+      {
+        "name": "note.add",
+        "risk": "safe",
+        "base": "confirm"
+      }
+    ],
+    "levels": [
+      "strict",
+      "ask",
+      "auto"
+    ],
+    "kept": {},
+    "expect": [
+      "order.submit",
+      "note.add"
+    ]
+  },
+  {
+    "name": "bypass alone",
+    "offer": [
+      "order.submit",
+      "cart.add",
+      "staff.only",
+      "not.declared",
+      "pay.send",
+      "note.add",
+      "order.submit"
+    ],
+    "actions": [
+      {
+        "name": "cart.add",
+        "risk": "safe",
+        "base": "allow"
+      },
+      {
+        "name": "order.submit",
+        "risk": "sensitive",
+        "base": "confirm"
+      },
+      {
+        "name": "pay.send",
+        "risk": "dangerous",
+        "base": "confirm"
+      },
+      {
+        "name": "staff.only",
+        "risk": "sensitive",
+        "base": "deny"
+      },
+      {
+        "name": "note.add",
+        "risk": "safe",
+        "base": "confirm"
+      }
+    ],
+    "levels": [
+      "strict",
+      "ask",
+      "bypass"
+    ],
+    "kept": {},
+    "expect": [
+      "order.submit",
+      "pay.send",
+      "note.add"
+    ]
+  },
+  {
+    "name": "no level that waives a prompt",
+    "offer": [
+      "order.submit",
+      "cart.add",
+      "staff.only",
+      "not.declared",
+      "pay.send",
+      "note.add",
+      "order.submit"
+    ],
+    "actions": [
+      {
+        "name": "cart.add",
+        "risk": "safe",
+        "base": "allow"
+      },
+      {
+        "name": "order.submit",
+        "risk": "sensitive",
+        "base": "confirm"
+      },
+      {
+        "name": "pay.send",
+        "risk": "dangerous",
+        "base": "confirm"
+      },
+      {
+        "name": "staff.only",
+        "risk": "sensitive",
+        "base": "deny"
+      },
+      {
+        "name": "note.add",
+        "risk": "safe",
+        "base": "confirm"
+      }
+    ],
+    "levels": [
+      "strict",
+      "ask"
+    ],
+    "kept": {},
+    "expect": []
+  },
+  {
+    "name": "the grant stays at strict",
+    "offer": [
+      "order.submit",
+      "cart.add",
+      "staff.only",
+      "not.declared",
+      "pay.send",
+      "note.add",
+      "order.submit"
+    ],
+    "actions": [
+      {
+        "name": "cart.add",
+        "risk": "safe",
+        "base": "allow"
+      },
+      {
+        "name": "order.submit",
+        "risk": "sensitive",
+        "base": "confirm"
+      },
+      {
+        "name": "pay.send",
+        "risk": "dangerous",
+        "base": "confirm"
+      },
+      {
+        "name": "staff.only",
+        "risk": "sensitive",
+        "base": "deny"
+      },
+      {
+        "name": "note.add",
+        "risk": "safe",
+        "base": "confirm"
+      }
+    ],
+    "levels": [
+      "strict",
+      "ask",
+      "auto",
+      "bypass"
+    ],
+    "kept": {
+      "level": "strict"
+    },
+    "expect": []
+  },
+  {
+    "name": "the person blocked one before",
+    "offer": [
+      "order.submit",
+      "cart.add",
+      "staff.only",
+      "not.declared",
+      "pay.send",
+      "note.add",
+      "order.submit"
+    ],
+    "actions": [
+      {
+        "name": "cart.add",
+        "risk": "safe",
+        "base": "allow"
+      },
+      {
+        "name": "order.submit",
+        "risk": "sensitive",
+        "base": "confirm"
+      },
+      {
+        "name": "pay.send",
+        "risk": "dangerous",
+        "base": "confirm"
+      },
+      {
+        "name": "staff.only",
+        "risk": "sensitive",
+        "base": "deny"
+      },
+      {
+        "name": "note.add",
+        "risk": "safe",
+        "base": "confirm"
+      }
+    ],
+    "levels": [
+      "strict",
+      "ask",
+      "auto",
+      "bypass"
+    ],
+    "kept": {
+      "rules": [
+        "order.submit"
+      ]
+    },
+    "expect": [
+      "pay.send",
+      "note.add"
+    ]
+  },
+  {
+    "name": "two of their rules stay",
+    "offer": [
+      "order.submit",
+      "cart.add",
+      "staff.only",
+      "not.declared",
+      "pay.send",
+      "note.add",
+      "order.submit"
+    ],
+    "actions": [
+      {
+        "name": "cart.add",
+        "risk": "safe",
+        "base": "allow"
+      },
+      {
+        "name": "order.submit",
+        "risk": "sensitive",
+        "base": "confirm"
+      },
+      {
+        "name": "pay.send",
+        "risk": "dangerous",
+        "base": "confirm"
+      },
+      {
+        "name": "staff.only",
+        "risk": "sensitive",
+        "base": "deny"
+      },
+      {
+        "name": "note.add",
+        "risk": "safe",
+        "base": "confirm"
+      }
+    ],
+    "levels": [
+      "strict",
+      "ask",
+      "auto",
+      "bypass"
+    ],
+    "kept": {
+      "rules": [
+        "note.add",
+        "pay.send"
+      ]
+    },
+    "expect": [
+      "order.submit"
+    ]
+  }
+]
+```
+
+Generated by `conformance/tools/make-vectors.mjs` from the formulas in the specification, with `node:crypto` only.

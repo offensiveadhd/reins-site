@@ -2,7 +2,7 @@
 
 > Test vectors: JSON merge patch for state events. Shown here as it is in conformance/vectors/merge-patch.json.
 
-Protocol `0.1`. Covers: SPEC.md section 10 ("an RFC 7396 merge patch"); RFC 7396 section 2 and appendix A.
+Protocol `0.2`. Covers: SPEC.md section 10 ("an RFC 7396 merge patch"); RFC 7396 section 2 and appendix A.
 
 [Download merge-patch.json](./merge-patch.json): the file itself, as the conformance suite reads it.
 

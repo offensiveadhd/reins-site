@@ -10,13 +10,13 @@ Agent side. All but the first two and `stream.close` take `s`, the surface id.
 |---|---|---|---|
 | `hub.info` | | `HubInfo` | |
 | `surfaces.list` | | `{surfaces}` | |
-| `surface.attach` | `scopes, reason?` | `{grant, surface, manifest}` | |
+| `surface.attach` | `scopes, reason?, tk?` | `{grant, surface, manifest}` | |
 | `surface.detach` | | `{}` | |
 | `observe` | `since?, boxes?` | `Observation` | observe |
 | `read` | `h?, max?` | `{text, truncated}` | observe |
 | `state.get` | `name?` | `{state}` | observe |
 | `sub` / `unsub` | `topics` | `{topics}` now subscribed | observe |
-| `act` | `a, args?` | `{result?, rev}` | act |
+| `act` | `a, args?, tk?` | `{result?, rev}` | act |
 | `ui.click` | `h` | `{rev}` | ui |
 | `ui.type` | `h, text, clear?, enter?` | `{rev}` | ui |
 | `ui.select` | `h, value` | `{rev}` | ui |
@@ -35,7 +35,7 @@ Agent side. All but the first two and `stream.close` take `s`, the surface id.
 | `stream.open` | `kind:"pointer"` | `{ch, credit}` | cursor |
 | `stream.close` | `ch` | `{}` | |
 
-A request is `req {id, m, p}` and is answered by exactly one `res`. There are 27 methods in protocol 0.1. An unknown method is answered `E_UNKNOWN_METHOD` before any parameter is checked.
+A request is `req {id, m, p}` and is answered by exactly one `res`. There are 27 methods in protocol 0.2; on a link that negotiated 0.1 the three `chat.*` methods are not among them ([Protocol versions](./protocol-versions.md)). `act` and `surface.attach` take `tk` (0.2), the ticket of a request that waited for the person and was allowed ([Requests that wait](../concepts/waiting-requests.md)). An unknown method is answered `E_UNKNOWN_METHOD` before any parameter is checked.
 
 ## Who answers
 
@@ -130,13 +130,13 @@ Between the hub and a surface, forwarded methods arrive with the same name and p
 
 | method | params | result |
 |---|---|---|
-| `attach` | `agent, scopes, reason?, levels?, decisions?, chatRelay?, cred?` | `{scopes, ttlMs, kept?}` |
+| `attach` | `agent, scopes, reason?, levels?, decisions?, chatRelay?, cred?, v?, tk?` | `{scopes, ttlMs, kept?}`, or `E_WAITING` |
 | `detach` | `why`: `agent`, `hub` or `expired` | `{}` |
 | `stream.open` | `kind:"pointer", ch` | `{credit}` |
 | `stream.close` | `ch` | `{}` |
 | `chat.undelivered` | `id` | `{}` |
 
-In `attach`, `levels` is the list of permission levels the hub's policy offers, `decisions` is what the hub's policy decides for each action of the surface's manifest, `chatRelay` is the hub's setting for who hears whom in the chat, and `cred` is the id of the agent's credential, by which a surface knows an agent again whatever its session id or name. In the answer, `kept` is what stays of the person's earlier settings for that agent: the level `strict`, rules `confirm` and `deny`, and scopes switched off. The hub reads nothing else from it, and `surface.attach` hands `kept` on to the agent with the grant. See [Grants and scopes](../concepts/grants-and-scopes.md#what-ends-with-a-grant-and-what-stays). `chat.undelivered` tells the surface that the hub did not relay a message of the person to the agent `ag` names; the surface shows it as not delivered.
+In `attach`, `levels` is the list of permission levels the hub's policy offers, `decisions` is what the hub's policy decides for each action of the surface's manifest, `chatRelay` is the hub's setting for who hears whom in the chat, and `cred` is the id of the agent's credential, by which a surface knows an agent again whatever its session id or name. In the answer, `kept` is what stays of the person's earlier settings for that agent: the level `strict`, rules `confirm` and `deny`, and scopes switched off. The hub reads nothing else from it, and `surface.attach` hands `kept` on to the agent with the grant. `v` (0.2) is the protocol version the agent's own link speaks, so that a surface puts no request of an agent on 0.1 in its waiting list, and `tk` is a ticket, forwarded as the agent sent it. A request that waits for the person is answered `E_WAITING` with `data: {tk, ms}` instead of a result, and the surface reports the person's answer as `evt user {kind:"answer"}`. See [Grants and scopes](../concepts/grants-and-scopes.md#what-ends-with-a-grant-and-what-stays). `chat.undelivered` tells the surface that the hub did not relay a message of the person to the agent `ag` names; the surface shows it as not delivered.
 
 ## For implementers
 

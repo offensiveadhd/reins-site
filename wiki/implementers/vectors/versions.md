@@ -1,0 +1,1042 @@
+# Protocol versions and what a link on 0.1 leaves out
+
+> Test vectors: Protocol versions and what a link on 0.1 leaves out. Shown here as it is in conformance/vectors/versions.json.
+
+Protocol `0.2`. Covers: SPEC.md section 16.
+
+[Download versions.json](./versions.json): the file itself, as the conformance suite reads it.
+
+## Notes
+
+`versions` is what an implementation of this document lists in challenge.v, newest first. `pick`: the version a peer names in hello, null where the handshake ends with E_VERSION. `v01` is what 0.1 has, `added` what 0.2 added to it. `events`, `methods`, `scopes` and `errors` say what exists on a link by the version it negotiated: an implementation of 0.2 neither sends nor takes the rest on a 0.1 link.
+
+## versions
+
+```json
+[
+  "0.2",
+  "0.1"
+]
+```
+
+## pick
+
+10 cases.
+
+```json
+[
+  {
+    "offered": [
+      "0.2",
+      "0.1"
+    ],
+    "speaks": [
+      "0.2",
+      "0.1"
+    ],
+    "expect": "0.2"
+  },
+  {
+    "offered": [
+      "0.2",
+      "0.1"
+    ],
+    "speaks": [
+      "0.1"
+    ],
+    "expect": "0.1"
+  },
+  {
+    "offered": [
+      "0.2",
+      "0.1"
+    ],
+    "speaks": [
+      "0.1",
+      "0.2"
+    ],
+    "expect": "0.2"
+  },
+  {
+    "offered": [
+      "0.1"
+    ],
+    "speaks": [
+      "0.2",
+      "0.1"
+    ],
+    "expect": "0.1"
+  },
+  {
+    "offered": [
+      "0.1",
+      "0.2"
+    ],
+    "speaks": [
+      "0.2",
+      "0.1"
+    ],
+    "expect": "0.1"
+  },
+  {
+    "offered": [
+      "0.3",
+      "0.2",
+      "0.1"
+    ],
+    "speaks": [
+      "0.2",
+      "0.1"
+    ],
+    "expect": "0.2"
+  },
+  {
+    "offered": [
+      "0.2"
+    ],
+    "speaks": [
+      "0.2",
+      "0.1"
+    ],
+    "expect": "0.2"
+  },
+  {
+    "offered": [
+      "0.3"
+    ],
+    "speaks": [
+      "0.2",
+      "0.1"
+    ],
+    "expect": null
+  },
+  {
+    "offered": [
+      "0.2"
+    ],
+    "speaks": [
+      "0.1"
+    ],
+    "expect": null
+  },
+  {
+    "offered": [],
+    "speaks": [
+      "0.2",
+      "0.1"
+    ],
+    "expect": null
+  }
+]
+```
+
+## v01
+
+```json
+{
+  "scopes": [
+    "observe",
+    "act",
+    "ui",
+    "cursor",
+    "show",
+    "nav"
+  ],
+  "methods": [
+    "hub.info",
+    "surfaces.list",
+    "surface.attach",
+    "surface.detach",
+    "stream.open",
+    "stream.close",
+    "observe",
+    "read",
+    "state.get",
+    "sub",
+    "unsub",
+    "act",
+    "ui.click",
+    "ui.type",
+    "ui.select",
+    "ui.scroll",
+    "ui.key",
+    "cursor.move",
+    "cursor.set",
+    "show.toast",
+    "show.highlight",
+    "show.view",
+    "show.clear",
+    "nav.go"
+  ],
+  "surfaceMethods": [
+    "attach",
+    "detach",
+    "stream.open",
+    "stream.close"
+  ],
+  "events": {
+    "ui": null,
+    "state": null,
+    "nav": null,
+    "user": [
+      "override",
+      "pause",
+      "resume"
+    ],
+    "grant": [
+      "revoked",
+      "expired"
+    ],
+    "surface": [
+      "added",
+      "gone",
+      "changed"
+    ]
+  },
+  "attachParams": [
+    "agent",
+    "scopes",
+    "reason"
+  ],
+  "attachAnswer": [
+    "scopes",
+    "ttlMs"
+  ],
+  "attachResult": [
+    "grant",
+    "surface",
+    "manifest"
+  ],
+  "errors": [
+    "E_BAD_FRAME",
+    "E_VERSION",
+    "E_AUTH",
+    "E_ORIGIN",
+    "E_TOO_LARGE",
+    "E_UNKNOWN_METHOD",
+    "E_BAD_ARGS",
+    "E_NO_SURFACE",
+    "E_NOT_ATTACHED",
+    "E_SCOPE",
+    "E_DENIED",
+    "E_CONSENT",
+    "E_PAUSED",
+    "E_RATE",
+    "E_NO_TARGET",
+    "E_TIMEOUT",
+    "E_GONE",
+    "E_BUSY",
+    "E_INTERNAL"
+  ]
+}
+```
+
+## added
+
+```json
+{
+  "scopes": [
+    "chat"
+  ],
+  "methods": [
+    "chat.say",
+    "chat.read",
+    "chat.status"
+  ],
+  "surfaceMethods": [
+    "chat.undelivered"
+  ],
+  "topics": [
+    "chat"
+  ],
+  "userKinds": [
+    "level",
+    "rule",
+    "relay"
+  ],
+  "grantKinds": [
+    "scopes"
+  ],
+  "attachParams": [
+    "levels",
+    "decisions",
+    "chatRelay",
+    "cred"
+  ],
+  "attachAnswer": [
+    "kept"
+  ],
+  "attachResult": [
+    "kept"
+  ],
+  "surfaceInfo": [
+    "v"
+  ],
+  "errors": [
+    "E_WAITING"
+  ]
+}
+```
+
+## events
+
+21 cases.
+
+```json
+[
+  {
+    "topic": "ui",
+    "d": {
+      "rev": 3
+    },
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "state",
+    "d": {
+      "name": "cart",
+      "patch": {
+        "total": 4.5
+      }
+    },
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "nav",
+    "d": {
+      "url": "https://shop.example/cart",
+      "title": "Cart"
+    },
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "user",
+    "d": {
+      "kind": "override"
+    },
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "user",
+    "d": {
+      "kind": "pause"
+    },
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "user",
+    "d": {
+      "kind": "resume"
+    },
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "user",
+    "d": {
+      "kind": "level",
+      "level": "strict"
+    },
+    "on": {
+      "0.1": false,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "user",
+    "d": {
+      "kind": "rule",
+      "a": "cart.add",
+      "d": "deny"
+    },
+    "on": {
+      "0.1": false,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "user",
+    "d": {
+      "kind": "relay",
+      "on": true
+    },
+    "on": {
+      "0.1": false,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "user",
+    "d": {
+      "kind": "later"
+    },
+    "on": {
+      "0.1": false,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "user",
+    "d": {},
+    "on": {
+      "0.1": false,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "user",
+    "d": "pause",
+    "on": {
+      "0.1": false,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "grant",
+    "d": {
+      "kind": "revoked"
+    },
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "grant",
+    "d": {
+      "kind": "expired"
+    },
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "grant",
+    "d": {
+      "kind": "scopes",
+      "scopes": [
+        "observe"
+      ]
+    },
+    "on": {
+      "0.1": false,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "grant",
+    "d": {
+      "kind": 7
+    },
+    "on": {
+      "0.1": false,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "surface",
+    "d": {
+      "kind": "added"
+    },
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "surface",
+    "d": {
+      "kind": "gone"
+    },
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "surface",
+    "d": {
+      "kind": "changed"
+    },
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "chat",
+    "d": {
+      "id": 1,
+      "from": {
+        "kind": "person"
+      },
+      "text": "add a latte",
+      "ts": 1
+    },
+    "on": {
+      "0.1": false,
+      "0.2": true
+    }
+  },
+  {
+    "topic": "toString",
+    "d": {},
+    "on": {
+      "0.1": false,
+      "0.2": true
+    }
+  }
+]
+```
+
+## methods
+
+27 cases.
+
+```json
+[
+  {
+    "m": "hub.info",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "surfaces.list",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "surface.attach",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "surface.detach",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "stream.open",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "stream.close",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "observe",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "read",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "state.get",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "sub",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "unsub",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "act",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "ui.click",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "ui.type",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "ui.select",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "ui.scroll",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "ui.key",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "cursor.move",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "cursor.set",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "show.toast",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "show.highlight",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "show.view",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "show.clear",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "nav.go",
+    "on": {
+      "0.1": true,
+      "0.2": true
+    }
+  },
+  {
+    "m": "chat.say",
+    "on": {
+      "0.1": false,
+      "0.2": true
+    }
+  },
+  {
+    "m": "chat.read",
+    "on": {
+      "0.1": false,
+      "0.2": true
+    }
+  },
+  {
+    "m": "chat.status",
+    "on": {
+      "0.1": false,
+      "0.2": true
+    }
+  }
+]
+```
+
+## scopes
+
+3 cases.
+
+```json
+[
+  {
+    "asked": [
+      "observe",
+      "act",
+      "ui",
+      "cursor",
+      "show",
+      "nav",
+      "chat"
+    ],
+    "on": {
+      "0.1": [
+        "observe",
+        "act",
+        "ui",
+        "cursor",
+        "show",
+        "nav"
+      ],
+      "0.2": [
+        "observe",
+        "act",
+        "ui",
+        "cursor",
+        "show",
+        "nav",
+        "chat"
+      ]
+    }
+  },
+  {
+    "asked": [
+      "chat",
+      "observe"
+    ],
+    "on": {
+      "0.1": [
+        "observe"
+      ],
+      "0.2": [
+        "chat",
+        "observe"
+      ]
+    }
+  },
+  {
+    "asked": [
+      "chat"
+    ],
+    "on": {
+      "0.1": [],
+      "0.2": [
+        "chat"
+      ]
+    }
+  }
+]
+```
+
+## errors
+
+20 cases.
+
+```json
+[
+  {
+    "code": "E_BAD_FRAME",
+    "on": {
+      "0.1": {
+        "code": "E_BAD_FRAME",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_BAD_FRAME",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_VERSION",
+    "on": {
+      "0.1": {
+        "code": "E_VERSION",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_VERSION",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_AUTH",
+    "on": {
+      "0.1": {
+        "code": "E_AUTH",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_AUTH",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_ORIGIN",
+    "on": {
+      "0.1": {
+        "code": "E_ORIGIN",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_ORIGIN",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_TOO_LARGE",
+    "on": {
+      "0.1": {
+        "code": "E_TOO_LARGE",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_TOO_LARGE",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_UNKNOWN_METHOD",
+    "on": {
+      "0.1": {
+        "code": "E_UNKNOWN_METHOD",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_UNKNOWN_METHOD",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_BAD_ARGS",
+    "on": {
+      "0.1": {
+        "code": "E_BAD_ARGS",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_BAD_ARGS",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_NO_SURFACE",
+    "on": {
+      "0.1": {
+        "code": "E_NO_SURFACE",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_NO_SURFACE",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_NOT_ATTACHED",
+    "on": {
+      "0.1": {
+        "code": "E_NOT_ATTACHED",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_NOT_ATTACHED",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_SCOPE",
+    "on": {
+      "0.1": {
+        "code": "E_SCOPE",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_SCOPE",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_DENIED",
+    "on": {
+      "0.1": {
+        "code": "E_DENIED",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_DENIED",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_CONSENT",
+    "on": {
+      "0.1": {
+        "code": "E_CONSENT",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_CONSENT",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_WAITING",
+    "on": {
+      "0.1": {
+        "code": "E_CONSENT",
+        "data": false
+      },
+      "0.2": {
+        "code": "E_WAITING",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_PAUSED",
+    "on": {
+      "0.1": {
+        "code": "E_PAUSED",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_PAUSED",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_RATE",
+    "on": {
+      "0.1": {
+        "code": "E_RATE",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_RATE",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_NO_TARGET",
+    "on": {
+      "0.1": {
+        "code": "E_NO_TARGET",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_NO_TARGET",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_TIMEOUT",
+    "on": {
+      "0.1": {
+        "code": "E_TIMEOUT",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_TIMEOUT",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_GONE",
+    "on": {
+      "0.1": {
+        "code": "E_GONE",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_GONE",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_BUSY",
+    "on": {
+      "0.1": {
+        "code": "E_BUSY",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_BUSY",
+        "data": true
+      }
+    }
+  },
+  {
+    "code": "E_INTERNAL",
+    "on": {
+      "0.1": {
+        "code": "E_INTERNAL",
+        "data": true
+      },
+      "0.2": {
+        "code": "E_INTERNAL",
+        "data": true
+      }
+    }
+  }
+]
+```
+
+Generated by `conformance/tools/make-vectors.mjs` from the formulas in the specification, with `node:crypto` only.

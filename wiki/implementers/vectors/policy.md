@@ -2,7 +2,7 @@
 
 > Test vectors: Policy profiles and action decisions. Shown here as it is in conformance/vectors/policy.json.
 
-Protocol `0.1`. Covers: SPEC.md section 12 table and "Action decisions"; strictness allow < confirm < deny (section 12 "Two enforcement points": the stricter decision).
+Protocol `0.2`. Covers: SPEC.md section 12 table and "Action decisions"; strictness allow < confirm < deny (section 12 "Two enforcement points": the stricter decision).
 
 [Download policy.json](./policy.json): the file itself, as the conformance suite reads it.
 

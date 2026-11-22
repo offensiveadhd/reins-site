@@ -9,6 +9,7 @@
   <url><loc>https://reins.offensiveadhd.com/wiki/community/protocol-changes.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/community/showcase.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/community/vulnerability-disclosure.html</loc></url>
+  <url><loc>https://reins.offensiveadhd.com/wiki/community/whats-new-0.2.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/concepts/audit-log.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/concepts/chat.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/concepts/consent.html</loc></url>
@@ -23,6 +24,7 @@
   <url><loc>https://reins.offensiveadhd.com/wiki/concepts/rate-limits-and-capacity.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/concepts/roles-and-trust.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/concepts/transports-and-framing.html</loc></url>
+  <url><loc>https://reins.offensiveadhd.com/wiki/concepts/waiting-requests.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/guides/actions-and-risk.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/guides/adopting-an-electron-app.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/guides/claude-and-hermes.html</loc></url>
@@ -41,6 +43,7 @@
   <url><loc>https://reins.offensiveadhd.com/wiki/reference/limits.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/reference/methods.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/reference/policy-fields.html</loc></url>
+  <url><loc>https://reins.offensiveadhd.com/wiki/reference/protocol-versions.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/reference/sdk.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/start/drive-from-node.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/start/in-tab.html</loc></url>
@@ -57,9 +60,11 @@
   <url><loc>https://reins.offensiveadhd.com/wiki/guides/chat-serve.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/guides/hermes-desktop-plugin.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/implementers/conformance-suite.html</loc></url>
+  <url><loc>https://reins.offensiveadhd.com/wiki/community/changelog.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/implementers/vectors/audit.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/implementers/vectors/auth.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/implementers/vectors/chat.html</loc></url>
+  <url><loc>https://reins.offensiveadhd.com/wiki/implementers/vectors/consent.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/implementers/vectors/errors.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/implementers/vectors/levels.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/implementers/vectors/limits.html</loc></url>
@@ -71,4 +76,5 @@
   <url><loc>https://reins.offensiveadhd.com/wiki/implementers/vectors/policy.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/implementers/vectors/seal.html</loc></url>
   <url><loc>https://reins.offensiveadhd.com/wiki/implementers/vectors/ui-delta.html</loc></url>
+  <url><loc>https://reins.offensiveadhd.com/wiki/implementers/vectors/versions.html</loc></url>
 </urlset>

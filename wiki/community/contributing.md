@@ -86,13 +86,13 @@ order: 45
 |---|---|---|---|
 | `hub.info` | | `HubInfo` | |
 | `surfaces.list` | | `{surfaces}` | |
-| `surface.attach` | `scopes, reason?` | `{grant, surface, manifest}` | |
+| `surface.attach` | `scopes, reason?, tk?` | `{grant, surface, manifest}` | |
 | `surface.detach` | | `{}` | |
 | `observe` | `since?, boxes?` | `Observation` | observe |
 | `read` | `h?, max?` | `{text, truncated}` | observe |
 | `state.get` | `name?` | `{state}` | observe |
 | `sub` / `unsub` | `topics` | `{topics}` now subscribed | observe |
-| `act` | `a, args?` | `{result?, rev}` | act |
+| `act` | `a, args?, tk?` | `{result?, rev}` | act |
 | `ui.click` | `h` | `{rev}` | ui |
 | `ui.type` | `h, text, clear?, enter?` | `{rev}` | ui |
 | `ui.select` | `h, value` | `{rev}` | ui |

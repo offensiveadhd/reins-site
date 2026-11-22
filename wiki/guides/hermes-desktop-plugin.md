@@ -59,6 +59,8 @@ What it does not get:
 - **No prompt you could not read.** A prompt is approved on a card that shows all of it,
   or it is not sent. See below for the limit.
 - **No way to act without you, unless you say so.** See the next section.
+- **No refusal because you were looking elsewhere.** A card you did not answer waits for
+  you in the panel; see "When you are in another window".
 
 The scopes an agent can hold are `observe`, `act`, `show` and `chat`.
 
@@ -81,7 +83,27 @@ Allow for `prompt.send` or `prompt.draft` does the same for that one action; it 
 set for the same reason Bypass can, and only because Bypass is on offer. Either takes
 two steps: you choose it, and then confirm on a step that names the agent and the
 actions that will stop asking. While it holds, the indicator in the Hermes window shows
-it in red. It lasts until that agent disconnects or you set it back.
+it in red. The level lasts until that agent disconnects or you set it back.
+
+**The rule Allow for `prompt.send` is the easy way, and it is offered where you are
+anyway.** There are three places to set it, and it is the same rule in each:
+
+- on the card that lets the agent connect, as a box to tick: "Without asking each time",
+  `prompt.send`. Unticked, nothing changes. Ticked, Allow shows a second step that names
+  the agent and the action, and the button there sets it;
+- on a card that asks about one prompt, as "Always allow", with the same second step;
+- in the panel, on the action's row.
+
+On the second step you choose how long: until this agent disconnects, or for fifteen
+minutes, after which every prompt asks again. `prompt.draft` is not offered on the
+connect card: an unasked draft puts the agent's words into your message box, where one
+Enter sends them as yours. You can still set its rule in the panel.
+
+**Prompts that run without a question are counted.** After five of them by one agent in
+ten minutes, the next one asks again, with a card that says why and shows the prompt,
+whatever waived the question: your rule, or Bypass. Allow on that card starts the count
+again. Five is this plugin's choice, well under the twenty of the guarded profile: each
+prompt is a turn of Hermes's model, and whatever Hermes does with it.
 
 Know what it means before you do it. From then on every prompt that agent writes goes to
 Hermes without you seeing it first, and Hermes acts on a prompt with its own tools, under
@@ -97,6 +119,39 @@ as two. That leaves about 1,900 characters for a prompt in plain text. A longer 
 answers `E_TOO_LARGE` under Strict, Ask and Auto, and nothing is sent. What to do: send
 a shorter prompt, or several, one after the other. Under Bypass there is no card, so the
 limit there is the action's own, 8000 characters, none of which you see.
+
+## When you are in another window
+
+You drive the outer agent from its own window, and the card comes up in the Hermes
+window, which you are not looking at. Before, the request was refused after a minute.
+Now:
+
+1. **The card waits for a minute, then the request waits in the panel.** Nothing is
+   refused and nothing runs. "Later" on the card does the same at once. The request stays
+   in the list for ten minutes.
+2. **The agent is told** that its request waits in your window, that nothing ran, and for
+   how long it stays there (error `E_WAITING`, with a ticket). The Reins tools say this to
+   the model in plain words and tell it not to ask you for the approval in the chat.
+3. **The plugin tells you**, with one desktop notification, while the Hermes window is not
+   in front: "Hermes Desktop: a request is waiting for you". The words are the plugin's.
+   Nothing an agent named or wrote is in them: no agent name, no action, no prompt. The
+   notification takes no focus and raises no window. One per stretch: a card that then
+   moves to the list does not notify again, and coming to the window ends the stretch. If
+   Hermes Desktop does not grant notifications to its page, there is none; the plugin does
+   not ask for the permission.
+4. **In the Hermes window** the indicator reads "1 waiting". The panel lists the request
+   under "Waiting for your answer": the agent, the action, its risk and since when, and
+   not the prompt. **Review** opens the card again exactly as it was asked, with the whole
+   prompt, and with every rule a card has. Allow there approves it; Deny refuses it;
+   **Discard** in the list refuses it without a card.
+5. **The agent repeats the request**, and it runs: once. The approval is for that request
+   by that agent, word for word; the same ticket with another prompt, or from another
+   agent, is a new question. After it ran, the next prompt asks again. An approval you
+   gave and the agent has not used yet can be taken back in the list.
+
+A request also stops waiting when its agent disconnects, and when its ten minutes are
+over (the agent is told that too). One agent can have three requests waiting, and the
+window twelve.
 
 ## Two conversations in one window
 
@@ -174,11 +229,31 @@ connected.)
 
 ## Use (not run)
 
+In the order you and the agent meet it. None of this was run in a live Hermes; every step
+is run against the stand-in for Hermes's SDK in `packages/electron/test/hermes-plugin.test.ts`.
+
 ```bash
-node "$HOME/.reins/reins.mjs" reins_attach '{"reason":"ask Hermes a question"}'    # Hermes asks you: allow
-node "$HOME/.reins/reins.mjs" reins_act '{"action":"prompt.send","args":{"text":"Summarise the open pull requests"}}'    # asks again
+node "$HOME/.reins/reins.mjs" reins_attach '{"reason":"ask Hermes a question"}'
+node "$HOME/.reins/reins.mjs" reins_act '{"action":"prompt.send","args":{"text":"Summarise the open pull requests"}}'
 node "$HOME/.reins/reins.mjs" reins_act '{"action":"reply.read"}'    # repeat until "complete":true
 ```
+
+1. **Connect.** `reins_attach` raises a card in the Hermes window. You are there for this
+   one: read it, and decide about the box "Without asking each time: `prompt.send`".
+   - Left unticked: Allow connects the agent, and every prompt will ask you.
+   - Ticked: Allow shows what will run without asking; choose "For 15 minutes" or "Until
+     this agent disconnects", and press "Allow with these".
+2. **The first prompt.** `reins_act` with `prompt.send`. With the rule it goes to Hermes
+   at once. Without it, a card shows the whole prompt.
+3. **If you miss the card**, the agent's call does not fail with a refusal: it is told
+   that the request waits in your window. You get the notification, find the request
+   under "Waiting for your answer", press Review, read the prompt and press Allow. The
+   agent calls `reins_act` again with the same arguments, and the prompt is sent. (The
+   tool keeps the ticket; an agent on the SDK passes it as `tk`, or lets the SDK wait and
+   repeat.)
+4. **The reply.** `reins_act` with `reply.read`, until `complete` is true.
+5. **After a while.** A fifteen-minute rule ends by itself, and the next prompt asks. And
+   the sixth unasked prompt within ten minutes asks whatever the rule says.
 
 With the MCP adapter registered, the same are the tools `reins_attach` and `reins_act`.
 `reply.read` answers the session that sent the prompt: read with the same agent.
@@ -203,4 +278,10 @@ With the MCP adapter registered, the same are the tools `reins_attach` and `rein
   the session id under `session_id`, `sessionId` and `payload.session_id`; an event that
   carries none is ignored); that the driver's indicator and panel sit well over Hermes's
   interface; that hot reload disposes the driver (`ctx.onDispose`).
+- **Also not verified in a live Hermes**: that Hermes Desktop grants its page the Web
+  Notifications API (Electron does by default; an app can refuse it, and then the plugin
+  stays silent), and what such a notification looks like on each system.
+- **The waiting list needs a hub that speaks protocol 0.2**, which the hub of this
+  package does. With an older hub a card nobody answers is refused after a minute, as
+  before, and the connect card offers nothing.
 - **The hub address is fixed** at `ws://127.0.0.1:7346` in `src/plugin.js`.

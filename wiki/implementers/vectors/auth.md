@@ -2,7 +2,7 @@
 
 > Test vectors: Handshake authentication proofs. Shown here as it is in conformance/vectors/auth.json.
 
-Protocol `0.1`. Covers: SPEC.md section 5.
+Protocol `0.2`. Covers: SPEC.md section 5.
 
 [Download auth.json](./auth.json): the file itself, as the conformance suite reads it.
 

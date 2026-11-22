@@ -1,5 +1,5 @@
 {
-  "reins": "0.1",
+  "reins": "0.2",
   "generator": "conformance/tools/make-vectors.mjs",
   "title": "Agent methods, their scopes, and which take a surface id",
   "spec": "SPEC.md section 9 table; section 6 (hub methods); section 8 (scope order)",

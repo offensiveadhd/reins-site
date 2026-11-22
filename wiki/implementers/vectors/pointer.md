@@ -2,7 +2,7 @@
 
 > Test vectors: Binary pointer frames. Shown here as it is in conformance/vectors/pointer.json.
 
-Protocol `0.1`. Covers: SPEC.md section 11, "Pointer stream" (layout table and encoding of fractions).
+Protocol `0.2`. Covers: SPEC.md section 11, "Pointer stream" (layout table and encoding of fractions).
 
 [Download pointer.json](./pointer.json): the file itself, as the conformance suite reads it.
 

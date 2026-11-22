@@ -155,6 +155,22 @@ What you get, and what to know:
   goes by is `isVisible()` of that window. It does not see a view that is hidden, of no
   size or covered by another view inside a window that is shown, nor a window that is
   shown behind others.
+- **A request that waits while the window is not in front.** A consent card stays up for
+  a minute and then joins the panel's waiting list (section 4); a person who is working
+  in another window sees neither. `reinsMain({ ..., attention: { app } })` in the main
+  process and `electronAttention(driver)` in the page draw their eye without taking
+  anything from them: while a card is up or a request waits and the window is not
+  focused, the window's taskbar button flashes (`flashFrame`: the taskbar on Windows,
+  the dock on macOS, the urgency hint on Linux) and the app's icon carries the count
+  (`app.setBadgeCount`: the dock on macOS and launchers that have a counter on Linux;
+  Windows has no such counter, and nothing is drawn there). Both stop when nothing waits
+  any more or when the person comes to the window. Nothing takes the focus, and no window
+  is raised or shown. What crosses from the page is two numbers, never text: a prompt
+  count and a waiting count, from the top page of a registered window that holds a link.
+  It is off unless you pass `attention`. **Run** (`waiting`), as far as it can be seen
+  from outside: that `flashFrame(true)` is called once while the window is out of front
+  and `flashFrame(false)` afterwards, and that the window does not get the focus. Whether
+  the button is seen to flash cannot be read back from the system.
 - **`contextIsolation` has to stay on.** It is Electron's default, and the bridge needs
   it. In a window without it the preload refuses, and both sides are told why: the main
   process as a `preload-error`, the page as `E_DENIED` from `electronLink()`. `sandbox`
@@ -368,6 +384,24 @@ behind a port (below).
 | `--app-id <id>`, `--app-name <name>` | how the surface names itself. Default: from the executable's name |
 | `--match <origin \| url>` | adopt only documents of this origin (`http://127.0.0.1:9120`, `app://notes`), or whose URL is this one or lies under it (`file:///C:/app/`). Asked of every document: a tab that goes elsewhere is not adopted there |
 
+**A request that waits in an adopted app.** The waiting list is on, as under every
+guarded policy: a card nobody answers within a minute, the one that asks whether an agent
+may connect included, waits in the app's panel for ten minutes, and the agent is told
+that it waits. For drawing your eye there, `reins-electron` does what it can do without
+touching the app: when a card comes up or a request starts waiting while the app's window
+does not have the focus, the command prints one line in its own terminal, with the
+terminal's bell, once for each such stretch:
+
+```
+reins-electron: a request is waiting for your answer in the app's window (a page of origin app://notes). Nothing has run. It waits there; open the window to answer
+```
+
+It does not flash the app's taskbar button, which a debugging connection has no way to
+do, and it does not raise the app's window or post a notification in the app's name:
+those are the app's, and an agent's request is no reason to take them. The line carries
+the page's origin and nothing an agent wrote. (The counts reaching the command are
+covered by a unit test; the line in a real terminal was not looked at.)
+
 **Which origin, when you name none.** Without `--allow-origin` the command takes the
 origin from the app's own pages, and only when there is no doubt. From the first page on
 it listens for a second; if every page that asked in that time has the same origin, that
@@ -530,6 +564,18 @@ this section says what that is in an Electron window.
 
 The panel belongs to the person at the window. It opens on their click and nothing else:
 no agent and no message can open it, close it or press anything in it.
+
+**A card nobody answered waits.** Under the guarded profile a consent card that gets no
+answer within a minute, or on which the person presses "Later", is not a refusal: the
+request joins the panel's section "Waiting for your answer" for ten minutes, the
+indicator says how many wait, and the agent is told that its request waits and that
+nothing ran. Review opens the card again as it was asked; Allow there approves that one
+request, which the agent then repeats and which runs once. This holds in an app you
+built and in one you adopted alike. Three more things an app's policy can turn on are
+described with the Hermes plugin, which uses them (6.1): an offer on the connect card
+(`human.offer`), a rule Allow that ends by itself (`human.allowMs`), and a cap on runs
+that nobody was asked about (`human.burst`). **Run** (`waiting`) in the Notes example,
+whose connect card offers `notes.publish`. The normative text is SPEC section 12.
 
 ### In an app you built
 
@@ -758,10 +804,12 @@ level means for this plugin:
 | Auto | ask, every time: the same as Ask for this plugin | runs |
 | Bypass | run unasked, unseen, whatever their length | runs |
 
-Bypass is the one way to let prompts through without the question (the rule Allow for
-one of the two actions does the same for that action, and is offered for the same
-reason). You set it in two steps, the second of which names the agent and the actions,
-and the indicator shows it in red for as long as it holds.
+Bypass is the one level that lets prompts through without the question. The rule Allow
+for `prompt.send` does the same for that one action, and that rule is the easy way: the
+card that lets Claude connect offers it as a box to tick, for fifteen minutes or until
+Claude disconnects. Either takes two steps, the second of which names the agent and the
+actions, and the indicator shows it in red for as long as it holds. Whatever waives the
+question, unasked prompts are counted: after five in ten minutes the next one asks.
 
 **A prompt is approved on a card that shows all of it, or not at all.** A consent card
 holds 2000 characters, the argument's name and quotation marks included, which leaves
@@ -791,16 +839,40 @@ reins_act    {"action":"prompt.send","args":{"text":"Summarise the open pull req
 reins_act    {"action":"reply.read"}        (again until the answer has "complete":true)
 ```
 
-The Hermes window asks twice: for the attach, and for each `prompt.send`. `reply.read`
-answers the agent that sent the prompt, and nobody else: a second agent attached to the
-Hermes window, whatever it was granted, gets an empty reply, and there is no state to
-read it from.
+**What you and Claude see, in order.** You sit in Claude's window; the cards come up in
+the Hermes window. Each step is **run** against the stand-in for Hermes's SDK
+(`packages/electron/test/hermes-plugin.test.ts`), and none with Hermes or Claude Code;
+the same waiting list, offer and card are **run** in a real Electron with the Notes
+example in place of Hermes (`waiting`, section 10).
 
-**Letting prompts through without the question is your step, and a deliberate one.** In
-the panel you can set Claude to Bypass, or give `prompt.send` the rule Allow. From then
-until Claude disconnects or you set it back, every prompt Claude writes goes to Hermes
-unseen by you, at any length, and Hermes acts on it with its own tools: its files, its
-shell, its accounts, under whatever Hermes's own approvals are set to. What a web page,
+| | You | Claude |
+|---|---|---|
+| 1. Connect | The Hermes window shows a card: Claude wants to control this page. Under "Without asking each time" it lists `prompt.send`, unticked. Go to the Hermes window for this one. | `reins_attach` waits for your answer. |
+| 2. Tick the offer, or not | Unticked: Allow connects Claude, and every prompt asks you. Ticked: Allow shows what will run without asking; choose "For 15 minutes, then it asks again" or "Until this agent disconnects" and press "Allow with these". | It is attached, and is told of the rule you set. |
+| 3. The first prompt | With the rule: nothing to do. Without it: a card with the whole prompt, in the Hermes window. | `reins_act` with `prompt.send`. With the rule it returns at once. |
+| 4. You miss the card | After a minute the card goes to the waiting list; nothing is refused and nothing was sent. While the Hermes window is not in front you get one desktop notification, "Hermes Desktop: a request is waiting for you", with nothing in it that Claude chose. | Its call ends with `E_WAITING`: the tool tells it that the request waits in your window, that nothing ran, how long it stays, and not to ask you for the approval in the chat. |
+| 5. You answer | In the Hermes window the indicator says "1 waiting". In the panel, under "Waiting for your answer", press Review: the card comes up again with the whole prompt. Allow. | It is told that you allowed it. |
+| 6. The repeat | Nothing. | It calls `reins_act` again with the same arguments, and the prompt is sent, once. The approval was for that prompt; the next one asks again. |
+| 7. The reply | Hermes answers in its own conversation. | `reply.read`, until `complete` is true. Only Claude reads it. |
+| 8. Later on | A fifteen-minute rule ends by itself, and prompts ask again. With a rule or Bypass in force, the sixth unasked prompt within ten minutes asks, on a card that says why. | The call that asks is answered like any other: allowed, refused, or waiting. |
+
+Three requests of one agent can wait at a time, and twelve in the window; a request
+stops waiting after ten minutes, or when its agent disconnects. `prompt.draft` is not
+offered on the connect card: a draft nobody was asked about is Claude's words in your
+message box, one Enter from Hermes. The notification needs Hermes Desktop to grant its
+page the Web Notifications API, which Electron does unless the app refuses; where it is
+not granted there is none, and the card and the list are there all the same.
+
+`reply.read` answers the agent that sent the prompt, and nobody else: a second agent
+attached to the Hermes window, whatever it was granted, gets an empty reply, and there is
+no state to read it from.
+
+**Letting prompts through without the question is your step, and a deliberate one.** On
+the connect card or in the panel you can give `prompt.send` the rule Allow, or in the
+panel set Claude to Bypass. From then until the rule's time is over, Claude disconnects
+or you set it back, the prompts Claude writes go to Hermes unseen by you, at any length,
+five in ten minutes before one asks again, and Hermes acts on each with its own tools:
+its files, its shell, its accounts, under whatever Hermes's own approvals are set to. What a web page,
 a document or another agent managed to tell Claude can then reach those tools through
 Hermes. Leave it at Ask unless you are watching, or Hermes itself asks before it acts.
 Auto does not do this: under Auto both actions still ask.
@@ -827,7 +899,7 @@ keeps it as narrow as the steps need: `observe` to see the controls and read the
 | 1 | Quit Hermes Desktop, the tray icon included. It keeps a single instance, and a second start would hand over to the first without a debugging connection. | not run |
 | 2 | Start Hermes adopted (command below). Expect `adopting pages of: file://`. | not run with Hermes. **Run** (`tools-adopted`) with the example app in place of `Hermes.exe` |
 | 3 | Register the Reins tools in Claude Code, once (6.1, step 5). | not run |
-| 4 | In Claude Code, ask it to attach. The Hermes window asks you: Allow. | not run. **Run** (`tools-adopted`) with the same tool from a shell |
+| 4 | In Claude Code, ask it to attach. The Hermes window asks you: Allow. If you are not there within a minute, the request waits in the Hermes window ("An AI agent is waiting to connect"), Claude is told that it waits, and `reins-electron` says so once in its terminal; allow it from the panel's waiting list, and Claude attaches when it asks again. | not run. **Run** (`tools-adopted`) with the same tool from a shell, for an attach that is answered at once; a connect request that waits is covered by the surface's own tests, not by a run here |
 | 5 | Claude finds the message box and types the prompt. | not run with Hermes. **Run** (`tools-adopted`) against the example's text field |
 | 6 | Claude waits until the page stops changing. | not run |
 | 7 | Claude reads the reply with `reins_read`. | not run with Hermes. **Run** (`tools-adopted`) against the example's list |
@@ -1073,6 +1145,9 @@ it did.
   you address one of them or everyone.
 - **Nothing is approved in the chat.** Whoever says "yes", an action that needs approval
   asks on its prompt.
+- **What you did not answer waits.** A card you missed, for either agent, is listed in
+  the panel under "Waiting for your answer" with the agent's name. Each agent is told
+  about its own request and no other's, and repeats it once you allowed it there.
 - **Pause** holds every agent. They can still talk. **Stop** ends every grant.
 - **One at a time.** In the Permissions tab each agent has its own section: its level,
   its rules, its scope switches, and Disconnect. Setting Claude to Auto leaves Hermes at
@@ -1211,6 +1286,12 @@ found and what was changed. In short:
   the person said so.
 - **A plugin runs with the app's authority.** The Hermes plugin of 6.1 is code in
   Hermes's own page, next to every other plugin. It is not a boundary.
+- **Drawing the person's eye carries nothing an agent chose.** The attention signal of
+  an app you build is two numbers from the page to the main process, which flashes and
+  counts and never takes the focus. The Hermes plugin's notification has fixed words. For
+  an adopted app the command writes one line in its own terminal and leaves the app
+  alone. A request that waits is approved on the card that Review opens, with the
+  arguments in full, never from the list and never from a notification.
 - **A prompt to an agent app is a dangerous action.** The Hermes plugin asks about every
   prompt under every level but Bypass, shows all of it or refuses it, and gives the reply
   to the agent that asked and to no other (6.1).
@@ -1241,6 +1322,10 @@ found and what was changed. In short:
 | `reins-electron`: "cannot start the hub: port 7346 is in use" | a hub is already running there | join it with `--hub ws://127.0.0.1:7346`, or host another with `--port` |
 | `reins-electron`: "--hub: refusing the hub at ..." | the hub URL is not on a loopback address | a hub listens on loopback only |
 | a page says "offline: no hub answered" with `--hub` | no hub at that URL, or it does not admit the page's origin | start it with `--allow-origin` for the origin `reins-electron` prints |
+| an agent's call answers `E_WAITING` | nobody answered the card within a minute, or the person pressed Later: the request waits in the window | answer it in the panel under "Waiting for your answer"; the agent repeats the same call |
+| the connect card offers nothing to tick | the app's policy names no `human.offer`, the hub offers no level that would waive that action's prompt, the hub speaks protocol 0.1, or you set that agent to Strict before | sections 4 and 6.1 |
+| no taskbar flash while a request waits | `attention` was not passed to `reinsMain`, the page does not call `electronAttention(driver)`, or the window has the focus | section 1 |
+| no notification from the Hermes plugin | the Hermes window has the focus, or Hermes Desktop does not grant its page notifications | open the Hermes window: the indicator and the panel show what waits |
 | the prompt says "Unverified hub" | the page reached a hub by socket and holds no key, or the app was adopted through a debugging port | expected with `--hub` and no key, and with `--attach` or `--debug-port`; use the pipe and the hosted hub, or the pipe and a surface key |
 | `chat-serve` refuses an adopted page as not verified | the app was adopted through a debugging port | adopt it over the pipe, or pass `--allow-unverified` knowing what it accepts ([CHAT.md](./chat-guide.md)) |
 | `prompt.send` answers `E_DENIED ... denied by hub policy` (Hermes plugin) | the hub runs the plain guarded profile, which refuses dangerous actions | start it with `integrations/hermes-desktop/hub.json` (6.1, step 4) |
@@ -1282,17 +1367,22 @@ the mouse wheel over the card until the hint is gone, says in its log that it sc
 and presses. No model is called anywhere. The script's first lines name the Electron binary and
 print its Electron, Chrome and Node versions, so a run says what it ran with.
 
-103 checks, all passing on Windows 11 with Electron 45.4.1 (Chrome 156.0.8078.100, Node
-24.22.3), and the same 103 with Electron 44.10.2 (Chrome 152.0.7977.169, Node 24.22.2),
-the runtime Hermes Desktop ships, by setting `ELECTRON_BIN` to its `electron.exe`. The
-numbers are those of the last run before this was written; run it to get yours. Its last
-line says whether every check passed, and a failed attach prints what the person at the
-window saw and did.
+108 checks, all passing on Windows 11 with Electron 45.4.1 (Chrome 156.0.8078.100, Node
+24.22.3), the five of `waiting` among them. The run before the waiting list existed passed
+its 103 checks with Electron 44.10.2 (Chrome 152.0.7977.169, Node 24.22.2) as well, the
+runtime Hermes Desktop ships, by setting `ELECTRON_BIN` to its `electron.exe`; this one
+was not repeated with it. The check sends real input to real windows: on a machine that
+is busy with other work, or whose display is off or locked, the person's clicks can go
+unanswered and attaches then fail on time. Run it on a machine that is doing nothing
+else, with the screen on. Its last line says whether every check passed, a failed attach prints
+what the person at the window saw and did, and `REINS_SMOKE_VERBOSE=1` echoes
+everything the person says as it happens.
 
 | Scenario | What is checked |
 |---|---|
 | `origins` | the `Origin` header, `location.origin` and `mainFrame.origin` of a file, a standard scheme, a plain scheme and loopback http; the header and `self.origin` of a sandboxed frame |
 | `builtin` | the window is a surface; attach asks and is not marked unverified; a safe action; typing and a click; a sensitive action whose prompt names it; a dangerous action refused; the panel opens on a click; Auto through the confirm step, after which the sensitive action runs unasked and the dangerous one is still refused; the chat, both directions; the socket refuses `Origin: app://notes`; a reload, after which the grant is at Ask again |
+| `waiting` | the example with a person who is somewhere else: the connect card offers `notes.publish`, and ticked it runs with no card after a second step that names it; a card the person puts off gives the agent `E_WAITING` with a ticket and runs nothing; the indicator and the panel's "Waiting for your answer" list it without arguments; Review and Allow approve it, the agent is told, its repeat runs the action once and the next call asks again; with the window out of front a card makes the app call `flashFrame(true)` once without taking the focus, and it is stopped when the person comes back or answers |
 | `builtin-file` | the same app from `file://`: surface, attach, actions; the page cannot navigate its window to another file; another local file loaded into the window gets no link |
 | `adopt-pipe` | starts with a pipe and no port; surface; consent; UI tree, typing, a click; the hub lists the page as verified; the page's scripts see nothing of the driver; the panel offers Strict and Ask only; a scope switched off (`E_SCOPE`) and on; the chat, both directions; a reload; a second window; the app ends with the command |
 | `adopt-levels` | `--levels auto`: the panel offers Auto too and no Bypass; Auto through the confirm step, which says no action is affected; the agent is told |

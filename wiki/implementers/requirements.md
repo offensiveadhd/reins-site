@@ -8,11 +8,11 @@ The conformance suite is traceable to the specification. `conformance/requiremen
 
 A meta-test keeps the map honest. It fails if a normative sentence (MUST, MUST NOT, SHALL) or a rule of section 14 has no entry, if a quote no longer occurs in the specification, or if an entry names a test that does not exist. So the specification cannot gain a requirement without gaining a test.
 
-Ids are grouped by prefix: `TR` transports, `FR` framing, `HS` handshake, `RQ` requests and events, `MAN` manifest, `GR` grants, `M` methods, `OBS` observation, `PTR` the pointer stream, `POL` policy, `HUB` hub behaviour, `LV` levels, rules and the panel, `CH` chat, `OR` origins, `EL` Electron, `MCP` the adapter, `VER` versioning, `ERR` error codes, and `S14` the security requirements. Test names that start with `VEC` check the [test vectors](./test-vectors.md).
+Ids are grouped by prefix: `TR` transports, `FR` framing, `HS` handshake, `RQ` requests and events, `MAN` manifest, `GR` grants, `M` methods, `OBS` observation, `PTR` the pointer stream, `POL` policy, `HUB` hub behaviour, `LV` levels, rules and the panel, `CH` chat, `OR` origins, `EL` Electron, `MCP` the adapter, `VER` versioning, `WT` requests that wait at the surface, `WH` their tickets and answers at the hub, `CT` a request's time, `OF` offers at attach, `RT` a rule for a time, `RC` the rate cap on unasked runs, `AD` the notice after a refusal, `AT` the attention event, `ERR` error codes, and `S14` the security requirements. Test names that start with `VEC` check the [test vectors](./test-vectors.md).
 
 What the suite does not check, or only partly, is listed under "Coverage limits" in [The conformance suite](./conformance-suite.md#coverage-limits).
 
-205 requirements, checked by 426 test references. Each entry gives the requirement, the sentences of the specification it covers, word for word, and the tests that check it. The section headings link to the specification.
+241 requirements, checked by 487 test references. Each entry gives the requirement, the sentences of the specification it covers, word for word, and the tests that check it. The section headings link to the specification.
 
 ## Section 3: Transports
 
@@ -964,6 +964,88 @@ Wherever the Chat tab names an agent it names it as what it is, with its name in
 
 Tests: `CH-27 an agent is named as what it is, with its name in quotation marks and its session id, wherever the tab names it; what it says it is doing is quoted as its words`
 
+#### WT-2
+
+One entry for one request: the same agent session asking for the same action with arguments equal as canonical JSON (or the same attach) is shown no prompt and gets E_WAITING again with the same ticket and the time left.
+
+> A surface MUST NOT show a prompt for such a request
+
+Tests: `WT-2 the same request from the same agent shows no second prompt and gets the same ticket and the time left; other arguments are another request`, `VEC-CONSENT two act requests are the same request when the action is the same and the arguments are equal as canonical JSON`
+
+#### WT-3
+
+The list is bounded: an entry lasts consent.waitMs by the clock and its end is told as expired; at most 3 requests of one agent and 12 in all; a request that cannot wait (the list is full, or the agent's own link speaks 0.1) has no Later on its prompt and ends as E_CONSENT.
+
+Tests: `WT-3 the list is bounded: an entry ends by the clock with the answer expired, and where a request cannot wait its prompt has no Later and ends as E_CONSENT`
+
+#### WT-4
+
+The person answers in the panel: Review opens the prompt again as it was asked, under every rule of a prompt; Allow approves, Deny and Discard refuse; the agent is told with evt user {kind:'answer', tk, answer, a?}, and after an approval the person is told that the agent is told and when the request goes ahead.
+
+Tests: `WT-4 Review opens the prompt again as it was asked; Allow tells the agent with evt user answer allow and the person that the agent is told; Deny and Discard tell it deny`
+
+#### WT-6
+
+A ticket that is unknown, used, expired or another agent's names nothing: the request is handled as if it carried none.
+
+> a surface MUST handle such a request as if it carried no ticket
+
+Tests: `WT-6 a ticket that is unknown, another agent's, or for other arguments names nothing: the request is handled as if it carried none`
+
+#### WT-8
+
+Not answered is not refused: a prompt nobody answered and one put off move the cool-off as a timeout does and never count toward the three refusals. There is no list on a hub that speaks 0.1, with an app's own consent handler, without the panel, or with consent.waitMs 0.
+
+Tests: `WT-8 not answered is not refused: Later moves the cool-off as a timeout does and revokes nothing; and there is no list on a hub that speaks 0.1, with an app's own consent handler, without the panel or with consent.waitMs 0`
+
+#### OF-1
+
+Offers at attach: the attach prompt lists the actions human.offer names, each with a box that is not ticked, and only where the person could set the rule allow in the panel (offeredActions); what the person tightened before is left out, and the prompt says so.
+
+> A surface MUST NOT show a box ticked
+
+Tests: `OF-1 the attach prompt offers the actions the policy names, each unticked, only where the rule allow could be set in the panel; what the person tightened before is left out and the prompt says so`, `VEC-CONSENT offeredActions offers what the rule allow could be set for, and nothing the person tightened before`
+
+#### OF-2
+
+A tick alone changes nothing: with a box ticked Allow opens a second step that names the agent and exactly the ticked actions, and only its button, armed anew, grants.
+
+Tests: `OF-2 a tick alone changes nothing: with a box ticked Allow opens a second step that names exactly the ticked actions, and only its button, armed anew, grants`
+
+#### RT-1
+
+A rule allow for a time (human.allowMs): the confirm step offers until the agent disconnects (preselected) or the time; the rule is reported with ms, shown with when it ends, and ends by the clock, reported as d null.
+
+> a surface MUST NOT let an action run on a rule `allow` whose time is up
+
+Tests: `RT-1 a rule allow for a time is reported with ms, shown with when it ends, and ends by the clock: past its time the action asks again and the hub is told d null`
+
+#### RC-1
+
+The rate cap (human.burst): at most max runs of one action by one agent whose prompt was waived, within perMs (burstStep); a further call asks, saying how often and why in the surface's own words, with no Always allow, and Allow starts the count again.
+
+Tests: `RC-1 at most max runs whose prompt was waived go unasked within perMs; the next call asks with the count in the surface's own words and no Always allow, and Allow starts the count again`, `VEC-CONSENT burstStep reproduces every row of the rate cap`
+
+#### AD-1
+
+After a refused action the surface shows a notice of its own with one click to block the action for that agent and, where the agent may chat, a way into the Chat tab; it is no dialog, has no text field, goes by itself and is taken down when a prompt comes up.
+
+Tests: `AD-1 after a refused action a notice offers one click to block it for that agent and, where the agent may chat, a way into the Chat tab; it asks nothing, has no text field, and a prompt that comes up takes it down`
+
+#### OF-4
+
+What the person tightened wins over an offer at every moment: a rule allow from an offer is never set for an action the person set to confirm or deny, on the grant or kept for the agent, and never takes such a rule away; an offer approved in the waiting list before the person set the rule leaves the rule as it is, and the activity list says so.
+
+> a surface MUST NOT set a rule `allow` from an offer for an action the person has set to `confirm` or `deny`
+
+Tests: `OF-4 an offer the person ticked and approved in the waiting list sets no rule allow for an action they set to Block or Ask before the ticket was used: the Block stays, is kept, and the activity list says why`
+
+#### WT-9
+
+A prompt the agent withdraws itself (its session left, or it attached again) moves the cool-off like a timeout and counts as no refusal; an agent's entries in the waiting list end with its grant, a replacing attach included, and the agent is told expired for each.
+
+Tests: `WT-9 a prompt the agent withdraws moves the cool-off like a timeout; an agent's entries end with its grant, a replacing attach included, and the agent is told expired`
+
 ## Sections 8, 12
 
 This requirement spans several sections of [the specification](../reference/specification.md).
@@ -989,6 +1071,26 @@ Tests: `LV-15 the surface reasons from the stricter of its own decision and the 
 The chat scope: open and guarded grant it, kiosk does not; a surface without the panel grants none; without the scope every chat method is E_SCOPE, at the surface and at the hub.
 
 Tests: `CH-1 a grant holds chat only where the policy grants it and the page has a panel: open and guarded do, kiosk and a surface without the panel do not, and without the scope every chat method is E_SCOPE`, `CH-1 the hub grants the chat scope under open and guarded and not under kiosk; without it the chat methods are E_SCOPE and nothing is forwarded`, `VEC-SCOPE scopes are in canonical order`, `VEC-SCOPE every method maps to the scope in the section 9 table`, `VEC-POLICY each profile matches the section 12 table`
+
+#### CT-3
+
+detach for an agent withdraws its pending request, also one the app's own consent handler is still asking about: an answer given afterwards attaches nobody and runs nothing.
+
+Tests: `CT-3 detach withdraws a request the app's own consent handler is still asking about: a yes afterwards attaches nobody`
+
+#### WT-7
+
+A request to connect can wait: nothing is granted, the indicator is shown for it alone and says that an agent is waiting to connect, and after the person approved it the agent's next attach with the same scopes, the same credential and the ticket is granted without a prompt, once. detach from the hub drops what waits for an agent.
+
+Tests: `WT-7 a request to connect waits too: with nobody attached the indicator says that an agent is waiting to connect, and the approved ticket attaches the same credential without a prompt`
+
+#### OF-3
+
+The grant starts with the rule allow for each ticked action, set as if in the panel and reported with evt user {kind:'rule'} once the hub has the attach answer; no action runs under such a rule before the report was sent.
+
+> a surface MUST NOT let an action run under such a rule before
+
+Tests: `OF-3 the grant starts with the rule allow for each ticked action, reported with a rule event after the attach answer and before any action runs under it`
 
 ## Sections 8, 13
 
@@ -1292,6 +1394,48 @@ Malformed configuration is refused; a present but mistyped restriction never mea
 
 Tests: `CFG-1 malformed configuration is refused; a mistyped restriction never means "any"`
 
+#### WH-1
+
+The hub relays E_WAITING with {tk, ms} and nothing else of its data, keeps the ticket for that agent session and surface, forwards tk on act and surface.attach unchanged, and records the wait, the answer and the repeated request with the ticket.
+
+Tests: `WH-1 an agent on 0.2 gets E_WAITING with {tk, ms}; the person allows it; the agent is told, repeats with the ticket, and the request runs: all of it on record`, `WH-3 an attach request waits before any grant exists: the answer reaches the agent that holds none, and the repeated attach with the ticket is granted; the surface is told v with every attach`
+
+#### WH-2
+
+The SDK carries a request that waits to its result or a clear error: it waits for the answer no longer than the request stays in the list (or as long as told), repeats an allowed request once with its ticket, ends a refused or lapsed one with E_CONSENT, and reports what waits.
+
+Tests: `WH-1 an agent on 0.2 gets E_WAITING with {tk, ms}; the person allows it; the agent is told, repeats with the ticket, and the request runs: all of it on record`, `WH-2 refused, or lapsed, the waiting call ends with E_CONSENT and says which; a wait given in ms ends with the time the request has left`, `WH-3 an attach request waits before any grant exists: the answer reaches the agent that holds none, and the repeated attach with the ticket is granted; the surface is told v with every attach`
+
+#### WH-3
+
+A tk that is not a ticket, or not one the surface gave this agent session for this surface and this request, is E_BAD_ARGS before anything reaches the surface, in the same words for each; a ticket is forwarded once and then forgotten.
+
+Tests: `WH-4 a ticket that is not the agent's own is refused at the hub, before anything reaches the surface: another agent's, another request's, a used, lapsed or malformed one`, `WH-6 an agent on 0.1 gets E_CONSENT for a request that waits, is given no ticket, and the surface is told v: "0.1"; a waiting attach of its is withdrawn at once; its tk is never a ticket`
+
+#### WH-4
+
+The hub takes an answer only for a ticket it keeps for that agent and that request, also before any grant exists, records it with the ticket, forgets the ticket unless allowed, and tells that agent alone from the checked fields; any other answer is recorded as refused or dropped.
+
+Tests: `WH-3 an attach request waits before any grant exists: the answer reaches the agent that holds none, and the repeated attach with the ticket is granted; the surface is told v with every attach`, `WH-5 an answer is relayed to the agent the ticket was given to, from its checked fields, and recorded with the ticket; one for a ticket the hub did not give that agent, or malformed, is refused or dropped`
+
+#### WH-5
+
+The hub sends v, the protocol version of the agent's link, with every attach; an agent on 0.1 gets E_CONSENT for a request that waits, is given no ticket, and has a waiting attach withdrawn at once.
+
+Tests: `WH-3 an attach request waits before any grant exists: the answer reaches the agent that holds none, and the repeated attach with the ticket is granted; the surface is told v with every attach`, `WH-6 an agent on 0.1 gets E_CONSENT for a request that waits, is given no ticket, and the surface is told v: "0.1"; a waiting attach of its is withdrawn at once; its tk is never a ticket`
+
+#### WH-6
+
+When an agent whose attach waits leaves the hub, and when the hub stops waiting for an attach the surface did not answer, the hub sends the surface detach {why:"hub"} for that agent; a grant the agent held there ends with evt grant revoked.
+
+Tests: `WH-7 when an agent whose attach waits leaves, the surface is told detach {why:"hub"} for it; a grant's own end says detach {why:"agent"} instead`, `WH-8 an attach the surface does not answer within the hub wait is E_TIMEOUT, and the hub sends the surface detach {why:"hub"}; a grant the agent held there ends and the agent is told`
+
+#### WH-7
+
+A report of what the person set that arrives for an attach the hub is waiting on is kept and handled once the grant is recorded; a rule allow may carry ms, told and recorded with it.
+
+Tests: `WH-9 a rule reported right behind the attach answer, with or without a time, is kept for the grant and told; a rule allow with ms is told with it`
+
 ## Sections 12, 14
 
 This requirement spans several sections of [the specification](../reference/specification.md).
@@ -1316,6 +1460,20 @@ Who is sent a message is decided by the four rules of section 12 (chatAudience):
 
 Tests: `CH-5 a message is sent as evt chat with ag to each agent that is to hear it, never to its speaker: the person to all or to one, an agent to the others where the room relays and to nobody where it does not`, `VEC-CHAT chatAudience reproduces every row of who hears a message`, `VEC-CHAT a message off the wire is rebuilt from its checked fields, or dropped`
 
+#### CT-1
+
+A request's time for an answer runs from when it reached the surface, not from when its prompt is shown: a prompt that waited its turn shows for what is left, and one whose time is up before its turn is not shown.
+
+Tests: `CT-1 a request's time runs from when it reached the surface: a prompt that waits its turn ends with the one before it and is never shown`
+
+#### CT-2
+
+A prompt waits no longer than the hub does: the shorter of consent.timeoutMs and the consentTimeoutMs of welcome.
+
+> A surface MUST NOT let a prompt wait longer than
+
+Tests: `CT-2 a prompt waits no longer than the hub: the shorter of consent.timeoutMs and the consentTimeoutMs of welcome`
+
 ## Sections 12, 15
 
 This requirement spans several sections of [the specification](../reference/specification.md).
@@ -1327,6 +1485,14 @@ Only the person speaks as the person: a message of the person comes from trusted
 > A surface MUST NOT produce a message from the person except from trusted input events in the composer of its own Chat tab
 
 Tests: `CH-7 only trusted input in the composer of the Chat tab makes a message of the person: no method, parameter, event or untrusted input does`, `CH-7 the driver's API tells the app that a message was posted and how long it is, never its text, and posts none; no observation returns the transcript`
+
+#### AT-1
+
+on('attention') reports how many prompts are showing or queued and how many requests wait, whenever either changes: two counts, nothing an agent wrote, and the driver changes nothing of the page for it.
+
+> A surface MUST NOT put anything an agent wrote into it
+
+Tests: `AT-1 attention reports how many prompts are up and how many requests wait, and nothing an agent wrote; the driver leaves the page title alone`
 
 ## Sections 9, 12
 
@@ -1343,6 +1509,20 @@ Tests: `CH-10 chat.say and chat.status work while control is paused; while a con
 A message id counts, for each agent, the messages that agent may read, from 1 on each page load: an agent's ids say nothing about what was said to others, an event carries the id the message has for the agent it goes to, and the count goes on when the agent's grant is replaced.
 
 Tests: `CH-22 message ids count each agent's own messages from 1, an event carries the id the message has for the agent it goes to, and the count goes on when a grant is replaced`
+
+#### WT-1
+
+Where a request can wait (0.2), a prompt nobody answered in time and one the person put off with Later join the waiting list: the answer is E_WAITING with data {tk, ms}, a ticket of at least 96 random bits and the time the request waits. Nothing ran. The indicator and the panel say that it waits, without arguments.
+
+Tests: `WT-1 a prompt the person put off with Later, and one nobody answered, join the waiting list: E_WAITING with a ticket and the time it waits in data, nothing ran, and the indicator and the panel say that it waits without its arguments`, `VEC-CONSENT each profile has the waiting time, the time limit of a rule, the rate cap and the (empty) offers of the section 12 table`, `VEC-CONSENT a ticket is 1 to 32 characters of the base64url alphabet, and the answers are allow, deny and expired`
+
+#### WT-5
+
+Approved means one use: a request goes ahead on a ticket only when the ticket names an approved entry of the same agent session and the request asks for the same thing; the approval is then used up, and a Block set meanwhile or a policy deny refuses all the same.
+
+> A surface MUST let a request go ahead on a ticket
+
+Tests: `WT-5 an approved request goes ahead on its ticket once: the same agent session, the same action and arguments; the approval is then used up, and a Block set meanwhile wins`
 
 ## Sections 12, 13
 
@@ -1397,6 +1577,66 @@ Tests: `VER-2 unknown fields on frames are ignored`, `VER-5 an event with an unk
 Unknown methods are refused with E_UNKNOWN_METHOD.
 
 Tests: `VER-3 an unknown method is refused with E_UNKNOWN_METHOD on an attached surface`, `VER-4 an unknown method without a surface id is refused with E_UNKNOWN_METHOD`, `SF-SCOPE-1 the surface checks the grant and its scopes itself: E_NOT_ATTACHED, E_SCOPE, E_UNKNOWN_METHOD`
+
+#### VER-6
+
+challenge.v lists the versions the hub speaks, newest first; a peer names in hello.v the first one in that list that it speaks, the hub refuses one it did not list, and welcome.v repeats it.
+
+> The peer MUST name in `hello.v` the first version in that list that it speaks
+
+Tests: `VER-6 the hub lists 0.2 and 0.1 in challenge.v, newest first, and welcomes each peer in the version its hello names`, `VER-6 a hub that speaks 0.1 alone lists it alone, and refuses a hello that names another version`, `VER-6 the surface names in hello the first version of the hub's list that it speaks, and says which it speaks while connected`, `VER-11 on a hub that lists both, the SDK speaks 0.2, and 0.1 when told to speak 0.1 alone`, `VEC-VERSIONS the versions are 0.2 and 0.1, newest first, and a peer picks the first one in the hub's list that it speaks`
+
+#### VER-7
+
+The hub records the version of each connection in its connect record, and gives an agent on 0.2 each surface's version as SurfaceInfo.v; an agent on 0.1 gets the SurfaceInfo of 0.1.
+
+Tests: `VER-7 the hub records the version of each connection, and tells an agent on 0.2 which version each surface speaks`
+
+#### VER-8
+
+Toward an agent on 0.1 the hub sends no event that 0.1 does not have: no grant event of kind scopes (the grant narrows all the same, the request is E_SCOPE, the surface changed event is sent), no user event of kind level, rule or relay, no chat event; it holds and records what they say.
+
+> an implementation of 0.2 MUST keep to 0.1
+
+Tests: `VER-8 an agent on 0.1 is sent no grant event for a scope switch: its grant narrows all the same, the request is E_SCOPE, and the surface event that follows is sent`, `VER-8 an agent on 0.1 is sent no level, rule or relay switch and no chat message; the hub holds and records what the person set`
+
+#### VER-9
+
+Toward an agent on 0.1 the hub asks no chat scope for it and answers chat.* with E_UNKNOWN_METHOD, leaves kept out of the attach result, and sends E_WAITING as E_CONSENT without its data; a surface's error otherwise reaches the agent with its data unchanged.
+
+Tests: `VER-9 an agent on 0.1 has no chat: the scope is not asked of the surface for it, and the chat methods are E_UNKNOWN_METHOD whatever their params`, `VER-9 an agent on 0.1 is not sent kept in the attach result; what stays of the person's settings holds for its grant`, `VER-9 a surface's error reaches an agent on 0.2 with its data unchanged; an agent on 0.1 gets E_CONSENT, without the data, for a request that waits`
+
+#### VER-10
+
+Toward a surface on 0.1 the hub sends attach with agent, scopes and reason, and v (the agent's protocol version, which 0.1 ignores), never with chat, grants no chat there, reads no kept from the answer, and drops an event of a topic or kind 0.1 does not have, unread and unrecorded.
+
+> an implementation of 0.2 MUST keep to 0.1
+
+Tests: `VER-10 a surface on 0.1 is asked as 0.1 asks: the agent, the scopes without chat, the reason; chat on it is E_SCOPE and it is never asked`, `VER-10 a surface on 0.1 that answers attach with chat and with kept gets neither: no chat scope is granted, and no setting is read`, `VER-10 from a surface on 0.1 the hub takes what 0.1 has and drops the rest: no level, rule, scope switch, relay switch or chat message`
+
+#### VER-11
+
+An agent with a hub on 0.1 asks for no chat scope and sends no chat.* request; the reference SDK says which version it speaks and refuses a chat call itself with E_UNKNOWN_METHOD.
+
+Tests: `VER-11 on a hub that lists 0.1 alone the SDK speaks 0.1: it says so, asks for no chat scope, and refuses a chat call itself without a request`
+
+#### VER-12
+
+A surface with a hub on 0.1 sends no grant event of kind scopes, no user event of kind level, rule or relay and no chat event, reads only agent, scopes and reason from attach, grants no chat and answers without kept; what the person sets holds on the page.
+
+Tests: `VER-12 on a hub that lists 0.1 alone the surface grants no chat and reads only the agent, the scopes and the reason of attach: no level beyond ask is offered`, `VER-12 on a hub that lists 0.1 alone the surface reports no level and no scope switch, which hold on the page all the same; pause, resume and Stop are sent as in 0.1`, `VER-12 on a hub that lists 0.1 alone the attach answer has no kept; what stays of the person's settings stays on the page`, `VER-12 the same on a hub that speaks 0.2 is told: the level, the scopes in force, and kept in the attach answer`
+
+#### VER-13
+
+From 0.2 on, an event of a kind the receiver does not know, on a topic it knows, ends nothing and changes nothing.
+
+Tests: `VER-13 an event of a kind the receiver does not know, on a topic it knows, ends nothing: the hub drops such a grant event, and the SDK keeps its handle`
+
+#### VER-14
+
+What 0.1 has and what 0.2 adds to it are the tables of section 16; on a link that negotiated 0.1 only the events, methods, scopes and error codes of 0.1 exist.
+
+Tests: `VEC-VERSIONS what 0.1 has and what 0.2 added to it are the tables of section 16`, `VEC-VERSIONS on a link that negotiated 0.1 only the events, methods, scopes and error codes of 0.1 exist`
 
 ## Sections 4 to 16
 

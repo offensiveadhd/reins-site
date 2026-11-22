@@ -171,6 +171,14 @@ the app
   --bundle <path>         the page bundle (default: reins-adopt.iife.js of this package)
 ```
 
+**A request that waits in an adopted app** (0.2). The waiting list is on, as under every guarded policy: a card nobody answers within a minute, the one that asks whether an agent may connect included, waits in the app's panel for ten minutes, and the agent is told that it waits. For drawing your eye there, `reins-electron` does what it can without touching the app: when a card comes up or a request starts waiting while the app's window does not have the focus, it prints one line in its own terminal, with the terminal's bell, once for each such stretch:
+
+```text
+reins-electron: a request is waiting for your answer in the app's window (a page of origin app://notes). Nothing has run. It waits there; open the window to answer
+```
+
+It does not flash the app's taskbar button, which a debugging connection has no way to do, and it does not raise the app's window or post a notification in the app's name. The line carries the page's origin and nothing an agent wrote.
+
 ## The panel in an adopted app
 
 The adopted page has the same indicator and the same panel. **By default the panel of an adopted app offers Strict and Ask, and neither Auto nor Bypass.**

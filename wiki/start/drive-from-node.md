@@ -51,14 +51,16 @@ console.log(await kiosk.observeText()); // only what changed
 ## The surface handle
 
 ```ts
-connect(options: { url?: string; link?: Link; kid?: string; key?: string; name?: string }): Promise<ReinsClient>
+connect(options: { url?: string; link?: Link; kid?: string; key?: string; name?: string; versions?: readonly string[] }): Promise<ReinsClient>
 isHandshakeError(e: unknown): boolean            // connect threw e during the handshake: its message came from an unverified peer
 
 interface ReinsClient {
   readonly session: string
+  readonly version: string                         // the protocol version this connection speaks (section 16)
   info(): Promise<HubInfo>
   surfaces(): Promise<SurfaceInfo[]>
-  attach(s: string, opts?: { scopes?: Scope[]; reason?: string }): Promise<SurfaceHandle>
+  attach(s: string, opts?: { scopes?: Scope[]; reason?: string; wait?: boolean | number }): Promise<SurfaceHandle>   // wait: see "requests that wait" below
+  waiting(): Array<WaitingRequest & { s: string }>   // attach requests of this connection that wait for the person
   ping(): Promise<number>
   on(event: 'surface' | 'close', fn: (e: any) => void): () => void
   close(): void
@@ -74,7 +76,8 @@ interface SurfaceHandle {
   read(h?: Target, max?: number): Promise<string>
   readText(h?: Target, max?: number): Promise<{ text: string; truncated: boolean }>   // read, with whether it was cut at max
   state(name?: string): Promise<Record<string, unknown>>
-  act<R = unknown>(action: string, args?: object): Promise<R>
+  act<R = unknown>(action: string, args?: object, opts?: { wait?: boolean | number }): Promise<R>
+  waiting(): WaitingRequest[]                      // requests of this grant that wait for the person, with the answer where it came
   click(h: Target): Promise<void>
   type(h: Target, text: string, opts?: { clear?: boolean; enter?: boolean }): Promise<void>
   select(h: Target, value: string): Promise<void>
@@ -86,7 +89,7 @@ interface SurfaceHandle {
   pointer(): Promise<PointerStream>
   chat: { say(text: string, opts?: { to?: string }): Promise<{ id: number }>; read(opts?: { since?: number; max?: number }): Promise<{ messages: ChatMessage[]; next: number }>; status(state: 'idle' | 'thinking' | 'working', note?: string): Promise<void> }
   subscribe(topics: Topic[]): Promise<void>
-  on(event: Topic, fn: (d: any) => void): () => void
+  on(event: Topic | 'answer', fn: (d: any) => void): () => void   // 'answer': an AnswerEvent for a waiting request of this grant
   detach(): Promise<void>
 }
 interface PointerStream { push(x: number, y: number, dt?: number): void; end(): Promise<void>; readonly stats: { sent: number; dropped: number } }
@@ -104,6 +107,7 @@ kiosk.rules;                 // the person's rules for single actions, by name
 kiosk.grant.scopes;          // the scopes in force: it follows the person's switches
 kiosk.on('user', (e) => {}); // { kind: 'level', level }, { kind: 'rule', a, d }, { kind: 'relay', on }
 kiosk.on('grant', (e) => {}); // { kind: 'scopes', scopes }: not the end of the grant
+kiosk.on('answer', (e) => {}); // the person answered a request of yours that waited: { tk, answer, a? }
 ```
 
 None of this is on the prompt card. Under `auto` an action tagged `[confirm]` may run unasked, and a rule may block an action that has no tag. The answer to the request is the truth. See [Permission levels](../concepts/permission-levels.md).
@@ -144,6 +148,7 @@ The codes are listed in [Error codes](../reference/error-codes.md), and [Trouble
 
 - `E_PAUSED`: the person paused control. Reading still works; wait and try again.
 - `E_CONSENT`: the person refused, or blocked the action in the panel. After a refusal on a prompt the same request is answered `E_RATE` for a while, a cool-off that doubles with each further refusal.
+- `E_WAITING` (0.2): the person has not answered yet, and the request waits in their window with a ticket. Nothing ran. By default `act` and `attach` wait for the answer for you and repeat the request once it is allowed, so you see this code only with `wait: false`, or as a `WaitingError` when the time is up. See [Requests that wait](../concepts/waiting-requests.md).
 - `E_SCOPE`: the grant lacks the scope, or the person switched it off. `grant.scopes` says which are in force.
 - `E_NOT_ATTACHED`: there is no live grant. The person pressed Stop, the grant expired, or the page reloaded. Attach again.
 
@@ -151,7 +156,7 @@ An error thrown by `connect` itself while the handshake was running comes from a
 
 ## How long a request waits
 
-A request waits `reqTimeoutMs` (15 s by default) for its answer. Where a consent prompt may be involved, `surface.attach` and `act`, the agent waits 2 × `reqTimeoutMs` + `consentTimeoutMs`, 90 s with the default limits, so that the hub's answer, not the agent's own timer, says how a slow prompt ended.
+A request waits `reqTimeoutMs` (15 s by default) for its answer. Where a consent prompt may be involved, `surface.attach` and `act`, the agent waits 2 × `reqTimeoutMs` + `consentTimeoutMs`, 90 s with the default limits, so that the hub's answer, not the agent's own timer, says how a slow prompt ended. A prompt nobody answers ends inside that wait: as `E_CONSENT`, or, in protocol 0.2 and where the request can wait, as `E_WAITING`, after which the SDK waits for the person's answer by default, up to ten minutes (`handle.act(action, args, { wait })`).
 
 `E_TIMEOUT` on an attach or an action means the page did not answer within the hub's wait. Treat it as a prompt nobody answered: ask the person to bring the page to the front, then ask again. The prompt can still be on the page, and a request approved there later still takes effect. Before repeating an action that is not safe to run twice, observe whether it ran.
 
@@ -197,6 +202,10 @@ options:
   --name <agent name>   name shown to the user
   --kid <id>            the credential to authenticate as (default "default"); its key
                         is the one in --token-file
+  --wait <ms>           when the person puts the request off and it waits in their window,
+                        wait at most this long for their answer (default: 10 minutes, or as
+                        long as it waits if that is shorter)
+  --no-wait             report a waiting request at once instead
 ```
 
 Each `reins` command connects, attaches with the one scope it needs, does its work and detaches, so every command that needs a grant asks the page again under a profile that confirms attaches. `--kid` names the credential to authenticate as, with its key in `--token-file`, where a hub gave each agent its own (`reins-hub --agent <kid>=<file>`). For an agent that issues many commands, use [the shell tools](./shell-tools.md), which keep one session, or [the MCP adapter](./mcp.md).

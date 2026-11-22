@@ -2,7 +2,7 @@
 
 > Test vectors: Levels, rules and the decision for an act request. Shown here as it is in conformance/vectors/levels.json.
 
-Protocol `0.1`. Covers: SPEC.md section 12, "Levels and rules".
+Protocol `0.2`. Covers: SPEC.md section 12, "Levels and rules".
 
 [Download levels.json](./levels.json): the file itself, as the conformance suite reads it.
 

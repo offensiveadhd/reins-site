@@ -41,7 +41,7 @@ Step by step:
 2. **The page side.** `linkPair()` returns the two ends of an in-memory link. The broker accepts one end, and is told the origin, because there is no `Origin` header to read it from. The driver gets the other end as `link`, in place of a hub URL.
 3. **The assistant side.** A second link pair, and `connect` from the agent SDK with `link` in place of a URL. From here on the code is the code of [Drive it from Node](./drive-from-node.md).
 
-A complete page built this way is in [`examples/kiosk/public/inpage.js`](https://github.com/offensiveadhd/reins/blob/main/examples/kiosk/public/inpage.js). To run it, start `npm run demo` in a checkout and open <http://127.0.0.1:5173/inpage.html>. Its assistant adds a latte and then listens in the Chat tab, answering from a script, until you type "stop".
+A complete page built this way is in [`examples/kiosk/public/inpage.js`](https://github.com/offensiveadhd/reins/blob/main/examples/kiosk/public/inpage.js). Its policy names `human: { offer: ['order.submit'] }`, so its attach prompt offers to let the assistant place orders without asking each time, and a prompt nobody answers waits in its panel ([Requests that wait](../concepts/waiting-requests.md)). To run it, start `npm run demo` in a checkout and open <http://127.0.0.1:5173/inpage.html>. Its assistant adds a latte and then listens in the Chat tab, answering from a script, until you type "stop".
 
 ## What stays the same
 

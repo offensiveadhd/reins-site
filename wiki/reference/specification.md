@@ -1,6 +1,6 @@
-# Reins Protocol 0.1
+# Reins Protocol 0.2
 
-> Reins Protocol 0.1 in full: the normative text, rendered from docs/SPEC.md.
+> Reins Protocol 0.2 in full, with what a link on 0.1 leaves out: the normative text, rendered from docs/SPEC.md.
 
 Reins lets an AI agent drive a web app that is running in a browser tab: read what is
 on screen, call the app's own actions, move a visible cursor, and put data in front of
@@ -125,7 +125,7 @@ it drops the queue and closes.
 **Text frames** are JSON objects with a `t` field: `challenge`, `hello`, `welcome`,
 `req`, `res`, `evt`, `flow`, `ping`, `pong`, `bye`.
 
-**Binary frames** start with a kind byte. The only kind in 0.1 is the pointer frame
+**Binary frames** start with a kind byte. The only kind is the pointer frame
 (section 11).
 
 Limits (`DEFAULT_LIMITS`): text frame 256 KiB (`maxText`), binary frame 16 KiB
@@ -142,11 +142,14 @@ Decoding validates shape: field presence and primitive types.
 ## 5. Handshake and authentication
 
 ```
-hub  → peer   challenge { v:["0.1"], nonce, hub }
+hub  → peer   challenge { v:["0.2","0.1"], nonce, hub }
 peer → hub    hello     { v, role, name, cnonce, auth?, surface? }
 hub  → peer   welcome   { v, session, role, limits, proof? }      or   bye { code }
 ```
 
+- `challenge.v` lists the versions the hub speaks, newest first. `hello.v` names the first
+  of them that the peer speaks, and `welcome.v` repeats it: the version of this link
+  (section 16).
 - `nonce` and `cnonce` are 32 random bytes, base64url, fresh per connection.
 - `auth.proof = b64url(HMAC-SHA256(key, "reins.v1.auth\n" + role + "\n" + kid + "\n" + nonce + "\n" + cnonce))`.
   The key is the UTF-8 bytes of the shared secret and the message the UTF-8 bytes of
@@ -284,7 +287,8 @@ Either side sends `bye` before closing on purpose.
 ## 6. Requests, responses, events
 
 `req {id, m, p}` is answered by exactly one `res {re, ok, r}` or
-`res {re, ok:false, e:{code, msg}}`. Ids count up from 1 per sender per connection.
+`res {re, ok:false, e:{code, msg, data?}}`. Ids count up from 1 per sender per connection.
+An error may carry `data`: a JSON value that goes with its code.
 Error messages are short and safe to show to a model. They never contain stack traces,
 file paths or secrets. The codes (`ERROR_CODES`):
 
@@ -302,6 +306,7 @@ file paths or secrets. The codes (`ERROR_CODES`):
 | `E_SCOPE` | the grant lacks the method's scope, the person switched that scope off, or no requested scope is permitted |
 | `E_DENIED` | policy says no |
 | `E_CONSENT` | the person refused or blocked the action, or the prompt timed out |
+| `E_WAITING` | 0.2: the request waits for the person's answer and nothing ran; `data` is `{tk, ms}`, the ticket of the request and how long it stays. An agent on 0.1 gets `E_CONSENT` (section 16) |
 | `E_PAUSED` | control is paused, the indicator cannot be shown, or the person is using the page |
 | `E_RATE` | a rate or admission limit, or a consent cool-off |
 | `E_NO_TARGET` | the target is not a live, exposed, enabled element, or is read-only |
@@ -318,7 +323,8 @@ itself: `hub.info`, `surfaces.list`, `surface.attach`, `surface.detach`, `stream
 and `stream.close`. Every other method is forwarded: the hub checks the grant, the scope
 (`METHOD_SCOPE`) and the rate limit, strips `s`, and sends the request to the surface
 with `ag` set to the agent's session id, and `c:1` when the hub policy demands a human
-confirmation. The surface's answer is relayed back unchanged. An unknown method is
+confirmation. The surface's answer is relayed back unchanged, an error with its `data`
+(section 16 has the one exception, for an agent on 0.1). An unknown method is
 answered `E_UNKNOWN_METHOD` before any parameter is checked. A surface id that does not
 exist, and one naming a surface the credential may not attach to, get the same answer on
 every method that takes `s`: `E_NO_SURFACE`, with the same message. Params that cannot be
@@ -334,18 +340,21 @@ the agent's own timer. On timeout the asker gets `E_TIMEOUT`. When a surface
 disconnects, its pending requests fail with `E_GONE`.
 
 `E_TIMEOUT` on `surface.attach` or `act` says that the surface did not answer within
-the hub's wait. A prompt nobody answers ends as `E_CONSENT` after
-`consent.timeoutMs`, which is normally well inside that wait. It is not when the prompt
-first waited its turn behind another one (each prompt gets its full
-`consent.timeoutMs` from the moment it is shown), when the app set
-`consent.timeoutMs` above the hub's `consentTimeoutMs`, or when the page ran its
-timers late, as a browser may make a tab in the background do. In each case nobody
-approved the request. The prompt can still be on the page, though, and a request
-approved there later still takes effect: an action runs. An agent SHOULD treat this
-`E_TIMEOUT` as a prompt nobody answered: ask the person to bring the page to the
-front, then ask again. While the earlier prompt is up the new request is answered
-`E_BUSY`. Before repeating an action that is not safe to run twice, the agent SHOULD
-observe whether it ran.
+the hub's wait. A prompt nobody answers ends inside that wait, as `E_CONSENT` or, where
+the request can wait, as `E_WAITING` (section 12): the surface counts a request's time
+from when it arrived, takes the shorter of its policy's `consent.timeoutMs` and the hub's
+`consentTimeoutMs`, and reads the clock when the person answers, so that neither a
+prompt that waited its turn, nor an app that allows more time, nor a timer that fired
+late keeps a prompt answerable after the hub gave up. What is left is a request that
+reached the page more than `reqTimeoutMs` late, on a page that did not run for that
+long: its prompt comes up after the hub's `E_TIMEOUT`. The hub then withdraws what it
+can: it sends the surface `detach {why:"hub"}` for an attach it stopped waiting for
+(section 8), and the prompt becomes a "Request withdrawn" notice. It cannot withdraw a
+single action, so an action approved on such a late prompt still runs; the hub drops a
+page that is silent for 2.5 × `heartbeatMs`, which bounds that case. An agent SHOULD
+treat this `E_TIMEOUT` as a prompt nobody answered: ask the person to bring the page to
+the front, then ask again. Before repeating an action that is not safe to run twice,
+the agent SHOULD observe whether it ran.
 
 Events are `evt {topic, d}`. A surface addresses one agent with `ag`, or omits it to
 reach every attached agent. The hub adds `s` when it relays, and relays an event only to
@@ -453,23 +462,25 @@ Scopes, in canonical order:
 | `nav` | open same-origin URLs the policy allows |
 | `chat` | talk with the person in the page's chat room: say something, read what was said to it, show what it is doing |
 
-`surface.attach {s, scopes, reason}`:
+`surface.attach {s, scopes, reason, tk?}`:
 
 1. The hub intersects the requested scopes with the agent credential's cap and the
    hub policy's `scopes`. An empty result is `E_SCOPE`. Hub policy `attach: deny` is
    `E_DENIED`.
-2. The hub sends `attach {agent, scopes, reason, levels, decisions, chatRelay, cred}` to the surface, with
+2. The hub sends `attach {agent, scopes, reason, levels, decisions, chatRelay, cred, v, tk?}` to the surface, with
    `c:1` when the hub policy says `confirm`. `levels` is the hub policy's `human.levels`,
    and `decisions` is what the hub's policy decides for each action in the surface's
    manifest, `{"<action>": "allow" | "confirm" | "deny"}` (section 12). `chatRelay` is the
    hub policy's `chatRelay` (`off`, `person` or `on`; section 12, "Chat"). `cred` is the id
    of the agent's credential (its `kid`, at most 64 characters): what stays the same when
    an agent comes back under another session id or another name ("What the person
-   tightened stays", below).
+   tightened stays", below). `v` (0.2) is the protocol version the agent's own link
+   speaks, and a ticket (`tk`, 0.2) is forwarded as the agent sent it.
 3. The surface intersects with its own policy, decides by its `attach` setting
    (`allow`, `confirm` with an on-screen prompt, `deny`), and answers
-   `{scopes, ttlMs, kept?}`. A refusal is `E_CONSENT` or `E_DENIED`. `scopes` are the
-   scopes granted. `kept`, when present, is what stays of the person's earlier settings
+   `{scopes, ttlMs, kept?}`. A refusal is `E_CONSENT` or `E_DENIED`; a request that waits
+   for the person instead is answered `E_WAITING` ("A request to connect can wait",
+   below). `scopes` are the scopes granted. `kept`, when present, is what stays of the person's earlier settings
    for this agent: `{level?: "strict", rules?: {"<action>": "confirm" | "deny"}, off?: [scope]}`.
 4. The hub records the grant with expiry `min(hub ttl, surface ttl)` and returns
    `{grant, surface, manifest, kept?}`. `grant.scopes` holds the scopes in force: those
@@ -483,7 +494,7 @@ forwards one attach at a time per credential and surface, across all of the
 credential's sessions (`E_BUSY` for another), and allows a credential a burst of 3
 attaches per surface, then one every 2 s (`E_RATE`). When an agent session disconnects
 while its attach is pending, the hub sends the surface `detach {why:"agent"}`, which
-withdraws the prompt. The surface asks even when its policy says `allow` if the hub is
+withdraws the prompt, and whatever waits for that agent (below). The surface asks even when its policy says `allow` if the hub is
 unverified, or if the user has pressed Stop, or a revocation after refusals (section 12)
 has happened, since the page loaded, or if the person has tightened something for an
 agent that the surface cannot tell this one from ("What the person tightened stays").
@@ -509,6 +520,22 @@ ends, and the hub tells each side, as follows:
 A request without a live grant fails with `E_NOT_ATTACHED`. A request whose scope the
 grant lacks fails with `E_SCOPE`.
 
+**A request to connect can wait.** (0.2) Where the surface keeps a waiting list (section
+12, "Requests that wait"), an attach whose prompt nobody answered, or that the person put
+off with "Later", is answered `E_WAITING` with a ticket. Nothing was granted, and the
+surface holds no session for the agent. With nobody attached, the surface still shows the
+person that an agent is waiting to connect, and the request in its panel. When the
+person approves it there, the surface tells the agent (`evt user {kind:"answer"}`, with
+`ag`, for an agent that holds no grant yet), and the agent's next `surface.attach` with
+the same scopes and the ticket is granted without a prompt, once. The surface drops what
+waits for an agent when the hub sends `detach` for it; the hub does so when that agent
+leaves, and whenever it gives up on a request to the surface (section 13).
+
+The attach prompt may also offer the person rules for the new grant (section 12, "Offers
+at attach"). A grant that starts with such rules is reported like any other change of a
+rule: `evt user {kind:"rule"}` right after the surface's answer to `attach`, so the hub
+takes `rule` events for a grant it has only just recorded.
+
 **Scope switches.** The person can switch single scopes of a live grant off and back on,
 in the panel (section 12). The surface refuses a request whose scope is off with
 `E_SCOPE`, and sends the hub `evt grant {kind:"scopes", scopes}` with `ag`, naming the
@@ -523,7 +550,9 @@ scope switched off stays live: the person can switch them back on.
 **What lets an agent do more ends with the grant.** The levels `auto` and `bypass`, a rule
 `allow`, a remembered approval and what the person switched on in the chat (section 12)
 belong to one grant and end with it, however it ends. A new grant, also one that replaces
-another for the same agent, has none of them.
+another for the same agent, has none of them. A rule `allow` that was set for a time ends
+sooner, when its time is up, and an agent's requests in the waiting list go with its grant
+(section 12).
 
 **What the person tightened stays.** The level `strict`, the rules `confirm` and `deny`
 and the scopes the person switched off hold an agent back, and no sequence of the
@@ -556,13 +585,13 @@ Agent side. All but the first two and `stream.close` take `s`.
 |---|---|---|---|
 | `hub.info` | | `HubInfo` | |
 | `surfaces.list` | | `{surfaces}` | |
-| `surface.attach` | `scopes, reason?` | `{grant, surface, manifest}` | |
+| `surface.attach` | `scopes, reason?, tk?` | `{grant, surface, manifest}` | |
 | `surface.detach` | | `{}` | |
 | `observe` | `since?, boxes?` | `Observation` | observe |
 | `read` | `h?, max?` | `{text, truncated}` | observe |
 | `state.get` | `name?` | `{state}` | observe |
 | `sub` / `unsub` | `topics` | `{topics}` now subscribed | observe |
-| `act` | `a, args?` | `{result?, rev}` | act |
+| `act` | `a, args?, tk?` | `{result?, rev}` | act |
 | `ui.click` | `h` | `{rev}` | ui |
 | `ui.type` | `h, text, clear?, enter?` | `{rev}` | ui |
 | `ui.select` | `h, value` | `{rev}` | ui |
@@ -669,6 +698,16 @@ Surface behaviour:
   and `stream.close` still work.
   The page cannot change between the person reading a prompt and answering it. An
   action whose prompt a level or a rule waived is no exception (section 12).
+- **Waiting.** (0.2) `act` and `surface.attach` may fail with `E_WAITING` and `data: {tk,
+  ms}`: the request waits for the person in the surface's panel for `ms` more, and
+  nothing ran. `tk` is the ticket; sent back with the same request (`tk` in the params),
+  it lets the request go ahead once after the person approved it. The surface tells the
+  agent how the request was answered with `evt user {kind:"answer", tk, answer, a?}`
+  (section 12, "Requests that wait"). The same request sent again meanwhile is answered
+  `E_WAITING` with the same ticket and shows the person nothing new. The hub checks the
+  ticket before it forwards anything (section 13, "Requests that wait"): a `tk` that is not
+  a ticket, or not one the surface gave this agent session for this surface and this
+  request, is `E_BAD_ARGS`, in the same words for each.
 - **Checks hold across waits.** A command that waited (for a cursor glide, a consent
   prompt, or the person to stop typing) checks again, right before it acts, that the
   grant is live, its scope is still on, control is not paused, no consent prompt is up
@@ -870,6 +909,10 @@ A `Policy` (see `protocol.ts`) is a profile plus overrides. Three profiles exist
 | agents hear each other in the chat (`chatRelay`) | `on`: always | `person`: once the person switches it on | `off`: never |
 | remember approvals (`consent.remember`) | session | never | never |
 | `consent.timeoutMs` | 60 s | 60 s | 30 s |
+| a request nobody answered waits (`consent.waitMs`, 0.2) | 10 min | 10 min | no |
+| a rule `allow` for a time (`human.allowMs`, 0.2) | 15 min | 15 min | 15 min |
+| unasked runs of one action before it asks again (`human.burst`, 0.2) | 60 in 10 min | 20 in 10 min | no cap |
+| actions offered at attach (`human.offer`, 0.2) | none | none | none |
 | `human.yieldMs` | 600 ms | 800 ms | 400 ms |
 | grant `ttlMs` / `idleMs` | 8 h / 30 min | 2 h / 15 min | 8 h / 5 min |
 | `rates` per second: observe, act, ui, cursor, show, nav, chat | 30, 30, 60, 120, 30, 2, 10 | 20, 20, 40, 60, 20, 1, 5 | 20, 10, 0, 60, 10, 0, 0 |
@@ -902,8 +945,9 @@ main process's (section 3).
 **Consent.** A prompt names the agent, the scopes or the action, and shows the
 arguments as text. It lives in a closed shadow root owned by the driver and accepts
 only trusted input events, so an agent cannot approve its own request ("The overlay and
-the page", below, says what that takes and where it ends). An unanswered
-prompt is a refusal after `consent.timeoutMs`. With `remember: session` an approved
+the page", below, says what that takes and where it ends). A prompt nobody answers
+ends after `consent.timeoutMs`: as a refusal, or, where the surface keeps a waiting list,
+by joining it ("Requests that wait", below). With `remember: session` an approved
 action is remembered once its handler has run, and is not asked again under the same
 grant unless the hub confirms the request (`c:1`, or an action the hub said in `attach`
 that it confirms); an approval of such a request is not remembered. The approval then
@@ -932,14 +976,30 @@ request as data, and the display rules below are those of the driver's own promp
   with `E_TOO_LARGE`. A card taller than the screen scrolls, and Allow stays inactive
   until the person has scrolled to its end.
 - *Bounded.* One pending prompt per agent and four in total. More fail with `E_BUSY`.
-- *Cool-off.* After a refusal or a timeout, that agent's action prompts, and attach
-  prompts from any agent, are refused with `E_RATE` for 2 s, doubling with each further
-  refusal or timeout up to 60 s. An approval resets it. Three explicit refusals in a row
-  of one agent's action prompts revoke its grant as Stop does, and the third request
-  fails with `E_CONSENT`; timeouts do not count toward the three.
+- *A request's time runs from when it arrived.* The time a request has for an answer is
+  counted from when it reached the surface, not from when its prompt is shown: a prompt
+  that waited its turn behind another shows for what is left, and one whose time is up
+  before its turn is not shown at all. A surface MUST NOT let a prompt wait longer than
+  the hub waits for it: the time is the shorter of `consent.timeoutMs` and the
+  `consentTimeoutMs` the hub announced in `welcome` (a limit that is not a positive
+  number counts as the default, 60 s). So a request is answered inside the hub's wait
+  (section 6), whatever an app's policy says. `detach` for an agent withdraws the
+  request that is pending for it, also one that the app's own consent handler is still
+  asking about: an answer given afterwards attaches nobody and runs nothing.
+- *Cool-off.* After a refusal, a timeout, a "Later", or a prompt the agent itself withdrew
+  (its session left the hub, or it attached again while its prompt was up), that agent's
+  action prompts, and attach prompts from any agent, are refused with `E_RATE` for 2 s,
+  doubling with each further one up to 60 s. An approval resets it. Three explicit
+  refusals in a row of one agent's action prompts revoke its grant as Stop does, and the
+  third request fails with `E_CONSENT`; a timeout, a "Later" and a withdrawn prompt do not
+  count toward the three.
 - *No accidental approval.* Allow ignores clicks for the first 500 ms after the prompt
-  appears or moves, and shows that it is not yet active. A pointer click on Deny is taken
-  at once.
+  appears or moves, and shows that it is not yet active. A pointer click on Deny, or on
+  "Later", is taken at once: neither approves anything.
+- *Clear at a glance.* What refuses or puts off stands on the left of a prompt's foot
+  (Deny, then "Later"), what approves on the right ("Always allow", then Allow, the one
+  filled button), and above them one line says what happens if nobody answers. On a
+  narrow screen the two groups wrap, each staying together.
 - *Keys meant for the page answer nothing.* A prompt takes the focus, and the person may
   be typing, tabbing through a form or about to press Enter. A surface MUST NOT take a
   key as the answer to a prompt unless it is Enter or Space on a button of the prompt
@@ -966,9 +1026,10 @@ request as data, and the display rules below are those of the driver's own promp
   cool-off, the deadline of a prompt. A surface MUST NOT rely on a timer callback for
   any of them, because timer ids belong to the document and anything that shares the
   document can clear them ("The overlay and the page"). A prompt past
-  `consent.timeoutMs` is a refusal from the moment anything looks at it (a click on it,
+  its time is no longer answerable from the moment anything looks at it (a click on it,
   the next request, the next prompt), whether or not its timer fired, and a "Request
-  withdrawn" notice makes way the same way. A timer that never fires may leave something
+  withdrawn" notice makes way the same way. So do a request in the waiting list that is
+  past its time, a rule `allow` that was set for a time, and the notice after a refusal. A timer that never fires may leave something
   on screen (a toast, a highlight, a countdown that stands still, a button that still
   looks inactive); it never leaves anything answerable or running that would not be so
   otherwise. A command that waits for a glide or for the person to stop typing waits on
@@ -980,6 +1041,119 @@ request as data, and the display rules below are those of the driver's own promp
   disconnected) becomes a "Request withdrawn" notice with no Allow button for 1.5 s
   before any next prompt.
 - *Honest about the hub.* When the hub is unverified the prompt says so.
+
+**Requests that wait.** (0.2) A person who is not looking at the page misses a prompt.
+Where a request can wait, its prompt has a third answer, "Later", and a prompt nobody
+answered in time is not a refusal either: the request joins the surface's *waiting
+list*, and its answer is the error `E_WAITING` with `data: {tk, ms}`. `tk` is a ticket,
+1 to 32 characters of `[A-Za-z0-9_-]` that carry at least 96 bits from a CSPRNG (the
+reference driver sends 16 random bytes as 22 characters of base64url). `ms` is how long
+from now the request waits. Nothing ran. A request can wait when all of this holds: the
+surface's policy has `consent.waitMs` above 0; the surface has the panel and the
+indicator, where the person finds the list; the prompt is the driver's own, since an
+app's consent handler cannot be opened again; the hub speaks 0.2, and so does the agent's
+own link (the hub says which version that is with `v` in `attach`, section 8: an agent
+on 0.1 could never come back with a ticket, and the person would approve what can never
+run); and the list has room.
+
+- *One entry for one request.* A request is the same as one in the list when it comes
+  from the same agent session and asks for the same thing: for `act`, the same action
+  with arguments that are equal as canonical JSON (section 7), no `args` being `{}`; for
+  `attach`, the same scopes after the surface's policy capped them. A surface MUST NOT
+  show a prompt for such a request, and adds nothing to the list: the request is answered
+  `E_WAITING` again, with the same ticket and the time that is left.
+- *Bounded.* An entry lasts `consent.waitMs` from when it joined the list, judged by the
+  clock, and an approval lasts until then too. The list holds at most 3 requests of one
+  agent and 12 in all. Where a request could not join, its prompt has no "Later", and
+  with no answer it ends as `E_CONSENT`, as on a surface without a list. An agent's
+  entries end with its grant, however it ends: when the hub sends `detach` for that agent,
+  when a new attach of the same agent replaces the grant, when the person presses Stop,
+  and when the link to the hub closes. An approval belongs to one grant, like everything
+  that lets an agent do more (section 8). Where the agent can still be told, it is:
+  `expired` for each entry, or `deny` after Stop.
+- *Not answered is not refused.* A prompt nobody answered and one the person put off
+  move the cool-off as a timeout does ("Cool-off", above), so that an agent cannot
+  throw one prompt after another by having them put off, and count as no refusal.
+- *Told to the person.* The indicator says how many requests wait. With no agent
+  attached and a request to connect in the list, the indicator is shown for that alone:
+  it says that an agent is waiting to connect, not that one is connected, and it opens
+  the panel. The panel lists the requests ("The panel", below).
+- *Review.* "Review" in the list opens the request's prompt again as it was asked: the
+  same card with the same arguments, under every rule of a prompt (the arming delays,
+  the rule for keys, scrolling to the end, nothing an agent drew beside it). Allow there
+  approves the request and Deny refuses it; "Later", or no answer, leaves it in the list
+  and moves no cool-off, since the agent asked nothing new. "Discard" in the list refuses
+  a request without a prompt, and "Take back" does the same to an approval the agent
+  has not used; neither counts toward the three refusals that revoke a grant.
+- *Told to the agent.* The surface sends `evt user {kind:"answer", tk, answer, a?}` with
+  `ag` set to the session that asked: `answer` is `allow`, `deny` or `expired`, and `a`
+  is the action's name for an `act` request (never its arguments). After an approval the
+  surface tells the person, in its own words, that the agent is told and that the
+  request goes ahead when the agent asks again, before the time the entry ends.
+- *Approved means one use.* The agent repeats the same request with the ticket: `act
+  {a, args, tk}` or `attach {..., tk}`. A surface MUST let a request go ahead on a ticket
+  only when the ticket names an approved entry, the request comes from the agent session
+  the entry belongs to (for `attach` also with the same `cred`, where the hub sent one
+  with the request that waits), and it asks for the same thing as the entry, as defined
+  above. The approval is then used up, and is not remembered (`consent.remember`). A
+  ticket that is unknown, used, expired or another agent's names nothing: a surface MUST
+  handle such a request as if it carried no ticket. An approved request that comes
+  without its ticket is answered `E_WAITING` once more. An approval outranks nothing the
+  person or a policy says: a `deny` of the policy, and a Block the person set meanwhile,
+  refuse the request all the same.
+- *On record.* The activity list shows that a request waits, and what the person did
+  with it, with the action's name and never its arguments.
+
+**Offers at attach.** (0.2) An app can name, in `human.offer`, up to 8 of its actions that
+an attach prompt may offer to allow without asking each time. The prompt lists them
+under "Without asking each time", each with a box. A surface MUST NOT show a box ticked
+that the person did not tick. An action is offered only where the person could set the
+rule `allow` for it in the panel and the rule would change something (`offeredActions`):
+the app declares it; a request for it asks (the stricter of the app's decision and the
+hub's is `confirm`; an action that runs anyway needs no rule, and none runs a denied
+one); and a level on offer would waive that prompt ("Levels and rules"). What the person
+tightened before for the agent wins (section 8): nothing is offered for a grant that
+stays at `strict`, and an action that keeps their `confirm` or `deny` rule is left out;
+the prompt names what was left out. Nothing is offered where there is no attach prompt
+(`attach: allow`), with an app's own consent handler, or without the panel.
+
+A tick alone changes nothing. When any box is ticked, Allow does not grant: it opens a
+second step that names the agent and exactly the ticked actions, says that they will
+run without asking, with any arguments, and for how long, and whose button is armed
+anew. Only that button grants. The grant then starts with the rule `allow` for each
+ticked action, set as if the person had set it in the panel: under the same conditions,
+shown on the indicator and in the panel, where it is taken back, and reported to the hub
+with `evt user {kind:"rule"}` (section 13). The report goes out once the hub has the
+answer to `attach`, and a surface MUST NOT let an action run under such a rule before it
+has sent the report. What the person tightened wins over an offer at every moment: a
+surface MUST NOT set a rule `allow` from an offer for an action the person has set to
+`confirm` or `deny`, on the grant or kept for the agent (section 8), and MUST NOT take
+such a rule away for it. That holds also for an offer ticked on a reviewed attach prompt
+and approved in the waiting list before the person set the rule: the ticketed attach
+leaves the rule as it is, and the activity list says that the offer did not apply.
+
+The second step, and the choice of how long under it, are drawn inside the scrollable
+part of the prompt, under what the person has read, so that on a short screen the
+prompt's buttons stay where they are. What was read stays read: the step is brought into
+view, and the person has to scroll only to what is new, where the step itself is taller
+than the view.
+
+**After a refusal.** (0.2) When the person refused an action prompt, the surface shows a
+short notice of its own for 8 s: that the action did not run, and up to two things they
+may do about it with one click. One sets the rule `deny` for that action and that agent
+(it makes the agent ask less of them, so it takes no second step). The other, where the
+agent holds the `chat` scope, opens the panel's Chat tab with that agent addressed, for
+the person to say why. The notice asks nothing and holds nothing back: it is no dialog,
+takes no focus and has no text field, its buttons ignore clicks for their first 500 ms,
+it goes by itself, judged by the clock, and it is taken down when a prompt comes up.
+There is none after a refused attach, nor when the refusal ended the grant.
+
+**Attention.** (0.2) A driver tells its app how many consent prompts are showing or
+queued and how many requests wait for the person's answer, whenever either number
+changes (`on('attention')`, section 15), so that an app whose window is not in front
+can flash its taskbar entry or raise a notification of its own. The event holds the two
+counts and nothing else. A surface MUST NOT put anything an agent wrote into it, and
+changes nothing of the page for it: not the title, not the icon.
 
 **Human control.** While an agent is attached the driver shows an indicator naming
 it, with Pause and Stop when the policy enables them. Pause holds every command that
@@ -1153,6 +1327,31 @@ surface MUST use it or match it exactly; `conformance/vectors/levels.json` lists
    (`remember: session`). Nothing is remembered, or answered from memory, under `strict`,
    under the rule `confirm`, or for a request the hub confirms (step 1).
 
+*A rule for a time.* (0.2) Where the policy has `human.allowMs` above 0, every confirm
+step that sets the rule `allow` lets the person choose how long it holds: until the agent
+disconnects, which is preselected, or for `human.allowMs`. That goes for the panel, for
+"Always allow" on a prompt, and for the offers on an attach prompt. Choosing the longer
+of the two is a click that lets an agent do more, and the step's button is armed anew
+after either choice. A rule for a time ends by the clock: a surface MUST NOT let an
+action run on a rule `allow` whose time is up, whether or not a timer fired. The action
+then follows the level again. The surface reports such a rule as `evt user {kind:"rule",
+a, d:"allow", ms}`, `ms` being how long it lasts from now, and its end as `evt user
+{kind:"rule", a, d:null}`, like a rule the person removed. The panel shows when the rule
+ends, and so does the indicator's mark for rules. A rule for a time can be set again,
+for the time or for good.
+
+*Rate cap.* (0.2) A level or a rule lets an action run without asking however often it
+is called. `human.burst` `{max, perMs}` bounds that: the surface counts, for each grant
+and action, the runs whose prompt was waived, by the person's rule `allow`, by the level,
+or by an approval it remembers. At most `max` such runs within `perMs` go unasked
+(`burstStep`; `conformance/vectors/consent.json` lists the cases); a run no longer
+counts `perMs` after it happened. A further call within that time asks: its prompt says,
+in the surface's own words, how often the action ran unasked in that time and what let
+it, and offers no "Always allow". Allow runs that call and starts the count again; the
+rule or the level stays as it is. Deny, "Later" and no answer are what they are on every
+prompt. An action that needs no prompt at all (the policy allows it and the level is not
+`strict`) is not counted. `human.burst: false` switches the cap off.
+
 A waived prompt is not an approval. An action that runs because a level or a rule waived
 its prompt MUST NOT run while a consent prompt is showing or queued: it fails with
 `E_BUSY`, like any other command, and it is not remembered as approved. Changing a level
@@ -1168,7 +1367,11 @@ agent calls it (Allow, Ask or Block; "Blocked by app" or "Blocked by hub" where 
 denies), the scopes of the grant as switches, and, where the policy has Stop, a control
 that ends that one grant as Stop does. Under each action it says why it stands as it
 does: the person's rule, an approval the surface remembers, or the level, and that the
-hub asks about it where only the hub does. Its Activity tab lists the last 50 commands: the time, the agent, the method or the
+hub asks about it where only the hub does. Above the agents it lists the requests that
+wait ("Requests that wait"): for each the agent, the action's name and risk or that the
+agent wants to connect, when it was asked and until when it waits, with Review and
+Discard; and for one the person approved, that the agent is told and until when it may
+use the approval, with Take back. The list holds no arguments. Its Activity tab lists the last 50 commands: the time, the agent, the method or the
 name of a declared action, the outcome, and whether the person, a level, a rule or a
 remembered approval let an action run. The same command of the same agent several times
 in a row is one line with a count; two agents with one name are two agents there too. The activity list MUST NOT hold arguments, results or page text. Its
@@ -1224,9 +1427,10 @@ Chat tab is the page's chat room ("Chat", below).
   panel; on a narrow one the panel stays under the prompt's backdrop until the prompt is
   answered. With focus in the panel, Escape closes the panel and denies nothing.
 - *Told, and recorded.* The surface reports each change to the hub with `ag`:
-  `evt user {kind:"level", level}`, `evt user {kind:"rule", a, d}` (`d` is null when the
-  rule was removed) and `evt grant {kind:"scopes", scopes}`. The hub records them and
-  tells the agent (sections 8 and 13).
+  `evt user {kind:"level", level}`, `evt user {kind:"rule", a, d, ms?}` (`d` is null when
+  the rule was removed or its time ran out; `ms` is there for a rule `allow` that ends by
+  itself) and `evt grant {kind:"scopes", scopes}`. The hub records them and tells the
+  agent (sections 8 and 13).
 - *One grant for what loosens.* A surface MUST NOT carry the level `auto` or `bypass`, a
   rule `allow` or a remembered approval from one grant over to another. What the person
   tightened it carries (section 8).
@@ -1400,6 +1604,7 @@ must match `COLOR_PATTERN`. URLs are restricted as in section 9.
 - **Surface events and listing.** An agent hears about a surface only if its
   credential may attach to it. Without a live grant that includes `observe`, the
   `SurfaceInfo` it gets is reduced: `url` is the origin and `title` is the app's name.
+  `SurfaceInfo.v` is the protocol version the surface speaks with the hub (section 16).
   The full URL and title go only to agents holding such a grant. `evt surface` with
   kind `added` or `gone` goes to every agent that may attach; `changed` goes only to
   agents holding a grant on that surface. For an agent, `hub.info` counts only the
@@ -1441,6 +1646,48 @@ must match `COLOR_PATTERN`. URLs are restricted as in section 9.
     its report arrives. The hub MUST end the grant when it cannot record such a change,
     as for a level beyond the policy. A change that only tightens is kept and told; its
     record waits with the others.
+- **Requests that wait.** (0.2) An `E_WAITING` from the surface (section 12) is relayed to
+  the agent with `{tk, ms}` as its `data`, and nothing else of it: an `E_WAITING` without a
+  well-formed ticket and time, or on anything but `act` and `attach`, is a bad answer from
+  the surface (`E_INTERNAL`). The hub keeps the ticket for that agent session and surface,
+  with the request it was given for, until `ms` plus `reqTimeoutMs` have passed: at most 3
+  for one session on one surface (the surface's own cap on its list) and 16 in all. Over
+  either, the agent is answered `E_BUSY`, with a message that says so, instead of a ticket:
+  no ticket is forgotten unsaid. It then
+  - forwards `tk` on `act` and `surface.attach` unchanged, when `tk` is a ticket (1 to 32
+    characters of `[A-Za-z0-9_-]`) that it keeps for this session, this surface and this
+    kind of request (for `act`, this action), and refuses any other with `E_BAD_ARGS`
+    before anything reaches the surface, in the same words whether the ticket is unknown,
+    another session's, used, lapsed or for another request. A ticket is used up the moment
+    its check passes, before the hub awaits anything, so of two repeats with one ticket at
+    once one is forwarded and the other refused; a request that waits again brings a ticket
+    again. So a ticket read in a log, heard in the chat or given to another agent names
+    nothing at the hub, before the surface has to say so;
+  - takes `evt user {kind:"answer", tk, answer, a?}` with `ag` from the surface for a ticket
+    it keeps for that agent and that request (`a` names the action of an `act` request and is
+    absent for an attach), also where that agent holds no grant on the surface, since an
+    attach request waits before any grant exists. It records the answer with the ticket as
+    a `person` record (`method` `answer`, `value` the answer, `action` the action), forgets
+    the ticket unless the answer is `allow`, and tells that agent alone, in an event built
+    from the checked fields; an agent on 0.1 is told nothing (section 16). An answer for a
+    ticket it does not keep, or for another request than the ticket's, is recorded as
+    refused, within the bound of `person` records, and dropped; a malformed one is dropped;
+  - sends the surface `detach {why:"hub"}` with that `ag` when an agent whose attach waits
+    leaves the hub, so that the surface drops what waits for it, and when it gives up on an
+    attach request the surface did not answer in time (section 8): the agent is told
+    `E_TIMEOUT`, a grant it already held on that surface ends (`evt grant
+    {kind:"revoked"}`), and the prompt or the entry at the surface goes with it;
+  - sends the surface, with every `attach`, `v`: the protocol version the agent's link speaks,
+    so that the surface keeps a request of an agent on 0.1 out of its list (section 16);
+  - takes a report of a level, a rule, a scope switch or a relay switch that arrives for a
+    grant whose attach answer it has not taken in yet, as rules ticked on the attach card
+    are reported right behind that answer: kept, at most 32 for one attach, and handled
+    once the grant is recorded, as if they had come after it, as one change of the person's
+    (the bound of 20 changes a second is for live reports; the result of `surface.attach`
+    has the scopes as they then stand). An attach that ends without a grant drops them. A rule `allow` may carry `ms`, how long it lasts (an integer of milliseconds,
+    at most a day); it is told to the agent with the rule and recorded as the record's
+    `ms`, and the same rule reported again with a time is a change. The hub does not end
+    such a rule itself: the surface reports its end as a rule removed.
 - **Chat relay.** A surface sends `evt chat` once for each agent that is to hear a message,
   each with `ag` and with the `id` the message has for that agent (section 12). The hub
   MUST relay a `chat` event only to the grant its `ag` names, and only while that grant is
@@ -1505,7 +1752,9 @@ must match `COLOR_PATTERN`. URLs are restricted as in section 9.
   outcome `dropped` (beyond the budget) or `refused` (the policy does not let the two hear
   each other), and the agent that spoke. The
   text of a chat message MUST NOT be written to the audit log: a message is on record by
-  its length and its digest. A record has `seq`
+  its length and its digest. A `connect` record has `v`, the protocol version the
+  connection speaks (section 16). A request that waited (`E_WAITING`), one repeated with
+  its ticket, and the `person` record of its answer carry `ticket`. A record has `seq`
   (counting from 1), `ts`, `kind`, agent, surface, method, action name, `value`, `chars`, outcome,
   `args`, the duration, `prev` and `hash`. `args` covers the request params without `s`:
   `b64url(HMAC-SHA256(auditKey, canonical JSON))` when the hub has an audit key, else
@@ -1622,6 +1871,8 @@ allowRulePermitted(risk: Risk, offered: Level[]): boolean      // may the rule `
 actionDecisions(policy: Policy, actions: { name: string; risk: Risk }[]): Record<string, Decision>   // what a hub sends in attach as `decisions`
 hubDecision(decisions: unknown, name: string): Decision        // what a surface reads from it: `confirm` for anything missing or malformed
 keptSettings(v: unknown, granted: Scope[], actions: Iterable<string>): { level?: 'strict'; rules: Map<string, 'confirm' | 'deny'>; off: Scope[] }   // what a hub reads from `kept` in an attach answer: only what tightens
+offeredActions(q: { offer: string[]; actions: { name: string; risk: Risk; base: Decision }[]; offered: Level[]; kept?: { level?: 'strict'; rules?: { has(name: string): boolean } } }): string[]   // section 12, offers at attach
+burstStep(runs: number[], now: number, cap: { max: number; perMs: number } | false): { ask: boolean; n: number; runs: number[] }   // section 12, the rate cap
 stricter(a: Decision, b: Decision): Decision
 capScopes(requested: Scope[], ...caps: (Scope[] | undefined)[]): Scope[]   // intersection, canonical order
 methodScope(m: string): Scope | undefined
@@ -1696,8 +1947,15 @@ interface PeerHandlers {
   flow?(frame: FlowFrame): void
   close?(code: ErrorCode | 'OK' | 'E_GONE', msg?: string): void
 }
-clientConnect(link: Link, hello: { role: Role; name: string; kid?: string; key?: string; surface?: SurfaceHello }, opts?: { timeoutMs?: number }): Promise<{ welcome: WelcomeFrame; link: Link; sealed: boolean }>
+clientConnect(link: Link, hello: { role: Role; name: string; kid?: string; key?: string; surface?: SurfaceHello }, opts?: { timeoutMs?: number; versions?: readonly string[] }): Promise<{ welcome: WelcomeFrame; link: Link; sealed: boolean }>   // versions: speak only these of SUPPORTED_VERSIONS; welcome.v is the version of the link
 clientHandshake(link, hello, opts?): Promise<WelcomeFrame>     // unauthenticated sessions only; rejects when given a key
+
+// protocol versions (section 16)
+pickVersion(offered: unknown, mine?: readonly string[]): string | undefined   // the first version of the hub's list that is in `mine`
+speaks01(v: unknown): boolean                                  // the link negotiated a version before 0.2
+V01                                                            // what 0.1 has: scopes, methods, events by topic and kind, attach fields, error codes
+scopesIn(v, scopes): Scope[]; methodIn(v, m): boolean; eventIn(v, topic, d): boolean   // what exists on a link of version v
+errorIn(v, e: ReinsError): ReinsError                          // the error as a link of version v has it: E_WAITING is E_CONSENT on 0.1
 
 // sealed sessions
 deriveSealKeys(key: string, t: { nonce; cnonce; challengeText; helloText; welcomeText }, side: 'peer' | 'hub'): Promise<SealKeys>   // directional keys from the secret and the transcript; E_AUTH on a text that is not well-formed
@@ -1739,6 +1997,7 @@ interface BrokerConfig {
   audit?: AuditSink
   auditKey?: string                              // keys the audit chain with HMAC-SHA256
   maxSurfaces?: number; maxAgents?: number; maxStreams?: number
+  versions?: string[]                            // the versions offered in challenge.v: some of SUPPORTED_VERSIONS; default all
   surfaceAdmission?: { rate?: number; burst?: number }   // per origin; defaults 2/s, 2 x maxSurfaces
   agentAdmission?: { rate?: number; burst?: number }     // per credential; defaults 2/s, 20
   now?: () => number
@@ -1797,7 +2056,7 @@ from `%SystemRoot%\System32`. There the hub removes inherited entries and also e
 entry set on the file itself for anyone but the current user (SYSTEM and Administrators
 included), then reads the ACL back and requires that only the current user's entry
 remains. A failure to restrict stops the hub. The hub prints file
-paths, never secrets. With `--audit` it keeps the chain's head in `<path>.head`, replaced
+paths, never secrets, and the protocol versions it offers (`protocol: 0.2, 0.1`). With `--audit` it keeps the chain's head in `<path>.head`, replaced
 through a temporary file and a rename.
 
 **The user's Reins folder.** Once it listens, the hub announces itself in the user's
@@ -1833,23 +2092,37 @@ interface Driver {
   notify(name?: string): void        // an exposed state changed
   connect(): Promise<void>           // resolves once the hub has welcomed the surface
   disconnect(): void
-  on(event: 'status' | 'attach' | 'detach' | 'command' | 'level' | 'rule' | 'scopes' | 'chat', fn: (e: any) => void): () => void
+  on(event: 'status' | 'attach' | 'detach' | 'command' | 'level' | 'rule' | 'scopes' | 'chat' | 'attention', fn: (e: any) => void): () => void
   readonly status: 'idle' | 'connecting' | 'ready' | 'controlled' | 'paused' | 'offline'
   readonly manifest: Manifest
   readonly policy: Policy
   readonly hubVerified: boolean      // the session is sealed, or the app supplied the link
+  readonly hubProtocol: string | undefined   // the protocol version spoken with the hub while connected (section 16)
   agents(): AttachedAgent[]          // a copy: each attached agent with what the person set for it
   pause(): void; resume(): void; stop(): void
 }
-interface AttachedAgent { agent: AgentInfo; level: Level; scopes: Scope[]; granted: Scope[]; rules: Record<string, Decision> }
+interface AttachedAgent { agent: AgentInfo; level: Level; scopes: Scope[]; granted: Scope[]; rules: Record<string, Decision>; timed: Record<string, number> }   // timed: when each rule `allow` that ends by itself does, in epoch milliseconds
+interface Attention { asking: number; waiting: number }   // prompts showing or queued; requests in the waiting list that still need an answer
 interface CommandContext { agent: AgentInfo; scopes: Scope[] }
 interface ConsentRequest { kind: 'attach' | 'action'; agent: AgentInfo; scopes?: Scope[]; action?: ActionDef; args?: unknown; reason?: string; hubVerified?: false; kept?: string[] }   // kept: on an attach, what the person tightened for this agent before and that stays, one line each
 ```
 
-The events `level` (`{agent, level}`), `rule` (`{agent, action, rule}`, `rule` null when
-removed) and `scopes` (`{agent, scopes}`) fire when the person changes one in the panel.
+The events `level` (`{agent, level}`), `rule` (`{agent, action, rule, ms?}`, `rule` null
+when removed or when its time ran out, `ms` for a rule that ends by itself) and `scopes`
+(`{agent, scopes}`) fire when the person changes one in the panel.
 The API only reads them: nothing in it sets a level, a rule or a scope switch, and no
 option opens the panel. `human.panel: false` leaves the indicator without one.
+
+The event `attention` (`Attention`) fires when the number of consent prompts that are
+showing or queued, or the number of requests that wait in the list, changes. Two counts,
+with nothing an agent wrote: an app may show them anywhere, flash its taskbar entry or
+raise a notification. The driver itself changes nothing of the page for it.
+
+The policy keys of 0.2 are a surface's own: `consent.waitMs` (how long a request nobody
+answered waits; 0 for no list), `human.offer` (actions the attach prompt may offer),
+`human.allowMs` (the time of a rule for a time; 0 for none) and `human.burst` (the rate
+cap, or `false`). With an app's own `consent` handler there is no waiting list, no offer
+and no notice after a refusal: those belong to the driver's prompt.
 
 The event `chat` (`{id, from, chars, to?}`) fires when a message is posted in the page's
 chat room: who said it, and how long its text is. The text is not given to the app.
@@ -1866,14 +2139,16 @@ whose policy does not set `framed` (section 12).
 ### `@reins/agent` (Node and browser)
 
 ```ts
-connect(options: { url?: string; link?: Link; kid?: string; key?: string; name?: string }): Promise<ReinsClient>
+connect(options: { url?: string; link?: Link; kid?: string; key?: string; name?: string; versions?: readonly string[] }): Promise<ReinsClient>
 isHandshakeError(e: unknown): boolean            // connect threw e during the handshake: its message came from an unverified peer
 
 interface ReinsClient {
   readonly session: string
+  readonly version: string                         // the protocol version this connection speaks (section 16)
   info(): Promise<HubInfo>
   surfaces(): Promise<SurfaceInfo[]>
-  attach(s: string, opts?: { scopes?: Scope[]; reason?: string }): Promise<SurfaceHandle>
+  attach(s: string, opts?: { scopes?: Scope[]; reason?: string; wait?: boolean | number }): Promise<SurfaceHandle>   // wait: see "requests that wait" below
+  waiting(): Array<WaitingRequest & { s: string }>   // attach requests of this connection that wait for the person
   ping(): Promise<number>
   on(event: 'surface' | 'close', fn: (e: any) => void): () => void
   close(): void
@@ -1889,7 +2164,8 @@ interface SurfaceHandle {
   read(h?: Target, max?: number): Promise<string>
   readText(h?: Target, max?: number): Promise<{ text: string; truncated: boolean }>   // read, with whether it was cut at max
   state(name?: string): Promise<Record<string, unknown>>
-  act<R = unknown>(action: string, args?: object): Promise<R>
+  act<R = unknown>(action: string, args?: object, opts?: { wait?: boolean | number }): Promise<R>
+  waiting(): WaitingRequest[]                      // requests of this grant that wait for the person, with the answer where it came
   click(h: Target): Promise<void>
   type(h: Target, text: string, opts?: { clear?: boolean; enter?: boolean }): Promise<void>
   select(h: Target, value: string): Promise<void>
@@ -1901,7 +2177,7 @@ interface SurfaceHandle {
   pointer(): Promise<PointerStream>
   chat: { say(text: string, opts?: { to?: string }): Promise<{ id: number }>; read(opts?: { since?: number; max?: number }): Promise<{ messages: ChatMessage[]; next: number }>; status(state: 'idle' | 'thinking' | 'working', note?: string): Promise<void> }
   subscribe(topics: Topic[]): Promise<void>
-  on(event: Topic, fn: (d: any) => void): () => void
+  on(event: Topic | 'answer', fn: (d: any) => void): () => void   // 'answer': an AnswerEvent for a waiting request of this grant
   detach(): Promise<void>
 }
 interface PointerStream { push(x: number, y: number, dt?: number): void; end(): Promise<void>; readonly stats: { sent: number; dropped: number } }
@@ -1920,6 +2196,22 @@ handle is true once the hub has said that the person switched "Agents can hear e
 other" on for this agent (`on('user', ...)` gets `{kind:"relay", on}`); on a page whose
 policy is `on` it stays false, and every message without `to` reaches the other agents. `attach` asks for `observe`, `act`, `cursor` and `show` unless told otherwise:
 an agent that wants to be in the room names `chat`.
+
+**Requests that wait** (section 6, protocol 0.2). `act` and `attach` may be answered
+`E_WAITING`: the person has not answered, the request waits in their window, nothing ran.
+By default the SDK then waits for the answer (`evt user {kind:"answer"}`) up to
+`DEFAULT_WAIT_CAP_MS` (ten minutes), or as long as the request stays in the list if that is
+shorter, and once it is allowed repeats the same request with its ticket; a refusal, or no
+answer in time, is `E_CONSENT` ("the person declined", "the person did not answer in time").
+`wait: false` throws the `WaitingError` at once, the default throws it when its time is up,
+and a number waits at most that many milliseconds (more than the default if asked) before
+throwing it: `ticket`, `ms` (how long the
+request still waits), `action` for an `act`, and the wire's `code` and `data`. The SDK
+keeps each ticket with the request it stands for, so the same call made again, with any
+`wait`, is the repeat once the person has allowed it; `waiting()` on the handle and on
+the client list what waits. A grant that ends, or a connection that closes, ends a wait
+with `E_NOT_ATTACHED`. A hub on 0.1 never produces `E_WAITING` (section 16). `WaitingError`,
+`WaitingRequest`, `Answer` and `AnswerEvent` are exported.
 
 `connect` reads the key from `options.key`, else `REINS_TOKEN`, else the file named by
 `REINS_TOKEN_FILE`, else the token file that the running hub at `options.url` announced in
@@ -1979,14 +2271,26 @@ to 200 characters and marked `[unverified hub data]`.
 A line of the surface listing gives what the hub knows first, in a fixed order, and what
 the page says of itself last: the surface id, `verified` or `unverified` (whether the
 page proved its app key to the hub: one of the two words is always there), the origin,
-`attached` when this agent holds a grant, then `app=` with the app's name as a quoted
+`attached` when this agent holds a grant, `protocol=0.1` when the page speaks protocol 0.1
+with the hub (section 16: no chat there), then `app=` with the app's name as a quoted
 string, `id=` and `profile=`. A name that copies the hub's words therefore stands inside
 quotes, after the hub has spoken, and cannot close them. `reins_attach` answers the same
 way: its first line is the adapter's own (`attached to surface s1: verified
 https://shop.example, scopes: observe act ui`), and the prompt card, which is the page's
-account of itself, follows under the page-data marker. The scopes the server was started
+account of itself, follows under the page-data marker. Where the hub or the page speaks
+protocol 0.1, a second line of the adapter's says so and what the agent then does without,
+the surface listing starts with that line for such a hub, and `reins_chat` is refused by
+the adapter with `E_UNKNOWN_METHOD` (the hub) or `E_SCOPE` (the page). The scopes the server was started
 with are
-a ceiling: a tool call cannot request more. Unless it was started with others, they are
+a ceiling: a tool call cannot request more. A request that waits for the person
+(`E_WAITING`, section 6) is answered as an error in the adapter's words: that the request
+waits in the person's window, that nothing ran, how long it stays, and that the same call
+with `wait` (milliseconds, at most 150000) waits for the answer and runs the request once
+it is allowed; `reins_act` and `reins_attach` take `wait`. A `[reins]` notice tells the
+answer with the next result (allowed, refused, lapsed), with the action's name as page
+data, and the surface listing shows `waiting=N` for a surface where N requests of this
+agent wait. The `reins` command waits for the answer unless told `--no-wait` or `--wait <ms>`,
+and says that its connection, and the request with it, end with the command. Unless it was started with others, they are
 `observe`, `act`, `ui`, `cursor`, `show` and `chat`, and `reins_attach` asks for them.
 
 **Notices.** What the adapter itself has to tell the model between calls goes out with
@@ -2177,6 +2481,7 @@ reinsMain(options: {
   accept(link: Link, meta: { origin: string; vouched: true }): void   // (link, meta) => broker.accept(link, meta)
   channel?: string                                             // IPC channel, default "reins"
   onRefused?(reason: string, event: IpcMainEventLike): void
+  attention?: boolean | { flash?: boolean; app?: App }         // flash the window's taskbar button and count on the app's icon while a request waits and the window is not focused; off by default
 }): ReinsMain
 interface ReinsMain {
   allow(target: BrowserWindow | WebContents, options?: {
@@ -2193,6 +2498,7 @@ exposeReins(electron: { contextBridge; ipcRenderer }, win?: Window, channel?: st
 
 // @reins/electron/renderer: the page (also dist/bundle/reins-electron.js)
 electronLink(options?: { timeoutMs?: number; window?: Window }): Promise<Link>   // E_GONE without the preload, E_DENIED when refused, E_TIMEOUT
+electronAttention(driver: Driver, options?: { window?: Window }): () => void      // passes the driver's attention counts to the main process: two numbers, no text; returns a function that stops it
 
 // @reins/electron/adopt: Node, for an app that was not built for Reins
 class Cdp { constructor(t: CdpTransport); send<R>(method: string, params?: object, sessionId?: string): Promise<R>; on(fn: (e: CdpEvent) => void): () => void; onClose(fn: () => void): void; close(): void; readonly closed: boolean }
@@ -2299,6 +2605,63 @@ together with a debugging port.
 
 ## 16. Versioning
 
-`challenge.v` lists what the hub speaks. The peer picks one and states it in `hello.v`.
-No common version is `E_VERSION`. Within a version, receivers ignore unknown fields on
-frames and unknown event topics, and refuse unknown methods with `E_UNKNOWN_METHOD`.
+This document is protocol **0.2**. An implementation of it also speaks **0.1**, the
+version before it.
+
+**Negotiation.** `challenge.v` lists the versions the hub speaks, newest first. The peer
+MUST name in `hello.v` the first version in that list that it speaks; with none in common
+it sends `bye {code:"E_VERSION"}` and closes. The hub refuses a `hello.v` that it did not
+list with `E_VERSION`, and repeats the version in `welcome.v`. That version holds for the
+link until it closes, and each link has its own: an agent on 0.1 can attach to a surface on
+0.2, and the other way round. The WebSocket subprotocol (`reins.v1`) and the contexts of
+the proofs and of the seal (`reins.v1.*`) are the same in both versions.
+
+**Within a version**, receivers ignore unknown fields on frames and unknown event topics,
+and refuse unknown methods with `E_UNKNOWN_METHOD`. From 0.2 on, an event of a kind the
+receiver does not know, on a topic it knows, ends nothing and changes nothing. (In 0.1 an
+agent ends its handle on any `grant` event, and a hub relays a surface's `user` events as
+they came, whatever their kind.)
+
+**What 0.2 adds to 0.1.**
+
+| | 0.1 has | 0.2 adds |
+|---|---|---|
+| scopes | `observe`, `act`, `ui`, `cursor`, `show`, `nav` | `chat` |
+| methods of an agent | those of section 9 without `chat.*` | `chat.say`, `chat.read`, `chat.status` |
+| requests the hub itself sends a surface | `attach`, `detach`, `stream.open`, `stream.close` | `chat.undelivered` |
+| event topics | `ui`, `state`, `nav`, `user`, `grant`, `surface` | `chat` |
+| kinds of `evt user` | `override`, `pause`, `resume` | `level`, `rule`, `relay` |
+| kinds of `evt grant` | `revoked`, `expired` | `scopes` |
+| params of `attach` (hub to surface) | `agent`, `scopes`, `reason` | `levels`, `decisions`, `chatRelay`, `cred` |
+| the surface's answer to `attach` | `scopes`, `ttlMs` | `kept` |
+| the result of `surface.attach` | `grant`, `surface`, `manifest` | `kept` |
+| `SurfaceInfo` | every field but `v` | `v` |
+| error codes | those of section 6 without `E_WAITING` | `E_WAITING` |
+| params of `act` and `surface.attach` | without `tk` | `tk` |
+
+With them came what they carry: the levels, the rules and the scope switches of section
+12, what stays of them for an agent's next grant (section 8), and chat.
+
+**A link on 0.1.** On a link that negotiated 0.1, an implementation of 0.2 MUST keep to
+0.1: it sends nothing there that 0.1 does not have, the right-hand column above, and takes
+nothing of it from the peer. A peer that speaks 0.1 alone needs no change. For each end:
+
+| on a 0.1 link | what the 0.2 end does |
+|---|---|
+| the hub, toward an **agent** on 0.1 | Sends no `evt grant {kind:"scopes"}`. The grant narrows at the hub all the same: a request that needs a scope the person switched off is `E_SCOPE`, and the `evt surface {kind:"changed"}` that follows is sent. Sends no `evt user` of kind `level`, `rule`, `relay` or `answer` and no `chat` event; it holds and records what they say. Takes `chat` out of the scopes the agent asks for, and answers `chat.*` with `E_UNKNOWN_METHOD`. Leaves `kept` out of the result of `surface.attach` and `v` out of `SurfaceInfo`. Sends `E_WAITING` as `E_CONSENT`, without its `data`, keeps no ticket for the agent, and withdraws a waiting attach of its at the surface at once (`detach {why:"hub"}`); the audit record keeps `E_WAITING` and the ticket. A `tk` from such an agent is never a ticket of its own (`E_BAD_ARGS`). Tells the surface `v: "0.1"` in `attach`, so that the surface puts no request of this agent in its list. |
+| the hub, toward a **surface** on 0.1 | Sends `attach` with `agent`, `scopes` and `reason`, and `v` (which 0.1 ignores like every field it does not know), never with `chat` among the scopes: no grant there has `chat`, so `chat.*` from an agent on 0.2 is `E_SCOPE`. Reads no `kept` from the answer. Drops an event of a topic or kind 0.1 does not have, unread and unrecorded: a level, a rule, a scope switch, a relay switch, an answer, a chat message. Sends no `chat.undelivered`. Such a surface gives no ticket, so no request of any agent waits there: an `E_WAITING` from it is a bad answer (`E_INTERNAL`). |
+| an **agent**, with a hub on 0.1 | Asks for no `chat` scope and sends no `chat.*` request. Drops an event of a topic or kind 0.1 does not have: such a hub relays a surface's `user` events as they came. Gets no `E_WAITING` from such a hub, and sends it no `tk`. |
+| a **surface**, with a hub on 0.1 | Sends no `evt grant {kind:"scopes"}`, no `evt user` of kind `level`, `rule` or `relay`, and no `chat` event. Reads `agent`, `scopes` and `reason` from `attach` and nothing else: without `levels` it offers no level beyond `ask`, and without `cred` it cannot tell one agent from another. Grants no `chat`. Answers `attach` without `kept`. What the person sets in the panel holds on the page, where every request is checked against it; the hub and the agent are not told. |
+
+So an agent on 0.1 is not told the level, the rules or the scopes in force for its grant:
+it learns them from the refusal (`E_SCOPE`, `E_CONSENT`), which is the truth in any
+version. A surface on 0.1 has none of them to report.
+
+**Where the version shows.** The hub puts `v`, the version a connection speaks, in that
+connection's `connect` record of the audit log, lists what it offers in `hub.info`, and
+gives an agent on 0.2 each surface's version as `SurfaceInfo.v`. In the reference
+implementation the hub prints the versions it offers when it starts, `ReinsClient.version`
+and `Driver.hubProtocol` are the version of the own connection, and the MCP tools name a
+hub or a page that speaks 0.1 where they list and attach surfaces (section 15).
+`BrokerConfig.versions` and the `versions` option of `connect` limit an end to some of
+the versions it speaks.

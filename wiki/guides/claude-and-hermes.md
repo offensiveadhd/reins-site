@@ -44,7 +44,7 @@ Both writing actions are `dangerous`, and that is the point of the word here: th
 | Auto | ask, every time: the same as Ask for this plugin | runs |
 | Bypass | run unasked, unseen, whatever their length | runs |
 
-Bypass is the one way to let prompts through without the question; the rule Allow for one of the two actions does the same for that action, and is offered for the same reason. It is set in two steps, the second of which names the agent and the actions, and the indicator shows it in red for as long as it holds.
+Bypass is the one level that lets prompts through without the question. The rule Allow for `prompt.send` does the same for that one action, and that rule is the easy way: the card that lets Claude connect offers it as a box to tick, under "Without asking each time", for fifteen minutes or until Claude disconnects. Either takes two steps, the second of which names the agent and the actions, and the indicator shows it in red for as long as it holds. Whatever waives the question, unasked prompts are counted: after five in ten minutes the next one asks, on a card that says why. `prompt.draft` is not offered on the connect card: a draft nobody was asked about is Claude's words in your message box, one Enter from Hermes.
 
 **A prompt is approved on a card that shows all of it, or not at all.** A consent card holds 2000 characters, the argument's name and quotation marks included, which leaves about 1,900 for a prompt in plain text. A longer prompt is refused with `E_TOO_LARGE` under Strict, Ask and Auto, before anyone is asked. Only under Bypass does a long prompt go through, because there nobody is asked at all.
 
@@ -74,6 +74,21 @@ reins_act    {"action":"reply.read"}        (again until the answer has "complet
 
 The Hermes window asks twice: for the attach, and for each `prompt.send`. `reply.read` answers the agent that sent the prompt, and nobody else: a second agent attached to the Hermes window, whatever it was granted, gets an empty reply, and there is no state to read it from.
 
+**What you and Claude see, in order.** You sit in Claude's window; the cards come up in the Hermes window. Each step is run against the stand-in for Hermes's SDK, and none with Hermes or Claude Code; the same waiting list, offer and card are run in a real Electron with the Notes example in place of Hermes (`waiting`).
+
+| | You | Claude |
+|---|---|---|
+| 1. Connect | The Hermes window shows a card: Claude wants to control this page. Under "Without asking each time" it lists `prompt.send`, unticked. Go to the Hermes window for this one. | `reins_attach` waits for your answer. |
+| 2. Tick the offer, or not | Unticked: Allow connects Claude, and every prompt asks you. Ticked: Allow shows what will run without asking; choose "For 15 minutes, then it asks again" or "Until this agent disconnects" and press "Allow with these". | It is attached, and is told of the rule you set. |
+| 3. The first prompt | With the rule: nothing to do. Without it: a card with the whole prompt, in the Hermes window. | `reins_act` with `prompt.send`. With the rule it returns at once. |
+| 4. You miss the card | After a minute the card goes to the waiting list; nothing is refused and nothing was sent. While the Hermes window is not in front you get one desktop notification, "Hermes Desktop: a request is waiting for you", with nothing in it that Claude chose. | Its call ends with `E_WAITING`: the tool tells it that the request waits in your window, that nothing ran, how long it stays, and not to ask you for the approval in the chat. |
+| 5. You answer | In the Hermes window the indicator says "1 waiting". In the panel, under "Waiting for your answer", press Review: the card comes up again with the whole prompt. Allow. | It is told that you allowed it. |
+| 6. The repeat | Nothing. | It calls `reins_act` again with the same arguments, and the prompt is sent, once. The approval was for that prompt; the next one asks again. |
+| 7. The reply | Hermes answers in its own conversation. | `reply.read`, until `complete` is true. Only Claude reads it. |
+| 8. Later on | A fifteen-minute rule ends by itself, and prompts ask again. With a rule or Bypass in force, the sixth unasked prompt within ten minutes asks, on a card that says why. | The call that asks is answered like any other: allowed, refused, or waiting. |
+
+A card you missed is not a refusal: after a minute the request waits in the Hermes window's panel for ten minutes, Claude is told that it waits and that nothing ran, and while the Hermes window is not in front you get one desktop notification, "Hermes Desktop: a request is waiting for you", with nothing in it that Claude chose. Three requests of one agent can wait at a time, and twelve in the window. The notification needs Hermes Desktop to grant its page the Web Notifications API, which was not verified in a live Hermes; the card and the list are there all the same. See [Requests that wait](../concepts/waiting-requests.md).
+
 > [!WARNING]
 > **Letting prompts through without the question is your step, and a deliberate one.** In the panel you can set Claude to Bypass, or give `prompt.send` the rule Allow. From then until Claude disconnects or you set it back, every prompt Claude writes goes to Hermes unseen by you, at any length, and Hermes acts on it with its own tools: its files, its shell, its accounts, under whatever Hermes's own approvals are set to. What a web page, a document or another agent managed to tell Claude can then reach those tools through Hermes. Leave it at Ask unless you are watching, or Hermes itself asks before it acts. Auto does not do this: under Auto both actions still ask.
 
@@ -90,7 +105,7 @@ This route gives Claude the whole window. The command keeps it as narrow as the 
 | 1 | Quit Hermes Desktop, the tray icon included. It keeps a single instance, and a second start would hand over to the first without a debugging connection. | not run |
 | 2 | Start Hermes adopted (command below). Expect `adopting pages of: file://`. | not run with Hermes. **Run** (`tools-adopted`) with the example app in place of `Hermes.exe` |
 | 3 | Register the Reins tools in Claude Code, once (6.1, step 5). | not run |
-| 4 | In Claude Code, ask it to attach. The Hermes window asks you: Allow. | not run. **Run** (`tools-adopted`) with the same tool from a shell |
+| 4 | In Claude Code, ask it to attach. The Hermes window asks you: Allow. If you are not there within a minute, the request waits in the Hermes window ("An AI agent is waiting to connect"), Claude is told that it waits, and `reins-electron` says so once in its terminal; allow it from the panel's waiting list, and Claude attaches when it asks again. | not run. **Run** (`tools-adopted`) with the same tool from a shell, for an attach that is answered at once; a connect request that waits is covered by the surface's own tests, not by a run here |
 | 5 | Claude finds the message box and types the prompt. | not run with Hermes. **Run** (`tools-adopted`) against the example's text field |
 | 6 | Claude waits until the page stops changing. | not run |
 | 7 | Claude reads the reply with `reins_read`. | not run with Hermes. **Run** (`tools-adopted`) against the example's list |
@@ -213,6 +228,7 @@ From then on what one agent says reaches the other, marked for its model as anot
 - **Each agent asked for itself.** The window showed one prompt per agent, with its name and the scopes it wanted.
 - **Both are named.** The indicator reads "AI connected: “Claude” (a1), “Hermes” (a2)", and with two agents attached a row above the chat's field lets you address one of them or everyone.
 - **Nothing is approved in the chat.** Whoever says "yes", an action that needs approval asks on its prompt.
+- **A card nobody answers waits.** It goes to the panel under "Waiting for your answer" with the agent's name, and each agent is told about its own request.
 - **Pause** holds every agent. They can still talk. **Stop** ends every grant.
 - **One at a time.** In the Permissions tab each agent has its own section: its level, its rules, its scope switches, and Disconnect. Setting Claude to Auto leaves Hermes at Ask.
 - **They share the page, not a budget.** Commands that change the page run one after another, whoever sent them. While a prompt is up, every agent's commands that change the page are answered `E_BUSY`.

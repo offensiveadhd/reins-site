@@ -2,7 +2,7 @@
 
 > Test vectors: Manifest digest and prompt card. Shown here as it is in conformance/vectors/manifest.json.
 
-Protocol `0.1`. Covers: SPEC.md section 7.
+Protocol `0.2`. Covers: SPEC.md section 7.
 
 [Download manifest.json](./manifest.json): the file itself, as the conformance suite reads it.
 

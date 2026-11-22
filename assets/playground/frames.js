@@ -74,6 +74,9 @@ function summarise(f, answers) {
       if (Array.isArray(p.levels)) bits.push(`levels ${p.levels.join(' ') || '(none listed)'}`);
       if (typeof p.chatRelay === 'string') bits.push(`chatRelay ${p.chatRelay}`);
       if (f.m === 'chat.undelivered') bits.push(`message #${p.id}`);
+      // 0.2: the agent's protocol version on the attach the page receives, and the ticket of a repeated request
+      if (typeof p.v === 'string' && f.m === 'attach') bits.push(`agent on ${p.v}`);
+      if (typeof p.tk === 'string') bits.push(`ticket ${p.tk}`);
       if (p.h !== undefined) bits.push(String(p.h));
       if (p.view !== undefined) bits.push(String(p.view));
       if (p.text !== undefined) bits.push(JSON.stringify(short(String(p.text), 28)));
@@ -92,7 +95,9 @@ function summarise(f, answers) {
         }
         return { id: f.re, lead: m ? `ok ${m}` : 'ok', rest: kept.length ? `kept · ${kept.join(' · ')}` : '' };
       }
-      return { id: f.re, lead: f.e?.code ?? 'error', rest: `${m ? `${m} · ` : ''}${short(String(f.e?.msg ?? ''), 70)}`, error: true };
+      // E_WAITING (0.2) carries data: the ticket and how long the request waits
+      const w = f.e?.code === 'E_WAITING' && f.e?.data && typeof f.e.data === 'object' ? ` · ticket ${f.e.data.tk} · waits ${Math.round(Number(f.e.data.ms) / 1000)} s` : '';
+      return { id: f.re, lead: f.e?.code ?? 'error', rest: `${m ? `${m} · ` : ''}${short(String(f.e?.msg ?? ''), 70)}${w}`, error: true };
     }
     case 'evt': {
       const d = f.d ?? {};
@@ -106,7 +111,8 @@ function summarise(f, answers) {
         if (d.to !== undefined) bits.push(`to ${d.to}`);
         if (typeof d.text === 'string') bits.push(JSON.stringify(short(d.text, 36)));
       } else if (f.topic === 'user' && d.kind === 'level') bits.push(`the person set the level: ${d.level}`);
-      else if (f.topic === 'user' && d.kind === 'rule') bits.push(`the person's rule for ${d.a}: ${d.d === null ? 'removed' : d.d}`);
+      else if (f.topic === 'user' && d.kind === 'rule') bits.push(`the person's rule for ${d.a}: ${d.d === null ? 'removed' : d.d}${typeof d.ms === 'number' ? ` for ${Math.round(d.ms / 60000)} min` : ''}`);
+      else if (f.topic === 'user' && d.kind === 'answer') bits.push(`the person answered the waiting request${d.a !== undefined ? ` ${d.a}` : ' to connect'}: ${d.answer} · ticket ${d.tk}`);
       else if (f.topic === 'user' && d.kind === 'relay') bits.push(`agents hear each other: ${d.on ? 'on' : 'off'}`);
       else if (f.topic === 'grant' && d.kind === 'scopes') bits.push(`scopes now in force: ${Array.isArray(d.scopes) && d.scopes.length ? d.scopes.join(' ') : 'none'}`);
       else {

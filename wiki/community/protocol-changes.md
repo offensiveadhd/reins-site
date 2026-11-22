@@ -4,7 +4,7 @@
 
 ## Where the protocol stands
 
-Protocol 0.1 is a first version. The wire format may change before 1.0, and a version change is announced in the handshake.
+Protocol 0.2 is the current version and 0.1 the one before it: an implementation of 0.2 still speaks 0.1 with a peer that knows no other ([Protocol versions](../reference/protocol-versions.md)). The wire format may change before 1.0, and a version change is announced in the handshake. 0.2 was added that way, next to 0.1, and the side that stayed on 0.1 needed no change; [What's new in 0.2](./whats-new-0.2.md) says what it brought.
 
 The repository does not define a formal process for changes: no proposal template and no review board. What it does have is a set of checks that every change to the protocol has to pass, and they describe what a complete proposal looks like. This page explains them.
 
@@ -49,7 +49,7 @@ A change that alters what existing frames mean, or what two parties compute, nee
 
 Open an issue in the repository and describe the problem first, before the solution. A protocol change is easier to accept when it is clear what cannot be done today. Useful things to include:
 
-- what you are trying to build, and where 0.1 stops you;
+- what you are trying to build, and where 0.2 stops you;
 - whether the change is additive or needs a version;
 - which party enforces it, the hub or the surface, and what a hostile agent could do with it;
 - what it costs in tokens: the protocol's economy is a goal, not an accident.

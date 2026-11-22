@@ -65,7 +65,7 @@ Ids count up from 1 per sender per connection. Within a version, receivers ignor
 
 ## Binary frames
 
-Binary frames start with a kind byte. The only kind in 0.1 is the pointer frame, `0x01`, which carries points of a live cursor trajectory. Its layout is in [Cursor and the pointer stream](./cursor-and-pointer-stream.md).
+Binary frames start with a kind byte. The only kind so far, in 0.1 and 0.2 alike, is the pointer frame, `0x01`, which carries points of a live cursor trajectory. Its layout is in [Cursor and the pointer stream](./cursor-and-pointer-stream.md).
 
 ## Limits
 

@@ -1,5 +1,5 @@
 {
-  "reins": "0.1",
+  "reins": "0.2",
   "generator": "conformance/tools/make-vectors.mjs",
   "title": "JSON merge patch for state events",
   "spec": "SPEC.md section 10 (\"an RFC 7396 merge patch\"); RFC 7396 section 2 and appendix A",

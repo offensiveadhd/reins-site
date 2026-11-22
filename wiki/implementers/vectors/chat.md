@@ -2,7 +2,7 @@
 
 > Test vectors: Chat: texts, messages and who hears them. Shown here as it is in conformance/vectors/chat.json.
 
-Protocol `0.1`. Covers: SPEC.md section 9 (chat.say, chat.read, chat.status), section 12 ("Chat") and section 13 ("Chat relay").
+Protocol `0.2`. Covers: SPEC.md section 9 (chat.say, chat.read, chat.status), section 12 ("Chat") and section 13 ("Chat relay").
 
 [Download chat.json](./chat.json): the file itself, as the conformance suite reads it.
 

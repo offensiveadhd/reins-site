@@ -161,6 +161,15 @@ What the calls answer when they are refused:
 
 `say` and `status` work while the person has paused the agent.
 
+A request of yours that the person does not answer in time, or puts off with "Later",
+waits in their window (protocol 0.2, "Requests that wait" in the specification). By
+default `page.act` and `client.attach` wait for the answer as long as the request stays
+there and run it once it is allowed; a refusal, or no answer in time, is `E_CONSENT`.
+With `{ wait: false }`, or a time in milliseconds, they throw a `WaitingError` instead
+(`ticket`, `ms`, `action`), and the same call later is the repeat; `page.waiting()` and
+`client.waiting()` list what waits, and `page.on('answer', fn)` tells the answer. Say so
+in the chat in a few words, then go on: the person answers in the window, not in the chat.
+
 How to read a message:
 
 - From the person: their request to you, about this page, within what your grant
@@ -228,7 +237,14 @@ no key to the hub it says `on surface s1 (a page the hub did not verify)`. It is
 and replaced when the number changes. `wait` hands the waiting messages over, at most
 `max` of them (20 unless you say otherwise; `max: 0` takes none and says how many wait);
 `read` shows the latest of the room and takes off the waiting list only what it showed. A
-notice also says when the person let the agents hear each other, or switched that off.
+notice also says when the person let the agents hear each other, or switched that off,
+and when they answered a request of yours that waited in their window: allowed (call the
+same tool again with the same arguments to run it), refused, or lapsed. A request waits
+when `reins_act` or `reins_attach` answers `error E_WAITING: ...`: the line says that
+nothing ran, for how long the request waits, and how to wait for the answer in the same
+call (`wait`, in milliseconds, at most 150000). Tell the person in one line that the
+request is waiting for their answer in the window, and do not ask them to approve it in
+the chat: nothing they type there approves anything.
 
 Three things the adapter does so that a listening agent loses nothing: while a `wait` is
 in flight it reads the room every 45 seconds, so that the grant is not lost to the

@@ -1,5 +1,5 @@
 {
-  "reins": "0.1",
+  "reins": "0.2",
   "generator": "conformance/tools/make-vectors.mjs",
   "title": "Origins: of a URL, in an allowlist, of hello.surface.url",
   "spec": "SPEC.md section 5, \"Origins\"",

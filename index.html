@@ -53,7 +53,7 @@
   <section class="hero" aria-labelledby="hero-title">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <p class="eyebrow">An open protocol · version 0.1</p>
+        <p class="eyebrow">An open protocol · version 0.2</p>
         <h1 id="hero-title">Let an AI agent drive your web app. <span class="hl">You hold the reins.</span></h1>
         <p class="lede">Reins is a protocol, and a reference implementation, for letting an AI agent drive a web app that is running in a browser tab. The agent reads the screen as a compact tree, calls the app's own actions, moves a visible cursor and puts data in front of the person. The app decides what an agent may do, the person watches and can stop it, and a kiosk can lock it down to a fixed allowlist.</p>
         <p class="btn-row">
@@ -61,7 +61,7 @@
           <a class="btn" href="./wiki/start/what-is-reins.html">Read the wiki</a>
           <a class="btn btn-quiet" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg> GitHub</a>
         </p>
-        <p class="hero-meta">Protocol 0.1, package 0.1.0, Apache-2.0. A first version: the wire format may change before 1.0.</p>
+        <p class="hero-meta">Protocol 0.2, package 0.2.0, Apache-2.0. The hub speaks 0.2 and 0.1, so a peer on the older version needs no change; the wire format may change before 1.0.</p>
       </div>
 
       <figure class="stage" data-rein-stage>
@@ -89,21 +89,21 @@
     <div class="wrap">
       <header class="section-head">
         <p class="eyebrow">See it run</p>
-        <h2 id="film-title">One real session, thirty seconds</h2>
-        <p>One real session of the Brew Kiosk demo in the repository, recorded in Chromium. The agent works through the hub, and Allow, Pause, Resume and Stop are real clicks. The film and the stills were recorded before the panel existed: today the indicator's text opens it, and the card for an action has a third button, “Always allow”. The <a href="./playground.html">playground</a> runs the current driver.</p>
+        <h2 id="film-title">One real session, forty-five seconds</h2>
+        <p>One real session of the Brew Kiosk demo in the repository, recorded in Chromium for protocol 0.2. The agent works through the hub, and Allow, Later, Review and Stop are real clicks, made with a person's care: a button that lets the agent do more is pressed only once it is armed. The <a href="./playground.html">playground</a> runs the same driver in this tab.</p>
       </header>
       <figure class="film">
         <video controls playsinline preload="none" width="1920" height="1080" poster="./assets/film-poster.jpg" aria-describedby="film-desc">
           <source src="./assets/media/reins-demo.mp4" type="video/mp4">
         </video>
-        <figcaption id="film-desc">What happens in the film, which has no sound: the page asks before the agent Barista AI may attach, and the person allows it. The agent adds a latte and two mochas and types a name. The person presses Pause, and the agent's next two commands come back refused. Placing the order waits for the person, who allows it, and the order is placed. The person presses Stop, and the agent's access is gone. <a href="https://github.com/offensiveadhd/reins/tree/main/docs/media/film">How the film was made</a>.</figcaption>
+        <figcaption id="film-desc">What happens in the film, which has no sound: the page asks before the agent Barista AI may attach, with an offer to tick, and the person allows it. The agent adds a latte and two mochas, types the name Sam and puts a chart of the day's orders on screen (that stretch plays at one and a half times speed). Placing the order asks the person, who presses Later: the request waits, the indicator reads “1 waiting”, and the agent's one call waits with it. The person opens the panel, where the request waits above the agent's permission levels, presses Review and allows it on the card; the agent asks again with its ticket, and the order is placed. The person presses Stop, and the agent's access is gone. <a href="https://github.com/offensiveadhd/reins/tree/main/docs/media/film">How the film was made</a>.</figcaption>
       </figure>
       <ul class="stills" aria-label="Five moments from the demo">
-        <li><figure><img src="./assets/media/1-attach-consent.jpg" alt="The Brew Kiosk page dimmed behind a card: Barista AI wants to control this page. The card lists the scopes it asks for, and has Deny and Allow." width="800" height="500" loading="lazy" decoding="async"><figcaption>The page asks before an agent may attach.</figcaption></figure></li>
-        <li><figure><img src="./assets/media/2-cursor-toast-highlight.jpg" alt="The kiosk menu with the agent's labelled cursor over the Latte card, a highlight around it and a toast from the agent at the top." width="800" height="500" loading="lazy" decoding="async"><figcaption>The agent's cursor, a captioned toast, a highlight.</figcaption></figure></li>
-        <li><figure><img src="./assets/media/3-order-chart-pointer-stream.jpg" alt="The order filled in with a latte and two mochas, a name typed, a bar chart in the Insights panel, and the agent's cursor at the total." width="800" height="500" loading="lazy" decoding="async"><figcaption>Order filled in, chart sent from a file, the live pointer stream circling the total.</figcaption></figure></li>
-        <li><figure><img src="./assets/media/4-action-consent.jpg" alt="A card: Barista AI wants to run an action, order.submit, marked sensitive, with Deny and Allow." width="800" height="500" loading="lazy" decoding="async"><figcaption>A sensitive action waits for the person.</figcaption></figure></li>
-        <li><figure><img src="./assets/media/5-indicator-over-modal-dialog.jpg" alt="A modal dialog opened by the app. The indicator, with Pause and Stop, stays in the corner above it." width="800" height="500" loading="lazy" decoding="async"><figcaption>The indicator stays reachable when the app opens a modal dialog.</figcaption></figure></li>
+        <li><figure><img src="./assets/media/1-attach-consent-offer.jpg" alt="The Brew Kiosk page dimmed behind a card: “Barista AI” (a3) wants to control this page. The card lists the five scopes it asks for, offers order.submit, sensitive, under Without asking each time with its box unticked, quotes the reason Help you order a coffee, says it goes to the waiting list in 59 s, and has Deny, Later and Allow." width="800" height="500" loading="lazy" decoding="async"><figcaption>The page asks before an agent may attach, and may offer an action to allow without asking each time.</figcaption></figure></li>
+        <li><figure><img src="./assets/media/2-panel-waiting-and-levels.jpg" alt="The panel open beside the kiosk, on its Permissions tab: under Waiting for your answer, “Barista AI” (a3) order.submit, sensitive, asked at 17:35 and waiting until 17:45, with Discard and Review. Below, the agent's section with Disconnect and How much it asks you: Strict, Ask (chosen), Auto and Bypass, each with one line. The indicator reads 1 waiting." width="800" height="500" loading="lazy" decoding="async"><figcaption>The panel: a request that waits, and the level the person set.</figcaption></figure></li>
+        <li><figure><img src="./assets/media/3-after-deny-notice.jpg" alt="The kiosk with a latte and two mochas in the order, the name Sam and a bar chart of the most ordered drinks. Above the indicator a small notice: Denied. order.submit did not run for “Barista AI” (a3), with the buttons Block this action and Close." width="800" height="500" loading="lazy" decoding="async"><figcaption>After a refusal: a notice, and one click blocks the action. (With the chat scope it also offers to say why there.)</figcaption></figure></li>
+        <li><figure><img src="./assets/media/4-action-consent-later.jpg" alt="Over the filled-in order, a card: “Barista AI” (a3) wants to run an action, order.submit, marked sensitive, Place the order. A line says it goes to the waiting list in 59 s; Deny and Later on the left, Always allow and Allow on the right." width="800" height="500" loading="lazy" decoding="async"><figcaption>A sensitive action asks, and can be put off with Later.</figcaption></figure></li>
+        <li><figure><img src="./assets/media/5-indicator-waiting.jpg" alt="The kiosk with the order filled in and the chart on screen, no card. In the corner the indicator reads AI connected: “Barista AI” (a3) with a 1 waiting chip, next to Pause and Stop; the status line under the menu ends with last order.submit (E_WAITING)." width="800" height="500" loading="lazy" decoding="async"><figcaption>The indicator counts what waits for the person.</figcaption></figure></li>
       </ul>
     </div>
   </section>
@@ -212,6 +212,7 @@
 </table></div>
 
           <p>You can also say Allow, Ask or Block for a single action, switch single scopes of the grant off, and see what the agent did. Whatever lets an agent do more takes a second step that names what stops asking, and the pill then shows the level. A <code>deny</code> of the app or the hub stays a <code>deny</code> at every level. What loosens ends with the grant; what you tightened stays with that agent for as long as the page is open.</p>
+          <p>A request you did not answer, or put off with “Later”, waits in the same panel for ten minutes instead of failing. Nothing runs until you allow it there, and then only when the agent asks again, once. <a href="./wiki/concepts/waiting-requests.html">Requests that wait</a></p>
           <p class="more"><a href="./wiki/concepts/permission-levels.html">Permission levels</a></p>
         </article>
         <article class="hand">
@@ -241,7 +242,7 @@
       <ol class="steps">
         <li class="step">
           <h3>Install the package</h3>
-          <p>From Git, in a project that has a bundler: the package builds itself on install. It is not on the npm registry. A static page with no build step copies one file, <code>dist/bundle/reins.js</code> (446 KiB, unminified), and imports it.</p>
+          <p>From Git, in a project that has a bundler: the package builds itself on install. It is not on the npm registry. A static page with no build step copies one file, <code>dist/bundle/reins.js</code> (518 KiB, unminified), and imports it.</p>
           <div class="code" data-lang="bash"><div class="code-bar"><span class="code-lang">Shell</span><button type="button" class="copy" data-copy>Copy</button></div><pre><code>npm i github:offensiveadhd/reins</code></pre></div>
 
           <p class="more"><a href="./wiki/start/make-an-app-drivable.html#install">Every way to install it</a></p>
@@ -409,19 +410,19 @@ console.log(<span class="t-k">await</span> kiosk.observeText()); <span class="t-
       </header>
       <div class="trio">
         <article>
-          <p class="big">0.1<small>protocol</small></p>
+          <p class="big">0.2<small>protocol</small></p>
           <h3>Specified</h3>
           <p>The wire types are one file and the behaviour behind them is one document, in which the words MUST, SHOULD and MAY are normative. The same frames run over a loopback WebSocket and over an in-page message port.</p>
           <p class="more"><a href="./wiki/reference/specification.html">Read the specification</a></p>
         </article>
         <article>
-          <p class="big">205<small>requirements</small></p>
+          <p class="big">241<small>requirements</small></p>
           <h3>Traceable</h3>
-          <p>Each conformance test names the requirement and the section it checks, and a meta-test fails when a normative sentence in the spec has no test. 14 files of language-neutral test vectors, computed independently of this implementation, are there for anyone writing another one.</p>
+          <p>Each conformance test names the requirement and the section it checks, and a meta-test fails when a normative sentence in the spec has no test. 16 files of language-neutral test vectors, computed independently of this implementation, are there for anyone writing another one.</p>
           <p class="more"><a href="./wiki/implementers/requirements.html">Requirements index</a> · <a href="./wiki/implementers/test-vectors.html">Test vectors</a></p>
         </article>
         <article>
-          <p class="big">75<small>threats, each with what stops it</small></p>
+          <p class="big">87<small>threats, each with what stops it</small></p>
           <h3>Attacked, and honest about it</h3>
           <p>Reviewers that did not write the code attacked it while it ran. The security model records what each review found, what was changed and what is left as a stated limit, and says that the fixes after the latest reviews have not been reviewed again. It also lists what Reins does not protect against. Read that list before deploying.</p>
           <p class="more"><a href="./wiki/reference/security-model.html#what-reins-does-not-protect-against">What Reins does not protect against</a> · <a href="./wiki/reference/security-model.html#review">Review history</a></p>
@@ -461,7 +462,7 @@ console.log(<span class="t-k">await</span> kiosk.observeText()); <span class="t-
         <li><a href="./wiki/index.html#concepts"><strong>Concepts</strong><span>Roles, the handshake, sealed sessions, grants, policy, consent, permission levels, chat, observation, the cursor.</span></a></li>
         <li><a href="./wiki/index.html#guides"><strong>Guides</strong><span>Kiosk deployment, surface keys, serving the chat, Electron, Claude and Hermes, troubleshooting.</span></a></li>
         <li><a href="./wiki/index.html#reference"><strong>Reference</strong><span>Methods, events, error codes, policy fields, limits, the commands and the SDK.</span></a></li>
-        <li><a href="./wiki/reference/specification.html"><strong>Specification</strong><span>Reins Protocol 0.1 in full, rendered from the repository's own file.</span></a></li>
+        <li><a href="./wiki/reference/specification.html"><strong>Specification</strong><span>Reins Protocol 0.2 in full, with what a link on 0.1 leaves out, rendered from the repository's own file.</span></a></li>
         <li><a href="./wiki/reference/security-model.html"><strong>Security model</strong><span>Who can attack this, what stops them, and what Reins does not protect against.</span></a></li>
         <li><a href="./wiki/index.html#implementers"><strong>Implementers</strong><span>Writing another implementation, the conformance suite, test vectors, requirements.</span></a></li>
         <li><a href="./wiki/index.html#community"><strong>Community</strong><span>Contributing, proposing a protocol change, reporting a vulnerability, the FAQ.</span></a></li>
@@ -476,7 +477,7 @@ console.log(<span class="t-k">await</span> kiosk.observeText()); <span class="t-
   <div class="wrap footer-grid">
     <div class="footer-brand">
       <a class="brand" href="./index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
-      <p>An open protocol and a reference implementation. Protocol 0.1, package 0.1.0: a first version, and the wire format may change before 1.0.</p>
+      <p>An open protocol and a reference implementation. Protocol 0.2, package 0.2.0; this version still speaks 0.1 with a peer that knows no other. The wire format may change before 1.0.</p>
       <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
     </div>
     <nav aria-label="Documentation">

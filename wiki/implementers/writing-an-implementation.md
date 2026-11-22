@@ -73,9 +73,9 @@ The [security model](../reference/security-model.md) explains which threat each 
 
 ## Versions
 
-`challenge.v` lists what the hub speaks. The peer picks one and states it in `hello.v`. No common version is `E_VERSION`. Within a version, receivers ignore unknown fields on frames and unknown event topics, and refuse unknown methods with `E_UNKNOWN_METHOD`.
+`challenge.v` lists what the hub speaks. The peer picks one and states it in `hello.v`. No common version is `E_VERSION`. Within a version, receivers ignore unknown fields on frames and unknown event topics, and refuse unknown methods with `E_UNKNOWN_METHOD`. From 0.2 on, an event of a kind the receiver does not know, on a topic it knows, changes nothing; a 0.2 implementation keeps to 0.1 on a link that negotiated 0.1 ([Protocol versions](../reference/protocol-versions.md), with the cases in `versions.json`).
 
-This is protocol 0.1, a first version: the wire format may change before 1.0. If you are building on it, it helps to say so in the repository's issues, so that a change can take you into account: see [How to propose a protocol change](../community/protocol-changes.md).
+This is protocol 0.2, which also speaks 0.1: the wire format may change before 1.0. If you are building on it, it helps to say so in the repository's issues, so that a change can take you into account: see [How to propose a protocol change](../community/protocol-changes.md).
 
 ## See it on the wire
 

@@ -75,13 +75,14 @@ An agent's message is plain text: no links, no formatting, and characters that w
 - **It never stands next to a decision.** While a consent prompt is showing or queued, the Chat tab shows nothing an agent wrote: no transcript, no status and no agent's name. `chat.say` and `chat.status` fail with `E_BUSY`, and nothing can be typed or sent. So an agent cannot put words next to a prompt, also not by saying them just before it.
 - **No agent speaks as the person.** A message of the person comes only from the person's own input in the field of the Chat tab. No method, parameter or event posts as the person, and text that an agent's synthetic input put in the field is not sent. While the app's own code runs because an agent asked for it (an action's handler, a view's renderer, a state getter, the handlers of synthesised input) the field takes no input: what such code puts into a focused field was chosen by the agent.
 - **It does not stop when the agent is paused.** A paused agent cannot act, and can still answer.
+- **It is where the person says why.** After a refused action the page's notice offers "Say why in the chat", which opens the Chat tab with that agent addressed. What is typed there is still a request, never an approval; the refused action asks again on a card when the agent asks again.
 
 ## What the page can see
 
 > [!WARNING]
 > **Chat is not secret from the app.** The chat is drawn in the app's own page. The app, and every script it loads (a third-party tag, an XSS payload), can read what the person types in the field, read the whole transcript, and replace what the person sends, as with any field of that page. The closed shadow root, the trusted-input checks and an API without the text keep agents out. They do not keep the page out, and nothing inside one document can.
 
-Treat the chat as any field of that page: what the person types there, the app can have. The fix that was not taken is a tab in a browsing context of its own, which Reins 0.1 does not have. This is listed under [What Reins does not protect against](../reference/security-model.md#what-reins-does-not-protect-against).
+Treat the chat as any field of that page: what the person types there, the app can have. The fix that was not taken is a tab in a browsing context of its own, which Reins 0.2 does not have either. This is listed under [What Reins does not protect against](../reference/security-model.md#what-reins-does-not-protect-against).
 
 What the driver hands out is less: its API tells the app that a message was posted, by whom and how long it is, not its text, and no `observe` and no `read` returns the transcript.
 

@@ -5,12 +5,12 @@
 ## Three frames
 
 ```text
-hub  → peer   challenge { v:["0.1"], nonce, hub }
+hub  → peer   challenge { v:["0.2","0.1"], nonce, hub }
 peer → hub    hello     { v, role, name, cnonce, auth?, surface? }
 hub  → peer   welcome   { v, session, role, limits, proof? }      or   bye { code }
 ```
 
-The hub speaks first. `challenge.v` lists the versions it speaks; the peer picks one and states it in `hello.v`. No common version is `E_VERSION`. `nonce` and `cnonce` are 32 random bytes, base64url, fresh per connection.
+The hub speaks first. `challenge.v` lists the versions it speaks, newest first; the peer names the first one it speaks in `hello.v`, and the hub repeats it in `welcome.v`. No common version is `E_VERSION`. Each link has its own version, and a peer that knows only 0.1 is served as 0.1 ([Protocol versions](../reference/protocol-versions.md)). `nonce` and `cnonce` are 32 random bytes, base64url, fresh per connection.
 
 A peer that sends anything but `hello` first, or takes longer than 5 s, is closed.
 

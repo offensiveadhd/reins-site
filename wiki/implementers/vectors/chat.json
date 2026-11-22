@@ -1,5 +1,5 @@
 {
-  "reins": "0.1",
+  "reins": "0.2",
   "generator": "conformance/tools/make-vectors.mjs",
   "title": "Chat: texts, messages and who hears them",
   "spec": "SPEC.md section 9 (chat.say, chat.read, chat.status), section 12 (\"Chat\") and section 13 (\"Chat relay\")",

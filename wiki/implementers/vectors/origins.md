@@ -2,7 +2,7 @@
 
 > Test vectors: Origins: of a URL, in an allowlist, of hello.surface.url. Shown here as it is in conformance/vectors/origins.json.
 
-Protocol `0.1`. Covers: SPEC.md section 5, "Origins".
+Protocol `0.2`. Covers: SPEC.md section 5, "Origins".
 
 [Download origins.json](./origins.json): the file itself, as the conformance suite reads it.
 

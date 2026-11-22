@@ -22,7 +22,7 @@ Reins is two things: a protocol, written down in the [specification](../referenc
 Three parties have a say, and an agent needs all three.
 
 - **The app** declares what exists (actions, views, state), marks each action `safe`, `sensitive` or `dangerous`, and chooses a [policy profile](../concepts/policy-profiles.md). Policy answers allow, confirm or deny.
-- **The person** sees an indicator naming the agent for as long as it is attached, approves what the policy says needs approval, and can press Pause or Stop at any time. Real input wins over synthetic input. The indicator opens a panel where the person, and only the person, changes how much each agent asks, from every time to never, within what the app and the hub offer. This holds against agents; hostile script in the page itself is outside it. See [Consent](../concepts/consent.md), [Human control](../concepts/human-control.md) and [Permission levels](../concepts/permission-levels.md).
+- **The person** sees an indicator naming the agent for as long as it is attached, approves what the policy says needs approval, or puts it off (a request they did not answer waits for them in the panel instead of failing), and can press Pause or Stop at any time. Real input wins over synthetic input. The indicator opens a panel where the person, and only the person, changes how much each agent asks, from every time to never, within what the app and the hub offer. This holds against agents; hostile script in the page itself is outside it. See [Consent](../concepts/consent.md), [Human control](../concepts/human-control.md) and [Permission levels](../concepts/permission-levels.md).
 - **The hub**, the broker between agent and page, authenticates both sides, issues grants with scopes, applies a policy of its own, limits rates and keeps an audit log. A request has to pass the hub's policy and the page's.
 
 Nothing in the protocol evaluates agent-supplied code, HTML or CSS. Text an agent sends is inserted as text.
@@ -80,7 +80,7 @@ The package also installs 5 commands: `reins-hub`, `reins`, `reins-mcp`, `reins-
 
 ## Where it stands
 
-Protocol 0.1, package 0.1.0. This is a first version: the wire format may change before 1.0, and a version change is announced in the handshake. The package is not on the npm registry; it installs from Git or from a tarball.
+Protocol 0.2, package 0.2.0. The wire format may change before 1.0, and a version change is announced in the handshake: this version still speaks 0.1 with a hub, a page or an agent that knows no other ([Protocol versions](../reference/protocol-versions.md)), and [What's new in 0.2](../community/whats-new-0.2.md) lists what changed. The package is not on the npm registry; it installs from Git or from a tarball.
 
 The demo has been run end to end in Chromium, with the page served from loopback. Firefox, Safari and pages served from a public `https:` origin have not been tested: see the [browser notes in the security model](../reference/security-model.md#browser-access-to-loopback). The in-tab shape needs no network access and so is not affected by loopback restrictions.
 

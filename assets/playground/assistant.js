@@ -96,6 +96,10 @@ export function createAssistant({ openAgent, ReinsError, driver, log, status, sa
       else if (d?.kind === 'relay') log.line('ok', 'told by the page', `agents can hear each other: ${d.on ? 'on' : 'off'} for this agent`);
     });
     log.line('ok', 'surface.attach', `granted: ${page.grant.scopes.join(' ')}`);
+    // An offer ticked on the attach card is a rule the grant starts with: the agent is told it like any rule.
+    if (page.rules?.['order.submit'] === 'allow') log.line('ok', 'told by the page', 'the person ticked order.submit on the card: it runs without asking');
+    // The person answered a request of ours that waited (protocol 0.2): allow, deny or expired.
+    page.on('answer', (d) => log.line(d?.answer === 'allow' ? 'ok' : 'held', 'told by the page', `the person answered the waiting request ${d?.a ?? 'to connect'}: ${d?.answer}${d?.answer === 'allow' ? '. The SDK asks again with the ticket' : ''}`));
     // What the person tightened for this agent before stays, and the agent is told from the start.
     const kept = [];
     if (page.level === 'strict') kept.push('level strict');
@@ -150,10 +154,28 @@ export function createAssistant({ openAgent, ReinsError, driver, log, status, sa
     await sleep(PACE_MS);
 
     log.step('A sensitive action: placing the order is up to you');
-    status('warn', 'Your call.', 'order.submit is marked sensitive. At the level Ask the page asks you under guarded and open; under kiosk it is refused outright.');
+    status('warn', 'Your call.', 'order.submit is marked sensitive. At the level Ask the page asks you under guarded and open; under kiosk it is refused outright. Press “Later”, or do nothing for a minute, and the request waits in the panel: this step waits with it.');
     await attempt('cursor.move #order.submit', () => page.cursor.move('#order.submit'));
-    const order = await attempt('act order.submit', () => page.act('order.submit'));
-    if (!order.ok && order.code === 'E_CONSENT') {
+    // handle.act() waits for the person's answer by default when the request waits (E_WAITING), up to ten
+    // minutes, and repeats it with the ticket once it is allowed. Meanwhile, say so.
+    let seen = false;
+    const watch = setInterval(() => {
+      const w = page.waiting?.().find((x) => x.action === 'order.submit');
+      if (!w || seen) return;
+      seen = true;
+      const left = Math.max(0, Math.round((w.until - Date.now()) / 1000));
+      log.line('held', 'act order.submit', `E_WAITING: ticket ${w.ticket}, waits ${left} s. Nothing ran. The SDK waits for your answer and asks again with the ticket.`);
+      status('warn', 'Waiting for your answer.', 'The request is in the panel: select “AI connected”, then Review under “Waiting for your answer”, and Allow or Deny. Discard refuses it without a card. The assistant waits.');
+    }, 300);
+    let order;
+    try {
+      order = await attempt('act order.submit', () => page.act('order.submit'));
+    } finally {
+      clearInterval(watch);
+    }
+    // A refusal on the card is followed by a cool-off: asking again at once shows it. A request that
+    // waited and was then discarded or refused in the list moved no cool-off, so it is not asked again.
+    if (!order.ok && order.code === 'E_CONSENT' && !seen) {
       log.step('Asking again at once: a refusal is followed by a cool-off');
       await attempt('act order.submit', () => page.act('order.submit'));
     }

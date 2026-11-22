@@ -2,7 +2,7 @@
 
 > Test vectors: Sealed-session keys and frame MACs. Shown here as it is in conformance/vectors/seal.json.
 
-Protocol `0.1`. Covers: SPEC.md section 5, "Sealed sessions".
+Protocol `0.2`. Covers: SPEC.md section 5, "Sealed sessions".
 
 [Download seal.json](./seal.json): the file itself, as the conformance suite reads it.
 

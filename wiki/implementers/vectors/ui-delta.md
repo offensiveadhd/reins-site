@@ -2,7 +2,7 @@
 
 > Test vectors: UI-tree delta operations. Shown here as it is in conformance/vectors/ui-delta.json.
 
-Protocol `0.1`. Covers: SPEC.md section 10, "Applying a delta" and "Text rendering".
+Protocol `0.2`. Covers: SPEC.md section 10, "Applying a delta" and "Text rendering".
 
 [Download ui-delta.json](./ui-delta.json): the file itself, as the conformance suite reads it.
 

@@ -10,13 +10,14 @@ The conformance suite includes language-neutral test vectors: fixed inputs and e
 
 ## The files
 
-There are 14 files. Each has a page here that shows its content, and each can be downloaded as it is in the repository.
+There are 16 files. Each has a page here that shows its content, and each can be downloaded as it is in the repository.
 
 | file | what it holds | covers |
 |---|---|---|
 | [`audit.json`](./vectors/audit.md) | Audit hash chain | SPEC.md section 13, "Audit" |
 | [`auth.json`](./vectors/auth.md) | Handshake authentication proofs | SPEC.md section 5 |
 | [`chat.json`](./vectors/chat.md) | Chat: texts, messages and who hears them | SPEC.md section 9 (chat.say, chat.read, chat.status), section 12 ("Chat") and section 13 ("Chat relay") |
+| [`consent.json`](./vectors/consent.md) | Consent in protocol 0.2: requests that wait, offers at attach, a rule for a time, the rate cap | SPEC.md section 12 ("Requests that wait", "Offers at attach", "Levels and rules": a rule for a time and the rate cap) and the section 12 table |
 | [`errors.json`](./vectors/errors.md) | Error codes | SPEC.md section 6 (the table of codes) and sections 4 to 16 |
 | [`levels.json`](./vectors/levels.md) | Levels, rules and the decision for an act request | SPEC.md section 12, "Levels and rules" |
 | [`limits.json`](./vectors/limits.md) | Default limits and fixed numbers | SPEC.md sections 3 to 13 |
@@ -28,6 +29,7 @@ There are 14 files. Each has a page here that shows its content, and each can be
 | [`policy.json`](./vectors/policy.md) | Policy profiles and action decisions | SPEC.md section 12 table and "Action decisions"; strictness allow < confirm < deny (section 12 "Two enforcement points": the stricter decision) |
 | [`seal.json`](./vectors/seal.md) | Sealed-session keys and frame MACs | SPEC.md section 5, "Sealed sessions" |
 | [`ui-delta.json`](./vectors/ui-delta.md) | UI-tree delta operations | SPEC.md section 10, "Applying a delta" and "Text rendering" |
+| [`versions.json`](./vectors/versions.md) | Protocol versions and what a link on 0.1 leaves out | SPEC.md section 16 |
 
 Each file is self-describing: `spec` names the section, `formula`, `layout` or `rule` restates the rule, and `note` explains the cases. Byte strings are hex, and base64url values are unpadded (RFC 4648 section 5).
 

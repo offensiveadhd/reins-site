@@ -14,6 +14,8 @@
 
 **Attach.** To ask for a grant on a surface, with `surface.attach`. The page decides, and under the `guarded` profile the person is asked. See [Grants and scopes](../concepts/grants-and-scopes.md).
 
+**Attention.** The driver's event for the app (0.2): how many consent prompts are showing or queued and how many requests wait, whenever either changes, with nothing an agent wrote. For a taskbar flash or a notification. See [Human control](../concepts/human-control.md#drawing-the-persons-eye).
+
 **Audit log.** The hub's append-only, hash-chained record of connections, grants and requests. See [The audit log](../concepts/audit-log.md).
 
 **Always allow.** The third button of a consent card for an action. It sets the person's rule Allow for that action and agent, in two presses. See [Consent](../concepts/consent.md#the-third-button-always-allow).
@@ -54,6 +56,8 @@
 
 **Kit.** The single entry point of the package for browser projects, `@offensiveadhd/reins`, and its bundle, `reins.js`.
 
+**Later.** The answer on a consent card that puts the request off (0.2): it approves nothing, is taken at once like Deny, and sends the request to the waiting list. See [Requests that wait](../concepts/waiting-requests.md).
+
 **Launcher.** `reins.mjs` in the Reins folder: a file that runs the shell tools of the installation that wrote it. See [Shell tools with nothing registered](../start/shell-tools.md).
 
 **Level.** How much the person is asked about one agent's actions, set per grant in the panel: `strict`, `ask` (where a grant starts, unless the person set that agent to Strict earlier on the page), `auto` or `bypass`. See [Permission levels](../concepts/permission-levels.md).
@@ -63,6 +67,8 @@
 **Manifest.** A surface's description of itself: its app, actions, views, state, exposure and profile. See [Manifest and prompt card](../concepts/manifest-and-prompt-card.md).
 
 **Notice.** A line the MCP adapter and the shell tools put before a tool's own answer, starting `[reins]`: what the person set, how many chat messages wait. Never page text. See [Use it from Claude Code and other MCP harnesses](../start/mcp.md#notices-what-the-person-set).
+
+**Offer.** An action the attach card lists under "Without asking each time" (0.2), from the app's `human.offer`, as a box the person may tick. A tick alone changes nothing; Allow then opens a second step whose button sets the rule Allow as the grant starts. See [Permission levels](../concepts/permission-levels.md#offers-on-the-attach-card).
 
 **Overlay.** The indicator, the panel and the prompts: the driver's own controls, in a closed shadow root in the browser's top layer, taking only the person's own input.
 
@@ -76,13 +82,19 @@
 
 **Profile.** One of three preset policies: `open`, `guarded` or `kiosk`.
 
+**Protocol version.** What a hub and a peer agree on in the handshake, `0.2` or `0.1`, for one link. An implementation of 0.2 keeps to 0.1 on a link that negotiated it. See [Protocol versions](../reference/protocol-versions.md).
+
 **Prompt card.** The short text, rendered from the manifest, that teaches a model to drive an app. See [Manifest and prompt card](../concepts/manifest-and-prompt-card.md#the-prompt-card).
+
+**Rate cap.** `human.burst` (0.2): how many runs of one action by one agent whose prompt was waived go unasked within a stretch before the next call asks again. See [Permission levels](../concepts/permission-levels.md#a-cap-on-unasked-runs).
 
 **Reins folder.** `~/.reins`, or the folder `REINS_HOME` names: where a hub announces itself and leaves the launcher.
 
 **Risk tier.** An app's statement about an action: `safe`, `sensitive` or `dangerous`.
 
 **Rule.** The person's decision for one action of one agent, set in the panel: Allow, Ask or Block (`allow`, `confirm`, `deny`). It beats the level and covers any arguments. Allow ends with the grant; Ask and Block stay with the agent for as long as the page lives. See [Permission levels](../concepts/permission-levels.md#rules-for-single-actions).
+
+**Rule for a time.** A rule Allow set for `human.allowMs`, 15 minutes, instead of the whole grant (0.2). It ends by the clock, and the indicator says when. See [Permission levels](../concepts/permission-levels.md#a-rule-for-a-time).
 
 **Scope.** A kind of thing an agent may do: `observe`, `act`, `ui`, `cursor`, `show`, `nav`, `chat`.
 
@@ -102,8 +114,12 @@
 
 **Target.** How a request names an element: a handle or a semantic id, never a selector.
 
+**Ticket.** What a request that waits is given (0.2): `tk` in the `E_WAITING` error, 22 random characters from the reference driver. The agent repeats the request with it once the person has allowed it, and it is used once. It names nothing without the agent session it was given to. See [Requests that wait](../concepts/waiting-requests.md).
+
 **Token file.** The file that holds an agent's secret, by default `.reins/token` where the hub was started.
 
 **Unverified hub.** What a page calls a hub whose proof it cannot check, because the page holds no key. Such a page never accepts an attach silently.
 
 **View.** A named renderer the app offers for showing data, fed by `show.view`.
+
+**Waiting list.** The panel's "Waiting for your answer" (0.2): requests nobody answered in time, or that the person put off with Later, for up to ten minutes, with Review, Discard and Take back. At most 3 of one agent and 12 in all. See [Requests that wait](../concepts/waiting-requests.md).

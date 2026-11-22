@@ -11,7 +11,7 @@ A kiosk is an unattended station: a self-service terminal with an assistant that
 - **No synthetic input.** The scopes are `observe`, `act`, `cursor` and `show`. There is no `ui` scope.
 - **No navigation**, no raw coordinates and no pointer stream.
 - **Pause, no Stop.** A visitor can pause the assistant but cannot revoke it.
-- **No panel, no levels, no chat.** A kiosk visitor is not the owner: the profile offers no level beyond `strict` and `ask`, the indicator opens no panel to set one in, and no `chat` scope is granted.
+- **No panel, no levels, no chat.** A kiosk visitor is not the owner: the profile offers no level beyond `strict` and `ask`, the indicator opens no panel to set one in, and no `chat` scope is granted. A prompt nobody answers is refused after 30 s: the kiosk profile has no waiting list (`consent.waitMs` is 0), its attach prompt offers nothing, and it caps no unasked runs (`human.burst: false`), since nothing runs unasked there but what the policy allows outright.
 - **A tamper-evident audit log**, when you turn it on.
 
 Compare the profiles in [Policy profiles](../concepts/policy-profiles.md), and run the same script under `kiosk` in the [playground](../../playground.html?profile=kiosk).

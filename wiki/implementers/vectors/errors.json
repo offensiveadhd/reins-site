@@ -1,5 +1,5 @@
 {
-  "reins": "0.1",
+  "reins": "0.2",
   "generator": "conformance/tools/make-vectors.mjs",
   "title": "Error codes",
   "spec": "SPEC.md section 6 (the table of codes) and sections 4 to 16",
@@ -52,6 +52,10 @@
     {
       "code": "E_CONSENT",
       "where": "8 attach refused; 9 act refused; 12 third refusal revokes, the person's rule deny"
+    },
+    {
+      "code": "E_WAITING",
+      "where": "6 a request that waits for the person's answer (0.2); 16 sent to an agent on 0.1 as E_CONSENT"
     },
     {
       "code": "E_PAUSED",

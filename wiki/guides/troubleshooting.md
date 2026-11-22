@@ -111,7 +111,7 @@ A malformed frame, an unknown frame type, or a frame out of place: not valid JSO
 
 No protocol version in common. `challenge.v` lists what the hub speaks, and the peer has to pick one of them.
 
-**What to do.** Update the older side. Protocol 0.1 is the only version so far.
+**What to do.** Update the older side. This build speaks protocol 0.2 and 0.1: a hub lists both in `challenge.v`, newest first, and a peer that speaks only 0.1 still connects. `E_VERSION` comes from a peer that speaks neither, from a `hello.v` the hub did not list, or from a hub whose `versions` configuration was narrowed to one. See [Protocol versions](../reference/protocol-versions.md).
 
 ### E_AUTH
 
@@ -139,7 +139,7 @@ A frame, a manifest, a result or a set of consent arguments over its limit: a te
 
 The other side did not answer in time: 15 s for an ordinary request by default.
 
-**What to do.** On `surface.attach` or `act`, treat it as a prompt nobody answered: ask the person to bring the page to the front, then ask again. The prompt can still be on the page, and a request approved there later still takes effect. Before repeating an action that is not safe to run twice, observe whether it ran. On other requests, the page is probably busy or in a background tab that runs its timers late.
+**What to do.** A prompt nobody answers ends inside the hub's wait (`E_CONSENT`, or `E_WAITING` where the request can wait), so `E_TIMEOUT` on `surface.attach` or `act` means the page itself did not answer: it did not run at all for that long, or its link is gone. Ask the person to bring the page to the front, then ask again. The hub withdraws an attach it stopped waiting for; an action whose prompt comes up late can still be approved and run, so before repeating an action that is not safe to run twice, observe whether it ran. On other requests, the page is probably busy or in a background tab.
 
 ### E_GONE
 
@@ -177,9 +177,15 @@ Policy says no. An action whose risk tier or override is `deny`, at the page or 
 
 ### E_CONSENT
 
-The person refused or blocked the action, or the prompt timed out.
+The person refused or blocked the action; a prompt nobody answered where the request could not wait (a kiosk, an app's own consent handler, an agent on protocol 0.1, a full waiting list); or a request that waited and was refused, discarded or left to lapse. With the SDK's default `wait`, a refusal of a request that waited also ends as `E_CONSENT`.
 
 **What to do.** Do not ask again at once: the same request is answered `E_RATE` during a cool-off, and three explicit refusals in a row revoke the grant. Say what you wanted to do and why, and let the person decide. When the answer came with no prompt ("the user blocked this action"), the person set the rule Block for that action in the panel: retrying changes nothing.
+
+### E_WAITING
+
+(0.2) The person has not answered yet: nobody answered the prompt in time, or they pressed "Later", and the request waits in their window for up to ten minutes with a ticket (`data: {tk, ms}`). Nothing ran.
+
+**What to do.** Wait for the person. The SDK does that by default and repeats the request with its ticket once it is allowed; with the MCP tools, call again with `wait`; with the `reins` command, it waits unless told `--no-wait`. Do not ask the person for the approval in the chat: a message there approves nothing, the card does. If you are told `expired` or `deny`, say what you wanted and let the person decide. An agent on protocol 0.1 never sees this code: its requests cannot wait. See [Requests that wait](../concepts/waiting-requests.md).
 
 ### E_PAUSED
 
@@ -197,7 +203,7 @@ A rate or admission limit, or a consent cool-off: too many requests per second i
 
 ### E_BUSY
 
-A capacity, a pending attach or consent prompt, a permission that changed while the request waited, or a peer that does not read: another attach by the same credential is in flight, a consent prompt is showing or queued on the page, the page already holds 32 grants, the hub is full (64 surfaces, 32 agents, 4 sessions per credential, 8 streams per agent), or 16 handshakes are already pending.
+A capacity, a pending attach or consent prompt, a permission that changed while the request waited, or a peer that does not read: another attach by the same credential is in flight, a consent prompt is showing or queued on the page, the page already holds 32 grants, the hub is full (64 surfaces, 32 agents, 4 sessions per credential, 8 streams per agent), 16 handshakes are already pending, or the hub already keeps 3 tickets of this session on this surface or 16 in all, so a request that waited gets `E_BUSY` instead of a ticket.
 
 **What to do.** Wait for the prompt to be answered, then retry. `chat.say` and `chat.status` answer `E_BUSY` while a prompt is up as well: nothing talks over a decision. An action that used to run without asking and now answers `E_BUSY` may ask when you send it again: the person tightened something meanwhile. If sessions are the problem, close the ones you do not use: a shell session ends with `stop`.
 
@@ -211,7 +217,7 @@ The method does not exist. An unknown method is answered before any parameter is
 
 ### E_BAD_ARGS
 
-Params fail validation: an unknown action, arguments that fail the action's schema (the message names the failing path), a property that was not declared, a target that takes no text, a label over 40 characters, or params nested too deeply.
+Params fail validation: an unknown action, arguments that fail the action's schema (the message names the failing path), a property that was not declared, a target that takes no text, a label over 40 characters, params nested too deeply, or a `tk` that is not a ticket the hub keeps for this session, this surface and this request (unknown, used, lapsed, another agent's, or for another action: the message is the same for all of them).
 
 **What to do.** Read the message, then the prompt card: it gives every action's signature. A model that gets `E_BAD_ARGS` can usually correct itself.
 
@@ -223,7 +229,7 @@ The target is not a live, exposed, enabled element, or is read-only: an unknown 
 
 ### E_INTERNAL
 
-An unexpected failure: an action handler threw, a result is not JSON, or the audit log is unavailable. The message never carries internals.
+An unexpected failure: an action handler threw, a result is not JSON, the audit log is unavailable, or a surface answered `E_WAITING` without a well-formed ticket and time, or on a method that cannot wait. The message never carries internals.
 
 **What to do.** Look at the page's console and the hub's output. If audited requests and attach all fail with `E_INTERNAL` while reads work, the hub cannot write its audit log and is failing closed on purpose: fix the log. If you own the handler, throw a `ReinsError` for refusals that are the agent's to fix.
 

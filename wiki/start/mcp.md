@@ -82,7 +82,7 @@ A model calls `reins_attach` first: it is the only tool that attaches, it asks t
 
 - `reins_observe` returns the compact tree in full the first time, then only what changed. `full: true` asks for the whole tree again.
 - `reins_read` returns the text the tree leaves out: of an element, a region or the page. `target` is a handle, and without one it reads the page; `max` is 2000 characters by default and 8000 at most. The adapter cuts the text at `max` itself, whatever the page sent, and a line of the adapter's own says so when the text was cut. With `state` it returns the app state of that name, or all of it for `*`, as one line of JSON, of which one call returns 8000 characters.
-- `reins_act` calls an app action: `{ "action": "cart.add", "args": { "sku": "latte" } }`. The card tells the model which actions exist.
+- `reins_act` calls an app action: `{ "action": "cart.add", "args": { "sku": "latte" } }`. The card tells the model which actions exist. A request the person has not answered yet (0.2) is an error in the adapter's words: that the request waits in the person's window, that nothing ran, how long it stays, and that the same call with `wait` (milliseconds, at most 150000) waits for the answer and runs the request once it is allowed. `reins_act` and `reins_attach` take `wait`; a `[reins]` notice tells the answer with the next result. See [Requests that wait](../concepts/waiting-requests.md).
 - `reins_ui` takes `op` (`click`, `type`, `select`, `scroll`, `key`) and a `target`.
 - `reins_cursor` takes `op` (`move`, `show`, `hide`); `reins_show` takes `kind` (`toast`, `highlight`, `view`, `clear`).
 - `reins_chat` talks with the person in the page's Chat tab. `op` is `wait`, `read`, `say` or `status`: see [Chat](../concepts/chat.md#for-a-model).
@@ -104,7 +104,7 @@ Text that comes from a page or from the hub is marked wherever a model reads it:
 - The quoted strings of the tree and of the prompt card are one line to every reader: a name a page chose cannot start a line of its own choosing.
 - Chat reaches the model as data as well: one line of the adapter's for each message that says who spoke, then the text behind `| `. A page that proved no key to the hub is named as "a page the hub did not verify" on the first line.
 - An error from a handshake that did not finish is one line, cut to 200 characters and marked `[unverified hub data]`.
-- A line of the surface listing gives what the hub knows first, in a fixed order, and what the page says of itself last: `s1 verified https://shop.example attached app="Shop" id=shop profile=guarded`. The second word is always `verified` or `unverified` (whether the page proved its app key to the hub), `attached` is there when this agent holds a grant, and the name in quotes is the page's own word: an app name that copies the hub's words stands inside quotes, after the hub has spoken.
+- A line of the surface listing gives what the hub knows first, in a fixed order, and what the page says of itself last: `s1 verified https://shop.example attached app="Shop" id=shop profile=guarded`. The second word is always `verified` or `unverified` (whether the page proved its app key to the hub), `attached` is there when this agent holds a grant, `protocol=0.1` when the page speaks protocol 0.1 with the hub, `waiting=N` when N requests of this agent wait there, and the name in quotes is the page's own word: an app name that copies the hub's words stands inside quotes, after the hub has spoken.
 - `reins_attach` answers the same way. Its first line is the adapter's own (`attached to surface s1: verified https://shop.example, scopes: observe act ui`), and the prompt card, which is the page's account of itself, follows under the page-data marker.
 
 ## Notices: what the person set
@@ -118,7 +118,7 @@ What the adapter itself has to tell the model between calls goes out with the ne
 
 A notice about a grant names the surface it is about, by the id the hub gave it, and says `(a page the hub did not verify)` after it when that is so. What a surface reports about the person is true of that surface and no other, and from a page that proved no key "the person" is whoever can reach the hub's port. A hostile page can report that the person lifted every prompt on it: what that changes is that page's own prompts; the hub's policy and the adapter's scopes do not move.
 
-The adapter tells this way that the person changed the level, that a rule changed and how many are set, which scopes are now in force, that chat messages wait (their number, never their text), and that the person let the agents hear each other or switched that off. No tool sets any of it. See [Permission levels](../concepts/permission-levels.md#what-an-agent-sees-and-should-do).
+The adapter tells this way that the person changed the level, that a rule changed and how many are set, which scopes are now in force, the answer to a request of its that waited (allowed, refused, lapsed), that chat messages wait (their number, never their text), and that the person let the agents hear each other or switched that off. No tool sets any of it. See [Permission levels](../concepts/permission-levels.md#what-an-agent-sees-and-should-do).
 
 ## Annotations
 

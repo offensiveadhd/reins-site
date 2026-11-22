@@ -28,6 +28,8 @@ A size in bytes counts the UTF-8 bytes of text. A length in characters counts UT
 
 **Consent.** One pending prompt per agent, four in total. Arguments on a card: at most 40 keys and items in total, nesting of 4, 2000 code points. Allow arms after 500 ms. A key answers a prompt no sooner than 500 ms after the prompt appeared or moved, after the focus landed on the button and after any other key, and no sooner than 3 s after the last key that types. At most two combining marks in a row are shown as they are. A cool-off of 2 s doubling to 60 s after a refusal; three refusals in a row revoke the grant. A withdrawn prompt shows its notice for 1.5 s. A `ui.*` command gives up after the person has kept using the page for 5 s.
 
+**Requests that wait (0.2).** A request waits `consent.waitMs`, 10 minutes under `open` and `guarded`, from when it joined the list. The list holds 3 requests of one agent and 12 in all. A ticket is 1 to 32 characters of `[A-Za-z0-9_-]` with at least 96 bits from a CSPRNG (the reference driver: 22 characters); the hub keeps at most 3 tickets of one session on one surface and 16 in all, each for `ms` plus `reqTimeoutMs`, and answers `E_BUSY` over that. An attach prompt offers at most 8 actions (`human.offer`). A rule `allow` for a time lasts `human.allowMs`, 15 minutes, and a rule's `ms` on the wire is at most a day. `human.burst`: 60 unasked runs of one action in 10 minutes under `open`, 20 under `guarded`. The notice after a refusal stays 8 s. The SDK waits for the person's answer up to ten minutes by default; a tool's `wait` is at most 150 s.
+
 **Grants.** A burst of 3 attaches per credential and surface, then one every 2 s. A surface holds at most 32 grants. Lifetimes come from the policy: see [Policy fields](./policy-fields.md).
 
 **What the person sets.** A confirm step arms after 500 ms. More than 20 changes of what the person set within one second end the grant. The activity list holds the last 50 commands.
@@ -81,7 +83,7 @@ The conformance suite keeps every number the specification states in one file, `
 | `stickyPrivacy.sameParentMs` | `1000` |
 | `defaultPort` | `7346` |
 | `subprotocol` | `reins.v1` |
-| `versions` | `["0.1"]` |
+| `versions` | `["0.2","0.1"]` |
 | `manifest.maxBytes` | `65536` |
 | `manifest.maxActions` | `256` |
 | `manifest.maxViews` | `64` |

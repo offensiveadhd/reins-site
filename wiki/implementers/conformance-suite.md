@@ -2,7 +2,7 @@
 
 > What the conformance suite checks, how to run it and what it does not cover. Rendered from conformance/README.md.
 
-This folder checks an implementation of Reins against `docs/SPEC.md` (protocol 0.1).
+This folder checks an implementation of Reins against `docs/SPEC.md` (protocol 0.2, and what it does with a peer on 0.1).
 The existing tests under `packages/*/test` exercise the reference implementation's own
 code paths; the tests here are written from the specification instead. Each test name
 starts with the id of the requirement it checks, and `requirements.json` maps every
@@ -16,13 +16,15 @@ requirement to its spec section and its tests.
 | `tools/make-vectors.mjs` | Generates the vectors from the formulas in SPEC.md with `node:crypto` only. It imports nothing from `@reins/*`. |
 | `vectors.test.ts` | Checks that `@reins/core` (and `verifyAuditChain` in `@reins/hub`) reproduce the vectors. |
 | `hub-transport.test.ts`, `hub-handshake.test.ts`, `hub-session.test.ts`, `levels-hub.test.ts`, `chat-hub.test.ts` | Black-box hub tests. A hub is started in-process on port 0; agents and surfaces are raw `ws` sockets that build every frame, proof and seal MAC by hand (`lib/wire.ts`). `chat-hub.test.ts` covers the relay of a room's messages, their rate and their audit records (`CH-`). |
-| `surface.test.ts`, `levels-surface.test.ts`, `timers-surface.test.ts`, `chat-surface.test.ts` | The reference driver in happy-dom, driven by a hub played with hand-built frames over an in-memory link (`lib/surface-hub.ts`). `levels-surface.test.ts` covers levels, rules, scope switches, the panel, and what a page's styles and scripts can and cannot do to the overlay (`LV-`); it reaches the panel through `shadowOf`, and plays the person with events it marks trusted. `timers-surface.test.ts` (`LV-34`) wraps the timer functions before the driver loads, clears every timer the surface set, and shows that nothing gets looser. `chat-surface.test.ts` covers the chat methods, the room and the Chat tab (`CH-`) the same way: what the person types is a value and an input event the test marks trusted. |
+| `surface.test.ts`, `levels-surface.test.ts`, `timers-surface.test.ts`, `waiting-surface.test.ts`, `chat-surface.test.ts` | The reference driver in happy-dom, driven by a hub played with hand-built frames over an in-memory link (`lib/surface-hub.ts`). `levels-surface.test.ts` covers levels, rules, scope switches, the panel, and what a page's styles and scripts can and cannot do to the overlay (`LV-`); it reaches the panel through `shadowOf`, and plays the person with events it marks trusted. `waiting-surface.test.ts` covers what protocol 0.2 adds at the surface: requests that wait, offers at attach, a rule for a time, the rate cap, the notice after a refusal, `attention`, and the time a prompt has (`CT-`, `WT-`, `OF-`, `RT-1`, `RC-1`, `AD-1`, `AT-1`); its played hub speaks 0.2 and names each agent's version. `timers-surface.test.ts` (`LV-34`) wraps the timer functions before the driver loads, clears every timer the surface set, and shows that nothing gets looser. `chat-surface.test.ts` covers the chat methods, the room and the Chat tab (`CH-`) the same way: what the person types is a value and an input event the test marks trusted. |
 | `security-hub.test.ts`, `security-surface.test.ts` | One or more tests per rule of SPEC section 14, named `S14.N ...`. Rule 14 also has a test in `mcp.test.ts`; rule 15 has its tests in `levels-surface.test.ts` and `levels-hub.test.ts`, rule 16 in `chat-surface.test.ts` and `chat-hub.test.ts`. |
 | `mcp.test.ts` | The MCP adapter, spoken to with raw JSON-RPC over the SDK's in-memory transport, `reins_read` (`MCP-6`) and `reins_chat` included (`CH-15`), the one rule for text a page supplied (`MCP-7`, `MCP-8`), the hand-over of chat messages over the shell session (`CH-28`), and the `chat-serve` runner with a command that echoes what it is given (`CH-16`) and with one that leaves a process running (`CH-29`). |
 | `hub-transport.test.ts`, `hub-handshake.test.ts`, `hub-session.test.ts` | Black-box hub tests. A hub is started in-process on port 0; agents and surfaces are raw `ws` sockets that build every frame, proof and seal MAC by hand (`lib/wire.ts`). |
 | `surface.test.ts` | The reference driver in happy-dom, driven by a hub played with hand-built frames over an in-memory link (`lib/surface-hub.ts`). |
 | `security-hub.test.ts`, `security-surface.test.ts` | One or more tests per rule of SPEC section 14, named `S14.N ...`. Rule 14 also has a test in `mcp.test.ts`. |
 | `mcp.test.ts` | The MCP adapter, spoken to with raw JSON-RPC over the SDK's in-memory transport. |
+| `waiting-hub.test.ts` | Sections 6, 13 and 16 at the hub (`WH-`): requests that wait, with the SDK as the agent and a raw socket as a 0.1 agent, against the real hub and a played surface that keeps a waiting list; the ticket a hub refuses, the answer it relays, the attach it withdraws, and the hub's half of the consent-timeout change (`WH-8`). |
+| `versions.test.ts`, `versions-surface.test.ts` | Section 16 (`VER-6` to `VER-14`). A peer on 0.1 is a raw socket that names `0.1` in its hello and records every frame it is sent, so what the hub must not send it is checked on the wire; the agent SDK is run against a hub that lists 0.1 alone (`versions: ["0.1"]`), and the driver against a played hub whose challenge lists 0.1 alone. The `versions.json` vectors are checked here too (`VEC-VERSIONS`). |
 | `origins.test.ts` | Section 5, "Origins": the origin vectors against `@reins/core`, and surfaces and agents from `file://`, app origins and `null` on raw sockets. |
 | `electron.test.ts` | The Electron port of section 3 and `reins-electron` of section 15. Electron is played by the stand-ins in `lib/electron.ts`: no Electron is installed or started. |
 | `electron-page.test.ts` | How long the driver of an adopted page lives: the real page glue and driver in happy-dom, against the real injector and broker, with the browser between them played by `lib/electron.ts`. |
@@ -89,6 +91,10 @@ These requirements are not checked, or only partly:
 
 - TR-2 (refuse a non-loopback remote address): needs a second network interface; the test
   only shows loopback clients are served.
+- Section 16: no implementation of protocol 0.1 is run. A peer on 0.1 is a raw socket that
+  names `0.1` in its hello, and a hub on 0.1 is the reference hub told to list 0.1 alone,
+  or a played one. That the agent SDK drops an event 0.1 does not have when a 0.1 hub
+  relays one is covered in `packages/agent/test/agent.test.ts`, not here.
 - S14.3, owner-only files: checked by POSIX mode only; on Windows the ACL is not inspected
   (the test is skipped there). The token file written by the CLI is not covered.
 - Section 5: the inbound bound before authentication (16 messages, 64 KiB) and dropping
@@ -290,6 +296,26 @@ says; each carries a `// SPEC MISMATCH:` comment.
 | LV-35 | 12 | A check that had to put the overlay back (show it again in the top layer, or move it) does not take the click that caused it as one that lets an agent do more; a later, separate click counts. | LV-35 |
 | LV-36 | 12 | Letting agents hear each other is not taken while the overlay cannot be relied on, switch or confirm step; a hub that sends another chatRelay with a later attach does not clear the person's switch silently: the surface reports relay off for each agent and the Chat tab says so. | LV-36 |
 | LV-37 | 12 | While the app's own code runs because an agent asked for it (an action's handler, a view's renderer, a state getter, the handlers of synthesised input), the chat composer takes no input. | LV-37 |
+| CT-1 | 6, 12 | A request's time runs from when it reached the surface: a prompt that waited its turn shows for what is left, and one whose time is up before its turn is not shown. | CT-1 |
+| CT-2 | 6, 12 | A prompt waits no longer than the hub: the shorter of consent.timeoutMs and the consentTimeoutMs of welcome. | CT-2 |
+| CT-3 | 8, 12 | detach withdraws a pending request, also one the app's own consent handler is still asking about. | CT-3 |
+| WT-1 | 9, 12 | A prompt nobody answered, or that the person put off with Later, joins the waiting list (0.2): E_WAITING with data {tk, ms}; nothing ran; the indicator and the panel say that it waits, without arguments. | WT-1, VEC-CONSENT |
+| WT-2 | 12 | One entry for one request: the same agent asking for the same thing is shown no prompt and gets the same ticket and the time left. | WT-2, VEC-CONSENT |
+| WT-3 | 12 | The list is bounded: entries end by the clock (expired), and a request that cannot wait has no Later and ends as E_CONSENT. | WT-3 |
+| WT-4 | 12 | Review opens the prompt again as it was asked; the agent is told the answer with evt user {kind:"answer"}; the person is told that the agent is told. | WT-4 |
+| WT-5 | 9, 12 | An approved request goes ahead on its ticket once, for the same agent session and the same request; a Block set meanwhile wins. | WT-5 |
+| WT-6 | 12 | A ticket that is unknown, used, expired or another agent's names nothing. | WT-6 |
+| WT-7 | 8, 12 | A request to connect waits too; with nobody attached the indicator says that an agent is waiting to connect; the approved ticket attaches the same credential without a prompt; detach drops what waits. | WT-7 |
+| WT-8 | 12 | Not answered is not refused (cool-off as for a timeout, no count toward the three); no list on a 0.1 hub, with an app's own handler, without the panel, or with consent.waitMs 0. | WT-8 |
+| OF-1 | 12 | The attach prompt offers the actions human.offer names, unticked, only where the rule allow could be set in the panel; what the person tightened before is left out. | OF-1, VEC-CONSENT |
+| OF-2 | 12 | A tick alone changes nothing: Allow opens a second step naming exactly the ticked actions, and only its armed button grants. | OF-2 |
+| OF-3 | 8, 12 | The grant starts with the rule allow for each ticked action, reported after the attach answer and before any action runs under it. | OF-3 |
+| OF-4 | 12 | What the person tightened wins over an offer: no rule allow is set from an offer for an action they set to Ask or Block, also one approved in the waiting list before the rule was set; the activity list says so. | OF-4 |
+| WT-9 | 12 | A prompt the agent withdraws moves the cool-off like a timeout; an agent's entries end with its grant, a replacing attach included, and it is told expired. | WT-9 |
+| RT-1 | 12 | A rule allow for a time is reported with ms, shown with its end, and ends by the clock (d null). | RT-1 |
+| RC-1 | 12 | The rate cap: at most max unasked runs within perMs; the next call asks with the count, and Allow starts it again. | RC-1, VEC-CONSENT |
+| AD-1 | 12 | After a refused action a notice offers Block for that agent and a way into the chat; no dialog, no text field. | AD-1 |
+| AT-1 | 12, 15 | on('attention') reports two counts and nothing an agent wrote; the driver changes nothing of the page. | AT-1 |
 | CH-1 | 8, 12 | The chat scope: open and guarded grant it, kiosk does not; a surface without the panel grants none; without it every chat method is E_SCOPE. | CH-1, VEC-SCOPE, VEC-POLICY |
 | CH-2 | 9 | chat.say: a text of 1 to 4000 characters after trimming, well-formed, else E_BAD_ARGS; answers the id the message has for the agent that said it; to names another agent of the room, or person. | CH-2, VEC-CHAT |
 | CH-3 | 9 | chat.read: what the agent may read, oldest first, the latest max (20, at most 50) or what came after since; next to read on; at most 128 KiB, the latest being the newest that fit. | CH-3, CH-22, VEC-CHAT |
@@ -339,6 +365,22 @@ says; each carries a `// SPEC MISMATCH:` comment.
 | VER-1 | 16 | No common version is E_VERSION. | VER-1 |
 | VER-2 | 16 | Receivers ignore unknown fields and unknown event topics. | VER-2, VER-5 |
 | VER-3 | 16 | Unknown methods are refused with E_UNKNOWN_METHOD. | VER-3, VER-4, SF-SCOPE-1 |
+| VER-6 | 16 | challenge.v lists the versions the hub speaks, newest first; a peer names in hello.v the first one in that list that it speaks, the hub refuses one it did not list, and welcome.v repeats it. | VER-6, VER-11, VEC-VERSIONS |
+| VER-7 | 16 | The hub records the version of each connection in its connect record, and gives an agent on 0.2 each surface's version as SurfaceInfo.v; an agent on 0.1 gets the SurfaceInfo of 0.1. | VER-7 |
+| VER-8 | 16 | Toward an agent on 0.1 the hub sends no event that 0.1 does not have: no grant event of kind scopes (the grant narrows all the same, the request is E_SCOPE, the surface changed event is sent), no user event of kind level, rule or relay, no chat event; it holds and records what they say. | VER-8 |
+| VER-9 | 16 | Toward an agent on 0.1 the hub asks no chat scope for it and answers chat.* with E_UNKNOWN_METHOD, leaves kept out of the attach result, and sends E_WAITING as E_CONSENT without its data; a surface's error otherwise reaches the agent with its data unchanged. | VER-9 |
+| VER-10 | 16 | Toward a surface on 0.1 the hub sends attach with agent, scopes and reason, and v (the agent's protocol version, which 0.1 ignores), never with chat, grants no chat there, reads no kept from the answer, and drops an event of a topic or kind 0.1 does not have, unread and unrecorded. | VER-10 |
+| VER-11 | 16 | An agent with a hub on 0.1 asks for no chat scope and sends no chat.* request; the reference SDK says which version it speaks and refuses a chat call itself with E_UNKNOWN_METHOD. | VER-11 |
+| VER-12 | 16 | A surface with a hub on 0.1 sends no grant event of kind scopes, no user event of kind level, rule or relay and no chat event, reads only agent, scopes and reason from attach, grants no chat and answers without kept; what the person sets holds on the page. | VER-12 |
+| VER-13 | 16 | From 0.2 on, an event of a kind the receiver does not know, on a topic it knows, ends nothing and changes nothing. | VER-13 |
+| VER-14 | 16 | What 0.1 has and what 0.2 adds to it are the tables of section 16; on a link that negotiated 0.1 only the events, methods, scopes and error codes of 0.1 exist. | VEC-VERSIONS |
+| WH-1 | 13 | The hub relays E_WAITING with {tk, ms} and nothing else of its data, keeps the ticket for that agent session and surface, forwards tk on act and surface.attach unchanged, and records the wait, the answer and the repeated request with the ticket. | WH-1, WH-3 |
+| WH-2 | 13 | The SDK carries a request that waits to its result or a clear error: it waits for the answer no longer than the request stays in the list (or as long as told), repeats an allowed request once with its ticket, ends a refused or lapsed one with E_CONSENT, and reports what waits. | WH-1, WH-2, WH-3 |
+| WH-3 | 13 | A tk that is not a ticket, or not one the surface gave this agent session for this surface and this request, is E_BAD_ARGS before anything reaches the surface, in the same words for each; a ticket is forwarded once and then forgotten. | WH-4, WH-6 |
+| WH-4 | 13 | The hub takes an answer only for a ticket it keeps for that agent and that request, also before any grant exists, records it with the ticket, forgets the ticket unless allowed, and tells that agent alone from the checked fields; any other answer is recorded as refused or dropped. | WH-3, WH-5 |
+| WH-5 | 13 | The hub sends v, the protocol version of the agent's link, with every attach; an agent on 0.1 gets E_CONSENT for a request that waits, is given no ticket, and has a waiting attach withdrawn at once. | WH-3, WH-6 |
+| WH-6 | 13 | When an agent whose attach waits leaves the hub, and when the hub stops waiting for an attach the surface did not answer, the hub sends the surface detach {why:"hub"} for that agent; a grant the agent held there ends with evt grant revoked. | WH-7, WH-8 |
+| WH-7 | 13 | A report of what the person set that arrives for an attach the hub is waiting on is kept and handled once the grant is recorded; a rule allow may carry ms, told and recorded with it. | WH-9 |
 | ERR-1 | 4-16 | The error codes are exactly those of the section 6 table. | VEC-ERR |
 | S14-1 | 14 | The hub listens on loopback only and validates Host, Origin and the remote address on every upgrade. | S14.1 |
 | S14-2 | 14 | Agents authenticate with a 256-bit secret by HMAC challenge-response; the hub proves the secret; every message is sealed with a MAC bound to the handshake. | S14.2 |

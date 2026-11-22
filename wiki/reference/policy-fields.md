@@ -34,6 +34,10 @@ An unknown field, or a value of the wrong type, is refused when the policy is re
 | `human.panel` | boolean | The indicator opens the panel: levels, per-action rules, scope switches, activity and chat. |
 | `consent.timeoutMs` | number | A prompt nobody answers is a refusal after this long. |
 | `consent.remember` | `never` or `session` | With `session`, an approved action is not asked again under the same grant. |
+| `consent.waitMs` | number | (0.2) How long a request nobody answered in time, or one the person put off with "Later", waits in the panel's list; 0 switches the list off. 10 minutes under `open` and `guarded`, 0 under `kiosk`. |
+| `human.offer` | list of action names | (0.2) Up to 8 actions the attach prompt may offer to allow without asking each time, each as an unticked box. None by default. |
+| `human.allowMs` | number | (0.2) How long a rule `allow` set "for a time" lasts; 0 means the confirm step offers no time. 15 minutes in every profile. |
+| `human.burst` | `{max, perMs}` or `false` | (0.2) How many runs of one action by one agent whose prompt was waived go unasked within `perMs` before the next call asks again. 60 in 10 minutes under `open`, 20 under `guarded`, off under `kiosk`. |
 
 A decision is `allow`, `confirm` or `deny`. The strictness order is allow < confirm < deny, and exposure is ordered the same way: auto < annotated < none. For `chatRelay` the strictest is `off`, then `person`, then `on`. A level is `strict`, `ask`, `auto` or `bypass`.
 
@@ -48,9 +52,9 @@ A decision is `allow`, `confirm` or `deny`. The strictness order is allow < conf
 | `risk.dangerous` | `confirm` | `deny` | `deny` |
 | `actions` | none | none | none |
 | `exposure` | `auto` | `auto` | `annotated` |
-| `privateInput` | `false` | `false` | `false` |
-| `coordinates` | `true` | `true` | `false` |
-| `framed` | `false` | `false` | `false` |
+| `privateInput` | off | off | off |
+| `coordinates` | `true` | `true` | off |
+| `framed` | off | off | off |
 | `nav` | `/` | `/` | none |
 | `chatRelay` | `on` | `person` | `off` |
 | `rates.observe` | 30 | 20 | 20 |
@@ -65,11 +69,16 @@ A decision is `allow`, `confirm` or `deny`. The strictness order is allow < conf
 | `idleMs` | 30 min | 15 min | 5 min |
 | `human.yieldMs` | 600 ms | 800 ms | 400 ms |
 | `human.pause` | `true` | `true` | `true` |
-| `human.stop` | `true` | `true` | `false` |
+| `human.stop` | `true` | `true` | off |
 | `human.levels` | `strict`, `ask`, `auto`, `bypass` | `strict`, `ask`, `auto`, `bypass` | none |
-| `human.panel` | `true` | `true` | `false` |
+| `human.panel` | `true` | `true` | off |
+| `human.offer` | none | none | none |
+| `human.allowMs` | 15 min | 15 min | 15 min |
+| `human.burst.max` | 60 | 20 | off |
+| `human.burst.perMs` | 10 min | 10 min | off |
 | `consent.timeoutMs` | 60 s | 60 s | 30 s |
 | `consent.remember` | `session` | `never` | `never` |
+| `consent.waitMs` | 10 min | 10 min | off |
 
 This table is printed from `POLICY_PRESETS` of the built package (`packages/core/src/protocol.ts`) when the site is built. The specification gives the same table in its own words:
 
@@ -89,6 +98,10 @@ This table is printed from `POLICY_PRESETS` of the built package (`packages/core
 | agents hear each other in the chat (`chatRelay`) | `on`: always | `person`: once the person switches it on | `off`: never |
 | remember approvals (`consent.remember`) | session | never | never |
 | `consent.timeoutMs` | 60 s | 60 s | 30 s |
+| a request nobody answered waits (`consent.waitMs`, 0.2) | 10 min | 10 min | no |
+| a rule `allow` for a time (`human.allowMs`, 0.2) | 15 min | 15 min | 15 min |
+| unasked runs of one action before it asks again (`human.burst`, 0.2) | 60 in 10 min | 20 in 10 min | no cap |
+| actions offered at attach (`human.offer`, 0.2) | none | none | none |
 | `human.yieldMs` | 600 ms | 800 ms | 400 ms |
 | grant `ttlMs` / `idleMs` | 8 h / 30 min | 2 h / 15 min | 8 h / 5 min |
 | `rates` per second: observe, act, ui, cursor, show, nav, chat | 30, 30, 60, 120, 30, 2, 10 | 20, 20, 40, 60, 20, 1, 5 | 20, 10, 0, 60, 10, 0, 0 |

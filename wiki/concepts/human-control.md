@@ -12,6 +12,8 @@ The indicator names each agent the way every part of the overlay does: the name 
 
 What the person loosened stays in sight. While an agent's level is not `ask`, the indicator shows that level: a chip with its name, and a dot that is amber for `auto` and red for `bypass`. While a rule of the person waives a prompt, the indicator shows that too ("1 rule"), and an approval the page remembers is counted on the same chip ("1 approved"). New chat messages show as a count on the indicator; the panel never opens by itself.
 
+What waits for the person stays in sight too (0.2): the indicator counts the requests in the waiting list ("1 waiting"), and with nobody attached and a request to connect waiting it is shown for that alone, reads "An AI agent is waiting to connect", and opens the panel. See [Requests that wait](./waiting-requests.md).
+
 The indicator, like the consent prompt, lives in a closed shadow root owned by the driver and acts on trusted input only: an event the browser made for input of the person and is delivering to the control it was meant for. Neither an agent nor synthetic events can press its buttons. Pause and Stop work without the hub's cooperation: the page enforces them itself.
 
 This keeps agents out, and events that a script makes or borrows. It does not keep out script that runs in the page itself: see [What script in the page can do](#what-script-in-the-page-can-do) below.
@@ -61,7 +63,7 @@ Whenever the overlay cannot be shown where the person can see and use it, every 
 
 No wait of the overlay relies on a timer firing. The arming delays, the lock after typing, the cool-off and the deadline of a prompt are times compared with the clock when a click, a key or a request arrives, because timer ids belong to the document and anything that shares the document can clear them. A timer that never fires may leave something on screen; it never leaves anything answerable or running that would not be so otherwise.
 
-![Indicator with Pause and Stop above a modal dialog](https://github.com/offensiveadhd/reins/blob/main/docs/demo/5-indicator-over-modal-dialog.jpg)
+![The indicator in the corner: AI connected: “Barista AI” (a3) with a 1 waiting chip, next to Pause and Stop](https://github.com/offensiveadhd/reins/blob/main/docs/demo/5-indicator-waiting.jpg)
 
 For the same reason the driver refuses to connect inside a frame: the page around a frame could cover the indicator. See [Policy profiles](./policy-profiles.md#frames).
 
@@ -80,6 +82,13 @@ There is a boundary where the driver does not share a realm with the page. In an
 
 The full text is "The overlay and the page" in [section 12 of the specification](../reference/specification.md#12-policy), and "Script in the page's own JavaScript realm" under [What Reins does not protect against](../reference/security-model.md#what-reins-does-not-protect-against).
 
+## Drawing the person's eye
+
+(0.2) A person who is working in another window sees neither a card nor the indicator. The driver tells its app how many consent prompts are showing or queued and how many requests wait, whenever either number changes (`driver.on('attention', fn)`, `{asking, waiting}`), so that the app can flash its taskbar entry or raise a notification of its own. The event holds the two counts and nothing an agent wrote: no name, no action, no reason. The driver itself changes nothing of the page for it, not the title and not the icon, and what moves the counts is bounded: one prompt per agent and four in all, the cool-off after every prompt that was not approved, and the caps of the waiting list.
+
+What the repository's apps do with it: the Electron example flashes the window's taskbar button and puts the count on the app's icon while the window is not in front, and takes no focus ([Electron: build it in](../guides/electron.md)); `reins-electron` prints one line with the terminal's bell for an adopted app, since a debugging connection cannot flash the app's button ([Adopt an Electron app](../guides/adopting-an-electron-app.md)); the Hermes Desktop plugin raises one desktop notification with fixed words ([Claude and Hermes](../guides/claude-and-hermes.md)). The notice after a refusal is not this: it is the page's own, for the person at the page.
+
+## What an agent writes is labelled
 ## What an agent writes is labelled
 
 Toasts are agent-written, so each one carries a caption naming the agent that sent it. Agent text is inserted as text, with invisible and look-alike characters shown as escapes.

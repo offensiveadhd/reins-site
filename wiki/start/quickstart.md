@@ -59,22 +59,22 @@ The script, `examples/kiosk/agent-demo.mjs`, prints each step in its terminal:
 8. It observes again and prints the delta: only what changed since step 3.
 9. It sends a chart from a file to the app's `insights` view. The data never passes through a model.
 10. It circles the total with the live pointer stream.
-11. It asks to place the order, a sensitive action. The page asks you.
+11. It asks to place the order, a sensitive action. The page asks you. Press "Later", or do nothing for a minute, and the request waits in the panel ("1 waiting" on the indicator): this step waits with it, and the order is placed once you allow it there.
 12. It tries a dangerous action and a private field. Both stay out of reach.
 13. It says goodbye, hides the cursor and detaches.
 
 Whatever the page's policy refuses is printed and the script carries on.
 
-![The page asks before the agent may attach](https://github.com/offensiveadhd/reins/blob/main/docs/demo/1-attach-consent.jpg)
+![The attach card: “Barista AI” (a3) wants to control this page, the five scopes it asks for, under Without asking each time an unticked box for order.submit, and Deny, Later and Allow](https://github.com/offensiveadhd/reins/blob/main/docs/demo/1-attach-consent-offer.jpg)
 
-![A sensitive action waits for the person](https://github.com/offensiveadhd/reins/blob/main/docs/demo/4-action-consent.jpg)
+![The card for order.submit, marked sensitive, over the filled-in order: goes to the waiting list in 59 s, Deny and Later on the left, Always allow and Allow on the right](https://github.com/offensiveadhd/reins/blob/main/docs/demo/4-action-consent-later.jpg)
 
 While the agent is attached, the indicator in the corner names it, with Pause and Stop. Try both. Pause holds every command that changes the page; Stop revokes the agent's access.
 
 > [!NOTE]
-> The film and these stills were recorded before the panel existed. Today the text of the indicator is a button that opens it, and the card for an action has a third button, "Always allow".
+> The film (45 s) and these stills are the second cut, for protocol 0.2. The film follows one session: the attach card with its offer, the order card put off with "Later", "1 waiting" on the indicator, Review and Allow in the panel, and the order placed on the agent's repeat; the stills add the panel's waiting list and levels and the notice after a refusal. There is no Pause in the film; try it yourself.
 
-![Indicator with Pause and Stop above a modal dialog](https://github.com/offensiveadhd/reins/blob/main/docs/demo/5-indicator-over-modal-dialog.jpg)
+![The indicator in the corner: AI connected: “Barista AI” (a3) with a 1 waiting chip, next to Pause and Stop](https://github.com/offensiveadhd/reins/blob/main/docs/demo/5-indicator-waiting.jpg)
 
 ## Change how much it asks
 

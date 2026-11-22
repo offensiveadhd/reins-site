@@ -1,5 +1,5 @@
 {
-  "reins": "0.1",
+  "reins": "0.2",
   "generator": "conformance/tools/make-vectors.mjs",
   "title": "Levels, rules and the decision for an act request",
   "spec": "SPEC.md section 12, \"Levels and rules\"",

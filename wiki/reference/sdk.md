@@ -43,22 +43,25 @@ interface Driver {
   notify(name?: string): void        // an exposed state changed
   connect(): Promise<void>           // resolves once the hub has welcomed the surface
   disconnect(): void
-  on(event: 'status' | 'attach' | 'detach' | 'command' | 'level' | 'rule' | 'scopes' | 'chat', fn: (e: any) => void): () => void
+  on(event: 'status' | 'attach' | 'detach' | 'command' | 'level' | 'rule' | 'scopes' | 'chat' | 'attention', fn: (e: any) => void): () => void
   readonly status: 'idle' | 'connecting' | 'ready' | 'controlled' | 'paused' | 'offline'
   readonly manifest: Manifest
   readonly policy: Policy
   readonly hubVerified: boolean      // the session is sealed, or the app supplied the link
+  readonly hubProtocol: string | undefined   // the protocol version spoken with the hub while connected (section 16)
   agents(): AttachedAgent[]          // a copy: each attached agent with what the person set for it
   pause(): void; resume(): void; stop(): void
 }
-interface AttachedAgent { agent: AgentInfo; level: Level; scopes: Scope[]; granted: Scope[]; rules: Record<string, Decision> }
+interface AttachedAgent { agent: AgentInfo; level: Level; scopes: Scope[]; granted: Scope[]; rules: Record<string, Decision>; timed: Record<string, number> }   // timed: when each rule `allow` that ends by itself does, in epoch milliseconds
+interface Attention { asking: number; waiting: number }   // prompts showing or queued; requests in the waiting list that still need an answer
 interface CommandContext { agent: AgentInfo; scopes: Scope[] }
 interface ConsentRequest { kind: 'attach' | 'action'; agent: AgentInfo; scopes?: Scope[]; action?: ActionDef; args?: unknown; reason?: string; hubVerified?: false; kept?: string[] }   // kept: on an attach, what the person tightened for this agent before and that stays, one line each
 ```
 
+
 Actions, views and state are registered before `connect()`. `createDriver` throws when the profile is `kiosk` and the driver would dial a hub without a `key`. `connect()` rejects with `E_DENIED`, and connects to nothing, in a page inside a frame whose policy does not set `framed`.
 
-The events `level`, `rule` and `scopes` fire when the person changes one in the panel, and `agents()` returns each attached agent with what the person set for it. The API only reads them: nothing in it sets a level, a rule or a scope switch, and no option opens the panel. The event `chat` says who posted a message and how long it is, not its text, and nothing in the API posts a message or reads the transcript.
+The events `level`, `rule` (with `ms` on a rule `allow` set for a time) and `scopes` fire when the person changes one in the panel, and `agents()` returns each attached agent with what the person set for it, `timed` saying when each rule for a time ends. The event `attention` (0.2) fires when the number of consent prompts showing or queued, or of requests that wait, changes: two counts and nothing an agent wrote, for an app to flash its taskbar entry or raise a notification; the driver changes nothing of the page for it. `hubProtocol` is the protocol version spoken with the hub. The policy keys of 0.2 (`consent.waitMs`, `human.offer`, `human.allowMs`, `human.burst`) are the page's own; with an app's own `consent` handler there is no waiting list, no offer and no notice after a refusal. The API only reads them: nothing in it sets a level, a rule or a scope switch, and no option opens the panel. The event `chat` says who posted a message and how long it is, not its text, and nothing in the API posts a message or reads the transcript.
 
 Guides: [Make an app drivable](../start/make-an-app-drivable.md), [Writing good actions and risk tiers](../guides/actions-and-risk.md).
 
@@ -67,14 +70,16 @@ Guides: [Make an app drivable](../start/make-an-app-drivable.md), [Writing good 
 `@offensiveadhd/reins/agent`, also exported by the kit. Node and browser.
 
 ```ts
-connect(options: { url?: string; link?: Link; kid?: string; key?: string; name?: string }): Promise<ReinsClient>
+connect(options: { url?: string; link?: Link; kid?: string; key?: string; name?: string; versions?: readonly string[] }): Promise<ReinsClient>
 isHandshakeError(e: unknown): boolean            // connect threw e during the handshake: its message came from an unverified peer
 
 interface ReinsClient {
   readonly session: string
+  readonly version: string                         // the protocol version this connection speaks (section 16)
   info(): Promise<HubInfo>
   surfaces(): Promise<SurfaceInfo[]>
-  attach(s: string, opts?: { scopes?: Scope[]; reason?: string }): Promise<SurfaceHandle>
+  attach(s: string, opts?: { scopes?: Scope[]; reason?: string; wait?: boolean | number }): Promise<SurfaceHandle>   // wait: see "requests that wait" below
+  waiting(): Array<WaitingRequest & { s: string }>   // attach requests of this connection that wait for the person
   ping(): Promise<number>
   on(event: 'surface' | 'close', fn: (e: any) => void): () => void
   close(): void
@@ -90,7 +95,8 @@ interface SurfaceHandle {
   read(h?: Target, max?: number): Promise<string>
   readText(h?: Target, max?: number): Promise<{ text: string; truncated: boolean }>   // read, with whether it was cut at max
   state(name?: string): Promise<Record<string, unknown>>
-  act<R = unknown>(action: string, args?: object): Promise<R>
+  act<R = unknown>(action: string, args?: object, opts?: { wait?: boolean | number }): Promise<R>
+  waiting(): WaitingRequest[]                      // requests of this grant that wait for the person, with the answer where it came
   click(h: Target): Promise<void>
   type(h: Target, text: string, opts?: { clear?: boolean; enter?: boolean }): Promise<void>
   select(h: Target, value: string): Promise<void>
@@ -102,7 +108,7 @@ interface SurfaceHandle {
   pointer(): Promise<PointerStream>
   chat: { say(text: string, opts?: { to?: string }): Promise<{ id: number }>; read(opts?: { since?: number; max?: number }): Promise<{ messages: ChatMessage[]; next: number }>; status(state: 'idle' | 'thinking' | 'working', note?: string): Promise<void> }
   subscribe(topics: Topic[]): Promise<void>
-  on(event: Topic, fn: (d: any) => void): () => void
+  on(event: Topic | 'answer', fn: (d: any) => void): () => void   // 'answer': an AnswerEvent for a waiting request of this grant
   detach(): Promise<void>
 }
 interface PointerStream { push(x: number, y: number, dt?: number): void; end(): Promise<void>; readonly stats: { sent: number; dropped: number } }
@@ -111,6 +117,8 @@ interface PointerStream { push(x: number, y: number, dt?: number): void; end(): 
 `connect` reads the key from `options.key`, else `REINS_TOKEN`, else the file named by `REINS_TOKEN_FILE`, else the token file that the running hub at `options.url` announced in the Reins folder, else `.reins/token` in the working directory (Node only).
 
 `attach` asks for `observe`, `act`, `cursor` and `show` unless told otherwise: an agent that wants to be in the chat room names `chat`. `grant.scopes` holds the scopes in force and follows the person's switches; `level` and `rules` hold what the person last set. An agent cannot change any of it.
+
+**Requests that wait** (0.2). `act` and `attach` may be answered `E_WAITING`: the person has not answered, the request waits in their window, nothing ran. By default the SDK then waits for the answer up to ten minutes, or as long as the request stays in the list if that is shorter, and once it is allowed repeats the same request with its ticket; a refusal, or no answer in time, is `E_CONSENT`. `wait: false` throws the `WaitingError` at once (`ticket`, `ms`, `action`, and the wire's `code` and `data`), and a number waits at most that many milliseconds. The SDK keeps each ticket with the request it stands for, so the same call made again is the repeat; `waiting()` on the handle and on the client list what waits, and `on('answer', ...)` gets each answer. A grant that ends, or a connection that closes, ends a wait with `E_NOT_ATTACHED`. `ReinsClient.version` is the protocol version of the connection, and `connect({ versions })` limits an agent to some of the versions it speaks; a hub on 0.1 never produces `E_WAITING`. See [Requests that wait](../concepts/waiting-requests.md) and [Protocol versions](./protocol-versions.md).
 
 Guide: [Drive it from Node](../start/drive-from-node.md).
 
@@ -130,6 +138,7 @@ interface BrokerConfig {
   audit?: AuditSink
   auditKey?: string                              // keys the audit chain with HMAC-SHA256
   maxSurfaces?: number; maxAgents?: number; maxStreams?: number
+  versions?: string[]                            // the versions offered in challenge.v: some of SUPPORTED_VERSIONS; default all
   surfaceAdmission?: { rate?: number; burst?: number }   // per origin; defaults 2/s, 2 x maxSurfaces
   agentAdmission?: { rate?: number; burst?: number }     // per credential; defaults 2/s, 20
   now?: () => number
@@ -210,6 +219,7 @@ reinsMain(options: {
   accept(link: Link, meta: { origin: string; vouched: true }): void   // (link, meta) => broker.accept(link, meta)
   channel?: string                                             // IPC channel, default "reins"
   onRefused?(reason: string, event: IpcMainEventLike): void
+  attention?: boolean | { flash?: boolean; app?: App }         // flash the window's taskbar button and count on the app's icon while a request waits and the window is not focused; off by default
 }): ReinsMain
 interface ReinsMain {
   allow(target: BrowserWindow | WebContents, options?: {
@@ -226,6 +236,7 @@ exposeReins(electron: { contextBridge; ipcRenderer }, win?: Window, channel?: st
 
 // @reins/electron/renderer: the page (also dist/bundle/reins-electron.js)
 electronLink(options?: { timeoutMs?: number; window?: Window }): Promise<Link>   // E_GONE without the preload, E_DENIED when refused, E_TIMEOUT
+electronAttention(driver: Driver, options?: { window?: Window }): () => void      // passes the driver's attention counts to the main process: two numbers, no text; returns a function that stops it
 
 // @reins/electron/adopt: Node, for an app that was not built for Reins
 class Cdp { constructor(t: CdpTransport); send<R>(method: string, params?: object, sessionId?: string): Promise<R>; on(fn: (e: CdpEvent) => void): () => void; onClose(fn: () => void): void; close(): void; readonly closed: boolean }
@@ -288,6 +299,8 @@ allowRulePermitted(risk: Risk, offered: Level[]): boolean      // may the rule `
 actionDecisions(policy: Policy, actions: { name: string; risk: Risk }[]): Record<string, Decision>   // what a hub sends in attach as `decisions`
 hubDecision(decisions: unknown, name: string): Decision        // what a surface reads from it: `confirm` for anything missing or malformed
 keptSettings(v: unknown, granted: Scope[], actions: Iterable<string>): { level?: 'strict'; rules: Map<string, 'confirm' | 'deny'>; off: Scope[] }   // what a hub reads from `kept` in an attach answer: only what tightens
+offeredActions(q: { offer: string[]; actions: { name: string; risk: Risk; base: Decision }[]; offered: Level[]; kept?: { level?: 'strict'; rules?: { has(name: string): boolean } } }): string[]   // section 12, offers at attach
+burstStep(runs: number[], now: number, cap: { max: number; perMs: number } | false): { ask: boolean; n: number; runs: number[] }   // section 12, the rate cap
 stricter(a: Decision, b: Decision): Decision
 capScopes(requested: Scope[], ...caps: (Scope[] | undefined)[]): Scope[]   // intersection, canonical order
 methodScope(m: string): Scope | undefined
@@ -362,8 +375,15 @@ interface PeerHandlers {
   flow?(frame: FlowFrame): void
   close?(code: ErrorCode | 'OK' | 'E_GONE', msg?: string): void
 }
-clientConnect(link: Link, hello: { role: Role; name: string; kid?: string; key?: string; surface?: SurfaceHello }, opts?: { timeoutMs?: number }): Promise<{ welcome: WelcomeFrame; link: Link; sealed: boolean }>
+clientConnect(link: Link, hello: { role: Role; name: string; kid?: string; key?: string; surface?: SurfaceHello }, opts?: { timeoutMs?: number; versions?: readonly string[] }): Promise<{ welcome: WelcomeFrame; link: Link; sealed: boolean }>   // versions: speak only these of SUPPORTED_VERSIONS; welcome.v is the version of the link
 clientHandshake(link, hello, opts?): Promise<WelcomeFrame>     // unauthenticated sessions only; rejects when given a key
+
+// protocol versions (section 16)
+pickVersion(offered: unknown, mine?: readonly string[]): string | undefined   // the first version of the hub's list that is in `mine`
+speaks01(v: unknown): boolean                                  // the link negotiated a version before 0.2
+V01                                                            // what 0.1 has: scopes, methods, events by topic and kind, attach fields, error codes
+scopesIn(v, scopes): Scope[]; methodIn(v, m): boolean; eventIn(v, topic, d): boolean   // what exists on a link of version v
+errorIn(v, e: ReinsError): ReinsError                          // the error as a link of version v has it: E_WAITING is E_CONSENT on 0.1
 
 // sealed sessions
 deriveSealKeys(key: string, t: { nonce; cnonce; challengeText; helloText; welcomeText }, side: 'peer' | 'hub'): Promise<SealKeys>   // directional keys from the secret and the transcript; E_AUTH on a text that is not well-formed

@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>What's new in 0.2 · Reins</title>
+<meta name="description" content="Protocol 0.2 next to 0.1, requests that wait in the panel instead of failing, offers on the attach card, a rule for a time, the rate cap, and what a peer on 0.1 still gets. From the repository's changelog.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/community/whats-new-0.2.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="What's new in 0.2">
+<meta property="og:description" content="Protocol 0.2 next to 0.1, requests that wait in the panel instead of failing, offers on the attach card, a rule for a time, the rate cap, and what a peer on 0.1 still gets. From the repository's changelog.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/community/whats-new-0.2.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="../concepts/roles-and-trust.html">Roles and trust</a></li><li><a href="../concepts/transports-and-framing.html">Transports and framing</a></li><li><a href="../concepts/handshake.html">Handshake and sealing</a></li><li><a href="../concepts/manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="../concepts/grants-and-scopes.html">Grants and scopes</a></li><li><a href="../concepts/policy-profiles.html">Policy profiles</a></li><li><a href="../concepts/consent.html">Consent</a></li><li><a href="../concepts/waiting-requests.html">Requests that wait</a></li><li><a href="../concepts/human-control.html">Human control</a></li><li><a href="../concepts/permission-levels.html">Permission levels</a></li><li><a href="../concepts/observation.html">Observation</a></li><li><a href="../concepts/cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="../concepts/rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="../concepts/audit-log.html">The audit log</a></li><li><a href="../concepts/chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/protocol-versions.html">Protocol versions</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="./contributing.html">Contributing</a></li><li><a href="./whats-new-0.2.html" aria-current="page">What's new in 0.2</a></li><li><a href="./changelog.html">Changelog</a></li><li><a href="./protocol-changes.html">Proposing a protocol change</a></li><li><a href="./vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="./faq.html">FAQ</a></li><li><a href="./glossary.html">Glossary</a></li><li><a href="./showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#community">Community</a></li><li aria-current="page">What's new in 0.2</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>What's new in 0.2</h1>
+        <p class="lede">Protocol 0.2 next to 0.1, requests that wait in the panel instead of failing, offers on the attach card, a rule for a time, the rate cap, and what a peer on 0.1 still gets. From the repository's changelog.</p>
+        
+      </header>
+      <h2 id="in-one-paragraph">In one paragraph <a class="anchor" href="#in-one-paragraph" aria-label="Link to the section In one paragraph">#</a></h2>
+<p>Protocol 0.2 is the version this build of the package speaks (0.2.0). A hub, an agent and a page of this version still speak 0.1 with a peer that knows no other: the hub lists both in its challenge, newest first, and each link has its own version. What 0.2 adds, in the person's hands, is that a request they did not answer in time, or put off with &quot;Later&quot;, waits for them in the panel instead of failing; offers on the attach card; an Allow rule for a time; a cap on how often an action runs unasked; and a notice after a refusal. On the wire it adds the error <code>E_WAITING</code> with a ticket, the ticket on a repeated request, the event kind <code>answer</code>, <code>v</code> on the attach the surface receives, and <code>SurfaceInfo.v</code>. The pages that explain each: <a href="../concepts/waiting-requests.html">Requests that wait</a>, <a href="../concepts/permission-levels.html#offers-on-the-attach-card">Permission levels</a>, <a href="../reference/protocol-versions.html">Protocol versions</a>.</p>
+<p>The text below is the entry for 0.2.0 of the repository's <a href="./changelog.html">changelog</a>, as it is in the file.</p>
+<h2 id="the-changelog-entry-for-020">The changelog entry for 0.2.0 <a class="anchor" href="#the-changelog-entry-for-020" aria-label="Link to the section The changelog entry for 0.2.0">#</a></h2>
+<p>Protocol 0.2. A hub, an agent and a page of this version still speak protocol 0.1 with a
+peer that knows no other.</p>
+<h3 id="for-the-person-at-the-page">For the person at the page <a class="anchor" href="#for-the-person-at-the-page" aria-label="Link to the section For the person at the page">#</a></h3>
+<ul>
+<li>A request you did not answer in time, or put off with &quot;Later&quot;, waits in the panel
+instead of failing: a &quot;Waiting for your answer&quot; list, where you review, allow, refuse or
+discard it. An allowed request runs when the agent asks again; nothing runs on your
+typing in the chat.</li>
+<li>The indicator &quot;AI connected&quot; is a button that opens a panel. For each attached agent it
+has a permission level (<code>strict</code>, <code>ask</code>, <code>auto</code>, <code>bypass</code>), a rule for each of the app's
+actions (Allow, Ask, Block), a switch for each scope of the grant, and a list of what
+the agent did.</li>
+<li>What you tightened for an agent stays for its next connection: the level <code>strict</code>, the
+rules Ask and Block, and the scopes you switched off. What lets an agent do more ends
+with the grant.</li>
+<li>A Chat tab in the same panel. You type to the agent that drives the page, and it answers
+there. What you type approves nothing: an action that needs your approval still asks on
+its own prompt.</li>
+</ul>
+<h3 id="for-apps">For apps <a class="anchor" href="#for-apps" aria-label="Link to the section For apps">#</a></h3>
+<ul>
+<li>A page reports what the person set to the hub, and an app can read it (<code>driver.agents()</code>,
+the events <code>level</code>, <code>rule</code>, <code>scopes</code> and <code>chat</code>).</li>
+<li><code>driver.hubProtocol</code> is the protocol version the page speaks with its hub.</li>
+<li>An Electron app can be a surface without a socket on the page side, and <code>reins-electron</code>
+adopts a running Electron app (docs/ELECTRON.md).</li>
+</ul>
+<h3 id="for-agents">For agents <a class="anchor" href="#for-agents" aria-label="Link to the section For agents">#</a></h3>
+<ul>
+<li>A request the person has not answered yet is <code>E_WAITING</code> with a ticket (<code>data: {tk, ms}</code>),
+not a refusal: nothing ran. The SDK waits for the person's answer by default, up to ten
+minutes, and repeats an allowed request once with its ticket (<code>handle.act(..., { wait })</code>, <code>client.attach(..., { wait })</code>, <code>WaitingError</code>, <code>handle.waiting()</code>, the <code>answer</code> event). The MCP tools say in
+plain words that the request waits, for how long, and how to wait for the answer (<code>wait</code>
+on <code>reins_act</code> and <code>reins_attach</code>); a <code>[reins]</code> notice tells the answer; <code>reins_surfaces</code>
+counts what waits. The <code>reins</code> command waits for the answer unless told <code>--no-wait</code>.</li>
+<li>New scope <code>chat</code> with the methods <code>chat.say</code>, <code>chat.read</code> and <code>chat.status</code>, and the tool
+<code>reins_chat</code>. <code>reins-tools chat-serve</code> runs a command for each message of the person.</li>
+<li>An agent is told what the person set for its grant: <code>evt user</code> with the kinds <code>level</code>,
+<code>rule</code> and <code>relay</code>, and <code>evt grant {kind:&quot;scopes&quot;}</code> when a scope is switched. The SDK
+keeps <code>handle.level</code>, <code>handle.rules</code> and <code>handle.grant.scopes</code> current, and the MCP tools
+say it as a <code>[reins]</code> notice with the next answer.</li>
+<li>The tool <code>reins_read</code> returns the text of an element or of the page, and the state the
+app exposes.</li>
+<li>An agent with a shell needs no registration: the hub leaves a launcher in the Reins
+folder that runs the same tools the MCP adapter has (<code>reins-tools</code>).</li>
+<li><code>ReinsClient.version</code> is the protocol version of the connection, and <code>SurfaceInfo.v</code> the
+version each page speaks. <code>reins_surfaces</code> marks a page on 0.1 with <code>protocol=0.1</code>.</li>
+</ul>
+<h3 id="for-whoever-runs-a-hub">For whoever runs a hub <a class="anchor" href="#for-whoever-runs-a-hub" aria-label="Link to the section For whoever runs a hub">#</a></h3>
+<ul>
+<li>The hub checks every ticket before it forwards a request: a ticket that is not the
+agent's own for that surface and that request is refused at the hub, and a ticket is
+used once. It relays the person's answer only for a ticket it gave, sends the surface the
+agent's protocol version with every attach, withdraws an attach it stopped waiting for or
+whose agent left (<code>detach {why:&quot;hub&quot;}</code>), and records waits, answers and repeated requests
+with their ticket. It keeps at most 3 tickets of one agent on one page and 16 in all, and
+answers <code>E_BUSY</code> over that.</li>
+<li>The hub prints the protocol versions it offers when it starts, and each <code>connect</code> record
+of the audit log has <code>v</code>, the version that connection speaks.</li>
+<li>What the person set for a grant is in the audit log as records of kind <code>person</code>. A chat
+message is on record by its length and its digest, never by its text.</li>
+<li><code>versions</code> in the hub's configuration limits it to some of the versions it speaks.</li>
+</ul>
+<h3 id="compatibility-with-01">Compatibility with 0.1 <a class="anchor" href="#compatibility-with-01" aria-label="Link to the section Compatibility with 0.1">#</a></h3>
+<p>The hub lists <code>0.2</code> and <code>0.1</code> in its challenge, and a peer takes the first one it speaks.
+On a link that speaks 0.1 neither end uses what 0.2 added. Nothing has to be changed on
+the side that stays on 0.1.</p>
+<ul>
+<li><strong>A 0.1 agent on a 0.2 hub</strong> works as before. It has no chat. It is not told the level,
+the rules or a scope switch: a request the person no longer allows is refused
+(<code>E_SCOPE</code>, <code>E_CONSENT</code>), as a refusal always was. The hub does not send it
+<code>evt grant {kind:&quot;scopes&quot;}</code>, because the 0.1 SDK ends its handle on any <code>grant</code> event.</li>
+<li><strong>A 0.1 page on a 0.2 hub</strong> works as before. Agents get no chat there, and the hub takes
+no level, rule or scope switch from it.</li>
+<li><strong>A 0.2 agent on a 0.1 hub</strong> has no chat (the SDK refuses the call with
+<code>E_UNKNOWN_METHOD</code> and asks for no <code>chat</code> scope) and is not told what the person set.</li>
+<li><strong>A 0.2 page on a 0.1 hub</strong> shows its panel, and what the person sets there holds on the
+page. The hub and the agent are not told, the levels <code>auto</code> and <code>bypass</code> are not
+offered, chat is off, and the page cannot recognise an agent that comes back.</li>
+<li>The manifest a 0.2 driver sends says <code>reins: &quot;0.2&quot;</code>. A manifest digest pinned at a hub
+(<code>surfaces.pins</code>) for a 0.1 build of the same app has to be pinned again.</li>
+<li>The package name, the WebSocket subprotocol (<code>reins.v1</code>), the keys and the token file
+are unchanged.</li>
+</ul>
+<h2 id="where-to-read-on">Where to read on <a class="anchor" href="#where-to-read-on" aria-label="Link to the section Where to read on">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>What changed</th>
+<th>Where it is explained</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A request that waits, &quot;Later&quot;, the ticket, <code>E_WAITING</code></td>
+<td><a href="../concepts/waiting-requests.html">Requests that wait</a>, <a href="../concepts/consent.html">Consent</a></td>
+</tr>
+<tr>
+<td>Offers at attach, a rule for a time, the rate cap, the notice after a refusal</td>
+<td><a href="../concepts/permission-levels.html">Permission levels</a></td>
+</tr>
+<tr>
+<td>The <code>attention</code> event, the taskbar flash and badge in Electron</td>
+<td><a href="../concepts/human-control.html#drawing-the-persons-eye">Human control</a>, <a href="../guides/electron.html">Electron: build it in</a></td>
+</tr>
+<tr>
+<td>The Hermes plugin's offer, cap and notification</td>
+<td><a href="../guides/claude-and-hermes.html">Claude and Hermes</a>, <a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></td>
+</tr>
+<tr>
+<td>Version negotiation and what a link on 0.1 leaves out</td>
+<td><a href="../reference/protocol-versions.html">Protocol versions</a>, <a href="../reference/error-codes.html">Error codes</a></td>
+</tr>
+<tr>
+<td>The <code>wait</code> option of the SDK, the tools and the <code>reins</code> command</td>
+<td><a href="../start/drive-from-node.html">Drive it from Node</a>, <a href="../start/mcp.html">Use it from Claude Code and other MCP harnesses</a>, <a href="../reference/sdk.html">SDK API</a></td>
+</tr>
+<tr>
+<td>What the hub records: <code>v</code>, tickets, answers</td>
+<td><a href="../concepts/audit-log.html">The audit log</a></td>
+</tr>
+<tr>
+<td>The new requirements and test vectors</td>
+<td><a href="../implementers/requirements.html">Requirements index</a>, <a href="../implementers/test-vectors.html">Test vectors</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>A manifest digest pinned at a hub (<code>surfaces.pins</code>) for a 0.1 build of the same app has to be pinned again: the manifest of a 0.2 driver says <code>reins: &quot;0.2&quot;</code>. See <a href="../guides/surface-keys.html#manifest-pins">Surface keys</a>.</p>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/community/whats-new-0.2.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/community/whats-new-0.2.md</code></span><a class="md-link" href="./whats-new-0.2.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./contributing.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Contributing</span></a>
+    <a class="pager-next" href="./changelog.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Changelog</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#in-one-paragraph">In one paragraph</a></li><li class="toc-2"><a href="#the-changelog-entry-for-020">The changelog entry for 0.2.0</a></li><li class="toc-3"><a href="#for-the-person-at-the-page">For the person at the page</a></li><li class="toc-3"><a href="#for-apps">For apps</a></li><li class="toc-3"><a href="#for-agents">For agents</a></li><li class="toc-3"><a href="#for-whoever-runs-a-hub">For whoever runs a hub</a></li><li class="toc-3"><a href="#compatibility-with-01">Compatibility with 0.1</a></li><li class="toc-2"><a href="#where-to-read-on">Where to read on</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.2, package 0.2.0; this version still speaks 0.1 with a peer that knows no other. The wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

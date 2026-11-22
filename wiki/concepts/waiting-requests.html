@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; media-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Requests that wait · Reins</title>
+<meta name="description" content="A prompt nobody answered, or one the person put off with &quot;Later&quot;, is not a refusal in protocol 0.2. The request waits in the panel for ten minutes, the agent gets E_WAITING with a ticket, and an approved request runs once when the agent asks again.">
+<link rel="canonical" href="https://reins.offensiveadhd.com/wiki/concepts/waiting-requests.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Reins">
+<meta property="og:title" content="Requests that wait">
+<meta property="og:description" content="A prompt nobody answered, or one the person put off with &quot;Later&quot;, is not a refusal in protocol 0.2. The request waits in the panel for ten minutes, the agent gets E_WAITING with a ticket, and an approved request runs once when the agent asks again.">
+<meta property="og:url" content="https://reins.offensiveadhd.com/wiki/concepts/waiting-requests.html">
+<meta property="og:image" content="https://reins.offensiveadhd.com/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Reins. Let an AI agent drive your web app. You hold the reins.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafc">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f14">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/site.css">
+<script src="../../assets/theme.js"></script>
+<script type="module" src="../../assets/site.js"></script>
+</head>
+<body class="page-doc">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../wiki/index.html" aria-current="page">Wiki</a></li>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security</a></li>
+        <li><a class="nav-gh" href="https://github.com/offensiveadhd/reins"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M12 2.2a9.8 9.8 0 0 0-3.1 19.1c.5.1.7-.2.7-.5v-1.7c-2.7.6-3.3-1.3-3.3-1.3-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.8v2.7c0 .3.2.6.7.5A9.8 9.8 0 0 0 12 2.2z"/></svg><span>GitHub</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-tools">
+      <button type="button" class="tool-btn search-open needs-js" data-search-open aria-haspopup="dialog" aria-keyshortcuts="/"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span class="tool-label">Search</span><kbd aria-hidden="true">/</kbd></button>
+      <button type="button" class="tool-btn theme-toggle needs-js" data-theme-toggle aria-label="Theme: follows your system. Change theme"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path class="icon-fill" d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" stroke="none"/></svg></button>
+      <button type="button" class="tool-btn nav-toggle needs-js" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<div class="doc wrap">
+  <button type="button" class="side-toggle needs-js" data-side-toggle aria-expanded="false" aria-controls="sidebar"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"/></svg><span>Wiki pages</span></button>
+  <nav class="sidebar" id="sidebar" aria-label="Wiki">
+  <a class="side-home" href="../index.html">Wiki home</a>
+  <section class="side-group"><h2>Start</h2><ul><li><a href="../start/what-is-reins.html">What is Reins</a></li><li><a href="../start/quickstart.html">Quickstart</a></li><li><a href="../start/make-an-app-drivable.html">Make an app drivable</a></li><li><a href="../start/drive-from-node.html">Drive it from Node</a></li><li><a href="../start/mcp.html">Claude Code and MCP</a></li><li><a href="../start/shell-tools.html">Shell tools</a></li><li><a href="../start/in-tab.html">The in-tab shape</a></li></ul></section>
+<section class="side-group"><h2>Concepts</h2><ul><li><a href="./roles-and-trust.html">Roles and trust</a></li><li><a href="./transports-and-framing.html">Transports and framing</a></li><li><a href="./handshake.html">Handshake and sealing</a></li><li><a href="./manifest-and-prompt-card.html">Manifest and prompt card</a></li><li><a href="./grants-and-scopes.html">Grants and scopes</a></li><li><a href="./policy-profiles.html">Policy profiles</a></li><li><a href="./consent.html">Consent</a></li><li><a href="./waiting-requests.html" aria-current="page">Requests that wait</a></li><li><a href="./human-control.html">Human control</a></li><li><a href="./permission-levels.html">Permission levels</a></li><li><a href="./observation.html">Observation</a></li><li><a href="./cursor-and-pointer-stream.html">Cursor and the pointer stream</a></li><li><a href="./rate-limits-and-capacity.html">Rate limits and capacity</a></li><li><a href="./audit-log.html">The audit log</a></li><li><a href="./chat.html">Chat</a></li></ul></section>
+<section class="side-group"><h2>Guides</h2><ul><li><a href="../guides/kiosk-deployment.html">Kiosk deployment</a></li><li><a href="../guides/surface-keys.html">Surface keys</a></li><li><a href="../guides/actions-and-risk.html">Actions and risk tiers</a></li><li><a href="../guides/chat-in-claude-code.html">Chat from a Claude Code subagent</a></li><li><a href="../guides/chat-serve.html">Serve chat from any command-line agent</a></li><li><a href="../guides/privacy-annotations.html">Privacy annotations</a></li><li><a href="../guides/strict-csp.html">Running under a strict CSP</a></li><li><a href="../guides/troubleshooting.html">Troubleshooting</a></li><li><a href="../guides/electron.html">Electron: build it in</a></li><li><a href="../guides/adopting-an-electron-app.html">Adopt an Electron app</a></li><li><a href="../guides/claude-and-hermes.html">Claude and Hermes</a></li><li><a href="../guides/hermes-desktop-plugin.html">The Hermes Desktop plugin</a></li></ul></section>
+<section class="side-group"><h2>Reference</h2><ul><li><a href="../reference/methods.html">Methods</a></li><li><a href="../reference/events.html">Events</a></li><li><a href="../reference/error-codes.html">Error codes</a></li><li><a href="../reference/policy-fields.html">Policy fields</a></li><li><a href="../reference/limits.html">Limits</a></li><li><a href="../reference/cli.html">CLI</a></li><li><a href="../reference/sdk.html">SDK API</a></li><li><a href="../reference/protocol-versions.html">Protocol versions</a></li><li><a href="../reference/specification.html">Specification</a></li><li><a href="../reference/security-model.html">Security model</a></li><li><a href="../reference/chat-guide.html">The chat guide</a></li><li><a href="../reference/electron-guide.html">The Electron guide</a></li></ul></section>
+<section class="side-group"><h2>Implementers</h2><ul><li><a href="../implementers/writing-an-implementation.html">Writing another implementation</a></li><li><a href="../implementers/conformance-suite.html">The conformance suite</a></li><li><a href="../implementers/test-vectors.html">Test vectors</a></li><li><a href="../implementers/requirements.html">Requirements index</a></li></ul></section>
+<section class="side-group"><h2>Community</h2><ul><li><a href="../community/contributing.html">Contributing</a></li><li><a href="../community/whats-new-0.2.html">What's new in 0.2</a></li><li><a href="../community/changelog.html">Changelog</a></li><li><a href="../community/protocol-changes.html">Proposing a protocol change</a></li><li><a href="../community/vulnerability-disclosure.html">Reporting a vulnerability</a></li><li><a href="../community/faq.html">FAQ</a></li><li><a href="../community/glossary.html">Glossary</a></li><li><a href="../community/showcase.html">Showcase</a></li></ul></section>
+</nav>
+  <main id="main" class="doc-main">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="../index.html">Wiki</a></li><li><a href="../index.html#concepts">Concepts</a></li><li aria-current="page">Requests that wait</li></ol></nav>
+    <article class="prose">
+      <header class="doc-head">
+        <h1>Requests that wait</h1>
+        <p class="lede">A prompt nobody answered, or one the person put off with &quot;Later&quot;, is not a refusal in protocol 0.2. The request waits in the panel for ten minutes, the agent gets E_WAITING with a ticket, and an approved request runs once when the agent asks again.</p>
+        
+      </header>
+      <h2 id="the-problem-it-solves">The problem it solves <a class="anchor" href="#the-problem-it-solves" aria-label="Link to the section The problem it solves">#</a></h2>
+<p>A person who is not looking at the page misses a prompt. In protocol 0.1 that was a refusal after <code>consent.timeoutMs</code>: the agent got <code>E_CONSENT</code>, and the person never knew what it had asked. In 0.2, where a request can wait, nobody's absence refuses anything.</p>
+<h2 id="as-the-person-sees-it">As the person sees it <a class="anchor" href="#as-the-person-sees-it" aria-label="Link to the section As the person sees it">#</a></h2>
+<p>A prompt for an action or for an attach has one more answer, <strong>Later</strong>, on the left with Deny. Above the buttons one line says what happens if nobody answers: &quot;Goes to the waiting list in N s&quot;. Later, like Deny, is taken at once: it approves nothing. Either way the request joins the page's <em>waiting list</em>, and the card goes.</p>
+<ul>
+<li><strong>The indicator says how many wait</strong> (&quot;1 waiting&quot;). With no agent attached and a request to connect in the list, the indicator is shown for that alone: it reads &quot;An AI agent is waiting to connect&quot;, not that one is connected, and it opens the panel.</li>
+<li><strong>The panel lists them</strong> above the agents, under &quot;Waiting for your answer&quot;: for each the agent, the action's name and risk (or that the agent wants to connect), when it was asked and until when it waits. Never the arguments.</li>
+<li><strong>Review</strong> opens the request's prompt again as it was asked: the same card with the same arguments, under every rule a prompt has (the arming delays, the rule for keys, scrolling to the end, nothing an agent drew beside it). Allow there approves that one request; Deny refuses it; Later, or no answer, leaves it in the list.</li>
+<li><strong>Discard</strong> refuses a request without a card. Neither Discard nor a reviewed Deny counts toward the three refusals that revoke a grant.</li>
+<li><strong>After an approval</strong> the list says that the agent is told and that the request goes ahead when the agent asks again, until when, with <strong>Take back</strong>, which withdraws the approval the agent has not used yet.</li>
+</ul>
+<p>An entry lasts <code>consent.waitMs</code> from when it joined the list, ten minutes under <code>open</code> and <code>guarded</code>, judged by the clock; an approval lasts until then too. The <code>kiosk</code> profile has no list (<code>consent.waitMs: 0</code>): a kiosk visitor is not the owner, and a prompt nobody answers there is refused as before.</p>
+<p>The activity list shows that a request waited and what the person did with it, with the action's name and never its arguments.</p>
+<h2 id="as-the-agent-sees-it">As the agent sees it <a class="anchor" href="#as-the-agent-sees-it" aria-label="Link to the section As the agent sees it">#</a></h2>
+<p>The answer is the error <code>E_WAITING</code> with <code>data: {tk, ms}</code>: <code>tk</code> is a ticket, <code>ms</code> how long from now the request waits. Nothing ran. When the person answers, the agent is told with <code>evt user {kind:&quot;answer&quot;, tk, answer, a?}</code>: <code>answer</code> is <code>allow</code>, <code>deny</code> or <code>expired</code>, and <code>a</code> the action's name for an <code>act</code> request. An approved request is not run by the page by itself: the agent repeats the same request with the ticket, <code>act {a, args, tk}</code> or <code>surface.attach {s, scopes, reason, tk}</code>, and it runs once, without a prompt. The approval is then used up and is not remembered.</p>
+<p>The same request sent again while it waits (the same agent session, the same action with arguments equal as canonical JSON, or the same scopes for an attach) shows no new card and gets <code>E_WAITING</code> again, with the same ticket and the time left. A ticket that is unknown, used, lapsed or another agent's names nothing: such a request is put to the person like one without a ticket. An approval outranks nothing the person or a policy says: a policy <code>deny</code>, or a Block the person set meanwhile, refuses the request all the same.</p>
+<p>What each way in does with it:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>You use</th>
+<th>What happens on <code>E_WAITING</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>the agent SDK</td>
+<td><code>handle.act()</code> and <code>client.attach()</code> wait for the answer by default, up to ten minutes or as long as the request stays in the list, and repeat the request with its ticket once it is allowed. A refusal or no answer in time is <code>E_CONSENT</code>. <code>wait: false</code> throws the <code>WaitingError</code> at once (<code>ticket</code>, <code>ms</code>, <code>action</code>, <code>code</code>, <code>data</code>); a number waits at most that long. <code>handle.waiting()</code> and <code>client.waiting()</code> list what waits, and <code>on('answer', ...)</code> gets each answer. The same call made again is the repeat.</td>
+</tr>
+<tr>
+<td>the MCP adapter or the shell tools</td>
+<td>The error is in the adapter's words: that the request waits in the person's window, that nothing ran, how long it stays, and that the same call with <code>wait</code> (milliseconds, at most 150 000) waits for the answer and runs the request once it is allowed. <code>reins_act</code> and <code>reins_attach</code> take <code>wait</code>. A <code>[reins]</code> notice tells the answer with the next result, and the surface listing shows <code>waiting=N</code> for a page where N requests of this agent wait.</td>
+</tr>
+<tr>
+<td>the <code>reins</code> command</td>
+<td>Waits for the answer unless told <code>--no-wait</code> or <code>--wait &lt;ms&gt;</code>, and says that its connection, and the request with it, end with the command.</td>
+</tr>
+</tbody>
+</table></div>
+<p>What to do with it, as an agent: tell the person, in the chat if you are in it, what you asked and that it waits in their window, and do not ask them for the approval there. A chat message approves nothing; the card does.</p>
+<h2 id="when-a-request-can-wait">When a request can wait <a class="anchor" href="#when-a-request-can-wait" aria-label="Link to the section When a request can wait">#</a></h2>
+<p>All of this has to hold: the page's policy has <code>consent.waitMs</code> above 0; the page has the panel and the indicator, where the person finds the list; the prompt is the driver's own (an app's own consent handler cannot be opened again); the hub speaks 0.2, and so does the agent's own link, which the hub tells the page with <code>v</code> in <code>attach</code>; and the list has room. An agent on 0.1 could never come back with a ticket, so its request never waits, and a 0.2 hub turns an <code>E_WAITING</code> toward such an agent into <code>E_CONSENT</code> (<a href="../reference/protocol-versions.html">Protocol versions</a>).</p>
+<h2 id="bounds">Bounds <a class="anchor" href="#bounds" aria-label="Link to the section Bounds">#</a></h2>
+<ul>
+<li>The list holds at most 3 requests of one agent and 12 in all. Where a request could not join, its prompt has no Later, and with no answer it ends as <code>E_CONSENT</code>.</li>
+<li>A prompt nobody answered and one put off with Later move the <a href="./consent.html#what-keeps-prompts-honest">cool-off</a> as a timeout does, so an agent cannot throw one prompt after another by having them put off; they count as no refusal.</li>
+<li>An agent's entries end with its grant, however it ends: a <code>detach</code> for that agent, a new attach of its own that replaces the grant, Stop, the link to the hub closing. Where the agent can still be told, it is: <code>expired</code> for each entry, or <code>deny</code> after Stop.</li>
+<li>A request's time runs from when it reached the page, never longer than the hub's own wait, and is read from the clock when the person answers. No wait here relies on a timer firing: an entry past its time is gone the moment anything looks at it.</li>
+</ul>
+<h2 id="at-the-hub">At the hub <a class="anchor" href="#at-the-hub" aria-label="Link to the section At the hub">#</a></h2>
+<p>The hub relays an <code>E_WAITING</code> with <code>{tk, ms}</code> and nothing else of its data; one without a well-formed ticket and time, or on anything but <code>act</code> and <code>attach</code>, is a bad answer from the surface (<code>E_INTERNAL</code>). It keeps the ticket for that agent session and surface, with the request it was given for: at most 3 for one session on one surface and 16 in all, and over either the agent is answered <code>E_BUSY</code> instead of a ticket. A <code>tk</code> on <code>act</code> or <code>surface.attach</code> is forwarded only when it is a ticket the hub keeps for this session, this surface and this request; any other is <code>E_BAD_ARGS</code> before anything reaches the surface, in the same words whether it is unknown, another session's, used, lapsed or for another request. A ticket is used up the moment its check passes, so of two repeats at once one is forwarded. An <code>answer</code> is taken only for a ticket the hub keeps, recorded as a <code>person</code> record and relayed to that agent alone. When an agent whose attach waits leaves the hub, or the hub gives up on an attach the surface did not answer in time, the hub sends the surface <code>detach {why:&quot;hub&quot;}</code> for that agent, and the surface drops its prompt and its entries. The <a href="./audit-log.html">audit log</a> carries the ticket on the request that waited, on the repeat and on the answer.</p>
+<h2 id="what-it-does-not-protect-against">What it does not protect against <a class="anchor" href="#what-it-does-not-protect-against" aria-label="Link to the section What it does not protect against">#</a></h2>
+<p>From the security model: a request approved from the waiting list runs later than it was asked. The person approves what the card shows, as it was asked up to ten minutes earlier; the page may have changed since, and an action whose meaning depends on what is on the page acts on what is there when the agent asks again. An app whose actions are like that should give them arguments that say what is meant, or set <code>consent.waitMs</code> to 0. And a prompt on a page that did not run for longer than the hub's <code>reqTimeoutMs</code> gets its prompt after the hub told the agent <code>E_TIMEOUT</code>; the hub withdraws an attach it stopped waiting for, but cannot withdraw a single action. See <a href="../reference/security-model.html#what-reins-does-not-protect-against">What Reins does not protect against</a>.</p>
+<h2 id="try-it">Try it <a class="anchor" href="#try-it" aria-label="Link to the section Try it">#</a></h2>
+<p>In the <a href="../../playground.html">playground</a>, run the assistant and press <strong>Later</strong> when it asks to place the order. The indicator reads &quot;1 waiting&quot;, the Script tab shows <code>E_WAITING</code> with the ticket, and the Wire tab the frame. Open the panel, press Review under &quot;Waiting for your answer&quot;, and Allow: an <code>evt user</code> with <code>kind: &quot;answer&quot;</code> crosses the wire, the assistant repeats <code>act order.submit</code> with <code>tk</code>, and the order is placed. Discard instead, and the assistant gets <code>E_CONSENT</code>.</p>
+<h2 id="for-implementers">For implementers <a class="anchor" href="#for-implementers" aria-label="Link to the section For implementers">#</a></h2>
+<p>The requirements are the <code>WT-</code> entries (the surface), <code>WH-</code> (the hub) and <code>CT-</code> (a request's time) of the <a href="../implementers/requirements.html">requirements index</a>; the cases are in the test vectors <a href="../implementers/vectors/consent.html"><code>consent.json</code></a>. The normative text is &quot;Requests that wait&quot; in <a href="../reference/specification.html#12-policy">section 12 of the specification</a> and &quot;Requests that wait&quot; in <a href="../reference/specification.html#13-hub-behaviour">section 13</a>; the threats are T76 to T78 and T84 to T87 in <a href="../reference/security-model.html#threats-and-what-stops-them">Threats and what stops them</a>.</p>
+
+    </article>
+    <footer class="doc-foot">
+      <p class="edit"><a href="https://github.com/offensiveadhd/reins/edit/main/site/wiki/concepts/waiting-requests.md"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span>Edit this page on GitHub</span></a><span class="edit-path"><code>site/wiki/concepts/waiting-requests.md</code></span><a class="md-link" href="./waiting-requests.md">Markdown</a></p>
+      <nav class="pager" aria-label="Previous and next page">
+    <a class="pager-prev" href="./consent.html"><span class="pager-dir"><svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Previous</span><span class="pager-title">Consent</span></a>
+    <a class="pager-next" href="./human-control.html"><span class="pager-dir">Next <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span class="pager-title">Human control</span></a>
+  </nav>
+    </footer>
+  </main>
+  <aside class="toc" aria-label="On this page"><h2>On this page</h2><ol><li class="toc-2"><a href="#the-problem-it-solves">The problem it solves</a></li><li class="toc-2"><a href="#as-the-person-sees-it">As the person sees it</a></li><li class="toc-2"><a href="#as-the-agent-sees-it">As the agent sees it</a></li><li class="toc-2"><a href="#when-a-request-can-wait">When a request can wait</a></li><li class="toc-2"><a href="#bounds">Bounds</a></li><li class="toc-2"><a href="#at-the-hub">At the hub</a></li><li class="toc-2"><a href="#what-it-does-not-protect-against">What it does not protect against</a></li><li class="toc-2"><a href="#try-it">Try it</a></li><li class="toc-2"><a href="#for-implementers">For implementers</a></li></ol></aside>
+</div>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="../../index.html" aria-label="Reins, home"><svg class="logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="logo-rein" d="M10.6 21.4C15.6 20.6 18 17.6 18.6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="23.5" r="4.3" fill="none" stroke="currentColor" stroke-width="2.4"/><path class="logo-cursor" d="M17 2.5v16.2l4.4-4 3.1 7 2.8-1.3-3-6.8h5.9z"/></svg><span>Reins</span></a>
+      <p>An open protocol and a reference implementation. Protocol 0.2, package 0.2.0; this version still speaks 0.1 with a peer that knows no other. The wire format may change before 1.0.</p>
+      <p class="footer-small">Apache-2.0 licensed. This site makes no requests to any other host: no analytics, no web fonts, no embeds.</p>
+    </div>
+    <nav aria-label="Documentation">
+      <h2>Read</h2>
+      <ul>
+        <li><a href="../../wiki/start/what-is-reins.html">What is Reins</a></li>
+        <li><a href="../../wiki/start/quickstart.html">Quickstart</a></li>
+        <li><a href="../../wiki/reference/specification.html">Specification</a></li>
+        <li><a href="../../wiki/reference/security-model.html">Security model</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Build">
+      <h2>Build</h2>
+      <ul>
+        <li><a href="../../playground.html">Playground</a></li>
+        <li><a href="../../wiki/start/make-an-app-drivable.html">Make an app drivable</a></li>
+        <li><a href="../../wiki/implementers/writing-an-implementation.html">Write an implementation</a></li>
+        <li><a href="../../wiki/implementers/test-vectors.html">Test vectors</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Project">
+      <h2>Project</h2>
+      <ul>
+        <li><a href="https://github.com/offensiveadhd/reins">GitHub</a></li>
+        <li><a href="../../wiki/community/contributing.html">Contributing</a></li>
+        <li><a href="../../wiki/community/vulnerability-disclosure.html">Report a vulnerability</a></li>
+        <li><a href="../../llms.txt">llms.txt</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<dialog class="search" id="search" aria-label="Search the site">
+  <div class="search-box">
+    <label class="sr-only" for="search-input">Search the wiki and the specification</label>
+    <div class="search-field"><svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search the wiki and the specification" aria-controls="search-results" aria-describedby="search-status"><button type="button" class="search-close" data-search-close>Close<kbd aria-hidden="true">Esc</kbd></button></div>
+    <p class="search-status" id="search-status" role="status"></p>
+    <ol class="search-results" id="search-results"></ol>
+  </div>
+</dialog>
+</body>
+</html>

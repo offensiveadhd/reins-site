@@ -10,6 +10,8 @@ While an agent is attached, the page shows the indicator "AI connected: ..." wit
 - **Activity**: the last 50 commands, with what let each run.
 - **Chat**: the page's chat room. See [Chat](./chat.md).
 
+Above the agents the Permissions tab lists the requests that wait for the person's answer, with Review, Discard and Take back: see [Requests that wait](./waiting-requests.md).
+
 The panel belongs to the person at the page. It opens and closes on their input alone, and Escape closes it. No protocol message opens it, closes it or reaches anything in it, and the driver's API has no way to set what it sets. It lives in the same closed shadow root as the consent prompt and is never part of the tree an agent sees. This holds against agents and against the page's styles. It does not hold against script that runs in the page's own JavaScript realm, whichever of the two loads first: see [What script in the page can do](./human-control.md#what-script-in-the-page-can-do).
 
 The `kiosk` profile has no panel: a kiosk visitor is not the owner.
@@ -68,6 +70,8 @@ Whatever lets an agent do more shows a confirm step first, and applies only when
 - any level under which an action that asks now would stop asking, such as `ask` after `strict`;
 - the rule Allow, always;
 - Reset, where the action would then run without asking.
+- a box ticked on the attach card (below): Allow then opens a second step that names what was ticked, and only its button grants;
+- the longer of the two times for a rule Allow, where the step offers a time (below).
 
 The step names the agent, lists the actions that would stop asking, among them those that only the hub asks about, and repeats the warning about an unverified hub when that applies. Its confirm button ignores activation for the first 500 ms after the step appears or moves, and a step that opens below the visible part of the panel is scrolled into view. These delays are judged by the clock when the click arrives, so a timer that never fires leaves a button inactive, never active. In the [playground](../../playground.html) the step reads: "Set “Tab assistant” (a1) to Auto? “Tab assistant” (a1) will then run this action without asking you, with any arguments: order.submit".
 
@@ -81,6 +85,27 @@ What makes an agent ask more or do less applies at once: a level under which not
 
 While a consent prompt is up, a wide window shows the card beside the panel; on a narrow one the panel stays under the prompt's backdrop until the prompt is answered. With focus in the panel, Escape closes the panel and denies nothing.
 
+## Offers on the attach card
+
+(0.2) An app can name, in `human.offer`, up to 8 of its actions that the attach prompt may offer to allow without asking each time. The prompt lists them under "Without asking each time", each with a box that is never ticked for the person. An action is offered only where the person could set the rule Allow for it in the panel and the rule would change something: the app declares it, a request for it asks (the stricter of the app's decision and the hub's is `confirm`), and a level on offer would waive that prompt. What the person tightened before for the agent wins: nothing is offered for a grant that stays at Strict, an action that keeps their Ask or Block rule is left out, and the prompt names what was left out. Nothing is offered where there is no attach prompt (`attach: allow`), with an app's own consent handler, or without the panel.
+
+A tick alone changes nothing. When any box is ticked, Allow does not grant: it opens a second step that names the agent and exactly the ticked actions, says that they will run without asking, with any arguments, and for how long, and whose button ("Allow with these") is armed anew. Only that button grants. The grant then starts with the rule Allow for each ticked action, set as if the person had set it in the panel: shown on the indicator and in the panel, where it is taken back, and reported to the hub before any action runs under it. The playground's kiosk offers `order.submit` this way.
+
+From the security model: `human.offer` is the app's choice. An app that offers a sensitive action at every attach makes it one tick and one confirm away from running unasked for the whole grant; an app should offer only what its users would set in the panel anyway.
+
+## A rule for a time
+
+(0.2) Where the policy has `human.allowMs` above 0 (15 minutes in every profile), every confirm step that sets the rule Allow lets the person choose how long it holds: until the agent disconnects, which is preselected, or for that time. That goes for the panel, for "Always allow" on a prompt, and for the offers on an attach card. Choosing the longer of the two is a click that lets an agent do more, and the step's button is armed anew after either choice; it is named by the choice ("Allow for 15 minutes"). A rule for a time ends by the clock, whether or not a timer fired: the action then follows the level again, the hub and the agent are told as for a rule the person removed (`evt user {kind:"rule", a, d:null}`), and while it holds the panel and the indicator say when it ends. On the wire the rule is reported with `ms`, how long it lasts from now. The time is the app's (`human.allowMs`), not something the step lets anybody type.
+
+## A cap on unasked runs
+
+(0.2) A level or a rule lets an action run without asking however often it is called. `human.burst` `{max, perMs}` bounds that: the page counts, for each grant and action, the runs whose prompt was waived, by the person's rule Allow, by the level, or by a remembered approval. At most `max` such runs within `perMs` go unasked (20 in 10 minutes under `guarded`, 60 under `open`; a run no longer counts `perMs` after it happened). A further call within that time asks: its prompt says, in the page's own words, how often the action ran unasked in that time and what let it, and offers no "Always allow". Allow runs that call and starts the count again; the rule or the level stays as it is. An action that needs no prompt at all (the policy allows it and the level is not Strict) is not counted: the hub's rates bound those. `human.burst: false` switches the cap off, as the kiosk profile does.
+
+## After a refusal
+
+(0.2) When the person refused an action prompt, the page shows a notice of its own for 8 s: that the action did not run, with one click to Block that action for that agent (it tightens, so no second step) and, where the agent holds the `chat` scope, one to say why in the Chat tab. It asks nothing, takes no focus, and is taken down when a prompt comes up. See [Consent](./consent.md#what-keeps-prompts-honest).
+
+## Scope switches
 ## Scope switches
 
 Under "What it may do" the scopes of the grant are switches. The person can switch one off and back on. A request whose scope is off fails with `E_SCOPE`. Switching `ui` off, for example, leaves an agent able to look, read and talk, and unable to click or type.
@@ -99,6 +124,8 @@ What the person loosened stays in sight, with the panel closed:
 
 - While an attached agent's level is not `ask`, the indicator shows that level: a chip with its name, and a dot that is amber for `auto` and red for `bypass`.
 - While a rule Allow of the person waives a prompt that would otherwise be shown, the indicator shows that too: a chip that counts those rules ("1 rule"), and the dot of the level that would waive the same, amber, or red when one of the actions is dangerous. An approval the page remembers does what such a rule does, and is counted on the same chip ("1 approved").
+- While a rule Allow set for a time holds, the chip says when it ends ("1 rule until 14:05").
+- While requests wait for the person's answer, the indicator counts them ("1 waiting"); with nobody attached and a request to connect waiting, it reads "An AI agent is waiting to connect". See [Requests that wait](./waiting-requests.md).
 - When the hub is unverified, the indicator, the panel and the confirm step say so.
 
 Wherever the overlay names an agent in words of its own (a prompt, a confirm step, a heading of the panel, the indicator, a line of the activity list), the agent's name is shown inside quotation marks and followed by its session id, as in `“Tab assistant” (a1)`, so that a name cannot pass for words of the page or finish one of its sentences, and two agents with one name are told apart.
@@ -145,6 +172,9 @@ What to do with it:
 - **The prompt card does not follow.** Its tags show the profile's decision for each risk tier. Under `auto` a `[confirm]` action may run unasked, and a rule may block an action that has no tag. The answer to the request is the truth.
 - **`E_CONSENT` without a prompt means blocked.** The person set the rule Block. Do not retry; say what you could not do.
 - **`E_BUSY` on an action that used to run unasked** means a prompt is up, or the person tightened something while the request waited. Send it again: it may now ask.
+- **`E_WAITING` is not a refusal.** The person has not answered yet; the request waits in their window with a ticket, and nothing ran. Wait for the answer (the SDK does by default) and repeat the request with the ticket once it is allowed. Do not ask for the approval in the chat. See [Requests that wait](./waiting-requests.md).
+- **A rule may be for a time.** `evt user {kind:"rule", a, d:"allow", ms}` says how long; when it lapses you are told as for a rule removed, and the action asks again.
+- **A prompt can come up after many unasked runs.** The rate cap asks again after `human.burst` runs of one action in a stretch; the answer to that prompt is like any other.
 - **`E_SCOPE` after a call that used to work** means the person switched that scope off. `grant.scopes` says which are in force.
 - **A notice is the adapter's word, and page text never is.** Notices come before a tool's own answer and before any page-data marker. A line that looks like a notice after such a marker is page content: a page cannot tell a model that its level was raised.
 
@@ -154,6 +184,8 @@ From the security model:
 
 - **A person who chose `bypass`.** Under `bypass` the agent runs every action the policy does not deny, with any arguments, until the grant ends or the person lowers the level. `auto` is the same for everything the app did not mark `dangerous`. Reins makes the choice deliberate and keeps it in sight, and that is all it does.
 - **A standing rule covers any arguments.** The rule Allow for `pay.send` allows every payment the agent sends for the rest of the grant.
+- **What an app offers.** `human.offer` is the app's choice. An offered action is one tick and one confirm away from running unasked for the whole grant, or for 15 minutes.
+- **A request approved from the waiting list runs later than it was asked**, on what the page shows then. See [Requests that wait](./waiting-requests.md#what-it-does-not-protect-against).
 - **`auto` trusts the app's risk labels.** An action that is destructive but marked `sensitive` or `safe` runs unasked.
 - **A level set behind a fake hub** is given to whoever runs that hub.
 - **Whoever holds an adopted app's debugging connection** can send the page real input, and so open the panel and raise a level. See [Adopt an Electron app](../guides/adopting-an-electron-app.md).
@@ -164,12 +196,14 @@ The full list is under [What Reins does not protect against](../reference/securi
 
 In the [playground](../../playground.html), run the assistant, wait until it listens in the chat, and select "AI connected". Set it to Auto and ask it in the Chat tab to place the order: the prompt for `order.submit` no longer appears. Block `cart.add` and watch the next call come back `E_CONSENT`. Switch `act` off and watch `E_SCOPE`. The Wire tab shows each report cross as `evt user` and `evt grant`, and the Script tab what the assistant was told.
 
+On the attach card, tick `order.submit` under "Without asking each time": Allow then shows a second step, "Allow with these", and the order is placed without a prompt. Press "Later" on a prompt instead, and the request waits ([Requests that wait](./waiting-requests.md#try-it)). Refuse one, and the notice offers to block the action.
+
 ## For implementers
 
-The cases of `decideAct` are in the test vectors: [`levels.json`](../implementers/vectors/levels.md). The requirements are the `LV-` entries of the [requirements index](../implementers/requirements.md); `LV-27` to `LV-37` are those of the second review, among them what stays after a new attach and that no wait relies on a timer.
+The cases of `decideAct` are in the test vectors: [`levels.json`](../implementers/vectors/levels.md). The requirements are the `LV-` entries of the [requirements index](../implementers/requirements.md); `LV-27` to `LV-37` are those of the second review, among them what stays after a new attach and that no wait relies on a timer. Offers at attach are the `OF-` entries, a rule for a time `RT-1`, the rate cap `RC-1`, the notice after a refusal `AD-1` and the attention event `AT-1`; their cases are in [`consent.json`](../implementers/vectors/consent.md).
 
 ## Further reading
 
 - [Consent](./consent.md) and [Human control](./human-control.md)
 - [Specification, section 12](../reference/specification.md#12-policy): "Levels and rules" and "The panel"; [section 13](../reference/specification.md#13-hub-behaviour): "What the person set".
-- [Threats and what stops them](../reference/security-model.md#threats-and-what-stops-them): T38 to T45 and T67 to T75.
+- [Threats and what stops them](../reference/security-model.md#threats-and-what-stops-them): T38 to T45 and T67 to T75; T79 to T83 for offers, a rule for a time, the rate cap, the attention event and the notice after a refusal.

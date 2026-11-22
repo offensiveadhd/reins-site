@@ -10,7 +10,11 @@ No. The package is `@offensiveadhd/reins`, and it installs from Git (`npm i gith
 
 ### Is the wire format stable?
 
-Not yet. This is protocol 0.1, a first version: the wire format may change before 1.0, and a version change is announced in the handshake. See [How to propose a protocol change](./protocol-changes.md).
+Not yet. This is protocol 0.2; the wire format may change before 1.0, and a version change is announced in the handshake. 0.2 was added that way: the hub lists `0.2` and `0.1`, each link has its own version, and a hub, a page or an agent that knows only 0.1 needs no change. See [Protocol versions](../reference/protocol-versions.md) and [How to propose a protocol change](./protocol-changes.md).
+
+### What if I miss a prompt?
+
+In protocol 0.2, where the request can wait, nothing is refused: the request joins the panel's "Waiting for your answer" for ten minutes, the indicator says how many wait, and the agent is told that its request waits and that nothing ran. Review opens the card again as it was asked; Allow there approves it, and the agent repeats the request once. "Later" on a card does the same at once. On a kiosk, with an app's own consent handler, or for an agent on 0.1, a prompt nobody answers is refused as before. See [Requests that wait](../concepts/waiting-requests.md).
 
 ### What licence is it under?
 
@@ -110,7 +114,7 @@ In the token file, `.reins/token` in the folder the hub was started in, unless y
 
 Under the `guarded` profile the person approves every attach: that is the profile's purpose, and no permission level changes it. The `open` profile, for local development, allows attaches, but only when the page can verify the hub: a page without a [surface key](../guides/surface-keys.md) always asks. After you press Stop, the page also asks until it is reloaded.
 
-Prompts for actions are another matter: in the panel you can set an agent to Auto, or give one action the rule Allow, for as long as that grant lasts. What you tighten (Strict, Ask, Block, a scope switched off) stays with that agent for as long as the page is open.
+Prompts for actions are another matter: in the panel you can set an agent to Auto, or give one action the rule Allow, for as long as that grant lasts or for 15 minutes. An app can also offer actions on the attach card itself, under "Without asking each time", each unticked: tick one, and Allow opens a second step that sets the rule as the grant starts. What you tighten (Strict, Ask, Block, a scope switched off) stays with that agent for as long as the page is open.
 
 ### How does a kiosk work if nobody can approve a prompt?
 

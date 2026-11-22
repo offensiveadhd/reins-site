@@ -15,7 +15,8 @@ The hub also appends records of kind `person`:
 - one for each level, rule and scope report that changes what the hub holds for a grant: the agent, the surface, `method` (`level`, `rule` or `scopes`), the action name for a rule, `value` (the level; the rule's decision, or `none` for a rule removed; the scopes in force) and the outcome `ok`, `refused`, or `kept` for what a grant starts with because the person tightened it for that agent before;
 - one for each message of the person that it relays to an agent: `method` `chat`, the agent, the surface, `chars` (the length of the text) and `args`, a digest of the text;
 - one for a message of the person that it did not relay, with the reason as its outcome (`E_RATE`, `E_INTERNAL`, `E_TOO_LARGE`);
-- one for what the person switched for one agent in the chat: `method` `relay` and `value` `on` or `off`.
+- one for what the person switched for one agent in the chat: `method` `relay` and `value` `on` or `off`;
+- one for the person's answer to a request that waited (0.2): `method` `answer`, `value` `allow`, `deny` or `expired`, `action` the action's name, and the ticket. A rule `allow` set for a time carries `ms`, how long it lasts.
 
 A relay of an agent's words that the hub did not hand over is a record of kind `chat`: `method` `relay`, the outcome `dropped` (beyond the budget) or `refused` (the policy does not let the two hear each other), and the agent that spoke.
 
@@ -33,7 +34,9 @@ A relay of an agent's words that the hub did not hand over is a record of kind `
 | `outcome` | `ok`, an error code, `accepted`, `refused`, or for a grant end the reason it ended. |
 | `value`, `chars` | On `person` records: what the person set, and the length of a chat message. |
 | `args` | A digest of the request's parameters. Never the parameters themselves. |
-| `ms` | The duration. |
+| `ms` | The duration; on the `person` record of a rule `allow` set for a time, how long it lasts. |
+| `v` | On `connect` records: the protocol version that connection speaks (0.2). |
+| `ticket` | On a request that waited for the person (`E_WAITING`), on the request repeated with its ticket, and on the `person` record of the answer (0.2). The ticket names nothing without the session it was given to. |
 | `ref` | On the outcome of an accepted request: the `seq` of its `accepted` record. |
 | `prev`, `hash` | The chain: the hash of the record before, and this record's own. |
 

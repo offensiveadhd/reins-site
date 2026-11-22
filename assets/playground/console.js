@@ -33,7 +33,8 @@ const PRESETS = [
     items: [
       { label: 'act: cart.add (safe)', m: 'act', p: { a: 'cart.add', args: { sku: 'latte', qty: 1 } } },
       { label: 'act: cart.add with a bad argument', m: 'act', p: { a: 'cart.add', args: { sku: 'whisky' } }, note: 'Arguments are validated against the schema before any handler runs.' },
-      { label: 'act: order.submit (sensitive)', m: 'act', p: { a: 'order.submit' }, note: 'Sensitive: the page asks you under guarded and open, and refuses under kiosk.' },
+      { label: 'act: order.submit (sensitive)', m: 'act', p: { a: 'order.submit', wait: false }, note: 'Sensitive: the page asks you under guarded and open, and refuses under kiosk. Press Later, or let the card time out, and the answer is E_WAITING with a ticket: the request waits in the panel. Send the same call again once you allowed it there, and the SDK repeats it with the ticket.' },
+      { label: 'act: order.submit, waiting for your answer', m: 'act', p: { a: 'order.submit', wait: true }, note: 'The same, with the SDK\'s default: the call does not return until you answered on the card or in the panel (up to ten minutes). Answer there; the console waits.' },
       { label: 'act: order.refund (dangerous)', m: 'act', p: { a: 'order.refund', args: { order: 'A-101' } } },
     ],
   },
@@ -208,7 +209,8 @@ export function createConsole({ openAgent, ReinsError }) {
       case 'sub':
         return { call: 'page.subscribe(…)', result: (await h.subscribe(p.topics)) ?? { subscribed: p.topics } };
       case 'act':
-        return { call: `page.act("${p.a}", …)`, result: (await h.act(p.a, p.args)) ?? null };
+        // wait: false shows E_WAITING, with its ticket, at once; wait: true lets the SDK wait for the person's answer
+        return { call: `page.act("${p.a}", …, { wait: ${p.wait === true} })`, result: (await h.act(p.a, p.args, { wait: p.wait === true })) ?? null };
       case 'ui.click':
         return { call: 'page.click(…)', result: (await h.click(p.h)) ?? {} };
       case 'ui.type':
@@ -238,7 +240,7 @@ export function createConsole({ openAgent, ReinsError }) {
       case 'chat.status':
         return { call: 'page.chat.status(…)', result: (await h.chat.status(p.state, p.note)) ?? {} };
       case 'local.settings':
-        return { call: 'page.level, page.rules, page.grant.scopes, page.chatRelay', result: { level: h.level, rules: h.rules, scopes: h.grant.scopes, chatRelay: h.chatRelay } };
+        return { call: 'page.level, page.rules, page.grant.scopes, page.chatRelay, page.waiting()', result: { level: h.level, rules: h.rules, scopes: h.grant.scopes, chatRelay: h.chatRelay, waiting: h.waiting?.() ?? [] } };
       case 'nav.go':
         return { call: 'page.go(…)', result: (await h.go(p.url)) ?? {} };
       case 'stream.open':

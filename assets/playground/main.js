@@ -118,7 +118,9 @@ async function start() {
     app: { id: 'brew-kiosk', name: 'Brew Kiosk', version: '1.0.0', description: 'Self-service coffee ordering.' },
     link: tappedLink('surface'),
     // One page, so no agent navigation at all: that also keeps ?profile= out of an agent's reach.
-    policy: { profile, nav: [] },
+    // `offer`: the attach prompt offers to let the assistant place orders without asking each time,
+    // as the demo's own in-tab page does (examples/kiosk/public/inpage.js).
+    policy: { profile, nav: [], human: { offer: ['order.submit'] } },
     root: $('kiosk'),
   });
   registerActions(driver, { app, ReinsError });

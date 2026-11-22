@@ -1,12 +1,12 @@
 # Error codes
 
-> The complete list of error codes in protocol 0.1, what each means and where the specification uses it.
+> The complete list of error codes in protocol 0.2, what each means, where the specification uses it, and what E_WAITING carries.
 
 ## The codes
 
 A request that fails is answered `res {re, ok:false, e:{code, msg}}`. Error messages are short and safe to show to a model. They never contain stack traces, file paths or secrets.
 
-There are 19 codes, and the list is closed:
+There are 20 codes, and the list is closed:
 
 | code | meaning |
 |---|---|
@@ -22,6 +22,7 @@ There are 19 codes, and the list is closed:
 | `E_SCOPE` | the grant lacks the method's scope, the person switched that scope off, or no requested scope is permitted |
 | `E_DENIED` | policy says no |
 | `E_CONSENT` | the person refused or blocked the action, or the prompt timed out |
+| `E_WAITING` | 0.2: the request waits for the person's answer and nothing ran; `data` is `{tk, ms}`, the ticket of the request and how long it stays. An agent on 0.1 gets `E_CONSENT` (section 16) |
 | `E_PAUSED` | control is paused, the indicator cannot be shown, or the person is using the page |
 | `E_RATE` | a rate or admission limit, or a consent cool-off |
 | `E_NO_TARGET` | the target is not a live, exposed, enabled element, or is read-only |
@@ -31,6 +32,8 @@ There are 19 codes, and the list is closed:
 | `E_INTERNAL` | an unexpected failure, the audit log unavailable, a result that is not JSON |
 
 `bye` also takes `OK`. A receiver reads an unknown code in a `res` as `E_INTERNAL` and in a `bye` as `E_GONE`.
+
+An error may carry `data`, a JSON value that goes with its code. `E_WAITING` (0.2) is the one code that does: `data` is `{tk, ms}`, the ticket of a request that waits for the person's answer and how long it stays in their list. Nothing ran. The agent repeats the request with the ticket once the person has allowed it; a 0.2 hub sends `E_WAITING` to an agent on protocol 0.1 as `E_CONSENT`, without its `data`. See [Requests that wait](../concepts/waiting-requests.md).
 
 ## Where each is used
 
@@ -50,6 +53,7 @@ From the conformance vectors, with the section of the specification first:
 | `E_SCOPE` | 8 empty scope intersection, grant lacks scope, scope switched off by the person |
 | `E_DENIED` | 5 manifest pin; 8 attach deny; 9 act deny, private target, nav, stream.open without coordinates; 12 a chat `to` from an agent that no other agent hears |
 | `E_CONSENT` | 8 attach refused; 9 act refused; 12 third refusal revokes, the person's rule deny |
+| `E_WAITING` | 6 a request that waits for the person's answer (0.2); 16 sent to an agent on 0.1 as E_CONSENT |
 | `E_PAUSED` | 9 pause; 12 indicator not usable, the person keeps using the page |
 | `E_RATE` | 8 attach burst; 11 pointer rate; 12 cool-off; 13 token buckets and admission |
 | `E_NO_TARGET` | 9 disabled, unknown, detached, unexposed or read-only target |

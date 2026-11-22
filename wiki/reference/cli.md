@@ -74,6 +74,10 @@ options:
   --name <agent name>   name shown to the user
   --kid <id>            the credential to authenticate as (default "default"); its key
                         is the one in --token-file
+  --wait <ms>           when the person puts the request off and it waits in their window,
+                        wait at most this long for their answer (default: 10 minutes, or as
+                        long as it waits if that is shorter)
+  --no-wait             report a waiting request at once instead
 ```
 
 Each run connects, attaches with the one scope the command needs, does its work and detaches. `surfaces` does not attach. `--kid` names the credential to authenticate as. The command prints text from a page or the hub with every control character other than tab and line feed escaped as `\xNN`, so page content cannot drive your terminal.

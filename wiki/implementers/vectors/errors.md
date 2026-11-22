@@ -2,7 +2,7 @@
 
 > Test vectors: Error codes. Shown here as it is in conformance/vectors/errors.json.
 
-Protocol `0.1`. Covers: SPEC.md section 6 (the table of codes) and sections 4 to 16.
+Protocol `0.2`. Covers: SPEC.md section 6 (the table of codes) and sections 4 to 16.
 
 [Download errors.json](./errors.json): the file itself, as the conformance suite reads it.
 
@@ -22,7 +22,7 @@ The complete error code list of SPEC section 6, and numeric limits the spec stat
 
 ## codes
 
-19 entries.
+20 entries.
 
 | `code` | `where` |
 |---|---|
@@ -38,6 +38,7 @@ The complete error code list of SPEC section 6, and numeric limits the spec stat
 | `E_SCOPE` | `8 empty scope intersection, grant lacks scope, scope switched off by the person` |
 | `E_DENIED` | `5 manifest pin; 8 attach deny; 9 act deny, private target, nav, stream.open without coordinates; 12 a chat 'to' from an agent that no other agent hears` |
 | `E_CONSENT` | `8 attach refused; 9 act refused; 12 third refusal revokes, the person's rule deny` |
+| `E_WAITING` | `6 a request that waits for the person's answer (0.2); 16 sent to an agent on 0.1 as E_CONSENT` |
 | `E_PAUSED` | `9 pause; 12 indicator not usable, the person keeps using the page` |
 | `E_RATE` | `8 attach burst; 11 pointer rate; 12 cool-off; 13 token buckets and admission` |
 | `E_NO_TARGET` | `9 disabled, unknown, detached, unexposed or read-only target` |

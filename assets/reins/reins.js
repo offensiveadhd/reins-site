@@ -9,12 +9,12 @@ var __export = (target, all) => {
 };
 
 // packages/core/src/protocol.ts
-var PROTOCOL_VERSION, SUPPORTED_VERSIONS, WS_SUBPROTOCOL, DEFAULT_PORT, SCOPES, LEVELS, DEFAULT_LEVEL, ERROR_CODES, ReinsError, DEFAULT_LIMITS, MAX_MANIFEST_BYTES, MAX_ACTIONS, MAX_VIEWS, MAX_RESULT_BYTES, MAX_NAME_CHARS, MAX_VALUE_CHARS, MAX_SURFACE_SESSIONS, NAME_PATTERN, COLOR_PATTERN, HOUR, MIN, POLICY_PRESETS, CHAT_RELAY, CHAT_TO_PERSON, CHAT_STATES, CHAT_MAX_TEXT, CHAT_MAX_NOTE, CHAT_TRANSCRIPT_MAX, CHAT_READ_DEFAULT, CHAT_READ_MAX, CHAT_READ_BYTES, CHAT_STATUS_TTL_MS, UI_KEYS, METHOD_SCOPE, READ_ONLY_METHODS, CHAT_SPEAK_METHODS, TOPICS, SUBSCRIBABLE_TOPICS, AUTH_CONTEXT, SEAL_CONTEXT, SEAL_CONFIRM_MS, SEAL_KIND, SEAL_MAC_BYTES, SEAL_MAC_TEXT_LENGTH, SEAL_SEPARATOR, BIN_POINTER, PTR_FLAG_DROPPABLE, PTR_FLAG_END, PTR_HEADER_BYTES, PTR_POINT_BYTES, PTR_MAX_POINTS, PTR_INITIAL_CREDIT;
+var PROTOCOL_VERSION, SUPPORTED_VERSIONS, WS_SUBPROTOCOL, DEFAULT_PORT, SCOPES, LEVELS, DEFAULT_LEVEL, ERROR_CODES, ReinsError, DEFAULT_LIMITS, MAX_MANIFEST_BYTES, MAX_ACTIONS, MAX_VIEWS, MAX_RESULT_BYTES, MAX_NAME_CHARS, MAX_VALUE_CHARS, MAX_SURFACE_SESSIONS, NAME_PATTERN, COLOR_PATTERN, MAX_OFFERS, HOUR, MIN, POLICY_PRESETS, CHAT_RELAY, CHAT_TO_PERSON, CHAT_STATES, CHAT_MAX_TEXT, CHAT_MAX_NOTE, CHAT_TRANSCRIPT_MAX, CHAT_READ_DEFAULT, CHAT_READ_MAX, CHAT_READ_BYTES, CHAT_STATUS_TTL_MS, UI_KEYS, METHOD_SCOPE, READ_ONLY_METHODS, CHAT_SPEAK_METHODS, TOPICS, SUBSCRIBABLE_TOPICS, AUTH_CONTEXT, SEAL_CONTEXT, SEAL_CONFIRM_MS, SEAL_KIND, SEAL_MAC_BYTES, SEAL_MAC_TEXT_LENGTH, SEAL_SEPARATOR, BIN_POINTER, PTR_FLAG_DROPPABLE, PTR_FLAG_END, PTR_HEADER_BYTES, PTR_POINT_BYTES, PTR_MAX_POINTS, PTR_INITIAL_CREDIT;
 var init_protocol = __esm({
   "packages/core/src/protocol.ts"() {
     "use strict";
-    PROTOCOL_VERSION = "0.1";
-    SUPPORTED_VERSIONS = ["0.1"];
+    PROTOCOL_VERSION = "0.2";
+    SUPPORTED_VERSIONS = ["0.2", "0.1"];
     WS_SUBPROTOCOL = "reins.v1";
     DEFAULT_PORT = 7346;
     SCOPES = ["observe", "act", "ui", "cursor", "show", "nav", "chat"];
@@ -44,6 +44,8 @@ var init_protocol = __esm({
       // policy says no
       "E_CONSENT",
       // a human declined, or the consent prompt timed out
+      "E_WAITING",
+      // 0.2: the request waits for the person's answer in the surface's list; nothing ran. `data` is `{tk, ms}`
       "E_PAUSED",
       // the human paused agent control
       "E_RATE",
@@ -88,6 +90,7 @@ var init_protocol = __esm({
     MAX_SURFACE_SESSIONS = 32;
     NAME_PATTERN = /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$/;
     COLOR_PATTERN = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+    MAX_OFFERS = 8;
     HOUR = 36e5;
     MIN = 6e4;
     POLICY_PRESETS = {
@@ -108,8 +111,8 @@ var init_protocol = __esm({
         pointerRate: 4e3,
         ttlMs: 8 * HOUR,
         idleMs: 30 * MIN,
-        human: { yieldMs: 600, pause: true, stop: true, levels: ["strict", "ask", "auto", "bypass"], panel: true },
-        consent: { timeoutMs: 6e4, remember: "session" }
+        human: { yieldMs: 600, pause: true, stop: true, levels: ["strict", "ask", "auto", "bypass"], panel: true, offer: [], allowMs: 15 * MIN, burst: { max: 60, perMs: 10 * MIN } },
+        consent: { timeoutMs: 6e4, remember: "session", waitMs: 10 * MIN }
       },
       // Default for a person's own browser: the user approves every attach and every sensitive action.
       guarded: {
@@ -129,8 +132,8 @@ var init_protocol = __esm({
         pointerRate: 2e3,
         ttlMs: 2 * HOUR,
         idleMs: 15 * MIN,
-        human: { yieldMs: 800, pause: true, stop: true, levels: ["strict", "ask", "auto", "bypass"], panel: true },
-        consent: { timeoutMs: 6e4, remember: "never" }
+        human: { yieldMs: 800, pause: true, stop: true, levels: ["strict", "ask", "auto", "bypass"], panel: true, offer: [], allowMs: 15 * MIN, burst: { max: 20, perMs: 10 * MIN } },
+        consent: { timeoutMs: 6e4, remember: "never", waitMs: 10 * MIN }
       },
       // Unattended station: a fixed allowlist, no synthetic input, no navigation, nobody to ask.
       kiosk: {
@@ -150,9 +153,10 @@ var init_protocol = __esm({
         pointerRate: 2e3,
         ttlMs: 8 * HOUR,
         idleMs: 5 * MIN,
-        // A kiosk visitor is not the owner: no level to switch, no panel to open.
-        human: { yieldMs: 400, pause: true, stop: false, levels: [], panel: false },
-        consent: { timeoutMs: 3e4, remember: "never" }
+        // A kiosk visitor is not the owner: no level to switch, no panel to open, nobody to come
+        // back to a request that waits, and no prompt that a rule or a level could waive.
+        human: { yieldMs: 400, pause: true, stop: false, levels: [], panel: false, offer: [], allowMs: 15 * MIN, burst: false },
+        consent: { timeoutMs: 3e4, remember: "never", waitMs: 0 }
       }
     };
     CHAT_RELAY = ["off", "person", "on"];
@@ -716,10 +720,10 @@ function wellFormed(s) {
   return !/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/.test(s);
 }
 function proofInput(context, f) {
-  const parts = [f.role, f.kid, f.nonce, f.cnonce];
-  if (parts.some((p) => typeof p !== "string" || p.includes("\n") || !wellFormed(p))) throw new ReinsError("E_AUTH", "invalid proof fields");
+  const parts2 = [f.role, f.kid, f.nonce, f.cnonce];
+  if (parts2.some((p) => typeof p !== "string" || p.includes("\n") || !wellFormed(p))) throw new ReinsError("E_AUTH", "invalid proof fields");
   return `${context}
-${parts.join("\n")}`;
+${parts2.join("\n")}`;
 }
 async function peerProof(key, f) {
   return hmacSha256(key, proofInput(AUTH_CONTEXT.peer, f));
@@ -754,7 +758,7 @@ function clonePolicy(p) {
     actions: { ...p.actions },
     nav: [...p.nav],
     rates: { ...p.rates },
-    human: { ...p.human, levels: [...p.human.levels] },
+    human: { ...p.human, levels: [...p.human.levels], offer: [...p.human.offer], burst: p.human.burst === false ? false : { ...p.human.burst } },
     consent: { ...p.consent }
   };
 }
@@ -832,7 +836,7 @@ function resolvePolicy(input) {
   if (o.ttlMs !== void 0) p.ttlMs = positive(o.ttlMs, "ttlMs");
   if (o.idleMs !== void 0) p.idleMs = positive(o.idleMs, "idleMs");
   if (o.human !== void 0) {
-    const h = subObject(o.human, "human", ["yieldMs", "pause", "stop", "levels", "panel"]);
+    const h = subObject(o.human, "human", ["yieldMs", "pause", "stop", "levels", "panel", "offer", "allowMs", "burst"]);
     if (h.yieldMs !== void 0) p.human.yieldMs = nonNeg(h.yieldMs, "human.yieldMs");
     if (h.pause !== void 0) p.human.pause = bool(h.pause, "human.pause");
     if (h.stop !== void 0) p.human.stop = bool(h.stop, "human.stop");
@@ -842,14 +846,31 @@ function resolvePolicy(input) {
       p.human.levels = LEVELS.filter((x) => l.includes(x));
     }
     if (h.panel !== void 0) p.human.panel = bool(h.panel, "human.panel");
+    if (h.offer !== void 0) {
+      const l = h.offer;
+      if (!Array.isArray(l) || !l.every((x) => typeof x === "string" && x.length <= 64 && NAME_PATTERN.test(x))) fail("human.offer", "must list action names");
+      const names = [...new Set(l)];
+      if (names.length > MAX_OFFERS) fail("human.offer", `must list at most ${MAX_OFFERS} actions`);
+      p.human.offer = names;
+    }
+    if (h.allowMs !== void 0) p.human.allowMs = nonNeg(h.allowMs, "human.allowMs");
+    if (h.burst !== void 0) {
+      if (h.burst === false) p.human.burst = false;
+      else {
+        const b = subObject(h.burst, "human.burst", ["max", "perMs"]);
+        if (typeof b.max !== "number" || !Number.isInteger(b.max) || b.max < 1) fail("human.burst.max", "must be a positive integer");
+        p.human.burst = { max: b.max, perMs: positive(b.perMs, "human.burst.perMs") };
+      }
+    }
   }
   if (o.consent !== void 0) {
-    const c = subObject(o.consent, "consent", ["timeoutMs", "remember"]);
+    const c = subObject(o.consent, "consent", ["timeoutMs", "remember", "waitMs"]);
     if (c.timeoutMs !== void 0) p.consent.timeoutMs = positive(c.timeoutMs, "consent.timeoutMs");
     if (c.remember !== void 0) {
       if (c.remember !== "never" && c.remember !== "session") fail("consent.remember", "must be never or session");
       p.consent.remember = c.remember;
     }
+    if (c.waitMs !== void 0) p.consent.waitMs = nonNeg(c.waitMs, "consent.waitMs");
   }
   return p;
 }
@@ -903,6 +924,28 @@ function hubDecision(decisions, name2) {
 function allowRulePermitted(risk, offered) {
   if (offered.includes("bypass")) return true;
   return (risk === "safe" || risk === "sensitive") && offered.includes("auto");
+}
+function offeredActions(q) {
+  if (!q || !Array.isArray(q.offer) || !Array.isArray(q.actions)) return [];
+  if (q.kept?.level === "strict") return [];
+  const offered = Array.isArray(q.offered) ? q.offered : [];
+  const out = [];
+  for (const name2 of q.offer) {
+    if (typeof name2 !== "string" || out.includes(name2) || out.length >= MAX_OFFERS) continue;
+    const a = q.actions.find((x) => x.name === name2);
+    if (!a || DECISIONS[rank(a.base)] !== "confirm") continue;
+    if (!allowRulePermitted(a.risk === "safe" || a.risk === "sensitive" ? a.risk : "dangerous", offered)) continue;
+    if (q.kept?.rules?.has(name2)) continue;
+    out.push(name2);
+  }
+  return out;
+}
+function burstStep(runs, now4, cap) {
+  if (cap === false || !cap || !(cap.max >= 1) || !(cap.perMs > 0) || !Number.isFinite(now4)) return { ask: false, n: 0, runs: [] };
+  const kept = (Array.isArray(runs) ? runs : []).filter((t) => typeof t === "number" && now4 - t < cap.perMs);
+  if (kept.length >= cap.max) return { ask: true, n: kept.length, runs: kept };
+  kept.push(now4);
+  return { ask: false, n: kept.length, runs: kept };
 }
 function decideAct(q) {
   const base = q.c ? stricter(q.base, "confirm") : DECISIONS[rank(q.base)];
@@ -1096,12 +1139,12 @@ function canon(v, depth, stack) {
   if (Array.isArray(o)) {
     out = `[${o.map((x) => canon(x, depth + 1, stack) ?? "null").join(",")}]`;
   } else {
-    const parts = [];
+    const parts2 = [];
     for (const k of Object.keys(o).sort()) {
       const s = canon(o[k], depth + 1, stack);
-      if (s !== void 0) parts.push(`${JSON.stringify(k)}:${s}`);
+      if (s !== void 0) parts2.push(`${JSON.stringify(k)}:${s}`);
     }
-    out = `{${parts.join(",")}}`;
+    out = `{${parts2.join(",")}}`;
   }
   stack.delete(o);
   return out;
@@ -1495,12 +1538,12 @@ function renderOps(ops, prev) {
   return lines.join("\n");
 }
 function renderObservation(o, prev) {
-  const parts = [`# rev ${Number(o.rev)}`];
-  if (o.base !== void 0) parts.push(`since ${Number(o.base)}`);
-  parts.push(`url ${urlToken(String(o.url ?? ""))}`, `title ${jsonLine(String(o.title ?? ""))}`);
-  if (Array.isArray(o.vp)) parts.push(`vp ${Number(o.vp[0])}x${Number(o.vp[1])}`);
-  if (o.paused) parts.push("paused");
-  const head = parts.join(" | ");
+  const parts2 = [`# rev ${Number(o.rev)}`];
+  if (o.base !== void 0) parts2.push(`since ${Number(o.base)}`);
+  parts2.push(`url ${urlToken(String(o.url ?? ""))}`, `title ${jsonLine(String(o.title ?? ""))}`);
+  if (Array.isArray(o.vp)) parts2.push(`vp ${Number(o.vp[0])}x${Number(o.vp[1])}`);
+  if (o.paused) parts2.push("paused");
+  const head = parts2.join(" | ");
   let body;
   if (o.ops !== void 0) body = renderOps(o.ops, prev) || "(no changes)";
   else body = renderTree(o.nodes ?? []) || "(empty)";
@@ -1923,11 +1966,11 @@ function subtle2() {
   return c.subtle;
 }
 function lengthPrefixed(texts) {
-  const parts = texts.map((t) => enc2.encode(t));
-  const out = new Uint8Array(parts.reduce((n, p) => n + 4 + p.length, 0));
+  const parts2 = texts.map((t) => enc2.encode(t));
+  const out = new Uint8Array(parts2.reduce((n, p) => n + 4 + p.length, 0));
   const dv = new DataView(out.buffer);
   let at = 0;
-  for (const p of parts) {
+  for (const p of parts2) {
     dv.setUint32(at, p.length);
     out.set(p, at + 4);
     at += 4 + p.length;
@@ -2145,6 +2188,119 @@ var init_seal = __esm({
   }
 });
 
+// packages/core/src/versions.ts
+function pickVersion(offered, mine = SUPPORTED_VERSIONS) {
+  if (!Array.isArray(offered)) return void 0;
+  return offered.find((v) => typeof v === "string" && mine.includes(v));
+}
+function parts(v) {
+  const m = typeof v === "string" ? /^(\d{1,4})\.(\d{1,4})$/.exec(v) : null;
+  return m ? [Number(m[1]), Number(m[2])] : void 0;
+}
+function versionAtLeast(v, min) {
+  const a = parts(v);
+  const b = parts(min);
+  if (!a || !b) return false;
+  return a[0] > b[0] || a[0] === b[0] && a[1] >= b[1];
+}
+function speaks01(v) {
+  return !versionAtLeast(v, "0.2");
+}
+function scopesIn(v, list2) {
+  return speaks01(v) ? list2.filter((s) => V01.scopes.includes(s)) : [...list2];
+}
+function methodIn(v, m) {
+  return !speaks01(v) || V01.methods.includes(m);
+}
+function eventIn(v, topic, d) {
+  if (!speaks01(v)) return true;
+  if (!hasOwn(V01.events, topic)) return false;
+  const kinds = V01.events[topic];
+  if (kinds === null || kinds === void 0) return true;
+  const kind = isPlainObject(d) ? d.kind : void 0;
+  return typeof kind === "string" && kinds.includes(kind);
+}
+function errorIn(v, e) {
+  if (!speaks01(v) || V01.errors.includes(e.code)) return e;
+  if (e.code === "E_WAITING") return new ReinsError("E_CONSENT", "the user did not answer");
+  return new ReinsError("E_INTERNAL", e.message);
+}
+function fieldsIn(o, keep) {
+  const out = {};
+  for (const k of keep) if (hasOwn(o, k) && o[k] !== void 0) out[k] = o[k];
+  return out;
+}
+var V01;
+var init_versions = __esm({
+  "packages/core/src/versions.ts"() {
+    "use strict";
+    init_protocol();
+    init_util();
+    V01 = Object.freeze({
+      scopes: Object.freeze(["observe", "act", "ui", "cursor", "show", "nav"]),
+      methods: Object.freeze([
+        "hub.info",
+        "surfaces.list",
+        "surface.attach",
+        "surface.detach",
+        "stream.open",
+        "stream.close",
+        "observe",
+        "read",
+        "state.get",
+        "sub",
+        "unsub",
+        "act",
+        "ui.click",
+        "ui.type",
+        "ui.select",
+        "ui.scroll",
+        "ui.key",
+        "cursor.move",
+        "cursor.set",
+        "show.toast",
+        "show.highlight",
+        "show.view",
+        "show.clear",
+        "nav.go"
+      ]),
+      surfaceMethods: Object.freeze(["attach", "detach", "stream.open", "stream.close"]),
+      events: Object.freeze({
+        ui: null,
+        state: null,
+        nav: null,
+        user: Object.freeze(["override", "pause", "resume"]),
+        grant: Object.freeze(["revoked", "expired"]),
+        surface: Object.freeze(["added", "gone", "changed"])
+      }),
+      attachParams: Object.freeze(["agent", "scopes", "reason"]),
+      attachAnswer: Object.freeze(["scopes", "ttlMs"]),
+      attachResult: Object.freeze(["grant", "surface", "manifest"]),
+      errors: Object.freeze([
+        "E_BAD_FRAME",
+        "E_VERSION",
+        "E_AUTH",
+        "E_ORIGIN",
+        "E_TOO_LARGE",
+        "E_UNKNOWN_METHOD",
+        "E_BAD_ARGS",
+        "E_NO_SURFACE",
+        "E_NOT_ATTACHED",
+        "E_SCOPE",
+        "E_DENIED",
+        "E_CONSENT",
+        "E_PAUSED",
+        "E_RATE",
+        "E_NO_TARGET",
+        "E_TIMEOUT",
+        "E_GONE",
+        "E_BUSY",
+        "E_INTERNAL"
+      ])
+    });
+  }
+});
+
 // packages/core/src/rpc.ts
 function isErrorCode(c) {
   return typeof c === "string" && ERROR_CODES.includes(c);
@@ -2202,7 +2358,7 @@ function runHandshake(link, hello, opts) {
       }
       if (stage === "challenge") {
         if (f.t !== "challenge") return fail4("E_BAD_FRAME", "expected challenge", true);
-        const v = f.v.find((x) => SUPPORTED_VERSIONS.includes(x));
+        const v = pickVersion(f.v, opts.versions ?? SUPPORTED_VERSIONS);
         if (v === void 0) return fail4("E_VERSION", "no common protocol version", true);
         const cnonce = randomToken(32);
         const kid = hello.kid ?? "default";
@@ -2246,6 +2402,7 @@ var init_rpc = __esm({
     init_codec();
     init_crypto();
     init_seal();
+    init_versions();
     Peer = class {
       #link;
       #h;
@@ -2479,6 +2636,56 @@ var init_rpc = __esm({
   }
 });
 
+// packages/core/src/waiting.ts
+function isTicket(v) {
+  return typeof v === "string" && TICKET_PATTERN.test(v);
+}
+function waitingData(d) {
+  if (!isPlainObject(d) || !isTicket(d.tk)) return void 0;
+  const ms = d.ms;
+  if (typeof ms !== "number" || !Number.isInteger(ms) || ms < 0 || ms > WAIT_MAX_MS) return void 0;
+  return { tk: d.tk, ms };
+}
+function asWaiting(e, action) {
+  if (e instanceof WaitingError) return e;
+  if (!(e instanceof ReinsError) || e.code !== "E_WAITING") return void 0;
+  const data = waitingData(e.data);
+  return data === void 0 ? void 0 : new WaitingError(e.message, data, action);
+}
+function answerEvent(d) {
+  if (!isPlainObject(d) || d.kind !== "answer" || !isTicket(d.tk)) return void 0;
+  const answer = ANSWERS.find((x) => x === d.answer);
+  if (answer === void 0) return void 0;
+  if (d.a !== void 0 && (typeof d.a !== "string" || d.a.length === 0 || d.a.length > 64)) return void 0;
+  const out = { kind: "answer", tk: d.tk, answer };
+  if (typeof d.a === "string") out.a = d.a;
+  return out;
+}
+var TICKET_PATTERN, WAIT_MAX_MS, DEFAULT_WAIT_CAP_MS, ANSWERS, WaitingError;
+var init_waiting = __esm({
+  "packages/core/src/waiting.ts"() {
+    "use strict";
+    init_protocol();
+    init_util();
+    TICKET_PATTERN = /^[A-Za-z0-9_-]{1,32}$/;
+    WAIT_MAX_MS = 864e5;
+    DEFAULT_WAIT_CAP_MS = 6e5;
+    ANSWERS = ["allow", "deny", "expired"];
+    WaitingError = class extends ReinsError {
+      ticket;
+      ms;
+      action;
+      constructor(msg, data, action) {
+        super("E_WAITING", msg, { tk: data.tk, ms: data.ms });
+        this.name = "WaitingError";
+        this.ticket = data.tk;
+        this.ms = data.ms;
+        if (action !== void 0) this.action = action;
+      }
+    };
+  }
+});
+
 // packages/core/src/index.ts
 var init_src = __esm({
   "packages/core/src/index.ts"() {
@@ -2495,6 +2702,8 @@ var init_src = __esm({
     init_crypto();
     init_link();
     init_rpc();
+    init_versions();
+    init_waiting();
     init_seal();
   }
 });
@@ -2756,6 +2965,19 @@ function agentLabel(name2, id, o = {}) {
   const label = sid === "" ? quoted2 : `${quoted2} (${sid})`;
   return o.lead ? `AI agent ${label}` : label;
 }
+function span(ms) {
+  const s = Math.max(1, Math.ceil((Number.isFinite(ms) ? ms : 0) / 1e3));
+  const unit = (n, one) => `${n} ${one}${n === 1 ? "" : "s"}`;
+  if (s < 90) return unit(s, "second");
+  const m = Math.ceil(s / 60);
+  if (m < 90) return unit(m, "minute");
+  return unit(Math.ceil(m / 60), "hour");
+}
+function hhmm(t) {
+  const d = new Date(t);
+  const two = (n) => String(n).padStart(2, "0");
+  return `${two(d.getHours())}:${two(d.getMinutes())}`;
+}
 
 // packages/driver/src/panel.ts
 var PANEL_ID = "reins-panel";
@@ -2770,6 +2992,8 @@ var Panel = class {
   #onToggle;
   /** A line under the tabs, from the overlay: why a click was not taken. */
   #notice;
+  /** Under that: room for a short notice of the overlay's own that has buttons (`aside`). */
+  #aside;
   /** `onToggle(open, byPerson)`: `byPerson` is true when the panel was closed from inside (Escape, the close button). */
   constructor(kit, onToggle) {
     this.#kit = kit;
@@ -2788,7 +3012,9 @@ var Panel = class {
     this.#notice = kit.el("p", "held");
     this.#notice.setAttribute("role", "status");
     this.#notice.hidden = true;
-    this.el.append(head, this.#notice);
+    this.#aside = kit.el("div", "aside");
+    this.#aside.hidden = true;
+    this.el.append(head, this.#notice, this.#aside);
     const el = this.el;
     listen(el, "keydown", (e) => {
       const mine = trustedAt(e, el);
@@ -2806,8 +3032,27 @@ var Panel = class {
     this.#notice.textContent = text ?? "";
     this.#notice.hidden = text === null;
   }
+  /**
+   * Put a notice of the overlay's own (with its buttons) under the tabs, or with `null` take
+   * it away. What is below moves, so nothing there that lets an agent do more takes a click
+   * for a moment.
+   */
+  aside(node) {
+    if (node === null && this.#aside.hidden) return;
+    this.#aside.replaceChildren(...node ? [node] : []);
+    this.#aside.hidden = node === null;
+    this.settle("layout");
+  }
   get isOpen() {
     return this.#open;
+  }
+  /** Open the panel on one tab. Called from a click of the person on a control of the overlay, never by itself. */
+  show(id) {
+    if (!this.#rec(id)) return;
+    if (!this.#open) {
+      this.#active = id;
+      this.open();
+    } else this.#select(id, true);
   }
   addTab(tab) {
     const kit = this.#kit;
@@ -2919,8 +3164,8 @@ var Panel = class {
    * backdrop went away from over the panel. For a moment, nothing in the tab that is showing
    * that lets an agent do more takes a click.
    */
-  settle() {
-    if (this.#open) this.#rec(this.#active)?.tab.settle?.();
+  settle(kind) {
+    if (this.#open) this.#rec(this.#active)?.tab.settle?.(kind);
   }
 };
 var LEVEL_LABEL = { strict: "Strict", ask: "Ask", auto: "Auto", bypass: "Bypass" };
@@ -2931,6 +3176,31 @@ var LEVEL_MEANING = {
   bypass: "Runs every action without asking. Actions the app or the hub blocks stay blocked."
 };
 var UNVERIFIED_HUB = "Unverified hub: this page cannot confirm that this agent comes through your Reins hub. Any program on this computer could be behind it. Continue only if you started this agent yourself.";
+function durationLabels(allowMs) {
+  return { timed: `For ${span(allowMs)}, then it asks again`, grant: "Until this agent disconnects" };
+}
+function durationChoice(kit, allowMs, timed, choose) {
+  const labels = durationLabels(allowMs);
+  const group = kit.el("div", "dur");
+  group.setAttribute("role", "radiogroup");
+  group.setAttribute("aria-label", "How long it runs without asking");
+  const buttons = [];
+  for (const [isTimed, label] of [
+    [false, labels.grant],
+    [true, labels.timed]
+  ]) {
+    const on = isTimed === timed;
+    const b = kit.button("", "du", (e) => choose(isTimed, e));
+    b.setAttribute("role", "radio");
+    b.setAttribute("aria-checked", String(on));
+    b.setAttribute("data-k", isTimed ? "dur:timed" : "dur:grant");
+    b.tabIndex = on ? 0 : -1;
+    b.append(kit.el("span", "mk"), kit.el("span", "dl", label));
+    buttons.push(b);
+    group.append(b);
+  }
+  return { el: group, buttons };
+}
 function rankOf(l) {
   return LEVELS.indexOf(l);
 }
@@ -3016,7 +3286,11 @@ var PermissionsTab = class {
     const a = this.#find(p.action);
     if (a === void 0 || baseOf(a, agent) === "deny") return false;
     if (p.kind === "reset") return own2(agent.rules, p.action) !== void 0 || agent.remembered.includes(p.action);
-    return own2(agent.rules, p.action) !== "allow" && this.#mayAllow(a, agent);
+    return !this.#allowedForGood(agent, p.action) && this.#mayAllow(a, agent);
+  }
+  /** The person's rule `allow` for this action stands with no time limit: there is nothing more to allow. */
+  #allowedForGood(agent, action) {
+    return own2(agent.rules, action) === "allow" && own2(agent.timed, action) === void 0;
   }
   /**
    * May the person set the rule `allow` for this action: never where the app or the hub
@@ -3102,6 +3376,8 @@ var PermissionsTab = class {
     const scroll = body.scrollTop;
     this.#confirmBtn = null;
     body.replaceChildren();
+    const waiting = this.#model.waiting ?? [];
+    if (waiting.length) body.append(this.#waiting(waiting));
     if (!this.#model.agents.length) body.append(kit.el("p", "empty", "No AI agent is connected."));
     for (const agent of this.#model.agents) body.append(this.#section(agent));
     if (this.#pending) this.rearm();
@@ -3125,6 +3401,56 @@ var PermissionsTab = class {
     const h = this.#kit.el("h4", void 0, text);
     h.id = `${PANEL_ID}-h${++this.#seq}`;
     return h;
+  }
+  /**
+   * The waiting list: requests nobody answered, or that the person put off. Each line says who
+   * asks, for what (the name the app declared, or "to connect"), how risky the app says it is,
+   * and since when. No arguments: those are on the card, which Review opens again as it was
+   * asked, with every rule a card has. Discard refuses without a card.
+   */
+  #waiting(items) {
+    const kit = this.#kit;
+    const sec = kit.el("section", "waiting");
+    const h = this.#heading("Waiting for your answer");
+    sec.setAttribute("aria-labelledby", h.id);
+    sec.append(h, kit.el("p", "note", "Nothing here has run. Review shows a request as it was asked; Discard refuses it."));
+    const list2 = kit.el("ul", "waits");
+    for (const w of items) {
+      const name2 = agentLabel(w.name, w.ag);
+      const li = kit.el("li", w.approved ? "wait ok" : "wait");
+      const row = kit.el("div", "wrow");
+      row.append(kit.el("span", "wn", name2));
+      if (w.kind === "attach") row.append(kit.el("span", "ww", "wants to connect"));
+      else {
+        row.append(kit.el("span", "an", kit.show(w.action ?? "", 80)));
+        if (w.risk) row.append(kit.el("span", `risk ${w.risk}`, w.risk));
+      }
+      li.append(row);
+      const what = w.kind === "attach" ? "It may connect" : "The action runs";
+      li.append(
+        kit.el(
+          "p",
+          "wsub",
+          w.approved ? `You approved this. ${name2} is told. ${what} when it asks again, before ${hhmm(w.until)}.` : `Asked at ${hhmm(w.asked)}. Waits until ${hhmm(w.until)}.`
+        )
+      );
+      const btns = kit.el("div", "wb");
+      const subject = w.kind === "attach" ? `the request of ${name2} to connect` : `${kit.show(w.action ?? "", 80)} for ${name2}`;
+      const discard = kit.button(w.approved ? "Take back" : "Discard", "sm", () => this.#apply(() => this.#hooks.discard(w.id)));
+      discard.setAttribute("aria-label", w.approved ? `Take back your approval of ${subject}` : `Discard ${subject}`);
+      discard.setAttribute("data-k", `wait:${w.id}:discard`);
+      btns.append(discard);
+      if (!w.approved) {
+        const review = kit.button("Review", "primary sm", () => this.#apply(() => this.#hooks.review(w.id)));
+        review.setAttribute("aria-label", `Review ${subject}`);
+        review.setAttribute("data-k", `wait:${w.id}:review`);
+        btns.append(review);
+      }
+      li.append(btns);
+      list2.append(li);
+    }
+    sec.append(list2);
+    return sec;
   }
   #section(agent) {
     const kit = this.#kit;
@@ -3164,7 +3490,8 @@ var PermissionsTab = class {
     const p = this.#pending;
     if (p && p.ag === agent.ag && p.kind === "level") sec.append(this.#confirmLevel(agent, p.level));
     if (this.#model.actions.length) {
-      sec.append(this.#heading("Actions"), kit.el("p", "note", "A rule you set here covers that action with any arguments, until this agent disconnects."));
+      const limit = (this.#model.allowMs ?? 0) > 0 ? " or, where you chose a time limit, until that time" : "";
+      sec.append(this.#heading("Actions"), kit.el("p", "note", `A rule you set here covers that action with any arguments, until this agent disconnects${limit}.`));
       if (agent.hub === null) sec.append(kit.el("p", "note", "This hub did not say which actions it asks about, so each is shown as asking."));
       const list2 = kit.el("ul", "acts");
       for (const a of this.#model.actions) list2.append(this.#action(agent, a));
@@ -3226,7 +3553,8 @@ var PermissionsTab = class {
     row.append(seg);
     const sub = kit.el("div", "asub");
     const remembered = rule2 === void 0 && st.by === "remembered";
-    if (rule2 !== void 0) sub.append(kit.el("span", "src", "Your rule"));
+    const until = rule2 === "allow" ? own2(agent.timed, a.name) : void 0;
+    if (rule2 !== void 0) sub.append(kit.el("span", until === void 0 ? "src" : "src timed", until === void 0 ? "Your rule" : `Your rule, until ${hhmm(until)}`));
     else if (remembered) sub.append(kit.el("span", "src", agent.hub === null ? "You approved it earlier. The hub may still ask" : "You approved it earlier"));
     else sub.append(kit.el("span", "src", "Follows the level"));
     if (hubAsks && agent.hub !== null) sub.append(kit.el("span", "src", "The hub asks about it"));
@@ -3281,9 +3609,9 @@ var PermissionsTab = class {
     if (!agent || baseOf(a, agent) === "deny") return;
     const now4 = standing(a, agent).outcome;
     if (d === "allow") {
-      if (!this.#mayAllow(a, agent) || own2(agent.rules, a.name) === "allow") return;
+      if (!this.#mayAllow(a, agent) || this.#allowedForGood(agent, a.name)) return;
       if (!this.#mayLoosen()) return;
-      this.#ask({ ag, kind: "rule", action: a.name });
+      this.#ask({ ag, kind: "rule", action: a.name, timed: false });
       return;
     }
     if (d === null && now4 !== "run" && standing(a, agent, { rule: null, forget: true }).outcome === "run") {
@@ -3305,6 +3633,7 @@ var PermissionsTab = class {
     if (this.#model.unverified) box.append(kit.el("p", "warn", UNVERIFIED_HUB));
     for (const l of lines) {
       if (typeof l === "string") box.append(kit.el("p", void 0, l));
+      else if (!Array.isArray(l)) box.append(l);
       else {
         const ul = kit.el("ul", "cl");
         for (const x of l) ul.append(kit.el("li", void 0, x));
@@ -3352,8 +3681,28 @@ var PermissionsTab = class {
     const action = kit.show(a.name, 80);
     const lines = [`${name2} will then run ${action} without asking you, with any arguments${a.risk === "safe" ? "" : `. The app marks this action ${a.risk}`}.`];
     if (a.base === "allow" && hubOf(agent, a.name) === "confirm") lines.push(agent.hub === null ? "The hub may want this action confirmed. This rule answers that for you from now on." : "The hub wants this action confirmed. This rule answers that for you from now on.");
-    lines.push("It lasts until this agent disconnects or you change it here, whatever the level.");
-    return this.#confirmBox(`Always allow ${action}?`, lines, "Always allow", () => this.#apply(() => this.#hooks.setRule(agent.ag, a.name, "allow")));
+    const allowMs = this.#model.allowMs ?? 0;
+    const p = this.#pending;
+    const timed = allowMs > 0 && p !== null && p.kind === "rule" && p.timed;
+    if (allowMs > 0) {
+      lines.push(
+        durationChoice(kit, allowMs, timed, (t) => {
+          const cur = this.#pending;
+          if (!cur || cur.kind !== "rule" || cur.timed === t) return;
+          if (!t && !this.#mayLoosen()) return;
+          this.#pending = { ...cur, timed: t };
+          this.settle();
+          this.#redraw();
+        }).el
+      );
+    }
+    lines.push(timed ? `After ${span(allowMs)} it asks again. Until then the rule holds whatever the level, unless you change it here or this agent disconnects.` : "It lasts until this agent disconnects or you change it here, whatever the level.");
+    return this.#confirmBox(
+      timed ? `Allow ${action} for ${span(allowMs)}?` : `Always allow ${action}?`,
+      lines,
+      timed ? `Allow for ${span(allowMs)}` : "Always allow",
+      () => this.#apply(() => timed ? this.#hooks.setRule(agent.ag, a.name, "allow", allowMs) : this.#hooks.setRule(agent.ag, a.name, "allow"))
+    );
   }
   /** Reset, where the action would then run without asking: the person's own Ask or Block is all that holds it. */
   #confirmReset(agent, a) {
@@ -3410,7 +3759,8 @@ var ActivityTab = class {
       const name2 = agentLabel(e.agent, e.ag, { max: 40 });
       const who = kit.el("span", "la", e.you ? `You, for ${name2}` : name2);
       li.append(time, what);
-      if (e.outcome) li.append(kit.el("span", `lo ${e.outcome === "ok" ? "ok" : "err"}`, e.outcome === "ok" ? "ok" : kit.show(e.outcome, 24)));
+      if (e.outcome === "E_WAITING") li.append(kit.el("span", "lo wait", "waiting"));
+      else if (e.outcome) li.append(kit.el("span", `lo ${e.outcome === "ok" ? "ok" : "err"}`, e.outcome === "ok" ? "ok" : kit.show(e.outcome, 24)));
       li.append(who);
       if (e.by) li.append(kit.el("span", "lb", BY_TEXT[e.by]));
       list2.append(li);
@@ -3506,6 +3856,27 @@ background:var(--r-card);color:var(--r-fg);border:1px solid var(--r-line);box-sh
 .panel .confirm .cl{max-height:92px;overflow:auto;margin:0 0 6px;padding:4px 9px;border-radius:8px;background:var(--r-card);font:12px/1.5 monospace;overflow-wrap:anywhere}
 .panel .confirm .cb{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
 .panel .empty{margin:6px 0;color:var(--r-muted)}
+.panel .aside{flex:none;margin:8px 10px 0}
+.panel .waiting{margin:0 0 14px;padding:0 0 12px;border-bottom:1px solid var(--r-line)}
+.panel .waiting h4{margin-top:2px;color:var(--r-warn)}
+.panel .wait{padding:8px 0;border-top:1px solid var(--r-line)}
+.panel .wait:first-child{border-top:0}
+.panel .wrow{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.panel .wn{font-weight:650;overflow-wrap:anywhere}
+.panel .ww{color:var(--r-muted)}
+.panel .wrow .an{flex:0 1 auto}
+.panel .wsub{margin-top:2px;color:var(--r-muted);font-size:12px;overflow-wrap:anywhere}
+.panel .wait.ok .wsub{color:var(--r-ok);font-weight:600}
+.panel .wb{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+.panel .src.timed{color:var(--r-warn);font-weight:600}
+.panel .log .lo.wait{color:var(--r-warn)}
+.dur{display:grid;gap:3px;margin:0 0 8px}
+.dur .du{display:grid;grid-template-columns:16px 1fr;column-gap:9px;justify-content:stretch;align-items:start;height:auto;padding:6px 9px;border-radius:9px;background:transparent;text-align:left;font-weight:400;line-height:1.35}
+.dur .du:hover,.dur .du[aria-checked="true"]{background:var(--r-card)}
+.dur .du:active{transform:none}
+.dur .mk{width:14px;height:14px;margin-top:2px;border-radius:50%;border:2px solid var(--r-muted)}
+.dur .du[aria-checked="true"] .mk{border-color:var(--r-accent);background:var(--r-accent);box-shadow:inset 0 0 0 2.5px var(--r-card)}
+.dur .dl{font-size:12.5px}
 .panel .log li{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;padding:6px 0;border-top:1px solid var(--r-line);font-size:12px}
 .panel .log li:first-child{border-top:0}
 .panel .log .lt{flex:none;color:var(--r-muted);font-variant-numeric:tabular-nums}
@@ -3875,6 +4246,21 @@ var ChatTab = class {
     const ta = this.#ta;
     return ta !== null && ta.isConnected && ta.getRootNode().activeElement === ta;
   }
+  /**
+   * The person asked to write to one agent (a control of the overlay that leads here, after
+   * they refused a request of its): the message they type next is addressed to it. Only for an
+   * agent that is in the room; the choice shows as it always does and can be changed.
+   */
+  address(ag) {
+    if (!this.#model.members.some((m) => m.ag === ag)) return;
+    this.#to = ag;
+    this.#toGone = null;
+    if (this.#body) {
+      this.#syncTo();
+      this.#showComposer();
+      this.refocus();
+    }
+  }
   /** Give the composer its focus back, when a command took it while the person was typing. */
   refocus() {
     const ta = this.#ta;
@@ -3910,7 +4296,7 @@ var ChatTab = class {
     this.#onUnread(this.unread);
   }
   #forget() {
-    this.#log = this.#empty = this.#stat = this.#warn = this.#hear = this.#gone = this.#toRow = this.#count = null;
+    this.#log = this.#empty = this.#stat = this.#warn = this.#hear = this.#gone = this.#toRow = this.#count = this.#again = null;
     this.#ta = null;
     this.#sendBtn = null;
     this.#confirmBtn = null;
@@ -3930,13 +4316,25 @@ var ChatTab = class {
   #settled() {
     return tick() >= this.#settleAt;
   }
+  /** Until then a pointer press on Send is held: what is under the pointer moved without the room changing. */
+  #layoutAt = 0;
+  /** Says, under the field, that a Send or an Enter was not taken because the room had just changed. */
+  #again = null;
+  #showAgain(byKey) {
+    const a = this.#again;
+    if (!a) return;
+    a.hidden = byKey === null;
+    a.textContent = byKey === null ? "" : `Just changed: ${byKey ? "press Enter" : "press Send"} again to send.`;
+  }
   /**
    * What is under the pointer changed without the person choosing it (a consent card went away
    * from over the panel, or the overlay was put back on top): for `armMs` Send, the "Send to"
    * choices and the controls that let agents hear more take no press.
    */
-  settle() {
-    if (this.#body) this.#settleAt = tick() + this.#kit.armMs;
+  settle(kind) {
+    if (!this.#body) return;
+    if (kind === "layout") this.#layoutAt = tick() + this.#kit.armMs;
+    else this.#settleAt = tick() + this.#kit.armMs;
   }
   /** Run one of the driver's hooks for a press of the person. */
   #apply(fn) {
@@ -4103,6 +4501,7 @@ var ChatTab = class {
     ta.setAttribute("aria-describedby", `${PANEL_ID}-chat-hint`);
     ta.value = this.#draft;
     ta.addEventListener("input", (e) => {
+      if (isTrusted(e)) this.#showAgain(null);
       if (isTrusted(e) && this.#model.held !== true) {
         this.#draft = ta.value;
         this.#hooks.typing();
@@ -4114,7 +4513,7 @@ var ChatTab = class {
       this.#hooks.typing();
       if (e.key !== "Enter" || e.shiftKey || e.isComposing || e.keyCode === 229) return;
       e.preventDefault();
-      this.#send();
+      this.#send(true);
     });
     this.#ta = ta;
     const foot = kit.el("div", "cfoot");
@@ -4124,11 +4523,15 @@ var ChatTab = class {
     count.setAttribute("aria-live", "polite");
     count.hidden = true;
     this.#count = count;
-    const send = kit.button("Send", "primary sm", () => this.#send());
+    const send = kit.button("Send", "primary sm", () => this.#send(false));
     send.setAttribute("data-k", "chat:send");
     this.#sendBtn = send;
     foot.append(hint, count, send);
-    form.append(toRow, ta, foot);
+    const again = kit.el("p", "cagain");
+    again.setAttribute("role", "status");
+    again.hidden = true;
+    this.#again = again;
+    form.append(toRow, ta, again, foot);
     wrap.append(warn, hear, log, stat, gone2, form);
     body.append(wrap);
     this.#sync();
@@ -4325,8 +4728,12 @@ var ChatTab = class {
     if (ok) send.removeAttribute("aria-disabled");
     else send.setAttribute("aria-disabled", "true");
   }
-  /** Send what the person typed. Reached from a trusted click on Send or a trusted Enter only. */
-  #send() {
+  /**
+   * Send what the person typed. Reached from a trusted click on Send (`byKey` false) or a
+   * trusted Enter (`byKey` true) only. One that is not taken because the room just changed
+   * says so under the field, and the text stays where it is: it is never sent on its own.
+   */
+  #send(byKey) {
     const ta = this.#ta;
     if (!ta) return;
     if (ta.value !== this.#draft) {
@@ -4334,10 +4741,14 @@ var ChatTab = class {
       this.#showComposer();
       return;
     }
-    if (!this.#settled()) return;
+    if (!this.#settled() || !byKey && tick() < this.#layoutAt) {
+      if (this.#sendable() !== void 0) this.#showAgain(byKey);
+      return;
+    }
     const text = this.#sendable();
     if (text === void 0) return;
     if (!this.#hooks.say(text, this.#to)) return;
+    this.#showAgain(null);
     this.#draft = "";
     ta.value = "";
     this.#showComposer();
@@ -4365,6 +4776,7 @@ var CHAT_CSS = `
 .panel .chat .cstat{flex:none;min-height:16px;margin:0;color:var(--r-muted);font-size:12px;line-height:1.3;overflow-wrap:anywhere;overflow:hidden}
 .panel .chat .cq{font-style:italic}
 .panel .chat .cfrozen{flex:none;margin:0;padding:6px 9px;border-radius:8px;background:rgba(217,119,6,.15);color:var(--r-warn);font-size:12px;font-weight:600}
+.panel .chat .cagain{margin:4px 0 0;color:var(--r-warn);font-size:12px;font-weight:600}
 .panel .chat .cgone{flex:none;margin:0;padding:6px 9px;border-radius:8px;background:rgba(217,119,6,.15);color:var(--r-warn);font-size:12px;font-weight:600;overflow-wrap:anywhere;overflow:hidden}
 .panel .chat .cwarn{flex:none;margin:0;padding:6px 9px;border-radius:8px;background:rgba(220,38,38,.12);color:var(--r-danger);font-size:12px;font-weight:600;overflow-wrap:anywhere}
 .panel .chat .chear{flex:none;display:grid;gap:4px;padding:6px 8px;border-radius:8px;border:1px solid var(--r-line);font-size:12px;line-height:1.35;overflow:hidden}
@@ -4881,12 +5293,12 @@ var UiTree = class {
     const ids = (el.getAttribute("aria-labelledby") || "").trim();
     if (!ids) return "";
     const doc = el.ownerDocument;
-    const parts = [];
+    const parts2 = [];
     for (const id of ids.split(/\s+/).slice(0, 8)) {
       const ref = doc.getElementById(id);
-      if (ref && this.#nameSource(ref)) parts.push(this.text(ref, MAX_NAME_CHARS, true));
+      if (ref && this.#nameSource(ref)) parts2.push(this.text(ref, MAX_NAME_CHARS, true));
     }
-    return collapse(parts.join(" "));
+    return collapse(parts2.join(" "));
   }
   #labelText(el) {
     const tag = el.localName;
@@ -5102,7 +5514,7 @@ var UiTree = class {
     else if (el) text = isPrivate(el) ? "" : one(el, max + 1);
     else if (mode === "auto") text = isPrivate(root) ? "" : one(root, max + 1);
     else {
-      const parts = [];
+      const parts2 = [];
       let total = 0;
       const visit = (e, depth) => {
         if (depth > MAX_DEPTH2) return;
@@ -5115,7 +5527,7 @@ var UiTree = class {
           }
           const t = one(e, max + 1 - total);
           if (t) {
-            parts.push(t);
+            parts2.push(t);
             total += t.length + 1;
           }
           return;
@@ -5123,7 +5535,7 @@ var UiTree = class {
         for (const c of Array.from(e.children)) visit(c, depth + 1);
       };
       if (!isPrivate(root)) visit(root, 0);
-      text = parts.join("\n");
+      text = parts2.join("\n");
     }
     const truncated = cut || text.length > max;
     return { text: truncated ? clip(text, max) : text, truncated };
@@ -6112,9 +6524,38 @@ button.wait:not(.primary),button.wait:not(.primary):hover{background:var(--r-sof
 .card pre{margin:0 0 14px;padding:10px 12px;border-radius:10px;background:var(--r-soft);font:12px/1.5 monospace;white-space:pre-wrap;overflow-wrap:anywhere;overflow:hidden}
 .card pre .ln{display:block;overflow:hidden}
 .card .reason{margin:0 0 14px;padding:8px 12px;border-left:3px solid var(--r-line);color:var(--r-muted);font-style:italic;overflow-wrap:anywhere;overflow:hidden}
-.card .foot{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px;margin-top:4px}
-.card .timer{margin-right:auto;color:var(--r-muted);font-size:12px}
+.card .foot{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.card .meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 10px}
+.card .timer{color:var(--r-muted);font-size:12px}
 .card .queue{color:var(--r-muted);font-size:12px}
+.card .btns{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px}
+.card .bl,.card .br{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.card .br{margin-left:auto;justify-content:flex-end}
+button.quiet{background:transparent;color:var(--r-muted)}
+button.quiet:hover{background:var(--r-soft);color:var(--r-fg)}
+.card .offers{margin:0 0 14px;padding:10px 12px;border-radius:10px;border:1px solid var(--r-line)}
+.card .offers .lead{margin:0 0 2px}
+.card .offers .note{margin:0 0 8px;color:var(--r-muted);font-size:12px}
+.card .offer{display:grid;grid-template-columns:18px 1fr auto;column-gap:9px;row-gap:1px;justify-content:stretch;align-items:start;width:100%;height:auto;padding:6px 8px;border-radius:9px;background:transparent;text-align:left;font-weight:400;line-height:1.35}
+.card .offer:hover,.card .offer[aria-checked="true"]{background:var(--r-soft)}
+.card .offer:active{transform:none}
+.card .offer .bx{width:15px;height:15px;margin-top:2px;border-radius:4px;border:2px solid var(--r-muted)}
+.card .offer[aria-checked="true"] .bx{border-color:var(--r-accent);background:var(--r-accent);box-shadow:inset 0 0 0 2px var(--r-card)}
+.card .offer .on{font:600 12.5px/1.4 monospace;overflow-wrap:anywhere;overflow:hidden}
+.card .offer .risk{margin-left:0;vertical-align:0}
+.card .offer .od{grid-column-start:2;grid-column-end:4;color:var(--r-muted);font-size:12px;overflow-wrap:anywhere;overflow:hidden}
+.card .held-offers{margin:-6px 0 14px;color:var(--r-muted);font-size:12px;overflow-wrap:anywhere}
+.card .burst{margin:0 0 12px;padding:8px 12px;border-radius:10px;background:rgba(217,119,6,.15);color:var(--r-warn);font-weight:600;overflow-wrap:anywhere}
+.card .always ul{margin:6px 0 0;font:12px/1.5 monospace;font-weight:600}
+.card .dur{margin:8px 0 0}
+.card .dur .du:hover,.card .dur .du[aria-checked="true"]{background:var(--r-soft)}
+.follow{position:fixed;z-index:3;right:16px;bottom:72px;width:min(380px,calc(100vw - 32px));padding:10px 12px;border-radius:12px;background:var(--r-card);color:var(--r-fg);border:1px solid var(--r-line);box-shadow:0 1px 3px rgba(0,0,0,.3);pointer-events:auto}
+.panel .aside .follow{position:static;width:auto;box-shadow:none;background:var(--r-soft)}
+.follow p{margin:0 0 8px;overflow-wrap:anywhere}
+.follow .fb{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px}
+.follow button{height:26px;padding:0 11px;font-size:12px}
+.pill .wt{flex:none;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:700;line-height:17px;background:rgba(217,119,6,.16);color:var(--r-warn)}
+.pill.idle .dot{background:var(--r-warn);animation-name:r-pulse-a}
 .toasts{position:fixed;top:16px;left:50%;transform:translateX(-50%);width:min(420px,calc(100vw - 32px));display:flex;flex-direction:column;align-items:center;gap:8px}
 .toast{max-width:100%;padding:10px 15px 10px 13px;border-radius:12px;background:var(--r-card);
 border:1px solid var(--r-line);border-left:4px solid var(--r-accent);box-shadow:var(--r-shadow);overflow-wrap:anywhere;white-space:pre-wrap;animation:r-drop .24s cubic-bezier(.2,.8,.2,1);transition:opacity .3s,transform .3s}
@@ -6134,6 +6575,8 @@ var sealed;
 function overlayCss() {
   return sealed ??= sealCss(CSS + PANEL_CSS + CHAT_CSS);
 }
+var FOLLOW_MS = 8e3;
+var FOLLOW_DONE_MS = 4e3;
 var WITHDRAWN_MS = 1500;
 var KEY_LOCK_MS = 3e3;
 var KEYS_NOTE = "Keys do not answer this request right now, because something was just typed. Use the pointer, or wait a moment and press the key again.";
@@ -6273,6 +6716,16 @@ var Overlay = class {
   #pillUnreadN;
   /** The mark for `allow` rules that waive a prompt: the indicator is not calm while there are any. */
   #pillRules;
+  /** The mark for requests that wait for the person's answer. */
+  #pillWait;
+  /** The words before the agents' names: "AI connected: ", or what the indicator is there for when nobody is attached. */
+  #pillLead;
+  /** How many requests wait: the indicator's button then opens the panel where the list is. */
+  #waitingN = 0;
+  /** What the overlay lends its panel and every part that is built like it. */
+  #kit;
+  /** The follow-up notice that is showing, with the time it is due to go. */
+  #follow = null;
   #cursorPath;
   /** The agent's cursor colour and the text colour on it, once one was set. */
   #cursorTint = null;
@@ -6386,11 +6839,14 @@ var Overlay = class {
     this.#pillDot = this.#el("span", "dot");
     this.#pillText = this.#el("span", "text");
     this.#pillWho = this.#el("span", "who");
-    this.#pillText.append(createTextNode(doc, "AI connected: "), this.#pillWho);
+    this.#pillLead = createTextNode(doc, "AI connected: ");
+    this.#pillText.append(this.#pillLead, this.#pillWho);
     this.#pillLevel = this.#el("span", "lvl");
     this.#pillLevel.hidden = true;
     this.#pillRules = this.#el("span", "rul");
     this.#pillRules.hidden = true;
+    this.#pillWait = this.#el("span", "wt");
+    this.#pillWait.hidden = true;
     this.#pillUnread = this.#el("span", "unread");
     this.#pillUnread.hidden = true;
     this.#pillUnreadN = this.#el("span");
@@ -6407,7 +6863,7 @@ var Overlay = class {
       this.#panel.close();
     });
     this.#stopBtn.setAttribute("aria-label", "Stop the AI agent and revoke its access");
-    this.#openBtn = this.#button("", "open", () => this.#panel.isOpen ? this.#panel.close(true) : this.#panel.open());
+    this.#openBtn = this.#button("", "open", () => this.#panel.isOpen ? this.#panel.close(true) : this.#waitingN > 0 ? this.#panel.show(this.#permissions.id) : this.#panel.open());
     this.#openBtn.setAttribute("aria-expanded", "false");
     this.#openBtn.setAttribute("aria-haspopup", "dialog");
     this.#openBtn.setAttribute("aria-controls", PANEL_ID);
@@ -6433,12 +6889,14 @@ var Overlay = class {
       now: tick,
       sound: () => this.#mayLoosen()
     };
+    this.#kit = kit;
     this.#panel = new Panel(kit, (open, byPerson) => {
       this.#openBtn.setAttribute("aria-expanded", String(open));
       if (open) listen(doc, "keydown", this.#onPanelKey, true);
       else unlisten(doc, "keydown", this.#onPanelKey, true);
       if (!open) this.#panel.notice(null);
       this.#arrange();
+      this.#placeFollow();
       this.#armAllow?.();
       if (!open && byPerson && this.#openBtn.isConnected) {
         try {
@@ -6466,11 +6924,11 @@ var Overlay = class {
     if (panel) {
       const caret = this.#el("span", "car");
       caret.setAttribute("aria-hidden", "true");
-      this.#openBtn.replaceChildren(this.#pillDot, this.#pillText, this.#pillLevel, this.#pillRules, this.#pillUnread, caret);
+      this.#openBtn.replaceChildren(this.#pillDot, this.#pillText, this.#pillLevel, this.#pillRules, this.#pillWait, this.#pillUnread, caret);
       this.#pill.replaceChildren(this.#openBtn, this.#pillFlag, this.#pillState, this.#pillCtrls);
     } else {
       this.#panel.close();
-      this.#pill.replaceChildren(this.#pillDot, this.#pillText, this.#pillLevel, this.#pillRules, this.#pillFlag, this.#pillState, this.#pillCtrls);
+      this.#pill.replaceChildren(this.#pillDot, this.#pillText, this.#pillLevel, this.#pillRules, this.#pillWait, this.#pillFlag, this.#pillState, this.#pillCtrls);
     }
   }
   /**
@@ -6674,6 +7132,7 @@ var Overlay = class {
   destroy() {
     this.#destroyed = true;
     this.cancel();
+    this.#dropFollow();
     this.clear();
     this.#panel.close();
     for (const t of this.#timers) cancelLater(t);
@@ -7011,9 +7470,11 @@ var Overlay = class {
     if (this.#destroyed) return;
     const t = tick();
     const cur = this.#current;
-    if (cur && t >= cur.deadline) cur.close("timeout");
+    if (cur && t >= cur.prompt.deadline) cur.close("timeout");
+    for (const q of [...this.#prompts]) if (t >= q.deadline) this.#expire(q);
     const hold = this.#hold;
     if (hold && t >= hold.until) this.#endHold(hold);
+    if (this.#follow && t >= this.#follow.until) this.#dropFollow();
     for (const x of [...this.#toastList]) if (t >= x.until) this.#dropToast(x.el);
     for (const h of [...this.#highlights]) if (t >= h.until) this.#dropHighlight(h);
   }
@@ -7076,6 +7537,15 @@ var Overlay = class {
     this.#layoutPill(s.panel === true);
     this.#pill.hidden = !s.show;
     this.#pill.classList.toggle("paused", s.paused);
+    const waiting = Math.max(0, Math.floor(s.waiting ?? 0));
+    this.#waitingN = waiting;
+    this.#pillWait.hidden = waiting === 0;
+    this.#pillWait.textContent = waiting === 0 ? "" : `${waiting} waiting`;
+    this.#pillWait.title = waiting === 0 ? "" : waiting === 1 ? "One request is waiting for your answer" : `${waiting} requests are waiting for your answer`;
+    const idle = s.names.length === 0;
+    const c = s.connect ?? { waiting: 0, approved: 0 };
+    this.#pill.classList.toggle("idle", idle);
+    this.#pillLead.data = !idle ? "AI connected: " : c.waiting > 1 ? `${c.waiting} requests to connect are waiting` : c.waiting === 1 ? "An AI agent is waiting to connect" : c.approved > 0 ? "An AI agent may connect: you approved it" : "No AI agent connected";
     const names = s.names.map((n, i) => agentLabel(n, s.ids?.[i] ?? "", { max: 40 }));
     this.#pillWho.textContent = names.length <= 2 ? names.join(", ") : `${names.slice(0, 2).join(", ")} +${names.length - 2}`;
     const levels = (s.levels ?? []).filter((l) => LEVELS.includes(l));
@@ -7090,13 +7560,15 @@ var Overlay = class {
     const rules = s.rules && s.rules.n + approved > 0 ? s.rules : void 0;
     this.#pillRules.hidden = rules === void 0;
     this.#pillRules.className = `rul ${rules?.like ?? ""}`.trim();
-    const parts = [];
-    if (rules && rules.n > 0) parts.push(rules.n === 1 ? "1 rule" : `${rules.n} rules`);
-    if (rules && approved > 0) parts.push(`${approved} approved`);
-    this.#pillRules.textContent = parts.join(", ");
+    const parts2 = [];
+    if (rules && rules.n > 0) parts2.push(rules.n === 1 ? "1 rule" : `${rules.n} rules`);
+    if (rules && approved > 0) parts2.push(`${approved} approved`);
+    const until = rules && rules.n > 0 && typeof rules.until === "number" ? rules.until : void 0;
+    this.#pillRules.textContent = parts2.join(", ") + (until === void 0 ? "" : ` until ${hhmm(until)}`);
     const why = [];
     if (rules && rules.n > 0) why.push(`${rules.n === 1 ? "One of your Allow rules lets an action" : `${rules.n} of your Allow rules let actions`} run without asking you`);
     if (rules && approved > 0) why.push(`${approved === 1 ? "One action runs" : `${approved} actions run`} without asking because you approved ${approved === 1 ? "it" : "them"} earlier`);
+    if (until !== void 0) why.push(`${rules.n === 1 ? "The rule ends" : "The first of them ends"} by itself at ${hhmm(until)}`);
     this.#pillRules.title = why.join(". ");
     const calm = shown === "bypass" || rules?.like === "bypass" ? "bypass" : shown === "auto" || rules?.like === "auto" ? "auto" : "ask";
     this.#pill.classList.toggle("lv-auto", calm === "auto");
@@ -7125,12 +7597,14 @@ var Overlay = class {
     this.#sweep();
   }
   /**
-   * Ask the person. One prompt at a time; the rest wait their turn. Resolves false on
-   * timeout. Rejects with E_TOO_LARGE, without asking, when the action's arguments cannot
-   * be shown on the card in full.
+   * Ask the person. One prompt at a time; the rest wait their turn. The request's time runs
+   * from this call, not from when its card comes up: a card that shows late shows for what is
+   * left, and one whose time is up before its turn is never shown. It then ends as `timeout`,
+   * as does one nobody answers. Rejects with E_TOO_LARGE, without asking, when the action's
+   * arguments cannot be shown on the card in full.
    */
   ask(view, timeoutMs, owner) {
-    if (this.#destroyed) return Promise.resolve("cancel");
+    if (this.#destroyed) return Promise.resolve({ outcome: "cancel" });
     let argsText;
     if (view.kind === "action" && view.args !== void 0 && !(typeof view.args === "object" && view.args !== null && !Array.isArray(view.args) && Object.keys(view.args).length === 0)) {
       const t = renderArgs(view.args);
@@ -7138,11 +7612,38 @@ var Overlay = class {
       argsText = t;
     }
     this.#sweep();
+    const ms = Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 0;
     return new Promise((resolve) => {
-      this.#prompts.push({ view, argsText, timeoutMs, owner, resolve });
+      const prompt = { view, argsText, deadline: tick() + ms, timer: void 0, owner, resolve };
+      prompt.timer = this.#later(() => {
+        prompt.timer = void 0;
+        this.#expire(prompt);
+      }, ms);
+      this.#prompts.push(prompt);
       if (!this.#current && !this.#hold) this.#next();
       else this.#updateQueueNote();
     });
+  }
+  /** Answer a prompt's request and stop its deadline timer. */
+  #settle(p, answer) {
+    if (p.timer !== void 0) {
+      cancelLater(p.timer);
+      this.#timers.delete(p.timer);
+      p.timer = void 0;
+    }
+    p.resolve(answer);
+  }
+  /** A prompt's time is up: its card closes if it is the one showing, else it leaves the queue unshown. */
+  #expire(p) {
+    if (this.#current?.prompt === p) {
+      this.#current.close("timeout");
+      return;
+    }
+    const i = this.#prompts.indexOf(p);
+    if (i < 0) return;
+    this.#prompts.splice(i, 1);
+    this.#settle(p, { outcome: "timeout" });
+    this.#updateQueueNote();
   }
   /** Prompts waiting or showing, for one owner or all. */
   pending(owner) {
@@ -7160,7 +7661,7 @@ var Overlay = class {
   cancel(owner) {
     const keep = [];
     for (const p of this.#prompts) {
-      if (owner === void 0 || p.owner === owner) p.resolve("cancel");
+      if (owner === void 0 || p.owner === owner) this.#settle(p, { outcome: "cancel" });
       else keep.push(p);
     }
     this.#prompts = keep;
@@ -7172,6 +7673,7 @@ var Overlay = class {
       this.#hold = null;
       this.#panel.settle();
     }
+    if (owner === void 0) this.#dropFollow();
     this.#updateQueueNote();
     this.#arrange();
     this.#showChip();
@@ -7195,14 +7697,24 @@ var Overlay = class {
    * wait is a time, compared with the clock when a click or a key arrives.
    */
   #next() {
-    const prompt = this.#prompts.shift();
-    if (!prompt || this.#destroyed) return;
+    if (this.#destroyed) return;
+    let due = this.#prompts.shift();
+    while (due && tick() >= due.deadline) {
+      this.#settle(due, { outcome: "timeout" });
+      due = this.#prompts.shift();
+    }
+    if (!due) return;
+    const prompt = due;
     const v = prompt.view;
+    const ticked = /* @__PURE__ */ new Set();
+    const offerBoxes = [];
+    let timed = false;
     const doc = this.#doc;
     const previous = doc.activeElement;
     const previousInner = this.#root.activeElement;
     const previousKey = previousInner?.getAttribute("data-k") ?? null;
     this.clear();
+    this.#dropFollow();
     const backdrop = this.#el("div", "backdrop");
     const card = this.#el("div", "card");
     card.setAttribute("role", "alertdialog");
@@ -7224,7 +7736,7 @@ var Overlay = class {
     const agent = agentLabel(v.agentName, v.agentId ?? "");
     const h2 = this.#el("h2", void 0, v.kind === "attach" ? `${agent} wants to control this page` : `${agent} wants to run an action`);
     h2.id = "reins-consent-title";
-    const sub = this.#el("p", "sub", `${truncate(v.appName, 60)} \xB7 AI agent request`);
+    const sub = this.#el("p", "sub", `${truncate(v.appName, 60)} \xB7 AI agent request${v.review ? ` \xB7 asked at ${hhmm(v.review.asked)}` : ""}`);
     titles.append(h2, sub);
     head.append(badge, titles);
     card.append(head);
@@ -7256,11 +7768,44 @@ var Overlay = class {
         kept.append(kl);
         body.append(kept);
       }
+      if (v.offers && v.offers.length) {
+        const box = this.#el("div", "offers");
+        box.setAttribute("role", "group");
+        box.setAttribute("aria-label", "Without asking each time");
+        box.append(this.#el("p", "lead", "Without asking each time"), this.#el("p", "note", `Optional. Tick an action to let ${agent} run it without asking you, with any arguments. Nothing is ticked for you.`));
+        for (const o of v.offers) {
+          const b = this.#button("", "offer", (e) => toggleOffer(o.name, b, e));
+          b.setAttribute("role", "checkbox");
+          b.setAttribute("aria-checked", "false");
+          b.setAttribute("data-k", `offer:${o.name}`);
+          b.append(this.#el("span", "bx"), this.#el("span", "on", truncate(o.name, 80)));
+          if (o.risk !== "safe") b.append(this.#el("span", `risk ${o.risk}`, o.risk));
+          if (o.description) b.append(this.#el("span", "od", truncate(o.description, 160)));
+          box.append(b);
+          offerBoxes.push(b);
+        }
+        body.append(box);
+      }
+      if (v.offersHeld && v.offersHeld.length) {
+        body.append(this.#el("p", "held-offers", `Not offered here, because what you set before stays: ${v.offersHeld.map((n) => truncate(n, 80)).join(", ")}.`));
+      }
     } else if (v.action) {
       const name2 = this.#el("p", "action", truncate(v.action.name, 80));
       if (v.action.risk !== "safe") name2.append(this.#el("span", `risk ${v.action.risk}`, v.action.risk));
       body.append(name2);
       if (v.action.description) body.append(this.#el("p", "desc", truncate(v.action.description, 300)));
+      if (v.burst) {
+        const b = v.burst;
+        const why = b.by === "rule" ? "your rule allows it" : b.by === "remembered" ? "you approved it earlier" : `the ${LEVEL_LABEL[b.level ?? "auto"]} level lets it`;
+        const stays = b.by === "rule" ? "your rule stays" : b.by === "remembered" ? "your earlier approval stays" : "the level stays";
+        body.append(
+          this.#el(
+            "p",
+            "burst",
+            `${agent} has run this action ${b.n} times in the last ${span(b.perMs)} without asking you, because ${why}. That is as often as this app lets it go unasked, so it asks now. Allow runs it once more and starts the count again; ${stays}.`
+          )
+        );
+      }
       if (prompt.argsText !== void 0) {
         const pre = this.#el("pre");
         const lines = prompt.argsText.split("\n");
@@ -7277,7 +7822,7 @@ var Overlay = class {
     this.#queueNote = this.#el("span", "queue");
     let finished = false;
     const shownAt = tick();
-    const deadline = shownAt + prompt.timeoutMs;
+    const deadline = prompt.deadline;
     const over = () => {
       if (finished) return true;
       if (tick() < deadline) return false;
@@ -7286,9 +7831,12 @@ var Overlay = class {
     };
     let armedAt = 0;
     let armTimer;
-    let seenEnd = false;
+    let readTo = 0;
     const overflows = () => body.scrollHeight - body.clientHeight > 2;
-    const unread = () => overflows() && !seenEnd;
+    const noteRead = () => {
+      readTo = Math.max(readTo, body.scrollTop + body.clientHeight);
+    };
+    const unread = () => overflows() && readTo < body.scrollHeight - 2;
     const arming = () => tick() < armedAt;
     const waiting = () => arming() || unread();
     let keysAt = shownAt + ALLOW_ARM_MS;
@@ -7336,6 +7884,19 @@ var Overlay = class {
       if (fromRefusedKey(e) || over()) return;
       close("deny");
     });
+    const later2 = v.later ? this.#button("Later", "quiet", (e) => {
+      if (fromRefusedKey(e) || over()) return;
+      close("later");
+    }) : null;
+    if (later2) later2.title = v.review ? "Leave this request in the waiting list" : "Put this request in the waiting list and answer it later";
+    const toggleOffer = (name2, b, e) => {
+      if (fromRefusedKey(e) || over() || step !== "main") return;
+      const on = !ticked.has(name2);
+      if (on && (arming() || !this.#mayLoosen())) return;
+      if (on) ticked.add(name2);
+      else ticked.delete(name2);
+      b.setAttribute("aria-checked", String(on));
+    };
     let heldNote = null;
     const showHeld = () => {
       if (heldNote || finished) return;
@@ -7354,6 +7915,7 @@ var Overlay = class {
       }
     };
     const refresh = () => {
+      noteRead();
       const wait = waiting();
       for (const b of approving) {
         const w = wait || keyWait(b);
@@ -7364,64 +7926,113 @@ var Overlay = class {
       more.hidden = !unread();
       if (overflows()) body.tabIndex = 0;
     };
+    let step = "main";
+    const allowMs = typeof v.allowMs === "number" && v.allowMs > 0 ? v.allowMs : 0;
     const allow = this.#button("Allow", "primary", (e) => {
       if (fromRefusedKey(e) || over() || waiting() || !this.#mayLoosen()) return;
-      close("allow");
+      if (ticked.size > 0) setStep("more");
+      else close("allow");
     });
     approving.push(allow);
     const extra = [];
-    let alwaysNote = null;
-    if (v.kind === "action" && v.action && v.always) {
-      alwaysNote = this.#el(
-        "p",
-        "always",
-        `Always allow ${truncate(v.action.name, 80)} for ${agent}? It will then run without asking you, with any arguments, until this agent disconnects. You can change this from the "AI connected" indicator.`
-      );
-      alwaysNote.hidden = true;
-      const note = alwaysNote;
-      const step = (on) => {
-        note.hidden = !on;
-        always.hidden = on;
-        allow.hidden = on;
-        back.hidden = !on;
-        confirmAlways.hidden = !on;
-        if (rememberNote) rememberNote.hidden = on;
-        arm();
-        delay(ALLOW_ARM_MS);
+    const moreNote = this.#el("div", "always");
+    moreNote.hidden = true;
+    let durButtons = [];
+    let durEl = null;
+    const offersOn = v.kind === "attach" && offerBoxes.length > 0;
+    const alwaysOn = v.kind === "action" && v.action !== void 0 && v.always === true;
+    const back = this.#button("Back", "", (e) => {
+      if (fromRefusedKey(e) || over()) return;
+      setStep("main");
+    });
+    back.hidden = true;
+    const confirmMore = this.#button(offersOn ? "Allow with these" : "Always allow", "primary", (e) => {
+      if (fromRefusedKey(e) || over() || waiting() || !this.#mayLoosen()) return;
+      close(offersOn ? "allow" : "always");
+    });
+    confirmMore.hidden = true;
+    const always = alwaysOn ? this.#button("Always allow", "", (e) => {
+      if (fromRefusedKey(e) || over() || waiting() || !this.#mayLoosen()) return;
+      setStep("more");
+    }) : null;
+    const drawMore = () => {
+      const how = timed ? `for ${span(allowMs)}; after that it asks again` : "until this agent disconnects";
+      const kids = [];
+      if (alwaysOn && v.action) {
+        kids.push(createTextNode(doc, `Always allow ${truncate(v.action.name, 80)} for ${agent}? It will then run without asking you, with any arguments, ${how}. You can change this from the "AI connected" indicator.`));
+      } else {
+        const names = (v.offers ?? []).map((o) => o.name).filter((n) => ticked.has(n));
+        kids.push(createTextNode(doc, `Allow ${agent} to connect, and to run ${names.length === 1 ? "this action" : "these actions"} without asking you, with any arguments, ${how}?`));
+        const ul = this.#el("ul");
+        for (const n of names) ul.append(this.#el("li", void 0, truncate(n, 80)));
+        kids.push(ul, createTextNode(doc, 'You can change this from the "AI connected" indicator.'));
+      }
+      moreNote.replaceChildren(...kids);
+      confirmMore.textContent = offersOn ? "Allow with these" : timed ? `Allow for ${span(allowMs)}` : "Always allow";
+      for (const b of durButtons) {
+        const i = buttons.indexOf(b);
+        if (i >= 0) buttons.splice(i, 1);
+      }
+      durButtons = [];
+      if (allowMs > 0) {
+        const choice = durationChoice(this.#kit, allowMs, timed, (t, e) => {
+          if (fromRefusedKey(e) || over() || step !== "more" || t === timed) return;
+          if (!t && (arming() || !this.#mayLoosen())) return;
+          timed = t;
+          drawMore();
+          arm();
+          delay(ALLOW_ARM_MS);
+        });
+        durButtons = choice.buttons;
+        buttons.push(...durButtons);
+        if (durEl) durEl.replaceWith(choice.el);
+        else moreNote.after(choice.el);
+        durEl = choice.el;
+        durEl.hidden = step !== "more";
+      }
+    };
+    const setStep = (to) => {
+      step = to;
+      const on = to === "more";
+      if (on) drawMore();
+      moreNote.hidden = !on;
+      if (durEl) durEl.hidden = !on;
+      if (always) always.hidden = on;
+      allow.hidden = on;
+      if (later2) later2.hidden = on;
+      back.hidden = !on;
+      confirmMore.hidden = !on;
+      if (rememberNote) rememberNote.hidden = on;
+      if (on) {
         try {
-          card.focus({ preventScroll: true });
+          body.scrollTop += moreNote.getBoundingClientRect().top - body.getBoundingClientRect().top;
         } catch {
         }
-      };
-      const always = this.#button("Always allow", "", (e) => {
-        if (fromRefusedKey(e) || over() || waiting() || !this.#mayLoosen()) return;
-        step(true);
-      });
-      const back = this.#button("Back", "", (e) => {
-        if (fromRefusedKey(e) || over()) return;
-        step(false);
-      });
-      back.hidden = true;
-      const confirmAlways = this.#button("Always allow", "primary", (e) => {
-        if (fromRefusedKey(e) || over() || waiting() || !this.#mayLoosen()) return;
-        close("always");
-      });
-      confirmAlways.hidden = true;
-      approving.push(always, confirmAlways);
-      extra.push(always, back, confirmAlways);
+      }
+      arm();
+      delay(ALLOW_ARM_MS);
+      try {
+        card.focus({ preventScroll: true });
+      } catch {
+      }
+    };
+    if (always) {
+      approving.push(always);
+      extra.push(always);
+    }
+    if (alwaysOn || offersOn) {
+      approving.push(confirmMore);
+      extra.push(back, confirmMore);
     }
     let rememberNote = null;
     if (v.kind === "action" && v.action && v.remembers) {
       rememberNote = this.#el("p", "remember", `Allow is remembered: ${agent} may then run ${truncate(v.action.name, 80)} again without asking, with any arguments, until it disconnects. The "AI connected" indicator shows it, and you can take it back there.`);
     }
-    buttons.push(deny, ...extra, allow);
+    buttons.push(deny, ...later2 ? [later2] : [], ...extra, allow, ...offerBoxes);
     listen(
       body,
       "scroll",
-      () => {
-        if (body.scrollTop + body.clientHeight >= body.scrollHeight - 2) seenEnd = true;
-        refresh();
-      },
+      () => refresh(),
       { passive: true }
     );
     const arm = () => {
@@ -7442,19 +8053,26 @@ var Overlay = class {
       arm();
       delay(ALLOW_ARM_MS);
     };
-    foot.append(timer, this.#queueNote, deny, ...extra, allow);
+    const meta = this.#el("div", "meta");
+    meta.append(timer, this.#queueNote);
+    const btns = this.#el("div", "btns");
+    const refusing = this.#el("span", "bl");
+    refusing.append(deny, ...later2 ? [later2] : []);
+    const approves = this.#el("span", "br");
+    approves.append(...extra, allow);
+    btns.append(refusing, approves);
+    foot.append(meta, btns);
+    if (alwaysOn || offersOn) body.append(moreNote);
     card.append(more);
-    if (alwaysNote) card.append(alwaysNote);
     if (rememberNote) card.append(rememberNote);
     card.append(foot);
     this.#updateQueueNote();
     const countdown = () => {
       if (over()) return;
       const left = Math.max(0, Math.ceil((deadline - tick()) / 1e3));
-      timer.textContent = `Denies automatically in ${left} s`;
+      timer.textContent = v.review ? `Stays in the waiting list. This closes in ${left} s` : v.later ? `Goes to the waiting list in ${left} s` : `Denies automatically in ${left} s`;
     };
     const interval = every(countdown, 1e3);
-    const timeout = this.#later(() => close("timeout"), prompt.timeoutMs);
     const onKey = (e, inside) => {
       if (over()) return;
       const k = e.key;
@@ -7518,8 +8136,6 @@ var Overlay = class {
       if (finished) return;
       finished = true;
       cancelEvery(interval);
-      cancelLater(timeout);
-      this.#timers.delete(timeout);
       if (armTimer) {
         cancelLater(armTimer);
         this.#timers.delete(armTimer);
@@ -7544,19 +8160,22 @@ var Overlay = class {
       this.#arrange();
       this.#showChip();
       this.#panel.settle();
-      prompt.resolve(outcome);
-      let back = null;
-      if (previousInner && previousInner.isConnected && this.#root.contains(previousInner)) back = previousInner;
-      else if (previousKey !== null) back = Array.from(this.#root.querySelectorAll("[data-k]")).find((x) => x.getAttribute("data-k") === previousKey) ?? null;
-      if (!back && previousInner && this.#panel.isOpen) back = this.#openBtn;
-      if (!back && previous && previous !== this.host && previous.isConnected) back = previous;
+      const answer = { outcome };
+      if (outcome === "allow" && step === "more" && ticked.size > 0) answer.rules = (v.offers ?? []).map((o) => o.name).filter((n) => ticked.has(n));
+      if ((outcome === "always" || answer.rules !== void 0) && timed && allowMs > 0) answer.ms = allowMs;
+      this.#settle(prompt, answer);
+      let back2 = null;
+      if (previousInner && previousInner.isConnected && this.#root.contains(previousInner)) back2 = previousInner;
+      else if (previousKey !== null) back2 = Array.from(this.#root.querySelectorAll("[data-k]")).find((x) => x.getAttribute("data-k") === previousKey) ?? null;
+      if (!back2 && previousInner && this.#panel.isOpen) back2 = this.#openBtn;
+      if (!back2 && previous && previous !== this.host && previous.isConnected) back2 = previous;
       try {
-        if (back && typeof back.focus === "function") back.focus({ preventScroll: true });
+        if (back2 && typeof back2.focus === "function") back2.focus({ preventScroll: true });
       } catch {
       }
       if (this.#prompts.length && !this.#hold) this.#next();
     };
-    this.#current = { prompt, deadline, close };
+    this.#current = { prompt, close };
     this.#cardEl = card;
     this.#root.insertBefore(backdrop, this.#pill);
     this.#observe(card, true);
@@ -7585,7 +8204,7 @@ var Overlay = class {
     card.setAttribute("aria-label", "Request withdrawn");
     const head = this.#el("div", "head");
     const titles = this.#el("div");
-    titles.append(this.#el("h2", void 0, "Request withdrawn"), this.#el("p", "sub", "The agent withdrew this request. Nothing was approved."));
+    titles.append(this.#el("h2", void 0, "Request withdrawn"), this.#el("p", "sub", "This request is no longer waiting for an answer. Nothing was approved."));
     head.append(titles);
     card.replaceChildren(head);
     const hold = {
@@ -7607,6 +8226,91 @@ var Overlay = class {
     this.#showChip();
     this.#panel.settle();
     if (this.#prompts.length && !this.#current) this.#next();
+  }
+  // ───────── follow-up notices ─────────
+  /**
+   * Say what just happened, in the overlay's own words, with at most two things the person may
+   * do about it. It asks nothing: it is no dialog, takes no focus, holds nothing back and goes
+   * by itself after `FOLLOW_MS`, judged by the clock. It is not shown next to a prompt, and a
+   * prompt that comes up takes it down. Its buttons take the person's own click, and none for
+   * the first ALLOW_ARM_MS: a click on its way to the card that was just answered presses
+   * nothing here.
+   */
+  followUp(f) {
+    if (this.#destroyed) return;
+    this.#sweep();
+    if (this.#current !== null || this.#hold !== null || this.#prompts.length > 0) return;
+    this.#dropFollow();
+    const box = this.#el("div", "follow");
+    box.setAttribute("role", "status");
+    const text = this.#el("p", void 0, f.text);
+    const row = this.#el("div", "fb");
+    const shown = tick();
+    const mine = () => this.#follow?.el === box && tick() >= shown + ALLOW_ARM_MS;
+    const close = this.#button("Close", "quiet", () => {
+      if (this.#follow?.el === box) this.#dropFollow();
+    });
+    close.setAttribute("data-k", "follow:close");
+    for (const a of (f.actions ?? []).slice(0, 2)) {
+      const b = this.#button(a.label, "", () => {
+        if (!mine()) return;
+        const said = a.run();
+        if (typeof said !== "string") {
+          this.#dropFollow();
+          return;
+        }
+        text.textContent = said;
+        row.replaceChildren(close);
+        this.#stayFollow(box, FOLLOW_DONE_MS);
+      });
+      b.setAttribute("data-k", `follow:${a.k}`);
+      row.append(b);
+    }
+    row.append(close);
+    box.append(text, row);
+    this.#follow = { el: box, until: 0, timer: this.#later(() => {
+    }, 0) };
+    this.#stayFollow(box, typeof f.ms === "number" && f.ms > 0 ? f.ms : FOLLOW_MS);
+    this.#placeFollow();
+  }
+  /** The follow-up notice stays this long from now. */
+  #stayFollow(box, ms) {
+    const f = this.#follow;
+    if (!f || f.el !== box) return;
+    cancelLater(f.timer);
+    this.#timers.delete(f.timer);
+    f.until = tick() + ms;
+    f.timer = this.#later(() => {
+      if (this.#follow?.el === box) this.#dropFollow();
+    }, ms);
+  }
+  /** Where the follow-up notice is: inside the open panel, else over the indicator. */
+  #placeFollow() {
+    const f = this.#follow;
+    if (!f) return;
+    if (this.#panel.isOpen) this.#panel.aside(f.el);
+    else {
+      this.#panel.aside(null);
+      this.#root.insertBefore(f.el, this.#pill);
+    }
+  }
+  #dropFollow() {
+    const f = this.#follow;
+    if (!f) return;
+    this.#follow = null;
+    cancelLater(f.timer);
+    this.#timers.delete(f.timer);
+    this.#panel.aside(null);
+    f.el.remove();
+  }
+  /**
+   * Open the panel on the Chat tab with one agent addressed. Called from a click of the person
+   * on a control of the overlay (the follow-up after a refusal), never by itself.
+   */
+  openChat(ag) {
+    if (this.#destroyed || !this.#chat) return;
+    this.#panel.show(this.#chat.id);
+    this.#chat.address(ag);
   }
   // ───────── toasts and highlights ─────────
   /** A toast always carries a caption naming the agent, so it cannot pass as the app's or the browser's. */
@@ -7687,6 +8391,12 @@ var Overlay = class {
 
 // packages/driver/src/driver.ts
 var MAX_KEPT_CREDS = 256;
+var KEPT_SAME = "What you set for this agent before stays:";
+var KEPT_UNSURE = "This page cannot tell whether this is an agent you restricted before. What you set then stays for this one:";
+var WAIT_MAX_PER_AGENT = 3;
+var WAIT_MAX_TOTAL = 12;
+var TICKET_PATTERN2 = /^[A-Za-z0-9_-]{1,32}$/;
+var WAIT_KEY_MAX = 262144;
 var DEFAULT_HUB = `ws://127.0.0.1:${DEFAULT_PORT}/`;
 var TARGET_MAX = 130;
 var MAX_TEXT = 1e4;
@@ -7843,6 +8553,8 @@ var ReinsDriver = class {
   #attachCoolOff = { until: 0, level: 0, denials: 0 };
   /** Whether the current hub connection is verified (see `hubVerified`). */
   #hubVerified = false;
+  /** The protocol version the current hub connection speaks (`welcome.v`); undefined while there is none. */
+  #hubV;
   /** Stop was used on this page: every later attach needs at least `confirm`. */
   #stopped = false;
   /** What the person tightened, by credential id (`''`: the agents this surface cannot tell apart). */
@@ -7853,6 +8565,22 @@ var ReinsDriver = class {
   #relayReset = false;
   /** Consent requests an app's own handler has not answered yet, each with its deadline by the clock. */
   #customAsks = /* @__PURE__ */ new Set();
+  /** By agent: withdraws the request the app's own consent handler is being asked about. */
+  #withdraw = /* @__PURE__ */ new Map();
+  /**
+   * Agents whose pending prompt is being withdrawn by their own doing (the hub's `detach` for
+   * them, an attach that replaces their grant): such a `cancel` moves the cool-off like a
+   * timeout, so that a prompt cannot be flapped by asking, withdrawing and asking again.
+   */
+  #withdrawnBy = /* @__PURE__ */ new Set();
+  /** The waiting list, oldest first (SPEC 12, "Requests that wait"). */
+  #waiting = [];
+  #waitSeq = 0;
+  #waitTimer = null;
+  /** Looks for rules whose time is up; the clock decides, this only saves the wait for the next request. */
+  #lapseTimer = null;
+  /** What `attention` last reported. */
+  #attended = { asking: 0, waiting: 0 };
   #refreshDue = 0;
   #activityDue = 0;
   #stopGen = 0;
@@ -7978,13 +8706,25 @@ var ReinsDriver = class {
   get hubVerified() {
     return this.#hubVerified;
   }
+  get hubProtocol() {
+    return this.#peer && !this.#peer.closed ? this.#hubV : void 0;
+  }
+  /**
+   * The hub speaks 0.1: on this link the driver sends nothing that 0.1 does not have and
+   * takes nothing of it (SPEC 16). What the person sets in the panel still holds here, where
+   * it is enforced; the hub is not told.
+   */
+  get #hub01() {
+    return speaks01(this.#hubV);
+  }
   agents() {
     return [...this.#sessions.values()].map((s) => ({
       agent: { ...s.agent },
       level: s.level,
       scopes: [...s.scopes],
       granted: [...s.granted],
-      rules: Object.fromEntries(s.rules)
+      rules: Object.fromEntries(this.#rulesNow(s)),
+      timed: Object.fromEntries(this.#timedNow(s))
     }));
   }
   get #hasKey() {
@@ -8116,6 +8856,7 @@ var ReinsDriver = class {
       throw new ReinsError("E_GONE", "connection superseded");
     }
     this.#hubVerified = this.#o.link !== void 0 || conn.sealed;
+    this.#hubV = welcome.v;
     this.#limits = { ...DEFAULT_LIMITS, ...welcome.limits };
     this.#navUrl = this.#win.location.href;
     this.#navTitle = this.#doc.title;
@@ -8201,7 +8942,9 @@ var ReinsDriver = class {
         resume: () => this.resume(),
         stop: () => this.stop(),
         setLevel: (ag, level) => this.#setLevel(ag, level),
-        setRule: (ag, action, rule2) => this.#setRule(ag, action, rule2),
+        setRule: (ag, action, rule2, ms) => this.#setRule(ag, action, rule2, ms),
+        review: (id) => void this.#review(id),
+        discard: (id) => this.#discard(id),
         setScope: (ag, scope, on) => this.#setScope(ag, scope, on),
         disconnect: (ag) => this.#disconnectOne(ag),
         say: (text, to) => this.#personSay(text, to),
@@ -8257,6 +9000,10 @@ var ReinsDriver = class {
     this.#activityTimer = null;
     if (this.#chatTimer) clearTimeout(this.#chatTimer);
     this.#chatTimer = null;
+    if (this.#waitTimer) clearTimeout(this.#waitTimer);
+    this.#waitTimer = null;
+    if (this.#lapseTimer) clearTimeout(this.#lapseTimer);
+    this.#lapseTimer = null;
     this.#human.stop();
     this.#motion?.stop();
     this.#motion = null;
@@ -8336,6 +9083,7 @@ var ReinsDriver = class {
   #send(topic, d, ag) {
     const peer = this.#peer;
     if (!peer || peer.closed) return;
+    if (!eventIn(this.#hubV, topic, d)) return;
     try {
       peer.event(topic, d, ag === void 0 ? {} : { ag });
     } catch (e) {
@@ -8346,20 +9094,43 @@ var ReinsDriver = class {
   #refreshIndicator() {
     const sessions = [...this.#sessions.values()];
     const names = sessions.map((s) => s.agent.name);
+    const now4 = Date.now();
+    const list2 = this.#waiting.filter((w) => now4 < w.until);
+    const connect2 = list2.filter((w) => w.kind === "attach");
     this.#overlay?.indicator({
-      show: this.#o.indicator !== false && names.length > 0,
+      show: this.#o.indicator !== false && (names.length > 0 || this.#policy.human.panel && connect2.length > 0),
       names,
       ids: sessions.map((s) => s.ag),
       paused: this.#paused,
-      canPause: this.#policy.human.pause,
-      canStop: this.#policy.human.stop,
+      canPause: this.#policy.human.pause && names.length > 0,
+      canStop: this.#policy.human.stop && names.length > 0,
       unverified: !this.#hubVerified,
       panel: this.#policy.human.panel,
       levels: sessions.map((s) => s.level),
-      ...this.#waivingRules(sessions)
+      ...this.#waivingRules(sessions),
+      waiting: list2.filter((w) => !w.approved).length,
+      connect: { waiting: connect2.filter((w) => !w.approved).length, approved: connect2.filter((w) => w.approved).length }
     });
     this.#overlay?.permissions(this.#panelModel());
     this.#statusChanged();
+  }
+  /** The person's rules of a grant as they hold now: one that was set for a time and is past it is no rule. */
+  #rulesNow(s) {
+    const now4 = Date.now();
+    const out = /* @__PURE__ */ new Map();
+    for (const [name2, d] of s.rules) {
+      const until = s.until.get(name2);
+      if (d === "allow" && until !== void 0 && now4 >= until) continue;
+      out.set(name2, d);
+    }
+    return out;
+  }
+  /** The `allow` rules of a grant that end by themselves and have not yet, with when they do. */
+  #timedNow(s) {
+    const now4 = Date.now();
+    const out = /* @__PURE__ */ new Map();
+    for (const [name2, until] of s.until) if (s.rules.get(name2) === "allow" && now4 < until) out.set(name2, until);
+    return out;
   }
   /**
    * The person's `allow` rules that waive a prompt right now, over all sessions: without the
@@ -8370,14 +9141,18 @@ var ReinsDriver = class {
     let n = 0;
     let approved = 0;
     let like = "auto";
+    let until;
     for (const s of sessions) {
-      for (const [name2, rule2] of s.rules) {
+      const timed = this.#timedNow(s);
+      for (const [name2, rule2] of this.#rulesNow(s)) {
         const def = this.#actions.get(name2)?.def;
         if (rule2 !== "allow" || !def) continue;
         const q = { base: this.#base(s, def), risk: def.risk, level: s.level, offered: s.offered };
         if (decideAct(q).outcome !== "prompt" || decideAct({ ...q, rule: rule2 }).outcome !== "run") continue;
         n++;
         if (def.risk !== "safe" && def.risk !== "sensitive") like = "bypass";
+        const t = timed.get(name2);
+        if (t !== void 0 && (until === void 0 || t < until)) until = t;
       }
       if (this.#policy.consent.remember !== "session") continue;
       for (const name2 of s.approved) {
@@ -8389,7 +9164,7 @@ var ReinsDriver = class {
         if (def.risk !== "safe" && def.risk !== "sensitive") like = "bypass";
       }
     }
-    return n + approved > 0 ? { rules: { n, like, approved } } : {};
+    return n + approved > 0 ? { rules: { n, like, approved, ...until !== void 0 && { until } } } : {};
   }
   // ───────── what the person tightened stays ─────────
   /** What the person has tightened on this grant right now. */
@@ -8462,20 +9237,32 @@ var ReinsDriver = class {
   /** What the Permissions tab shows. Data only: the panel changes nothing except through the hooks below. */
   #panelModel() {
     this.#panelActions ??= [...this.#actions.values()].map((a) => ({ name: a.def.name, risk: a.def.risk, base: decideAction(this.#policy, a.def) }));
+    const now4 = Date.now();
+    const waiting = this.#waiting.filter((w) => now4 < w.until).map((w) => {
+      const def = w.action !== void 0 ? this.#actions.get(w.action)?.def : void 0;
+      return { id: w.id, ag: w.ag, name: w.agent.name, kind: w.kind, ...def && { action: def.name, risk: def.risk }, asked: w.asked, until: w.until, ...w.approved && { approved: true } };
+    });
+    const allowMs = this.#hub01 ? 0 : this.#policy.human.allowMs;
     return {
-      agents: [...this.#sessions.values()].map((s) => ({
-        ag: s.ag,
-        name: s.agent.name,
-        level: s.level,
-        offered: [...s.offered],
-        rules: Object.fromEntries(s.rules),
-        hub: s.hub ? Object.fromEntries(s.hub) : null,
-        remembered: [...s.approved],
-        scopes: s.granted.map((scope) => ({ scope, on: s.scopes.includes(scope) }))
-      })),
+      agents: [...this.#sessions.values()].map((s) => {
+        const timed = this.#timedNow(s);
+        return {
+          ag: s.ag,
+          name: s.agent.name,
+          level: s.level,
+          offered: [...s.offered],
+          rules: Object.fromEntries(this.#rulesNow(s)),
+          hub: s.hub ? Object.fromEntries(s.hub) : null,
+          remembered: [...s.approved],
+          scopes: s.granted.map((scope) => ({ scope, on: s.scopes.includes(scope) })),
+          ...timed.size > 0 && { timed: Object.fromEntries(timed) }
+        };
+      }),
       actions: this.#panelActions,
       unverified: !this.#hubVerified,
-      canStop: this.#policy.human.stop
+      canStop: this.#policy.human.stop,
+      ...waiting.length > 0 && { waiting },
+      ...allowMs > 0 && { allowMs }
     };
   }
   /**
@@ -8489,6 +9276,8 @@ var ReinsDriver = class {
   }
   /** Where an `act` request stands for this agent now (SPEC 12, levels and rules). */
   #verdict(s, def, c) {
+    const until = s.until.get(def.name);
+    if (until !== void 0 && Date.now() >= until) this.#lapseRules();
     const rule2 = s.rules.get(def.name);
     const base = s.hub?.get(def.name) === "deny" ? "deny" : decideAction(this.#policy, def);
     return decideAct({ base, risk: def.risk, c, level: s.level, offered: s.offered, ...rule2 !== void 0 && { rule: rule2 } });
@@ -8524,13 +9313,15 @@ var ReinsDriver = class {
    * (`consent.remember: session`); so does the rule `confirm`. Otherwise an action the
    * person set back to asking would go on running from memory.
    */
-  #setRule(ag, action, rule2) {
+  #setRule(ag, action, rule2, ms) {
     const s = this.#sessions.get(ag);
     const entry = this.#actions.get(action);
     if (!s || !entry || !this.#policy.human.panel) return false;
     let forgot = false;
+    const limit = rule2 === "allow" && ms !== void 0 && this.#policy.human.allowMs > 0 && !this.#hub01 ? this.#policy.human.allowMs : void 0;
     if (rule2 === null) {
       forgot = s.approved.delete(action);
+      s.until.delete(action);
       if (!s.rules.delete(action)) {
         if (forgot) {
           this.#logYou(s, `${action} asks again`);
@@ -8543,17 +9334,56 @@ var ReinsDriver = class {
       const base = this.#base(s, entry.def);
       if (base === "deny") return false;
       if (rule2 === "allow" && base === "confirm" && !allowRulePermitted(entry.def.risk, s.offered)) return false;
-      if (s.rules.get(action) === rule2) return false;
+      const timedNow = this.#timedNow(s).has(action);
+      if (this.#rulesNow(s).get(action) === rule2 && (rule2 !== "allow" || limit === void 0 && !timedNow)) return false;
       s.rules.set(action, rule2);
+      if (limit !== void 0) s.until.set(action, Date.now() + limit);
+      else s.until.delete(action);
       if (rule2 === "confirm") s.approved.delete(action);
     }
     this.#kept.get(s.cred)?.rules.delete(action);
     this.#keep(s);
-    this.#send("user", { kind: "rule", a: action, d: rule2 }, ag);
-    this.#logYou(s, rule2 === null ? `${action} follows the level again` : `${action} set to ${rule2 === "allow" ? "Allow" : rule2 === "confirm" ? "Ask" : "Block"}`);
+    this.#send("user", { kind: "rule", a: action, d: rule2, ...limit !== void 0 && { ms: limit } }, ag);
+    this.#logYou(s, rule2 === null ? `${action} follows the level again` : `${action} set to ${rule2 === "allow" ? `Allow${limit !== void 0 ? ` for ${span(limit)}` : ""}` : rule2 === "confirm" ? "Ask" : "Block"}`);
     this.#refreshIndicator();
-    this.#emit("rule", { agent: { ...s.agent }, action, rule: rule2 });
+    this.#emit("rule", { agent: { ...s.agent }, action, rule: rule2, ...limit !== void 0 && { ms: limit } });
+    if (limit !== void 0) this.#armLapse();
     return true;
+  }
+  /**
+   * Rules the person set for a time end when the time is up, judged by the clock: the rule
+   * goes, the hub and the agent are told as for a rule the person removed, and the action
+   * follows the level again. Called before every decision that could rest on such a rule and
+   * whenever a request arrives; the timer only saves the wait.
+   */
+  #lapseRules() {
+    const now4 = Date.now();
+    let any = false;
+    for (const s of this.#sessions.values()) {
+      for (const [name2, until] of [...s.until]) {
+        if (now4 < until) continue;
+        s.until.delete(name2);
+        if (s.rules.get(name2) !== "allow") continue;
+        s.rules.delete(name2);
+        any = true;
+        this.#send("user", { kind: "rule", a: name2, d: null }, s.ag);
+        this.#log({ agent: s.agent.name, ag: s.ag, what: `${name2}: your Allow rule for a time ended`, outcome: "" });
+        this.#emit("rule", { agent: { ...s.agent }, action: name2, rule: null });
+      }
+    }
+    if (any) this.#refreshIndicator();
+    this.#armLapse();
+  }
+  #armLapse() {
+    if (this.#lapseTimer) clearTimeout(this.#lapseTimer);
+    this.#lapseTimer = null;
+    let first;
+    for (const s of this.#sessions.values()) for (const until of s.until.values()) if (first === void 0 || until < first) first = until;
+    if (first === void 0 || !this.#domOn) return;
+    this.#lapseTimer = setTimeout(() => {
+      this.#lapseTimer = null;
+      this.#lapseRules();
+    }, Math.min(Math.max(0, first - Date.now()) + 20, 2 ** 31 - 1));
   }
   /**
    * The person switched one scope of a grant off or back on. Never beyond what was granted
@@ -8712,6 +9542,7 @@ var ReinsDriver = class {
     this.#relayChanged(this.#room.leave(s.chat), false, false);
     this.#drawChat();
     this.#overlay?.cancel(ag);
+    this.#dropWaiting(ag, true);
     if (!this.#sessions.size) {
       this.#setCursor(false);
       this.#overlay?.clear();
@@ -8723,6 +9554,12 @@ var ReinsDriver = class {
     for (const ag of [...this.#sessions.keys()]) this.#drop(ag, why, notify);
     this.#streams.clear();
     this.#overlay?.cancel();
+    this.#withdrawnBy.clear();
+    for (const withdraw of [...this.#withdraw.values()]) withdraw();
+    if (this.#waiting.length) {
+      this.#waiting = [];
+      this.#waitingChanged();
+    }
   }
   #onHumanBurst() {
     for (const s of this.#sessions.values()) if (s.subs.has("user")) this.#send("user", { kind: "override" }, s.ag);
@@ -8744,6 +9581,8 @@ var ReinsDriver = class {
     this.#stopped = true;
     this.#stopGen++;
     this.#overlay?.cancel();
+    for (const withdraw of [...this.#withdraw.values()]) withdraw();
+    for (const w of [...this.#waiting]) this.#removeWaiting(w, "deny");
     this.#motion?.halt();
     for (const s of [...this.#sessions.values()]) this.#revoke(s.ag);
   }
@@ -8751,6 +9590,7 @@ var ReinsDriver = class {
   #revoke(ag) {
     this.#stopped = true;
     this.#overlay?.cancel(ag);
+    for (const w of this.#waiting.filter((x) => x.ag === ag)) this.#removeWaiting(w, "deny");
     if (!this.#sessions.has(ag)) return;
     this.#send("grant", { kind: "revoked" }, ag);
     this.#drop(ag, "user");
@@ -8874,33 +9714,60 @@ var ReinsDriver = class {
    * Ask, with at most one pending prompt per agent and MAX_PROMPTS in total (else E_BUSY),
    * and not during a cool-off (else E_RATE). Records the answer for the cool-off; the third
    * explicit refusal in a row of one agent's action prompts revokes its grant.
+   *
+   * The request's time runs from here, when it arrived, not from when its prompt comes up:
+   * the hub and the agent stop waiting by their own clocks, and a prompt that first waited
+   * its turn must not outlast them.
    */
-  async #consent(req, owner, always = false, extra = {}) {
+  async #consent(req, owner, o = {}) {
     const now4 = Date.now();
     const cool = req.kind === "attach" ? this.#attachCoolOff : this.#coolOff.get(owner);
-    if (cool && now4 < cool.until) throw new ReinsError("E_RATE", `the person refused a recent request; ask again in ${Math.ceil((cool.until - now4) / 1e3)} s`);
+    if (!o.review && cool && now4 < cool.until) throw new ReinsError("E_RATE", `the person refused a recent request; ask again in ${Math.ceil((cool.until - now4) / 1e3)} s`);
     if ((this.#asking.get(owner) ?? 0) > 0) throw new ReinsError("E_BUSY", "a consent prompt for this agent is already pending");
     if (this.#askingTotal >= MAX_PROMPTS) throw new ReinsError("E_BUSY", "too many consent prompts pending");
     this.#asking.set(owner, (this.#asking.get(owner) ?? 0) + 1);
     this.#askingTotal++;
     this.#room.quiet();
     this.#drawChat();
-    let outcome;
+    this.#attention();
+    let a;
     try {
-      outcome = await this.#ask(req, owner, always, extra);
+      a = await this.#ask(req, owner, o);
     } finally {
       const n = (this.#asking.get(owner) ?? 1) - 1;
       if (n > 0) this.#asking.set(owner, n);
       else this.#asking.delete(owner);
       this.#askingTotal--;
       this.#drawChat();
+      this.#attention();
     }
-    if (this.#recordAnswer(req.kind, owner, outcome)) throw new ReinsError("E_CONSENT", "the user declined three times in a row; access revoked");
-    return outcome === "allow" || outcome === "always" ? outcome : "no";
+    const outcome = a.outcome === "cancel" && this.#withdrawnBy.delete(owner) ? "timeout" : a.outcome;
+    if (this.#recordAnswer(req.kind, owner, outcome, o.review !== void 0)) throw new ReinsError("E_CONSENT", "the user declined three times in a row; access revoked");
+    if (a.outcome === "allow" || a.outcome === "always") return { answer: a.outcome, ...a.rules !== void 0 && { rules: a.rules }, ...a.ms !== void 0 && { ms: a.ms } };
+    return { answer: a.outcome === "later" || a.outcome === "timeout" ? "unanswered" : "no" };
   }
-  /** Update the cool-off for an answer; true when it revoked the agent's grant. */
-  #recordAnswer(kind, owner, outcome) {
+  /**
+   * How long a request waits for the person: the app's `consent.timeoutMs`, and never longer
+   * than the `consentTimeoutMs` the hub announced in `welcome`. The hub gives the surface
+   * that long for the person (and `reqTimeoutMs` for the way there and back), then answers
+   * the agent `E_TIMEOUT`. Time the app allows beyond it is time in which an answer would
+   * count for a request nobody waits for. A hub limit that is not a positive number is not
+   * one a hub can mean: the default stands in for it, as for the heartbeat.
+   */
+  get #consentMs() {
+    const hub = this.#limits.consentTimeoutMs;
+    return Math.min(this.#policy.consent.timeoutMs, typeof hub === "number" && hub > 0 ? hub : DEFAULT_LIMITS.consentTimeoutMs);
+  }
+  /**
+   * Update the cool-off for an answer; true when it revoked the agent's grant. A prompt nobody
+   * answered and one the person put off with "Later" move the cool-off as a timeout always
+   * did (an agent cannot throw card after card) and are no refusal: they do not count toward
+   * the three that revoke a grant. `review`: the person opened the card again themselves;
+   * leaving it unanswered then is nothing the agent did.
+   */
+  #recordAnswer(kind, owner, outcome, review = false) {
     if (outcome === "cancel") return false;
+    if (review && (outcome === "later" || outcome === "timeout")) return false;
     let cool;
     if (kind === "attach") cool = this.#attachCoolOff;
     else {
@@ -8928,13 +9795,23 @@ var ReinsDriver = class {
     }
     return false;
   }
-  async #ask(req, owner, always, extra) {
-    const timeoutMs = this.#policy.consent.timeoutMs;
+  /**
+   * Put the request to the person, through the app's consent handler or the driver's own
+   * prompt, and wait until its time is up at the latest. A yes that comes after that is a
+   * timeout, whatever the timers did.
+   */
+  async #ask(req, owner, o) {
+    const timeoutMs = Math.max(0, Math.min(this.#consentMs, o.timeoutMs ?? Infinity));
     const custom = this.#o.consent;
     if (custom) {
+      const until = Date.now() + timeoutMs;
+      let withdrawn = false;
       const run = async () => {
+        if (withdrawn) return "cancel";
+        const left = until - Date.now();
+        if (left <= 0) return "timeout";
         let timer;
-        const pending = { until: Date.now() + timeoutMs, expire: () => {
+        const pending = { until, expire: () => {
         } };
         try {
           return await Promise.race([
@@ -8942,7 +9819,7 @@ var ReinsDriver = class {
             new Promise((r) => {
               pending.expire = () => r("timeout");
               this.#customAsks.add(pending);
-              timer = setTimeout(() => r("timeout"), timeoutMs);
+              timer = setTimeout(() => r("timeout"), left);
             })
           ]);
         } catch (e) {
@@ -8960,33 +9837,318 @@ var ReinsDriver = class {
         () => {
         }
       );
-      return p;
+      return new Promise((resolve) => {
+        const withdraw = () => {
+          withdrawn = true;
+          if (this.#withdraw.get(owner) === withdraw) this.#withdraw.delete(owner);
+          resolve({ outcome: "cancel" });
+        };
+        this.#withdraw.set(owner, withdraw);
+        const settle = (outcome) => {
+          if (this.#withdraw.get(owner) === withdraw) this.#withdraw.delete(owner);
+          resolve({ outcome });
+        };
+        p.then(settle, () => settle("timeout"));
+      });
     }
     const overlay = this.#overlay;
-    if (!overlay) return "cancel";
+    if (!overlay) return { outcome: "cancel" };
     const view = { kind: req.kind, agentName: req.agent.name, agentId: req.agent.id, appName: this.#o.app.name };
     if (req.scopes) view.scopes = req.scopes;
     if (req.action) view.action = { name: req.action.name, description: req.action.description, risk: req.action.risk };
     if (req.args !== void 0) view.args = req.args;
     if (req.reason) view.reason = req.reason;
     if (req.hubVerified === false) view.unverifiedHub = true;
-    if (always && req.kind === "action") view.always = true;
-    if (extra.remembers && req.kind === "action") view.remembers = true;
+    if (o.always && req.kind === "action") view.always = true;
+    if (o.remembers && req.kind === "action") view.remembers = true;
     if (req.kept && req.kept.length) {
       view.kept = [...req.kept];
-      if (extra.keptWhy) view.keptWhy = extra.keptWhy;
+      if (o.keptWhy) view.keptWhy = o.keptWhy;
     }
+    if (o.later) view.later = true;
+    if (o.review) view.review = o.review;
+    if (o.offers && o.offers.length && req.kind === "attach") view.offers = o.offers;
+    if (o.offersHeld && o.offersHeld.length && req.kind === "attach") view.offersHeld = o.offersHeld;
+    if (o.burst && req.kind === "action") view.burst = o.burst;
+    if ((view.always || view.offers) && this.#policy.human.allowMs > 0 && !this.#hub01) view.allowMs = this.#policy.human.allowMs;
     return overlay.ask(view, timeoutMs, owner);
+  }
+  // ───────── requests that wait ─────────
+  /**
+   * Is there a waiting list at all (SPEC 12, "Requests that wait"): the policy gives requests
+   * time to wait, the person has the panel to answer them in and the indicator that leads
+   * there, the prompt is the driver's own (an app's handler cannot be opened again), and the
+   * hub speaks 0.2. Otherwise a prompt nobody answers is a refusal, as it always was. A
+   * request waits only where its agent speaks 0.2 as well (`Session.v02`).
+   */
+  get #waitOn() {
+    return !this.#hub01 && this.#policy.consent.waitMs > 0 && this.#policy.human.panel && this.#o.indicator !== false && !this.#o.consent && this.#overlay !== null;
+  }
+  /** May one more request of this agent join the list: at most three of one agent, twelve in all. */
+  #mayWait(ag) {
+    if (!this.#waitOn) return false;
+    this.#sweepWaiting();
+    return this.#waiting.length < WAIT_MAX_TOTAL && this.#waiting.filter((w) => w.ag === ag).length < WAIT_MAX_PER_AGENT;
+  }
+  /** What makes an `act` request the same request as one that waits: the action, and its arguments in canonical JSON. */
+  #actKey(a, args) {
+    try {
+      const key = canonicalJson({ a, args: args === void 0 ? {} : args });
+      return key.length <= WAIT_KEY_MAX ? key : void 0;
+    } catch {
+      return void 0;
+    }
+  }
+  /**
+   * The entry for the same request of the same agent, if one is in the list. For an attach the
+   * agent is also told by its credential, where the hub said which: a session id that comes
+   * with another credential is another agent.
+   */
+  #waitingFor(ag, kind, key, cred) {
+    if (key === void 0) return void 0;
+    this.#sweepWaiting();
+    return this.#waiting.find((w) => w.ag === ag && w.kind === kind && w.key === key && (cred === void 0 || w.cred === cred));
+  }
+  /**
+   * The approved entry a request may use: its ticket names the entry, the agent is the one
+   * that asked (for an attach also the same credential, where the hub said which), and what
+   * it asks is the same. A ticket that is unknown, used, expired or another agent's names
+   * nothing, and the request is then handled as if it carried none.
+   */
+  #approved(p, ag, kind, key, cred = "") {
+    const tk = get(p, "tk");
+    if (key === void 0 || typeof tk !== "string" || !TICKET_PATTERN2.test(tk)) return void 0;
+    this.#sweepWaiting();
+    const w = this.#waiting.find((x) => x.tk === tk);
+    if (!w || !w.approved || w.ag !== ag || w.kind !== kind || w.key !== key) return void 0;
+    if (kind === "attach" && w.cred !== "" && w.cred !== cred) return void 0;
+    return w;
+  }
+  /**
+   * The request joins the list. Returns the error that tells the agent so: `E_WAITING` with
+   * the ticket and how long the request waits. Nothing ran.
+   */
+  #wait(e) {
+    let tk;
+    try {
+      tk = randomToken(16);
+    } catch {
+      return new ReinsError("E_CONSENT", "the user did not answer");
+    }
+    const now4 = Date.now();
+    const w = { ...e, id: ++this.#waitSeq, tk, asked: now4, until: now4 + this.#policy.consent.waitMs, approved: false };
+    this.#waiting.push(w);
+    this.#waitingChanged();
+    return this.#waitingError(w);
+  }
+  #waitingError(w) {
+    const ms = Math.max(0, w.until - Date.now());
+    const msg = w.approved ? "the person approved this request: send it again with its ticket" : "the request waits for the person at the page; nothing ran";
+    return new ReinsError("E_WAITING", msg, { tk: w.tk, ms });
+  }
+  /** Take an entry out of the list. With `answer`, the agent is told (`evt user {kind:"answer"}`). */
+  #removeWaiting(w, answer) {
+    const i = this.#waiting.indexOf(w);
+    if (i < 0) return;
+    this.#waiting.splice(i, 1);
+    if (answer !== void 0) this.#answer(w, answer);
+    this.#waitingChanged();
+  }
+  /**
+   * The requests of one agent leave the list: with its grant, or when the hub withdraws them.
+   * With `tell`, the agent is told `expired` for each (the hub relays it if the agent is still
+   * there), so that an SDK holding a ticket does not wait on it.
+   */
+  #dropWaiting(ag, tell = false) {
+    const gone2 = this.#waiting.filter((w) => w.ag === ag);
+    if (!gone2.length) return;
+    this.#waiting = this.#waiting.filter((w) => w.ag !== ag);
+    if (tell) for (const w of gone2) this.#answer(w, "expired");
+    this.#waitingChanged();
+  }
+  /** Tell the agent how its waiting request was answered. Its ticket names the request; an action is named, never its arguments. */
+  #answer(w, answer) {
+    const d = { kind: "answer", tk: w.tk, answer };
+    if (w.kind === "action" && w.action !== void 0) d.a = w.action;
+    this.#send("user", d, w.ag);
+  }
+  /**
+   * Entries past their time leave the list, judged by the clock: the agent is told `expired`.
+   * Called whenever the list is looked at; the timer only saves the wait.
+   */
+  #sweepWaiting() {
+    const now4 = Date.now();
+    const gone2 = this.#waiting.filter((w) => now4 >= w.until && !w.reviewing);
+    if (!gone2.length) return;
+    this.#waiting = this.#waiting.filter((w) => !gone2.includes(w));
+    for (const w of gone2) {
+      this.#answer(w, "expired");
+      if (!w.approved) this.#log({ agent: w.agent.name, ag: w.ag, what: w.kind === "attach" ? "connect: waited, and nobody answered in time" : `${w.action}: waited, and nobody answered in time`, outcome: "" });
+    }
+    this.#waitingChanged();
+  }
+  /** The list changed: the indicator, the panel, the app (`attention`) and the timer for the next entry that ends. */
+  #waitingChanged() {
+    this.#refreshIndicator();
+    this.#attention();
+    if (this.#waitTimer) clearTimeout(this.#waitTimer);
+    this.#waitTimer = null;
+    let first;
+    for (const w of this.#waiting) if (first === void 0 || w.until < first) first = w.until;
+    if (first === void 0 || !this.#domOn) return;
+    this.#waitTimer = setTimeout(() => {
+      this.#waitTimer = null;
+      this.#sweepWaiting();
+    }, Math.min(Math.max(0, first - Date.now()) + 20, 2 ** 31 - 1));
+  }
+  /** Tell the app how many prompts are up and how many requests wait, when either number changed. Counts only. */
+  #attention() {
+    const now4 = Date.now();
+    const next = { asking: this.#askingTotal, waiting: this.#waiting.filter((w) => !w.approved && now4 < w.until).length };
+    if (next.asking === this.#attended.asking && next.waiting === this.#attended.waiting) return;
+    this.#attended = next;
+    this.#emit("attention", { ...next });
+  }
+  #logWaiting(w, what) {
+    this.#log({ agent: w.agent.name, ag: w.ag, what, outcome: "", you: true });
+  }
+  /**
+   * The person pressed Review on a waiting request: its card comes up again as it was asked,
+   * with every rule a card has. Allow approves the request: the agent is told, and its next
+   * identical request with the ticket runs, once, within the time the entry has left. Deny
+   * refuses it. "Later", or no answer, leaves it in the list.
+   */
+  async #review(id) {
+    this.#sweepWaiting();
+    const w = this.#waiting.find((x) => x.id === id);
+    const overlay = this.#overlay;
+    if (!w || w.approved || w.reviewing || !overlay || !this.#waitOn) return;
+    if ((this.#asking.get(w.ag) ?? 0) > 0 || this.#askingTotal >= MAX_PROMPTS) return;
+    const o = { later: true, review: { asked: w.asked }, timeoutMs: w.until - Date.now() };
+    let req;
+    let def;
+    const s = this.#sessions.get(w.ag);
+    if (w.kind === "action") {
+      def = w.action !== void 0 ? this.#actions.get(w.action)?.def : void 0;
+      if (!s || !def) return this.#removeWaiting(w);
+      req = { kind: "action", agent: { ...s.agent }, action: jsonClone(def), args: jsonClone(w.args) };
+      o.always = this.#mayOfferAlways(s, def, w.c === true);
+    } else {
+      const scopes = w.scopes ?? [];
+      req = { kind: "attach", agent: { ...w.agent }, scopes: [...scopes] };
+      if (w.reason) req.reason = w.reason;
+      if (!this.#hubVerified) req.hubVerified = false;
+      const before = this.#keptFor(w.cred);
+      const lines = this.#keptLines(before, scopes);
+      if (lines.length) req.kept = lines;
+      o.keptWhy = w.cred === "" ? KEPT_UNSURE : KEPT_SAME;
+      Object.assign(o, this.#offersFor(w.offered ?? [DEFAULT_LEVEL], w.hub ?? null, before));
+    }
+    w.reviewing = true;
+    let r;
+    try {
+      r = await this.#consent(req, w.ag, o);
+    } catch {
+      r = { answer: "no" };
+    } finally {
+      w.reviewing = false;
+    }
+    if (!this.#waiting.includes(w)) return;
+    if (Date.now() >= w.until) return this.#sweepWaiting();
+    const label = agentLabel(w.agent.name, w.ag);
+    if (r.answer === "allow" || r.answer === "always") {
+      w.approved = true;
+      if (r.rules !== void 0) w.rules = r.rules;
+      if (r.ms !== void 0) w.ms = r.ms;
+      if (r.answer === "always" && w.action !== void 0) this.#setRule(w.ag, w.action, "allow", r.ms);
+      this.#answer(w, "allow");
+      this.#logWaiting(w, w.kind === "attach" ? "Approved its waiting request to connect" : `Approved ${w.action}, which was waiting`);
+      this.#waitingChanged();
+      overlay.followUp({ text: `Approved. ${label} is told. ${w.kind === "attach" ? "It may connect" : `${clip(w.action ?? "", 80)} runs`} when it asks again, before ${hhmm(w.until)}.` });
+    } else if (r.answer === "no") {
+      this.#logWaiting(w, w.kind === "attach" ? "Refused its waiting request to connect" : `Refused ${w.action}, which was waiting`);
+      this.#removeWaiting(w, "deny");
+      if (s && def && this.#sessions.get(w.ag) === s) this.#afterDeny(s, def);
+    }
+  }
+  /** The person pressed Discard on a waiting request, or took back an approval the agent has not used: it is refused, with no card. */
+  #discard(id) {
+    this.#sweepWaiting();
+    const w = this.#waiting.find((x) => x.id === id);
+    if (!w || w.reviewing) return;
+    const what = w.kind === "attach" ? "its waiting request to connect" : `${w.action}, which was waiting`;
+    this.#logWaiting(w, w.approved ? `Took back the approval of ${what}` : `Discarded ${what}`);
+    this.#removeWaiting(w, "deny");
+  }
+  /**
+   * What an attach prompt offers to allow without asking each time (SPEC 12, "Offers at
+   * attach"): the actions the policy names for which the person could set the rule `allow` in
+   * the panel, and those left out because what the person tightened for this agent stays.
+   */
+  #offersFor(offered, hub, kept) {
+    const names = this.#policy.human.offer;
+    if (!names.length || this.#hub01 || this.#o.consent || !this.#policy.human.panel || this.#o.indicator === false) return {};
+    const actions = [...this.#actions.values()].map((a) => ({ name: a.def.name, risk: a.def.risk, base: stricter(decideAction(this.#policy, a.def), hub ? hub.get(a.def.name) ?? "confirm" : "confirm") }));
+    const free = offeredActions({ offer: names, actions, offered });
+    const now4 = offeredActions({ offer: names, actions, offered, kept: { level: kept.strict && offered.includes("strict") ? "strict" : void 0, rules: kept.rules } });
+    const offers = now4.map((n) => {
+      const d = this.#actions.get(n).def;
+      return { name: d.name, description: d.description, risk: d.risk };
+    });
+    const held = free.filter((n) => !now4.includes(n));
+    return { ...offers.length > 0 && { offers }, ...held.length > 0 && { offersHeld: held } };
+  }
+  /** Set the offers the person ticked at attach as their rules, now that the grant exists at the hub too. */
+  #applyOffers(s) {
+    const o = s.offers;
+    if (!o) return;
+    s.offers = void 0;
+    if (this.#sessions.get(s.ag) !== s) return;
+    const kept = this.#keptFor(s.cred);
+    for (const name2 of o.names) {
+      const held = s.rules.get(name2) ?? kept.rules.get(name2);
+      if (held === "confirm" || held === "deny") {
+        this.#log({ agent: s.agent.name, ag: s.ag, what: `${name2}: offer not applied, your ${held === "deny" ? "Block" : "Ask"} rule stays`, outcome: "" });
+        continue;
+      }
+      this.#setRule(s.ag, name2, "allow", o.ms);
+    }
+  }
+  /**
+   * After the person refused an action: a notice that says so and offers, in one click each, to
+   * block that action for that agent from now on (it asks less of them, so one click), and,
+   * where the agent may chat, to open the Chat tab addressed to it. It asks nothing.
+   */
+  #afterDeny(s, def) {
+    const overlay = this.#overlay;
+    if (!overlay || this.#o.consent || this.#o.indicator === false || this.#hub01 || this.#sessions.get(s.ag) !== s) return;
+    const label = agentLabel(s.agent.name, s.ag);
+    const name2 = clip(def.name, 80);
+    const actions = [];
+    if (this.#policy.human.panel && this.#rulesNow(s).get(def.name) !== "deny") {
+      actions.push({
+        label: "Block this action",
+        k: "block",
+        run: () => this.#setRule(s.ag, def.name, "deny") ? `Blocked. ${label} can no longer ask for ${name2}. You can change this from the "AI connected" indicator.` : void 0
+      });
+    }
+    if (this.#chatOn && s.scopes.includes("chat")) actions.push({ label: "Say why in the chat", k: "chat", run: () => void overlay.openChat(s.ag) });
+    if (actions.length) overlay.followUp({ text: `Denied. ${name2} did not run for ${label}.`, actions });
   }
   // ───────── requests ─────────
   async #request(m, p, f) {
     if (!isObj(p)) bad3("params must be an object");
     this.#flushMutations();
     this.#checkNav();
+    this.#lapseRules();
+    this.#sweepWaiting();
     if (m === "attach") return this.#attach(p, f);
     if (m === "detach") {
       if (typeof f.ag === "string") {
+        if ((this.#asking.get(f.ag) ?? 0) > 0) this.#withdrawnBy.add(f.ag);
         this.#overlay?.cancel(f.ag);
+        this.#withdraw.get(f.ag)?.();
+        this.#dropWaiting(f.ag, true);
         this.#drop(f.ag, typeof p.why === "string" ? p.why.slice(0, 16) : "hub");
       }
       return {};
@@ -9003,6 +10165,7 @@ var ReinsDriver = class {
     if (!handler || scope === void 0) throw new ReinsError("E_UNKNOWN_METHOD", "unknown method");
     const s = typeof f.ag === "string" ? this.#sessions.get(f.ag) : void 0;
     if (!s) throw new ReinsError("E_NOT_ATTACHED", "not attached");
+    this.#applyOffers(s);
     try {
       if (!s.scopes.includes(scope)) throw new ReinsError("E_SCOPE", `grant lacks scope ${scope}`);
       if (this.#paused && !READ_ONLY_METHODS.includes(m) && !CHAT_SPEAK_METHODS.includes(m)) throw new ReinsError("E_PAUSED", "the user paused agent control");
@@ -9028,6 +10191,7 @@ var ReinsDriver = class {
     }
   }
   async #attach(p, f) {
+    if (this.#hub01) p = fieldsIn(p, V01.attachParams);
     const ag = f.ag;
     if (typeof ag !== "string" || ag.length === 0 || ag.length > 64) bad3("ag: required");
     const a = get(p, "agent");
@@ -9037,7 +10201,7 @@ var ReinsDriver = class {
     if (!Array.isArray(requested) || requested.length > 16 || !requested.every((x) => typeof x === "string")) bad3("scopes: expected a list");
     const reasonRaw = optStr3(p, "reason", 2e3);
     const reason = reasonRaw === void 0 ? void 0 : clip(reasonRaw.replace(/\s+/g, " ").trim(), 240);
-    const scopes = capScopes(requested, this.#policy.scopes).filter((x) => x !== "chat" || this.#chatOn);
+    const scopes = capScopes(requested, this.#policy.scopes).filter((x) => x !== "chat" || this.#chatOn && !this.#hub01);
     if (!scopes.length) throw new ReinsError("E_SCOPE", "no requested scope is allowed");
     const full = () => !this.#sessions.has(ag) && this.#sessions.size >= MAX_SURFACE_SESSIONS;
     if (full()) throw new ReinsError("E_BUSY", "too many agents are attached to this page");
@@ -9045,6 +10209,7 @@ var ReinsDriver = class {
     const offered = this.#policy.human.panel ? capLevels(this.#policy.human.levels, Array.isArray(hubLevels) ? LEVELS.filter((l) => hubLevels.includes(l)) : []) : [DEFAULT_LEVEL];
     const said = get(p, "decisions");
     const hub = isObj(said) ? new Map([...this.#actions.keys()].map((name2) => [name2, hubDecision(said, name2)])) : null;
+    const v02 = !speaks01(get(p, "v"));
     const credRaw = get(p, "cred");
     const cred = this.#hubVerified && typeof credRaw === "string" && credRaw.length >= 1 && credRaw.length <= 64 ? credRaw : "";
     const before = this.#keptFor(cred);
@@ -9056,23 +10221,46 @@ var ReinsDriver = class {
     if (cred === "" && beforeLines.length > 0) d = stricter(d, "confirm");
     if (d === "deny") throw new ReinsError("E_DENIED", "attach denied by policy");
     this.#requireOverlay();
+    const key = scopes.join(",");
+    let chosen = {};
     if (d === "confirm") {
-      const epoch = this.#epoch;
-      const stopGen = this.#stopGen;
-      const req = { kind: "attach", agent: { ...agent }, scopes: [...scopes] };
-      if (reason) req.reason = reason;
-      if (!this.#hubVerified) req.hubVerified = false;
-      if (beforeLines.length) req.kept = beforeLines;
-      const keptWhy = cred === "" ? "This page cannot tell whether this is an agent you restricted before. What you set then stays for this one:" : "What you set for this agent before stays:";
-      const answer = await this.#consent(req, ag, false, { keptWhy });
-      if (epoch !== this.#epoch) throw new ReinsError("E_GONE", "connection closed");
-      if (answer === "no" || stopGen !== this.#stopGen) throw new ReinsError("E_CONSENT", "the user declined");
+      const ticket = this.#approved(p, ag, "attach", key, cred);
+      const same = ticket ? void 0 : this.#waitingFor(ag, "attach", key, cred);
+      if (same) throw this.#waitingError(same);
+      if (ticket) {
+        if (ticket.rules !== void 0) chosen.rules = ticket.rules;
+        if (ticket.ms !== void 0) chosen.ms = ticket.ms;
+        this.#removeWaiting(ticket);
+      } else {
+        const epoch = this.#epoch;
+        const stopGen = this.#stopGen;
+        const req = { kind: "attach", agent: { ...agent }, scopes: [...scopes] };
+        if (reason) req.reason = reason;
+        if (!this.#hubVerified) req.hubVerified = false;
+        if (beforeLines.length) req.kept = beforeLines;
+        const later2 = v02 && this.#mayWait(ag);
+        const r = await this.#consent(req, ag, { keptWhy: cred === "" ? KEPT_UNSURE : KEPT_SAME, later: later2, ...this.#offersFor(offered, hub, before) });
+        if (epoch !== this.#epoch) throw new ReinsError("E_GONE", "connection closed");
+        if (stopGen !== this.#stopGen) throw new ReinsError("E_CONSENT", "the user declined");
+        if (r.answer === "unanswered") {
+          if (later2 && this.#mayWait(ag) && !this.#waitingFor(ag, "attach", key, cred)) {
+            this.#log({ agent: agent.name, ag, what: "connect", outcome: "E_WAITING" });
+            throw this.#wait({ kind: "attach", ag, cred, agent: { ...agent }, key, scopes: [...scopes], ...reason !== void 0 && { reason }, offered: [...offered], hub });
+          }
+          throw new ReinsError("E_CONSENT", "the user did not answer");
+        }
+        if (r.answer === "no") throw new ReinsError("E_CONSENT", "the user declined");
+        chosen = r;
+      }
       this.#requireOverlay();
       if (full()) throw new ReinsError("E_BUSY", "too many agents are attached to this page");
     }
-    if (this.#sessions.has(ag)) this.#drop(ag, "replaced", false);
+    if (this.#sessions.has(ag)) {
+      if ((this.#asking.get(ag) ?? 0) > 0) this.#withdrawnBy.add(ag);
+      this.#drop(ag, "replaced", false);
+    }
     const kept = this.#keptFor(cred);
-    const session = { ag, agent, scopes, granted: [...scopes], level: DEFAULT_LEVEL, offered, hub, rules: /* @__PURE__ */ new Map(), nodes: null, rev: -1, subs: /* @__PURE__ */ new Set(), sent: /* @__PURE__ */ new Map(), approved: /* @__PURE__ */ new Set(), chat: {}, cred };
+    const session = { ag, agent, scopes, granted: [...scopes], level: DEFAULT_LEVEL, offered, hub, rules: /* @__PURE__ */ new Map(), until: /* @__PURE__ */ new Map(), runs: /* @__PURE__ */ new Map(), nodes: null, rev: -1, subs: /* @__PURE__ */ new Set(), sent: /* @__PURE__ */ new Map(), approved: /* @__PURE__ */ new Set(), chat: {}, cred, v02 };
     const stays = {};
     if (kept.strict && offered.includes("strict")) {
       session.level = "strict";
@@ -9091,6 +10279,10 @@ var ReinsDriver = class {
     }
     this.#sessions.set(ag, session);
     this.#keep(session);
+    if (chosen.rules && chosen.rules.length) {
+      session.offers = { names: [...chosen.rules], ...chosen.ms !== void 0 && { ms: chosen.ms } };
+      this.#later(() => this.#applyOffers(session), 0);
+    }
     const hubRelay = get(p, "chatRelay");
     const dropped = this.#room.setMode(stricterRelay(this.#policy.chatRelay, CHAT_RELAY.includes(hubRelay) ? hubRelay : "off"));
     if (dropped.changed) {
@@ -9103,7 +10295,7 @@ var ReinsDriver = class {
     if (anyKept) this.#logYou(session, "Kept what you set before");
     this.#refreshIndicator();
     this.#emit("attach", { agent: { ...agent }, scopes: [...session.scopes] });
-    return anyKept ? { scopes, ttlMs: this.#policy.ttlMs, kept: stays } : { scopes, ttlMs: this.#policy.ttlMs };
+    return anyKept && !this.#hub01 ? { scopes, ttlMs: this.#policy.ttlMs, kept: stays } : { scopes, ttlMs: this.#policy.ttlMs };
   }
   // ───────── method handlers ─────────
   #handlers = {
@@ -9387,19 +10579,40 @@ var ReinsDriver = class {
     refuse(v);
     let approved = false;
     let record = false;
-    let by = v.outcome === "run" && v.by !== "policy" ? v.by : void 0;
-    if (v.outcome === "prompt") {
-      if (remembered(v)) by = "remembered";
-      else {
+    let by = v.outcome === "run" && v.by !== "policy" ? v.by : v.outcome === "prompt" && remembered(v) ? "remembered" : void 0;
+    const key = this.#actKey(a, args);
+    let burst;
+    const cap = this.#hub01 ? false : this.#policy.human.burst;
+    if (by !== void 0 && cap !== false) {
+      const step = burstStep(s.runs.get(a) ?? [], Date.now(), cap);
+      if (step.ask) burst = { n: step.n, perMs: cap.perMs, by: by === "level" || by === "remembered" ? by : "rule", ...by === "level" && { level: s.level } };
+      else s.runs.set(a, step.runs);
+    }
+    if (v.outcome === "prompt" && by === void 0 || burst) {
+      const ticket = this.#approved(p, s.ag, "action", key);
+      const same = ticket ? void 0 : this.#waitingFor(s.ag, "action", key);
+      if (same) throw this.#waitingError(same);
+      if (ticket) {
+        this.#removeWaiting(ticket);
+      } else {
         const req = { kind: "action", agent: { ...s.agent }, action: jsonClone(entry.def), args: jsonClone(args) };
-        const answer = await this.#consent(req, s.ag, this.#mayOfferAlways(s, entry.def, c), { remembers: remembers && v.remember === true && !c });
+        const later2 = key !== void 0 && s.v02 && this.#mayWait(s.ag);
+        const r = await this.#consent(req, s.ag, burst ? { later: later2, burst } : { always: this.#mayOfferAlways(s, entry.def, c), remembers: remembers && v.remember === true && !c, later: later2 });
         if (this.#sessions.get(s.ag) !== s) throw new ReinsError("E_NOT_ATTACHED", "not attached");
-        if (answer === "no") throw new ReinsError("E_CONSENT", "the user declined");
-        if (answer === "always") this.#setRule(s.ag, a, "allow");
-        approved = true;
-        by = "person";
-        record = remembers && v.remember === true && !c;
+        if (r.answer === "no") {
+          this.#afterDeny(s, entry.def);
+          throw new ReinsError("E_CONSENT", "the user declined");
+        }
+        if (r.answer === "unanswered") {
+          if (later2 && this.#mayWait(s.ag) && !this.#waitingFor(s.ag, "action", key)) throw this.#wait({ kind: "action", ag: s.ag, cred: s.cred, agent: { ...s.agent }, key, action: a, args: jsonClone(args), c });
+          throw new ReinsError("E_CONSENT", "the user did not answer");
+        }
+        if (r.answer === "always") this.#setRule(s.ag, a, "allow", r.ms);
+        record = !burst && remembers && v.remember === true && !c;
       }
+      approved = true;
+      by = "person";
+      if (burst) s.runs.delete(a);
     }
     return this.#queue.push(async () => {
       this.#ready(s, "act", false, approved);
@@ -9407,6 +10620,8 @@ var ReinsDriver = class {
       refuse(now4);
       if (!approved && now4.outcome === "prompt" && !remembered(now4)) throw new ReinsError("E_BUSY", "the permission for this action changed while the request waited; send it again");
       if (by !== void 0) note.by = by;
+      const overtaken = this.#waitingFor(s.ag, "action", key);
+      if (overtaken && !overtaken.reviewing) this.#removeWaiting(overtaken);
       this.#keepChatFocus();
       let r;
       this.#holdChat(1);
@@ -9746,6 +10961,108 @@ var PointerStreamImpl = class {
   }
 };
 
+// packages/agent/src/waiting.ts
+init_src();
+var SLACK_MS = 1e3;
+var MAX_TIMER_MS = 2147483647;
+var Waits = class {
+  #recs = /* @__PURE__ */ new Map();
+  /** What waits now, oldest first; lapsed entries are gone. */
+  list() {
+    this.#prune();
+    return [...this.#recs.values()].map(({ ticket, action, until, answer }) => ({ ticket, until, ...action !== void 0 && { action }, ...answer !== void 0 && { answer } }));
+  }
+  /** The person answered (`evt user {kind:"answer"}`): kept with the request, and whoever waits for it is woken. */
+  answer(ev) {
+    const r = this.#recs.get(ev.tk);
+    if (!r) return void 0;
+    r.answer = ev.answer;
+    for (const wake of [...r.wakers]) wake();
+    return r;
+  }
+  /** Forget everything, and wake whoever waits: the grant ended, or the connection did. */
+  clear() {
+    for (const r of this.#recs.values()) for (const wake of [...r.wakers]) wake();
+    this.#recs.clear();
+  }
+  /**
+   * Make `send` with the care a request that may wait needs. `send(tk)` sends the request,
+   * with the ticket when there is one. `key` says which request this is.
+   */
+  async request(key, action, send, opts, gone2) {
+    this.#prune();
+    let tk = [...this.#recs.values()].find((r) => r.key === key && r.answer === "allow")?.ticket;
+    const cap = opts.wait === void 0 || opts.wait === true ? DEFAULT_WAIT_CAP_MS : opts.wait === false ? 0 : Math.max(0, opts.wait);
+    const started = Date.now();
+    for (let round = 0; round < 4; round++) {
+      let w;
+      try {
+        const r = await send(tk);
+        if (tk !== void 0) this.#recs.delete(tk);
+        return r;
+      } catch (e) {
+        if (tk !== void 0) this.#recs.delete(tk);
+        const got = asWaiting(e, action);
+        if (got === void 0) throw e;
+        w = got;
+      }
+      const rec = this.#add(w, key);
+      const left = cap - (Date.now() - started);
+      if (left <= 0) throw w;
+      const answer = await this.#waitFor(rec, left);
+      const why = gone2();
+      if (why !== void 0) throw new ReinsError("E_NOT_ATTACHED", `the surface is not attached (${why})`);
+      if (answer === void 0) {
+        if (this.#recs.get(rec.ticket) !== rec) throw new ReinsError("E_CONSENT", "the request waited for the person and is no longer in the list");
+        throw new WaitingError(w.message, { tk: rec.ticket, ms: Math.max(0, rec.until - Date.now()) }, action);
+      }
+      if (answer !== "allow") {
+        this.#recs.delete(rec.ticket);
+        throw new ReinsError("E_CONSENT", answer === "deny" ? "the person declined" : "the person did not answer in time");
+      }
+      tk = rec.ticket;
+    }
+    throw new ReinsError("E_CONSENT", "the request waited for the person again and again");
+  }
+  #add(w, key) {
+    const had = this.#recs.get(w.ticket);
+    const until = Date.now() + w.ms;
+    if (had) {
+      had.until = until;
+      had.key = key;
+      delete had.answer;
+      return had;
+    }
+    const rec = { ticket: w.ticket, key, until, wakers: /* @__PURE__ */ new Set(), ...w.action !== void 0 && { action: w.action } };
+    this.#recs.set(w.ticket, rec);
+    return rec;
+  }
+  /** Resolve with the answer, or with undefined after `ms`, when the request leaves the list, or when everything is cleared. */
+  #waitFor(rec, ms) {
+    if (rec.answer !== void 0) return Promise.resolve(rec.answer);
+    const wait = Math.min(ms, Math.max(0, rec.until + SLACK_MS - Date.now()), MAX_TIMER_MS);
+    return new Promise((resolve) => {
+      const done = () => {
+        clearTimeout(timer);
+        rec.wakers.delete(done);
+        resolve(rec.answer);
+      };
+      const timer = unref(setTimeout(done, wait));
+      rec.wakers.add(done);
+    });
+  }
+  #prune() {
+    const now4 = Date.now();
+    for (const [tk, r] of this.#recs) if (r.until + SLACK_MS < now4 && r.wakers.size === 0) this.#recs.delete(tk);
+  }
+};
+function actKey(action, args) {
+  return canonicalJson({ a: action, args: args ?? {} });
+}
+function attachKey(scopes) {
+  return canonicalJson({ scopes: [...scopes] });
+}
+
 // packages/agent/src/client.ts
 var DEFAULT_URL = `ws://127.0.0.1:${DEFAULT_PORT}`;
 var DEFAULT_SCOPES = ["observe", "act", "cursor", "show"];
@@ -9789,26 +11106,30 @@ async function connect(options = {}) {
     conn = await clientConnect(
       link,
       { role: "agent", name: options.name ?? "reins-agent", kid: options.kid ?? "default", key },
-      options.handshakeTimeoutMs === void 0 ? {} : { timeoutMs: options.handshakeTimeoutMs }
+      { ...options.handshakeTimeoutMs !== void 0 && { timeoutMs: options.handshakeTimeoutMs }, ...options.versions !== void 0 && { versions: options.versions } }
     );
   } catch (e) {
     link.close();
     if (typeof e === "object" && e !== null) HANDSHAKE_ERRORS.add(e);
     throw e;
   }
-  return new Client(conn.link, conn.welcome.session, conn.welcome.limits);
+  return new Client(conn.link, conn.welcome.session, conn.welcome.limits, conn.welcome.v);
 }
 var Client = class {
   session;
+  version;
   #peer;
   #limits;
   #events = new Emitter();
+  /** Attach requests that wait for the person, by surface id. */
+  #attachWaits = /* @__PURE__ */ new Map();
   #handles = /* @__PURE__ */ new Map();
   #streams = /* @__PURE__ */ new Map();
   #hb;
   #closed = false;
-  constructor(link, session, limits) {
+  constructor(link, session, limits, version) {
     this.session = session;
+    this.version = version;
     this.#limits = { ...DEFAULT_LIMITS, ...limits };
     this.#peer = new Peer(
       link,
@@ -9842,8 +11163,16 @@ var Client = class {
     return r.surfaces;
   }
   async attach(s, opts = {}) {
-    const scopes = capScopes(opts.scopes ?? DEFAULT_SCOPES);
-    const r = await this.request("surface.attach", clean({ s, scopes, reason: opts.reason }), this.consentTimeoutMs);
+    const scopes = scopesIn(this.version, capScopes(opts.scopes ?? DEFAULT_SCOPES));
+    let waits = this.#attachWaits.get(s);
+    if (!waits) this.#attachWaits.set(s, waits = new Waits());
+    const r = await waits.request(
+      attachKey(scopes),
+      void 0,
+      (tk) => this.request("surface.attach", clean({ s, scopes, reason: opts.reason, tk }), this.consentTimeoutMs),
+      opts,
+      () => this.#closed ? "connection closed" : void 0
+    );
     const h = new Handle(this, r);
     let set = this.#handles.get(h.info.s);
     if (!set) this.#handles.set(h.info.s, set = /* @__PURE__ */ new Set());
@@ -9852,6 +11181,11 @@ var Client = class {
   }
   ping() {
     return this.#peer.ping();
+  }
+  waiting() {
+    const out = [];
+    for (const [s, w] of this.#attachWaits) for (const r of w.list()) out.push({ s, ...r });
+    return out;
   }
   on(event, fn) {
     return this.#events.on(event, fn);
@@ -9882,10 +11216,15 @@ var Client = class {
     return st;
   }
   #onEvent(f) {
+    if (!eventIn(this.version, f.topic, f.d)) return;
     const d = f.d;
     if (f.topic === "surface") this.#events.emit("surface", d);
     const s = f.s ?? d?.surface?.s;
     if (s === void 0) return;
+    if (f.topic === "user" && d?.kind === "answer") {
+      const ev = answerEvent(d);
+      if (ev !== void 0 && this.#attachWaits.get(s)?.answer(ev) !== void 0) this.#events.emit("answer", { s, ...ev });
+    }
     const set = this.#handles.get(s);
     if (!set) return;
     for (const h of [...set]) h.deliver(f.topic, d);
@@ -9893,6 +11232,8 @@ var Client = class {
   #onClose(code, msg) {
     this.#closed = true;
     this.#clearHeartbeat();
+    for (const w of this.#attachWaits.values()) w.clear();
+    this.#attachWaits.clear();
     for (const st of this.#streams.values()) st.fail(new ReinsError("E_GONE", "connection closed"));
     this.#streams.clear();
     this.#events.emit("close", msg === void 0 ? { code } : { code, msg });
@@ -9927,6 +11268,8 @@ var Handle = class {
   #info;
   #c;
   #events = new Emitter();
+  /** Requests of this grant that wait for the person. */
+  #waits = new Waits();
   #level = DEFAULT_LEVEL;
   #rules = /* @__PURE__ */ new Map();
   #chatRelay = false;
@@ -9979,7 +11322,10 @@ var Handle = class {
       } else if (k === void 0 || k === "revoked" || k === "expired") this.#end(k ?? "revoked");
     } else if (topic === "user") {
       const u = d;
-      if (k === "relay") {
+      if (k === "answer") {
+        const ev = answerEvent(d);
+        if (ev !== void 0 && this.#waits.answer(ev) !== void 0) this.#events.emit("answer", ev);
+      } else if (k === "relay") {
         if (typeof u?.on === "boolean") this.#chatRelay = u.on;
       } else if (k === "level") {
         const level = LEVELS.find((l) => l === u?.level);
@@ -10002,10 +11348,15 @@ var Handle = class {
   #end(why) {
     if (this.#gone !== void 0) return;
     this.#gone = why;
+    this.#waits.clear();
     this.#c.forget(this);
+  }
+  waiting() {
+    return this.#waits.list();
   }
   async #call(m, p = {}, timeoutMs) {
     if (this.#gone !== void 0) throw new ReinsError("E_NOT_ATTACHED", `surface ${this.#info.s} is not attached`);
+    if (!methodIn(this.#c.version, m)) throw new ReinsError("E_UNKNOWN_METHOD", `the hub speaks protocol ${this.#c.version}, which has no ${m}`);
     try {
       return await this.#c.request(m, { s: this.#info.s, ...clean({ ...p }) }, timeoutMs);
     } catch (e) {
@@ -10055,8 +11406,14 @@ var Handle = class {
     return (await this.#call("state.get", { name: name2 })).state;
   }
   // ── commands ──
-  async act(action, args) {
-    const r = await this.#call("act", { a: action, args }, this.#c.consentTimeoutMs);
+  async act(action, args, opts = {}) {
+    const r = await this.#waits.request(
+      actKey(action, args),
+      action,
+      (tk) => this.#call("act", { a: action, args, tk }, this.#c.consentTimeoutMs),
+      opts,
+      () => this.#gone
+    );
     return r.result;
   }
   async click(h) {
@@ -10147,7 +11504,7 @@ ${canonicalJson(rest)}`;
 }
 
 // packages/hub/src/broker.ts
-var HUB_VERSION = "0.1.0";
+var HUB_VERSION = "0.2.0";
 var MIN_KEY_CHARS = 32;
 var HANDSHAKE_MS = 5e3;
 var FAIL_WINDOW_MS = 6e4;
@@ -10185,7 +11542,10 @@ function chatSayParams(p) {
   if (p.to !== void 0) out.to = p.to;
   return out;
 }
-var MAX_TIMER_MS = 2147483647;
+var MAX_TIMER_MS2 = 2147483647;
+var TICKETS_PER_SURFACE = 3;
+var TICKETS_PER_AGENT = 16;
+var EARLY_REPORTS_MAX = 32;
 var MAX_REASON_CHARS = 500;
 var MAX_AGENT_NAME = 64;
 var MAX_TITLE_CHARS = 200;
@@ -10267,6 +11627,13 @@ var RefusalLimiter = class {
     if (n > 0) this.summary(n);
   }
 };
+function waitingReq(m, p) {
+  try {
+    return canonicalJson(m === "act" ? { a: p.a, args: p.args ?? {} } : { scopes: p.scopes });
+  } catch {
+    return "";
+  }
+}
 var Broker = class {
   #name;
   #creds = /* @__PURE__ */ new Map();
@@ -10298,6 +11665,8 @@ var Broker = class {
   #surfaceAdmit;
   #agentAdmit;
   #peerOpts;
+  /** The versions offered in `challenge.v`, newest first. */
+  #versions;
   #agentSeq = 0;
   #surfaceSeq = 0;
   #grantSeq = 0;
@@ -10362,6 +11731,10 @@ var Broker = class {
       throw new TypeError(`auditKey must be a string of at least ${MIN_KEY_CHARS} characters`);
     }
     this.#auditKey = config.auditKey;
+    if (config.versions !== void 0 && !(isStringArray(config.versions) && config.versions.length > 0 && config.versions.every((v) => SUPPORTED_VERSIONS.includes(v)))) {
+      throw new TypeError(`versions must be a list of at least one of ${SUPPORTED_VERSIONS.join(", ")}`);
+    }
+    this.#versions = config.versions === void 0 ? [...SUPPORTED_VERSIONS] : SUPPORTED_VERSIONS.filter((v) => config.versions.includes(v));
     this.#name = typeof config.name === "string" && config.name ? config.name : "reins-hub";
     this.#policy = resolvePolicy(config.policy);
     this.#limits = { ...DEFAULT_LIMITS, ...config.limits ?? {} };
@@ -10399,7 +11772,7 @@ var Broker = class {
     return {
       name: this.#name,
       ver: HUB_VERSION,
-      v: [...SUPPORTED_VERSIONS],
+      v: [...this.#versions],
       profile: this.#policy.profile,
       surfaces: this.#surfaces.size,
       agents: this.#agents.size
@@ -10462,7 +11835,7 @@ var Broker = class {
     }
     link.limitInbound?.(PREAUTH_MESSAGES, PREAUTH_BYTES);
     const nonce = randomToken(32);
-    const challengeText = encodeFrame({ t: "challenge", v: [...SUPPORTED_VERSIONS], nonce, hub: { name: this.#name, ver: HUB_VERSION } });
+    const challengeText = encodeFrame({ t: "challenge", v: [...this.#versions], nonce, hub: { name: this.#name, ver: HUB_VERSION } });
     let done = false;
     const release = () => {
       done = true;
@@ -10505,7 +11878,7 @@ var Broker = class {
       const hello = f;
       const kid = hello.role === "agent" && hello.auth ? hello.auth.kid.slice(0, 64) : void 0;
       if (only !== void 0 && hello.role !== only) return refuse("E_ORIGIN", `this connection does not take the ${hello.role === "surface" ? "surface" : "agent"} role`, hello.role, kid);
-      if (!SUPPORTED_VERSIONS.includes(hello.v)) return refuse("E_VERSION", "no common protocol version", hello.role, kid);
+      if (!this.#versions.includes(hello.v)) return refuse("E_VERSION", "no common protocol version", hello.role, kid);
       clearTimeout(entry.timer);
       entry.timer = unref2(setTimeout(() => refuse("E_TIMEOUT", "handshake timed out"), HANDSHAKE_MS + FAIL_DELAY_MAX_MS));
       this.#admit(hello, nonce, origin).then(
@@ -10527,7 +11900,7 @@ var Broker = class {
             link.limitInbound?.();
             const id2 = `s${++this.#surfaceSeq}`;
             this.#welcome(link, hello.v, id2, "surface", void 0);
-            this.#addSurface(link, r, id2, vouched);
+            this.#addSurface(link, r, id2, hello.v, vouched);
             return;
           }
           if (!link.open) return entry.finish();
@@ -10553,7 +11926,7 @@ var Broker = class {
                 return;
               }
               if (r.role === "agent") this.#addAgent(sealed2, hello, r.cred, id, origin);
-              else this.#addSurface(sealed2, r, id, vouched);
+              else this.#addSurface(sealed2, r, id, hello.v, vouched);
             },
             () => {
               if (done) return;
@@ -10705,12 +12078,16 @@ ${origin}`) || !this.#surfaceAdmits.take()) return { ok: false, code: "E_RATE", 
   #addAgent(link, hello, cred, id, origin) {
     const a = {
       id,
+      v: hello.v,
       role: "agent",
       name: this.#displayName(cred, hello.name),
       cred,
       grants: /* @__PURE__ */ new Map(),
       streams: /* @__PURE__ */ new Map(),
       attaching: /* @__PURE__ */ new Set(),
+      tickets: /* @__PURE__ */ new Map(),
+      waitingAttach: /* @__PURE__ */ new Set(),
+      early: /* @__PURE__ */ new Map(),
       refusals: new RefusalLimiter(this.#now, (count) => this.#audit({ kind: "request", outcome: "suppressed", agent: id, count })),
       lastPing: 0,
       peer: void 0
@@ -10725,12 +12102,13 @@ ${origin}`) || !this.#surfaceAdmits.take()) return { ok: false, code: "E_RATE", 
       },
       this.#peerOpts
     );
-    this.#audit({ kind: "connect", outcome: "ok", role: "agent", agent: id, origin, kid: cred.kid.slice(0, 64) });
+    this.#audit({ kind: "connect", outcome: "ok", role: "agent", agent: id, origin, kid: cred.kid.slice(0, 64), v: hello.v });
   }
   /** Register a surface session (confirmed when keyed); `welcome` (with session `id`) has been sent. */
-  #addSurface(link, r, id, vouched = false) {
+  #addSurface(link, r, id, v, vouched = false) {
     const s = {
       id,
+      v,
       role: "surface",
       origin: r.origin,
       url: r.url,
@@ -10758,7 +12136,7 @@ ${origin}`) || !this.#surfaceAdmits.take()) return { ok: false, code: "E_RATE", 
       },
       this.#peerOpts
     );
-    this.#audit({ kind: "connect", outcome: "ok", role: "surface", surface: id, origin: r.origin });
+    this.#audit({ kind: "connect", outcome: "ok", role: "surface", surface: id, origin: r.origin, v });
     this.#broadcastSurface("added", s);
   }
   // ───────────────────────────── disconnects ─────────────────────────────
@@ -10770,6 +12148,13 @@ ${origin}`) || !this.#surfaceAdmits.take()) return { ok: false, code: "E_RATE", 
       if (s && !this.#closed && !s.peer.closed) s.peer.request("detach", { why: "agent" }, { ag: a.id }).catch(noop);
     }
     a.attaching.clear();
+    for (const sid of a.waitingAttach) {
+      const s = this.#surfaces.get(sid);
+      if (s && !a.grants.has(sid) && !this.#closed && !s.peer.closed) s.peer.request("detach", { why: "hub" }, { ag: a.id }).catch(noop);
+    }
+    a.waitingAttach.clear();
+    a.tickets.clear();
+    a.early.clear();
     for (const g of [...a.grants.values()]) this.#endGrant(g, "agent");
     for (const st of [...a.streams.values()]) this.#dropStream(st, true);
     a.refusals.flush();
@@ -10780,6 +12165,11 @@ ${origin}`) || !this.#surfaceAdmits.take()) return { ok: false, code: "E_RATE", 
     this.#surfaces.delete(s.id);
     for (const g of [...s.grants.values()]) this.#endGrant(g, "surface");
     for (const st of [...this.#streams.values()]) if (st.surface === s) this.#dropStream(st, false);
+    for (const a of this.#agents.values()) {
+      for (const [k, t] of a.tickets) if (t.surface === s) a.tickets.delete(k);
+      a.waitingAttach.delete(s.id);
+      a.early.delete(s.id);
+    }
     const mark = `
 ${s.id}|`;
     for (const k of [...this.#buckets.keys()]) if (k.includes(mark)) this.#buckets.delete(k);
@@ -10814,15 +12204,26 @@ ${s.id}|`;
       profile: s.manifest.profile,
       digest: s.digest,
       attached: g !== void 0,
-      verified: s.verified
+      verified: s.verified,
+      // Which version the surface speaks: told to an agent that speaks 0.2 itself.
+      ...!speaks01(a.v) && { v: s.v }
     };
+  }
+  /**
+   * Send an agent an event, if the version its link speaks has it (SPEC 16). On a 0.1 link
+   * a topic or a kind that 0.1 does not have is not sent: a 0.1 agent ends its handle on any
+   * `grant` event, and reads a `user` event as one of the three kinds it knows. Throws what
+   * `Peer.event` throws.
+   */
+  #tell(a, topic, d, extra = {}) {
+    if (eventIn(a.v, topic, d)) a.peer.event(topic, d, extra);
   }
   #broadcastSurface(kind, s) {
     for (const a of this.#agents.values()) {
       if (!this.#mayAttachTo(a, s)) continue;
       if (kind === "changed" && this.#currentGrant(a, s) === void 0) continue;
       try {
-        a.peer.event("surface", { kind, surface: this.#surfaceInfo(s, a) });
+        this.#tell(a, "surface", { kind, surface: this.#surfaceInfo(s, a) });
       } catch {
       }
     }
@@ -10830,6 +12231,16 @@ ${s.id}|`;
   #surfaceEvent(s, f) {
     if (this.#surfaces.get(s.id) !== s) return;
     const topic = f.topic;
+    if (!eventIn(s.v, topic, f.d)) return;
+    if (f.ag !== void 0 && !s.grants.has(f.ag) && isObject(f.d) && (topic === "user" && (f.d.kind === "relay" || f.d.kind === "level" || f.d.kind === "rule") || topic === "grant" && f.d.kind === "scopes")) {
+      const a = this.#agents.get(f.ag);
+      if (a && a.attaching.has(s.id)) {
+        const list2 = a.early.get(s.id) ?? [];
+        if (list2.length < EARLY_REPORTS_MAX) list2.push(f);
+        a.early.set(s.id, list2);
+        return;
+      }
+    }
     if (topic === "grant") {
       const d = f.d;
       if (!isObject(d)) return;
@@ -10841,6 +12252,10 @@ ${s.id}|`;
           for (const g of [...s.grants.values()]) this.#endGrant(g, "revoked");
         }
       } else if (d.kind === "scopes") this.#personScopes(s, f.ag, d.scopes);
+      return;
+    }
+    if (topic === "user" && isObject(f.d) && f.d.kind === "answer") {
+      this.#personAnswer(s, f.ag, f.d);
       return;
     }
     if (topic === "user" && isObject(f.d) && f.d.kind === "relay") {
@@ -10868,7 +12283,7 @@ ${s.id}|`;
     }
     for (const a of targets) {
       try {
-        a.peer.event(f.topic, f.d, { s: s.id });
+        this.#tell(a, f.topic, f.d, { s: s.id });
       } catch {
       }
     }
@@ -10894,11 +12309,15 @@ ${s.id}|`;
    * lets the agent do or hear more than before; such a change also ends the grant when the
    * audit log cannot be written.
    */
-  #personChange(g, method, value, loosens, action) {
+  #personChange(g, method, value, loosens, action, ms) {
     if (loosens && this.#auditUnavailable()) {
       this.#audit({ kind: "person", outcome: "refused", agent: g.agent.id, surface: g.surface.id, method, value, action });
       this.#endGrant(g, "audit");
       return false;
+    }
+    if (g.replaying) {
+      this.#audit({ kind: "person", outcome: "ok", agent: g.agent.id, surface: g.surface.id, method, value, action, ms });
+      return true;
     }
     const t = this.#now();
     if (t - g.changesAt >= 1e3 || t < g.changesAt) {
@@ -10906,7 +12325,7 @@ ${s.id}|`;
       g.changes = 0;
     }
     const ok = g.changes < PERSON_CHANGES_PER_SEC;
-    this.#audit({ kind: "person", outcome: ok ? "ok" : "refused", agent: g.agent.id, surface: g.surface.id, method, value, action });
+    this.#audit({ kind: "person", outcome: ok ? "ok" : "refused", agent: g.agent.id, surface: g.surface.id, method, value, action, ms });
     if (ok) g.changes++;
     else this.#endGrant(g, "reports");
     return ok;
@@ -10951,15 +12370,17 @@ ${s.id}|`;
         const mine = decideAction(this.#policy, def);
         if (mine === "deny" || mine === "confirm" && !allowRulePermitted(def.risk, offered)) return this.#personNoted(g, "refused", "rule", "allow", def.name);
       }
-      if ((g.rules.get(def.name) ?? null) === rule2) return this.#personNoted(g, "ok", "rule", rule2 ?? "none", def.name);
+      const ms = rule2 === "allow" && d.ms !== void 0 ? d.ms : void 0;
+      if (ms !== void 0 && !(typeof ms === "number" && Number.isInteger(ms) && ms > 0 && ms <= WAIT_MAX_MS)) return;
+      if ((g.rules.get(def.name) ?? null) === rule2 && ms === void 0) return this.#personNoted(g, "ok", "rule", rule2 ?? "none", def.name);
       const holds = (r) => r === "deny" ? 2 : r === "confirm" ? 1 : r === "allow" ? -1 : 0;
-      if (!this.#personChange(g, "rule", rule2 ?? "none", holds(rule2) < holds(g.rules.get(def.name)), def.name)) return;
+      if (!this.#personChange(g, "rule", rule2 ?? "none", holds(rule2) < holds(g.rules.get(def.name)), def.name, ms)) return;
       if (rule2 === null) g.rules.delete(def.name);
       else g.rules.set(def.name, rule2);
-      payload = { kind: "rule", a: def.name, d: rule2 };
+      payload = ms === void 0 ? { kind: "rule", a: def.name, d: rule2 } : { kind: "rule", a: def.name, d: rule2, ms };
     }
     try {
-      g.agent.peer.event("user", payload, { s: s.id });
+      this.#tell(g.agent, "user", payload, { s: s.id });
     } catch {
     }
   }
@@ -10984,7 +12405,40 @@ ${s.id}|`;
     if (!this.#personChange(g, "relay", on ? "on" : "off", on)) return;
     g.relay = on;
     try {
-      g.agent.peer.event("user", { kind: "relay", on }, { s: s.id });
+      this.#tell(g.agent, "user", { kind: "relay", on }, { s: s.id });
+    } catch {
+    }
+  }
+  /**
+   * A surface reports that the person answered a request that waited for them, or that it ran
+   * out of time (`evt user {kind:"answer", tk, answer, a?}` with `ag`, SPEC 6 and 13). The
+   * agent it names may hold no grant on the surface: an attach request waits before any grant
+   * exists. The hub takes an answer only for a ticket it relayed to that agent session for that
+   * surface, and for the request it was given for (`a` names the action of an `act` request and
+   * is absent for an attach): any other is recorded as refused, bounded, and dropped. A taken
+   * answer is recorded with the ticket and told to that agent alone, in an event built from the
+   * checked fields; an agent on 0.1 is told nothing (SPEC 16). A ticket answered with anything
+   * but `allow` is forgotten; an allowed one stays until the request is repeated with it or its
+   * time is up.
+   */
+  #personAnswer(s, ag, d) {
+    const ev = answerEvent(d);
+    if (!ev || ag === void 0) return;
+    const a = this.#agents.get(ag);
+    const key = `${s.id}
+${ev.tk}`;
+    const t = a?.tickets.get(key);
+    if (!a || !t || t.until < this.#now() || (t.method === "act" ? ev.a !== t.action : ev.a !== void 0)) {
+      if (s.person.allow()) this.#audit({ kind: "person", outcome: "refused", surface: s.id, agent: ag.slice(0, 64), method: "answer", value: ev.answer, action: ev.a, ticket: ev.tk });
+      return;
+    }
+    if (ev.answer !== "allow") {
+      a.tickets.delete(key);
+      if (t.method === "surface.attach" && ![...a.tickets.values()].some((x) => x.surface === s && x.method === "surface.attach")) a.waitingAttach.delete(s.id);
+    }
+    this.#audit({ kind: "person", outcome: "ok", surface: s.id, agent: a.id, method: "answer", value: ev.answer, action: ev.a, ticket: ev.tk });
+    try {
+      this.#tell(a, "user", ev, { s: s.id });
     } catch {
     }
   }
@@ -11076,7 +12530,7 @@ ${s.id}|`;
       this.#audit({ kind: "person", outcome: "ok", agent: g.agent.id, surface: s.id, method: "chat", chars: m.text.length }, canonicalJson(said));
     }
     try {
-      g.agent.peer.event("chat", d, { s: s.id });
+      this.#tell(g.agent, "chat", d, { s: s.id });
     } catch {
       if (d.from.kind === "person") this.#chatUndelivered(s, g, m, "E_TOO_LARGE");
     }
@@ -11101,8 +12555,8 @@ ${s.id}|`;
       for (const st of [...a.streams.values()]) if (st.surface === s) this.#dropStream(st, true);
     }
     try {
-      a.peer.event("grant", { kind: "scopes", scopes: [...scopes] }, { s: s.id });
-      a.peer.event("surface", { kind: "changed", surface: this.#surfaceInfo(s, a) });
+      this.#tell(a, "grant", { kind: "scopes", scopes: [...scopes] }, { s: s.id });
+      this.#tell(a, "surface", { kind: "changed", surface: this.#surfaceInfo(s, a) });
     } catch {
     }
   }
@@ -11166,7 +12620,7 @@ ${s.id}|`;
           if (why) this.#endGrant(g, why);
           else this.#schedule(g);
         },
-        Math.max(0, Math.min(MAX_TIMER_MS, due))
+        Math.max(0, Math.min(MAX_TIMER_MS2, due))
       )
     );
   }
@@ -11185,9 +12639,9 @@ ${s.id}|`;
         const reason = why === "idle" ? "expired" : why === "level" || why === "reports" || why === "audit" ? "hub" : why;
         if (!s.peer.closed) s.peer.request("detach", { why: reason }, { ag: a.id }).catch(noop);
       }
-      if (why === "expired" || why === "idle" || why === "revoked" || why === "level" || why === "reports" || why === "audit") {
+      if (why === "expired" || why === "idle" || why === "revoked" || why === "hub" || why === "level" || why === "reports" || why === "audit") {
         try {
-          a.peer.event("grant", { kind: why === "expired" || why === "idle" ? "expired" : "revoked" }, { s: s.id });
+          this.#tell(a, "grant", { kind: why === "expired" || why === "idle" ? "expired" : "revoked" }, { s: s.id });
         } catch {
         }
       }
@@ -11226,7 +12680,53 @@ ${s.id}|${scope}`;
     if (typeof p.s === "string") rec.surface = p.s.slice(0, 32);
     if (m === "act" && typeof p.a === "string") rec.action = p.a.slice(0, 64);
     if (m === "chat.say" && typeof p.text === "string") rec.chars = p.text.length;
+    if ((m === "act" || m === "surface.attach") && isTicket(p.tk)) rec.ticket = p.tk;
     return rec;
+  }
+  /**
+   * The surface answered a forwarded `act` or `attach` with `E_WAITING` (SPEC 6): the request
+   * waits for the person in its list. The hub keeps the ticket for this agent session and
+   * surface, so that the repeated request and the answer are recognised as this agent's, and
+   * relays the code with `{tk, ms}` and nothing else of the data. An `E_WAITING` that names no
+   * usable ticket, or on a method that cannot wait, is a bad answer from the surface.
+   */
+  #waits(a, m, p, err) {
+    const data = waitingData(err.data);
+    const s = typeof p.s === "string" ? this.#surfaces.get(p.s) : void 0;
+    if (!data || !s || speaks01(s.v) || m !== "act" && m !== "surface.attach") return { err: new ReinsError("E_INTERNAL", "bad answer from surface") };
+    if (speaks01(a.v)) {
+      if (m === "surface.attach" && !a.grants.has(s.id) && !s.peer.closed) s.peer.request("detach", { why: "hub" }, { ag: a.id }).catch(noop);
+      return { err, ticket: data.tk };
+    }
+    const key = `${s.id}
+${data.tk}`;
+    const now4 = this.#now();
+    for (const [k, t] of a.tickets) if (t.until < now4) a.tickets.delete(k);
+    if (!a.tickets.has(key) && ([...a.tickets.values()].filter((x) => x.surface === s).length >= TICKETS_PER_SURFACE || a.tickets.size >= TICKETS_PER_AGENT)) {
+      return { err: new ReinsError("E_BUSY", `too many requests of yours wait for the person already (at most ${TICKETS_PER_SURFACE} on one page, ${TICKETS_PER_AGENT} in all): wait for an answer before asking more`), ticket: data.tk };
+    }
+    const rec = { surface: s, method: m, req: waitingReq(m, p), until: now4 + data.ms + this.#limits.reqTimeoutMs, ...m === "act" && typeof p.a === "string" && { action: p.a } };
+    a.tickets.set(key, rec);
+    if (m === "surface.attach") a.waitingAttach.add(s.id);
+    return { err: new ReinsError("E_WAITING", err.message, data), ticket: data.tk };
+  }
+  /**
+   * `tk` on an `act` or `surface.attach`: the ticket of a waiting request the person allowed,
+   * forwarded unchanged (SPEC 6). It is validated, and it must be a ticket the surface gave this
+   * agent session for this surface and this kind of request, that the hub still knows: another
+   * agent's ticket, one read in a log or a chat message, or a used or lapsed one is refused, in
+   * the same words for each, before anything reaches the surface. Returns the ticket. The caller
+   * uses it up, before it awaits anything: an approval is used once, whatever the timing.
+   */
+  #ticketParam(a, s, m, p) {
+    if (p.tk === void 0) return void 0;
+    if (!isTicket(p.tk)) fail3("E_BAD_ARGS", 'tk must be a ticket: 1 to 32 letters, digits, "_" or "-"');
+    const key = `${s.id}
+${p.tk}`;
+    const t = a.tickets.get(key);
+    if (t && t.until < this.#now()) a.tickets.delete(key);
+    if (!t || t.until < this.#now() || t.method !== m || m === "act" && t.action !== p.a || t.req !== waitingReq(m, p)) fail3("E_BAD_ARGS", "tk is not a ticket of yours for this request");
+    return p.tk;
   }
   async #agentRequest(a, m, p) {
     const started = this.#now();
@@ -11240,23 +12740,26 @@ ${s.id}|${scope}`;
       canonical = void 0;
     }
     const ctx = { args: canonical ?? "" };
-    const record = (outcome) => {
+    const record = (outcome, ticket) => {
       const rec = this.#requestRecord(a, kind, m, p, outcome);
       rec.ms = Math.max(0, this.#now() - started);
       if (ctx.accepted !== void 0) rec.ref = ctx.accepted;
+      if (ticket !== void 0) rec.ticket = ticket;
       this.#audit(rec, canonical);
     };
     try {
-      if (!HUB_METHOD_NAMES.has(m) && methodScope(m) === void 0) fail3("E_UNKNOWN_METHOD", `unknown method ${m.slice(0, 64)}`);
+      if (!HUB_METHOD_NAMES.has(m) && methodScope(m) === void 0 || !methodIn(a.v, m)) fail3("E_UNKNOWN_METHOD", `unknown method ${m.slice(0, 64)}`);
       if (canonical === void 0) fail3("E_BAD_ARGS", "params are nested too deeply");
       if ((audited(m) || m === "surface.attach") && this.#auditUnavailable()) fail3("E_INTERNAL", "audit unavailable");
       const r = await this.#dispatch(a, m, p, ctx);
       if (ctx.accepted !== void 0 || kind !== "request" || audited(m)) record("ok");
       return r;
     } catch (e) {
-      const err = e instanceof ReinsError ? e : new ReinsError("E_INTERNAL", "internal error");
-      if (ctx.accepted !== void 0 || a.refusals.allow()) record(err.code);
-      throw err;
+      let err = e instanceof ReinsError ? e : new ReinsError("E_INTERNAL", "internal error");
+      let ticket;
+      if (err.code === "E_WAITING") ({ err, ticket } = this.#waits(a, m, p, err));
+      if (ctx.accepted !== void 0 || a.refusals.allow()) record(err.code, ticket);
+      throw errorIn(a.v, err);
     }
   }
   /**
@@ -11317,7 +12820,8 @@ ${s.id}|${scope}`;
     if (!Array.isArray(p.scopes) || !p.scopes.every((x) => typeof x === "string")) fail3("E_BAD_ARGS", "scopes must be a list of scopes");
     const reason = p.reason;
     if (reason !== void 0 && (typeof reason !== "string" || reason.length > MAX_REASON_CHARS)) fail3("E_BAD_ARGS", "reason must be a short string");
-    const scopes = capScopes(p.scopes, a.cred.scopes, this.#policy.scopes);
+    const tk = this.#ticketParam(a, s, "surface.attach", p);
+    const scopes = capScopes(scopesIn(s.v, scopesIn(a.v, p.scopes)), a.cred.scopes, this.#policy.scopes);
     if (scopes.length === 0) fail3("E_SCOPE", "none of the requested scopes is permitted");
     const decision2 = this.#policy.attach;
     if (decision2 === "deny") fail3("E_DENIED", "attach denied by hub policy");
@@ -11328,20 +12832,37 @@ ${s.id}`;
     this.#attaching.add(guard);
     let sent = false;
     let r;
+    let early;
     try {
+      if (tk !== void 0) {
+        a.tickets.delete(`${s.id}
+${tk}`);
+        if (![...a.tickets.values()].some((x) => x.surface === s && x.method === "surface.attach")) a.waitingAttach.delete(s.id);
+      }
       await this.#acceptRecord(a, "surface.attach", p, ctx);
       if (this.#surfaces.get(s.id) !== s) fail3("E_GONE", "surface gone");
       if (this.#agents.get(a.id) !== a) fail3("E_GONE", "agent gone");
-      const params2 = { agent: { id: a.id, name: a.name }, scopes, levels: [...this.#policy.human.levels], decisions: actionDecisions(this.#policy, s.manifest.actions), chatRelay: this.#policy.chatRelay, cred: a.cred.kid.slice(0, 64) };
+      const params2 = { agent: { id: a.id, name: a.name }, scopes, levels: [...this.#policy.human.levels], decisions: actionDecisions(this.#policy, s.manifest.actions), chatRelay: this.#policy.chatRelay, cred: a.cred.kid.slice(0, 64), v: a.v };
       if (typeof reason === "string") params2.reason = reason;
+      if (tk !== void 0) params2.tk = tk;
+      const asked = speaks01(s.v) ? { ...fieldsIn(params2, V01.attachParams), v: a.v } : params2;
       const opts = { ag: a.id, timeoutMs: this.#limits.reqTimeoutMs + this.#limits.consentTimeoutMs };
       if (decision2 === "confirm") opts.c = 1;
       a.attaching.add(s.id);
       sent = true;
-      r = await s.peer.request("attach", params2, opts);
+      try {
+        r = await s.peer.request("attach", asked, opts);
+      } catch (e) {
+        if (e instanceof ReinsError && e.code === "E_TIMEOUT") this.#withdrawAttach(a, s);
+        throw e;
+      }
     } finally {
       this.#attaching.delete(guard);
       if (sent) a.attaching.delete(s.id);
+      if (sent) {
+        early = a.early.get(s.id);
+        a.early.delete(s.id);
+      }
     }
     if (this.#surfaces.get(s.id) !== s) fail3("E_GONE", "surface gone");
     if (this.#agents.get(a.id) !== a) fail3("E_GONE", "agent gone");
@@ -11363,7 +12884,7 @@ ${s.id}`;
       }
     }
     const now4 = this.#now();
-    const kept = keptSettings(r.kept, granted, s.actions.keys());
+    const kept = keptSettings(speaks01(s.v) ? void 0 : r.kept, granted, s.actions.keys());
     const inForce = granted.filter((x) => !kept.off.includes(x));
     const g = {
       id: `g${++this.#grantSeq}`,
@@ -11389,14 +12910,38 @@ ${s.id}`;
     if (kept.level) this.#audit({ kind: "person", outcome: "kept", agent: a.id, surface: s.id, method: "level", value: kept.level });
     for (const [name2, d] of kept.rules) this.#audit({ kind: "person", outcome: "kept", agent: a.id, surface: s.id, method: "rule", value: d, action: name2 });
     if (kept.off.length) this.#audit({ kind: "person", outcome: "kept", agent: a.id, surface: s.id, method: "scopes", value: inForce.length ? inForce.join(" ") : "none" });
-    const result = { grant: { id: g.id, s: s.id, scopes: [...inForce], exp: g.exp }, surface: this.#surfaceInfo(s, a), manifest: s.manifest };
-    if (kept.level || kept.rules.size) {
+    if (early !== void 0 && early.length > 0) {
+      g.replaying = true;
+      try {
+        for (const f of early) this.#surfaceEvent(s, f);
+      } finally {
+        g.replaying = false;
+      }
+      g.changesAt = this.#now();
+      g.changes = 1;
+    }
+    const result = { grant: { id: g.id, s: s.id, scopes: [...g.scopes], exp: g.exp }, surface: this.#surfaceInfo(s, a), manifest: s.manifest };
+    if (!speaks01(a.v) && (kept.level || kept.rules.size)) {
       const k = {};
       if (kept.level) k.level = kept.level;
       if (kept.rules.size) k.rules = Object.fromEntries(kept.rules);
       result.kept = k;
     }
     return result;
+  }
+  /**
+   * The surface did not answer an attach within the hub's wait, and the agent is told
+   * `E_TIMEOUT`. The request must not stay open at the surface: a prompt still showing there
+   * could be approved later, for an agent that has no grant here. `detach {why:"hub"}` withdraws
+   * the prompt and drops whatever session the surface holds for this agent, so a grant the agent
+   * already held on the surface ends with it and both sides agree that there is none (SPEC 8).
+   */
+  #withdrawAttach(a, s) {
+    if (this.#closed || this.#surfaces.get(s.id) !== s) return;
+    if (this.#agents.get(a.id) !== a) return;
+    const old = a.grants.get(s.id);
+    if (old) this.#endGrant(old, "hub");
+    else if (!s.peer.closed) s.peer.request("detach", { why: "hub" }, { ag: a.id }).catch(noop);
   }
   #detach(a, p) {
     const s = this.#surfaceArg(a, p);
@@ -11413,10 +12958,12 @@ ${s.id}`;
     if (!g.scopes.includes(scope)) fail3("E_SCOPE", `grant lacks scope ${scope}`);
     if (!this.#bucket(a, s, scope).take()) fail3("E_RATE", "rate limit exceeded");
     let c;
+    let tk;
     if (m === "act") {
       if (typeof p.a !== "string") fail3("E_BAD_ARGS", "a must be an action name");
       const def = s.actions.get(p.a);
       if (!def) fail3("E_BAD_ARGS", "unknown action");
+      tk = this.#ticketParam(a, s, "act", p);
       const d = decideAction(this.#policy, def);
       if (d === "deny") fail3("E_DENIED", "action denied by hub policy");
       if (d === "confirm") c = 1;
@@ -11435,6 +12982,8 @@ ${s.id}`;
     const timeoutMs = m === "act" ? this.#limits.reqTimeoutMs + this.#limits.consentTimeoutMs : this.#limits.reqTimeoutMs;
     const opts = { ag: a.id, timeoutMs };
     if (c === 1) opts.c = 1;
+    if (tk !== void 0) a.tickets.delete(`${s.id}
+${tk}`);
     if (audited(m)) {
       await this.#acceptRecord(a, m, p, ctx);
       if (this.#surfaces.get(s.id) !== s) fail3("E_GONE", "surface gone");

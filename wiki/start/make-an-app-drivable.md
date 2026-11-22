@@ -15,7 +15,7 @@ npm i github:offensiveadhd/reins
 From a tarball, built once in a checkout of the repository with `npm pack`:
 
 ```bash
-npm i ../reins/offensiveadhd-reins-0.1.0.tgz
+npm i ../reins/offensiveadhd-reins-0.2.0.tgz
 ```
 
 For a static page with no build step, copy one file out of the package and import it:
@@ -28,13 +28,13 @@ For a static page with no build step, copy one file out of the package and impor
 
 | File in `dist/bundle/` | What it is | Size in this build |
 |---|---|---|
-| `reins.js` | The kit: driver, agent SDK, in-tab broker | 446 KiB |
-| `reins-driver.js` | The driver only (ES module) | 341 KiB |
-| `reins-driver.iife.js` | The driver as a global, `Reins.createDriver(...)` | 359 KiB |
-| `reins-agent.js` | The agent SDK only | 69 KiB |
-| `reins-broker.js` | The in-tab broker only | 122 KiB |
-| `reins-electron.js` | `electronLink()`, for a page in an Electron window | 11 KiB |
-| `reins-adopt.iife.js` | The driver for an app adopted by `reins-electron` | 370 KiB |
+| `reins.js` | The kit: driver, agent SDK, in-tab broker | 518 KiB |
+| `reins-driver.js` | The driver only (ES module) | 396 KiB |
+| `reins-driver.iife.js` | The driver as a global, `Reins.createDriver(...)` | 416 KiB |
+| `reins-agent.js` | The agent SDK only | 80 KiB |
+| `reins-broker.js` | The in-tab broker only | 137 KiB |
+| `reins-electron.js` | `electronLink()`, for a page in an Electron window | 12 KiB |
+| `reins-adopt.iife.js` | The driver for an app adopted by `reins-electron` | 427 KiB |
 
 Sizes are unminified and uncompressed, measured when this site was built. The bundles have no dependencies and no `node:` imports, and they run under a strict Content Security Policy (`script-src 'self'`, no inline script, no `eval`). See [Running under a strict CSP](../guides/strict-csp.md).
 

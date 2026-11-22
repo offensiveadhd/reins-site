@@ -2,7 +2,7 @@
 
 > Test vectors: Audit hash chain. Shown here as it is in conformance/vectors/audit.json.
 
-Protocol `0.1`. Covers: SPEC.md section 13, "Audit".
+Protocol `0.2`. Covers: SPEC.md section 13, "Audit".
 
 [Download audit.json](./audit.json): the file itself, as the conformance suite reads it.
 
